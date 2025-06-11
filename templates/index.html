@@ -10,7 +10,11 @@
   <div class="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-xl rounded-xl">
     <h1 class="text-3xl font-bold mb-6 text-center">🚀 AI Code Review Agent</h1>
 
-    <form action="/upload" method="POST" enctype="multipart/form-data" class="space-y-6">
+    <form method="POST" enctype="multipart/form-data">
+  <input type="file" name="files" multiple>
+  <button type="submit">Upload</button>
+</form>
+
       <!-- File Upload -->
       <div>
         <label class="block text-sm font-medium text-gray-700">Upload Codebase (.zip)</label>
@@ -37,6 +41,28 @@
       </div>
     </form>
   </div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const diffString = `{{ diff_data | safe }}`; // <- From Flask!
+    const diffHtml = Diff2Html.html(diffString, {
+      drawFileList: true,
+      matching: 'lines',
+      outputFormat: 'side-by-side'
+    });
+    document.getElementById('diff-container').innerHTML = diffHtml;
+    hljs.highlightAll();
+  });
+</script>
+
+<!-- Inject Summary Data -->
+{% if summary %}
+  <ul class="list-disc pl-6">
+    <li>✔️ {{ summary.bugs_fixed }} bugs fixed</li>
+    <li>🔐 {{ summary.security_issues }} security issues resolved</li>
+    <li>🧼 {{ summary.smells_removed }} code smells removed</li>
+    <li>📄 {{ summary.files_updated }} files updated</li>
+  </ul>
+{% endif %}
 
 </body>
 </html>
