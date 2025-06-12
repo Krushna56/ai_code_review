@@ -1,68 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Code Review Agent</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 text-gray-900">
+<body class="bg-gray-100 font-sans">
 
-  <div class="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-xl rounded-xl">
-    <h1 class="text-3xl font-bold mb-6 text-center">🚀 AI Code Review Agent</h1>
-
-    <form method="POST" enctype="multipart/form-data">
-  <input type="file" name="files" multiple>
-  <button type="submit">Upload</button>
-</form>
-
-      <!-- File Upload -->
+  <div class="max-w-3xl mx-auto mt-16 p-8 bg-white shadow-lg rounded-lg">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">🚀 AI Code Review Agent</h1>
+    
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
       <div>
-        <label class="block text-sm font-medium text-gray-700">Upload Codebase (.zip)</label>
-        <input type="file" name="codebase" accept=".zip" required
-               class="mt-1 p-2 border border-gray-300 rounded-md w-full">
+        <label for="codebase" class="block text-lg font-medium text-gray-700 mb-2">Upload your codebase</label>
+        <input 
+          type="file" 
+          name="codebase" 
+          id="codebase" 
+          class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+          required 
+        />
       </div>
 
-      <!-- Review Goals -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Select Review Priorities:</label>
-        <div class="space-y-1">
-          <label><input type="checkbox" name="goals" value="security" class="mr-2">🔐 Security</label><br>
-          <label><input type="checkbox" name="goals" value="performance" class="mr-2">⚡ Performance</label><br>
-          <label><input type="checkbox" name="goals" value="readability" class="mr-2">🧼 Readability</label>
-        </div>
-      </div>
-
-      <!-- Submit -->
-      <div>
-        <button type="submit"
-                class="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition">
-          Start Code Review
-        </button>
-      </div>
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">
+        🔍 Analyze Code
+      </button>
     </form>
-  </div>
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const diffString = `{{ diff_data | safe }}`; // <- From Flask!
-    const diffHtml = Diff2Html.html(diffString, {
-      drawFileList: true,
-      matching: 'lines',
-      outputFormat: 'side-by-side'
-    });
-    document.getElementById('diff-container').innerHTML = diffHtml;
-    hljs.highlightAll();
-  });
-</script>
 
-<!-- Inject Summary Data -->
-{% if summary %}
-  <ul class="list-disc pl-6">
-    <li>✔️ {{ summary.bugs_fixed }} bugs fixed</li>
-    <li>🔐 {{ summary.security_issues }} security issues resolved</li>
-    <li>🧼 {{ summary.smells_removed }} code smells removed</li>
-    <li>📄 {{ summary.files_updated }} files updated</li>
-  </ul>
-{% endif %}
+    <div class="mt-10 text-sm text-gray-500">
+      <p>You can upload a folder as a .zip file or even a single Python file. Our AI will scan and review it for issues, smells, and security flaws.</p>
+    </div>
+  </div>
 
 </body>
 </html>
