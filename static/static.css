@@ -1,0 +1,14 @@
+.code-container {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+.code-block {
+  flex: 1;
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 8px;
+  overflow-x: auto;
+  max-height: 400px;
+  font-family: monospace;
+}
