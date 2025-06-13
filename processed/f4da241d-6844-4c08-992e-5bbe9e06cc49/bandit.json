@@ -1,0 +1,33 @@
+{
+  "errors": [],
+  "generated_at": "2025-06-13T20:39:39Z",
+  "metrics": {
+    "_totals": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 350,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
+    "uploads\\f4da241d-6844-4c08-992e-5bbe9e06cc49\\generator.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 350,
+      "nosec": 0,
+      "skipped_tests": 0
+    }
+  },
+  "results": []
+}

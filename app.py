@@ -39,10 +39,9 @@ def index():
         analysis_result = analyze_codebase(input_path, output_path)
 
         return render_template('results.html',
-                               summary=analysis_result.get('summary'),
-                               details=analysis_result.get('details'),
-                               security=analysis_result.get('security'),
-                               report_file=os.path.join(uid, 'report.log'))
+                               summary=analysis_result['summary'],
+                               details=analysis_result['details'],
+                               security=analysis_result['security'])
 
     return render_template('index.html')
 

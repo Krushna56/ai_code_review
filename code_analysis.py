@@ -1,72 +1,97 @@
 import os
-import subprocess
 import json
-import shutil
-import tempfile
+import subprocess
+from autopep8 import fix_code
+import difflib
 
-def run_bandit_analysis(code_path):
-    try:
-        result = subprocess.run(
-            ['bandit', '-r', code_path, '-f', 'json'],
-            capture_output=True,
-            text=True,
-            check=True
-        )
-        return json.loads(result.stdout)
-    except subprocess.CalledProcessError as e:
-        return {
-            "error": True,
-            "message": "Bandit failed to analyze the code. This usually happens if the uploaded folder doesn't contain valid Python files or the structure is unsupported."
-        }
 
-def run_autopep8_analysis(code_path):
-    issues = []
-    for root, _, files in os.walk(code_path):
+def highlight_code_diff(original_code, modified_code):
+    """
+    Highlights differences in modified code using <span class="highlight">.
+    Only highlights added or changed lines.
+    """
+    original_lines = original_code.splitlines()
+    modified_lines = modified_code.splitlines()
+    diff = list(difflib.ndiff(original_lines, modified_lines))
+
+    highlighted = []
+    for line in diff:
+        if line.startswith('+ '):
+            highlighted.append(f'<span class="highlight">{line[2:]}</span>')
+        elif line.startswith('? '):
+            continue
+        elif line.startswith('  '):
+            highlighted.append(line[2:])
+        # Do not include removed lines
+    return '\n'.join(highlighted)
+
+
+def analyze_codebase(input_path, output_path):
+    summary = {
+        "bugs_fixed": 0,
+        "security_issues": 0,
+        "smells_removed": 0,
+        "files_updated": 0
+    }
+    details = {}
+
+    for root, _, files in os.walk(input_path):
         for file in files:
             if file.endswith(".py"):
                 file_path = os.path.join(root, file)
-                result = subprocess.run(
-                    ['autopep8', '--diff', file_path],
-                    capture_output=True,
-                    text=True
+                rel_path = os.path.relpath(file_path, input_path)
+
+                with open(file_path, "r", encoding="utf-8") as f:
+                    original_code = f.read()
+
+                formatted_code = fix_code(original_code)
+
+                # Save formatted version to disk (overwriting original)
+                with open(file_path, "w", encoding="utf-8") as f:
+                    f.write(formatted_code)
+
+                # Save before/after version in memory
+                details[rel_path] = {
+                    "before": original_code,
+                    "after": highlight_code_diff(original_code, formatted_code)
+                }
+
+                summary["bugs_fixed"] += 1
+                summary["files_updated"] += 1
+
+    # Run Bandit
+    try:
+        bandit_output_path = os.path.join(output_path, "bandit.json")
+        bandit_cmd = [
+            "bandit", "-r", input_path, "-f", "json", "-o", bandit_output_path
+        ]
+        subprocess.run(bandit_cmd, check=True)
+        with open(bandit_output_path, "r", encoding="utf-8") as f:
+            bandit_data = json.load(f)
+
+        issues = bandit_data.get("results", [])
+        summary["security_issues"] = len(issues)
+
+        if not issues:
+            security_report = "✅ No major security issues found by Bandit!"
+        else:
+            security_report = f"⚠️ Found {len(issues)} potential security issues:\n\n"
+            for issue in issues[:5]:
+                security_report += (
+                    f"🔍 **{issue['test_id']}**: {issue['issue_text']} at "
+                    f"{issue['filename']}:{issue['line_number']}\n"
                 )
-                if result.stdout:
-                    issues.append({"file": file_path, "diff": result.stdout})
-    return issues
-
-def analyze_codebase(input_path, output_path):
-    os.makedirs(output_path, exist_ok=True)
-
-    # Run Bandit for security checks
-    bandit_result = run_bandit_analysis(input_path)
-    security_report = []
-
-    if isinstance(bandit_result, dict) and bandit_result.get("error"):
-        security_report.append({"type": "error", "message": bandit_result["message"]})
-    else:
-        for result in bandit_result.get("results", []):
-            security_report.append({
-                "filename": result.get("filename"),
-                "issue_text": result.get("issue_text"),
-                "line_number": result.get("line_number"),
-                "severity": result.get("issue_severity"),
-                "confidence": result.get("issue_confidence"),
-                "code": result.get("code")
-            })
-
-    # Run autopep8 for formatting issues
-    pep8_issues = run_autopep8_analysis(input_path)
-
-    # Summary
-    summary = {
-        "bugs_fixed": len(pep8_issues),
-        "security_issues": len(security_report) if isinstance(security_report, list) else 0,
-        "smells_removed": 0,
-        "files_updated": len(pep8_issues)
-    }
+            if len(issues) > 5:
+                security_report += f"\n...and {len(issues) - 5} more."
+    except subprocess.CalledProcessError as e:
+        security_report = (
+            "❌ Bandit failed to analyze your code.\n"
+            "It might be due to malformed Python files or unexpected structure.\n"
+            f"**Error Log**: {str(e)}"
+        )
 
     return {
         "summary": summary,
-        "details": pep8_issues,
+        "details": details,
         "security": security_report
     }
