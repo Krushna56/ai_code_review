@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+       <!-- Include CodeMirror CSS/JS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/codemirror.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/mode/python/python.min.js"></script>
+</head>
+<body>
+<!-- Create a textarea -->
+<form method="POST" action="/save-edits">
+  <textarea id="codeEditor" name="code">{{ code }}</textarea>
+  <button type="submit">Save Changes</button>
+</form>
+
+<!-- Init CodeMirror -->
+<script>
+  var editor = CodeMirror.fromTextArea(document.getElementById("codeEditor"), {
+    lineNumbers: true,
+    mode: "python",
+    theme: "default"
+  });
+</script>
+
+</body>
+</html>

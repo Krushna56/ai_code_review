@@ -1,55 +1,96 @@
-from flask import Flask, render_template, request, redirect, send_from_directory
 import os
-import shutil
-import zipfile
-import uuid
+import json
+import subprocess
+from autopep8 import fix_code
+import difflib
 
-from code_analysis import analyze_codebase
+def contains_python_files(directory):
+    for root, _, files in os.walk(directory):
+        for file in files:
+            if file.endswith(".py"):
+                return True
+    return False
 
-app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'uploads'
-app.config['PROCESSED_FOLDER'] = 'processed'
+def highlight_code_diff(original_code, modified_code):
+    original_lines = original_code.splitlines()
+    modified_lines = modified_code.splitlines()
+    diff = list(difflib.ndiff(original_lines, modified_lines))
 
+    highlighted_lines = []
+    for line in diff:
+        if line.startswith('+ '):
+            highlighted_lines.append(f'<span class="highlight">{line[2:]}</span>')
+        elif line.startswith('? '):
+            continue
+        else:
+            highlighted_lines.append(line[2:] if line.startswith(('  ', '- ')) else line)
 
-def extract_zip(zip_path, extract_to):
-    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        zip_ref.extractall(extract_to)
+    return '\n'.join(highlighted_lines)
 
+def analyze_codebase(input_path, output_path):
+    summary = {
+        "bugs_fixed": 0,
+        "security_issues": 0,
+        "smells_removed": 0,
+        "files_updated": 0
+    }
+    details = {}
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    if request.method == 'POST':
-        uploaded_file = request.files['codebase']
-        if uploaded_file.filename == '':
-            return redirect(request.url)
+    for root, _, files in os.walk(input_path):
+        for file in files:
+            if file.endswith(".py"):
+                file_path = os.path.join(root, file)
+                rel_path = os.path.relpath(file_path, input_path)
 
-        uid = str(uuid.uuid4())
-        input_path = os.path.join(app.config['UPLOAD_FOLDER'], uid)
-        output_path = os.path.join(app.config['PROCESSED_FOLDER'], uid)
+                with open(file_path, "r", encoding="utf-8") as f:
+                    original_code = f.read()
 
-        os.makedirs(input_path, exist_ok=True)
-        os.makedirs(output_path, exist_ok=True)
+                formatted_code = fix_code(original_code)
 
-        file_path = os.path.join(input_path, uploaded_file.filename)
-        uploaded_file.save(file_path)
+                with open(file_path, "w", encoding="utf-8") as f:
+                    f.write(formatted_code)
 
-        if zipfile.is_zipfile(file_path):
-            extract_zip(file_path, input_path)
+                highlighted = highlight_code_diff(original_code, formatted_code)
 
-        analysis_result = analyze_codebase(input_path, output_path)
+                details[rel_path] = {
+                    "before": original_code,
+                    "after": formatted_code,
+                    "highlighted": highlighted
+                }
 
-        return render_template('results.html',
-                               summary=analysis_result['summary'],
-                               details=analysis_result['details'],
-                               security=analysis_result['security'])
+                summary["bugs_fixed"] += 1
+                summary["smells_removed"] += 0
+                summary["files_updated"] += 1
 
-    return render_template('index.html')
+    try:
+        if contains_python_files(input_path):
+            bandit_output_path = os.path.join(output_path, "bandit.json")
+            bandit_cmd = [
+                "bandit", "-r", input_path, "-f", "json", "-o", bandit_output_path
+            ]
+            subprocess.run(bandit_cmd, check=True)
+            with open(bandit_output_path, "r", encoding="utf-8") as f:
+                bandit_data = json.load(f)
 
+            issues = bandit_data.get("results", [])
+            summary["security_issues"] = len(issues)
 
-@app.route('/download/<path:filename>')
-def download_report(filename):
-    return send_from_directory(app.config['PROCESSED_FOLDER'], filename, as_attachment=True)
+            security_report = f"🔐 Found {len(issues)} potential security issues.\n"
+            for issue in issues[:5]:
+                security_report += f"• [{issue['test_id']}] {issue['issue_text']} at {issue['filename']}:{issue['line_number']}\n"
+            if len(issues) > 5:
+                security_report += f"...and {len(issues) - 5} more issues."
+        else:
+            security_report = "⚠️ No Python files found. Skipped security analysis."
+    except subprocess.CalledProcessError as e:
+        security_report = (
+            "❌ Bandit failed to analyze your code.\n"
+            "It might be due to malformed Python files or unexpected structure.\n"
+            f"**Error Log**: {str(e)}"
+        )
 
-
-if __name__ == '__main__':
-    app.run(debug=True)
+    return {
+        "summary": summary,
+        "details": details,
+        "security": security_report
+    }
