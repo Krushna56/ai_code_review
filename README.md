@@ -28,7 +28,7 @@ Generate a detailed report summarizing findings and recommended changes.
 
 🔹 Installation
 # Clone the repository
-git clone https://github.com/yourusername/ai-code-review.git
+git clone https://github.com/Krushna56/ai_code_review.git
 cd ai-code-review
 
 # Install dependencies
