@@ -1,9 +1,9 @@
 import os
 import json
-import subprocess
 from autopep8 import fix_code
 import difflib
-
+from bandit.core import manager as bandit_manager
+from bandit.core import config as bandit_config
 
 def highlight_code_diff(original_code, modified_code):
     """
@@ -59,18 +59,23 @@ def analyze_codebase(input_path, output_path):
                 summary["bugs_fixed"] += 1
                 summary["files_updated"] += 1
 
-    # Run Bandit
+    # Run Bandit using Python API instead of subprocess
     try:
-        bandit_output_path = os.path.join(output_path, "bandit.json")
-        bandit_cmd = [
-            "bandit", "-r", input_path, "-f", "json", "-o", bandit_output_path
-        ]
-        subprocess.run(bandit_cmd, check=True)
-        with open(bandit_output_path, "r", encoding="utf-8") as f:
-            bandit_data = json.load(f)
-
-        issues = bandit_data.get("results", [])
+        # Create Bandit config
+        b_conf = bandit_config.BanditConfig()
+        
+        # Create manager and run scan
+        b_mgr = bandit_manager.BanditManager(b_conf, 'file')
+        b_mgr.discover_files([input_path], True)
+        b_mgr.run_tests()
+        
+        issues = [issue.as_dict() for issue in b_mgr.results]
         summary["security_issues"] = len(issues)
+
+        # Save results to JSON file
+        bandit_output_path = os.path.join(output_path, "bandit.json")
+        with open(bandit_output_path, "w", encoding="utf-8") as f:
+            json.dump({"results": issues}, f, indent=2)
 
         if not issues:
             security_report = "✅ No major security issues found by Bandit!"
@@ -78,12 +83,12 @@ def analyze_codebase(input_path, output_path):
             security_report = f"⚠️ Found {len(issues)} potential security issues:\n\n"
             for issue in issues[:5]:
                 security_report += (
-                    f"🔍 **{issue['test_id']}**: {issue['issue_text']} at "
-                    f"{issue['filename']}:{issue['line_number']}\n"
+                    f"🔍 **{issue.get('test_id', 'N/A')}**: {issue.get('issue_text', 'N/A')} at "
+                    f"{issue.get('filename', 'N/A')}:{issue.get('line_number', 'N/A')}\n"
                 )
             if len(issues) > 5:
                 security_report += f"\n...and {len(issues) - 5} more."
-    except subprocess.CalledProcessError as e:
+    except Exception as e:
         security_report = (
             "❌ Bandit failed to analyze your code.\n"
             "It might be due to malformed Python files or unexpected structure.\n"

@@ -1,0 +1,23 @@
+{
+  "results": [
+    {
+      "filename": "uploads\\fb379478-9238-4a30-ab69-37e9d414549d\\app.py",
+      "test_name": "flask_debug_true",
+      "test_id": "B201",
+      "issue_severity": "HIGH",
+      "issue_cwe": {
+        "id": 94,
+        "link": "https://cwe.mitre.org/data/definitions/94.html"
+      },
+      "issue_confidence": "MEDIUM",
+      "issue_text": "A Flask app appears to be run with debug=True, which exposes the Werkzeug debugger and allows the execution of arbitrary code.",
+      "line_number": 56,
+      "line_range": [
+        56
+      ],
+      "col_offset": 4,
+      "end_col_offset": 23,
+      "code": "55 if __name__ == '__main__':\n56     app.run(debug=True)\n"
+    }
+  ]
+}
