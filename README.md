@@ -1,83 +1,265 @@
-AI Code Review Tool 🧠💻
+# AI-Powered Code Review Platform 🧠💻
 
-A Python-powered AI code review tool that analyzes codebases, highlights issues, suggests improvements, and generates detailed reports—helping developers write cleaner, smarter, and maintainable code.
+A next-generation AI-driven code review platform using hybrid ML + LLM architecture. Combines classical machine learning, deep learning models, semantic embeddings, and specialized LLM agents to provide comprehensive, context-aware code reviews.
 
-🔹 Features
+## 🔹 Features
 
-✅ Automated code analysis for bugs, inefficiencies, and code smells
+✅ **Multi-Layer Static Analysis**
 
-✅ Refactoring suggestions for cleaner, optimized code
+- AST parsing with comprehensive code metrics (LOC, WMC, DIT, LCOM, Complexity)
+- Multiple linters: Bandit (security), Semgrep (patterns), Pylint (quality), Ruff (style)
+- Automated code formatting with autopep8
 
-✅ Documentation and comment improvement suggestions
+✅ **Semantic Code Understanding**
 
-✅ Multi-file and multi-language support (Python ready, expandable)
+- Code embeddings using OpenAI or local sentence-transformers
+- FAISS vector store for semantic code search
+- RAG-enhanced context for LLM agents
 
-✅ Detailed review reports (Before/After & Improvement notes)
+✅ **Intelligent LLM Agents**
 
-✅ CLI and Python API integration for flexibility
+- SecurityReviewer: Deep security vulnerability analysis
+- RefactorAgent: Code quality and refactoring suggestions
+- Chain-of-thought prompting with contextual awareness
 
-🔹 How It Works
+✅ **Flexible Configuration**
 
-Upload or point the tool to your codebase.
+- CPU-optimized for systems without GPU
+- Feature flags to enable/disable components
+- Support for OpenAI and Anthropic LLMs
+- Local or API-based embeddings
 
-AI scans the code for issues, inefficiencies, and missing documentation.
+✅ **Comprehensive Reporting**
 
-Receive actionable suggestions for refactoring and improvements.
+- Detailed metrics and analysis results
+- Before/after code diffs with highlighting
+- Severity-based issue prioritization
+- JSON, Markdown, and HTML export
 
-Generate a detailed report summarizing findings and recommended changes.
+## 🔹 Installation
 
-🔹 Installation
-# Clone the repository
+### Prerequisites
+
+- Python 3.8+
+- pip
+
+### Setup
+
+1. **Clone the repository**
+
+```bash
 git clone https://github.com/Krushna56/ai_code_review.git
-cd ai-code-review
+cd ai_code_review
+```
 
-# Install dependencies
+2. **Install dependencies**
+
+```bash
 pip install -r requirements.txt
+```
 
-🔹 Usage
-Command-Line Interface (CLI)
-python review.py --input path/to/code
+3. **Configure environment**
 
-Python API
-from ai_code_review import CodeReviewer
+```bash
+# Copy the example environment file
+copy .env.example .env
 
-reviewer = CodeReviewer()
-report = reviewer.analyze("path/to/code")
-reviewer.save_report(report, "review_report.txt")
+# Edit .env and add your API keys
+# Required: OPENAI_API_KEY or ANTHROPIC_API_KEY
+# Optional: Configure embedding provider, models, feature flags
+```
 
+### Configuration Options
 
-🔹 Requirements
+Edit `.env` to customize:
 
-Python 3.8+
+**LLM Provider** (choose one):
 
-Dependencies:
+- `LLM_PROVIDER=openai` with `OPENAI_API_KEY`
+- `LLM_PROVIDER=anthropic` with `ANTHROPIC_API_KEY`
 
-openai / transformers (for AI analysis)
+**Embedding Provider**:
 
-black / flake8 (optional for formatting & linting)
+- `EMBEDDING_PROVIDER=local` (free, uses sentence-transformers)
+- `EMBEDDING_PROVIDER=openai` (paid, higher quality)
 
-pandas (for report generation)
+**Feature Flags**:
 
-🔹 Future Enhancements
+- `ENABLE_BANDIT=true` - Security scanning
+- `ENABLE_SEMGREP=true` - Pattern-based analysis
+- `ENABLE_PYLINT=false` - Code quality (can be slow)
+- `ENABLE_RUFF=true` - Fast Python linter
+- `ENABLE_LLM_AGENTS=true` - AI-powered insights
+- `ENABLE_SEMANTIC_SEARCH=true` - Vector-based code search
 
-🌐 Web dashboard for interactive code reviews
+## 🔹 Usage
 
-🛠 IDE plugin for real-time code suggestions
+### Web Interface
 
-🔄 GitHub/CI integration for automatic PR analysis
+```bash
+python app.py
+```
 
-🌍 Support for additional programming languages
+Navigate to `http://localhost:5000` and upload a ZIP file containing your codebase.
 
-🔹 Contributing
+### Command-Line Interface
+
+```python
+from code_analysis import analyze_codebase
+
+results = analyze_codebase(
+    input_path="path/to/code",
+    output_path="path/to/output"
+)
+
+print(results['summary'])
+print(results['security'])
+```
+
+### Python API
+
+```python
+from static_analysis import analyze_file
+from llm_agents import SecurityReviewer, RefactorAgent
+
+# Analyze a single file
+metrics = analyze_file("example.py")
+print(f"Complexity: {metrics['complexity']}")
+
+# Use LLM agents
+security_agent = SecurityReviewer()
+with open("example.py") as f:
+    code = f.read()
+
+result = security_agent.analyze(code)
+print(result['analysis'])
+```
+
+## 🔹 Architecture
+
+### Layers
+
+1. **Static Intelligence Layer**
+
+   - AST parsing and metrics extraction
+   - Multi-linter integration (Bandit, Semgrep, Pylint, Ruff)
+
+2. **Embedding Layer**
+
+   - Code embeddings (OpenAI or local)
+   - FAISS vector store for semantic search
+
+3. **LLM Agent Layer**
+
+   - SecurityReviewer for vulnerability analysis
+   - RefactorAgent for code quality improvements
+   - RAG-enhanced context
+
+4. **Meta-Reasoning Layer** (coming soon)
+   - Issue deduplication and prioritization
+   - Confidence scoring
+   - Structured reporting
+
+## 🔹 Static Analysis Tools
+
+### Bandit (Security)
+
+- Identifies common security issues in Python code
+- Checks for SQL injection, XSS, insecure crypto, etc.
+
+### Semgrep (Patterns)
+
+- Multi-language pattern-based scanner
+- Supports Python, JavaScript, Java, Go, and more
+- Custom rule definitions
+
+### Pylint (Code Quality)
+
+- Comprehensive Python linter
+- Checks coding standards, refactoring opportunities
+- Can be slow on large codebases (disabled by default)
+
+### Ruff (Style)
+
+- Extremely fast Python linter written in Rust
+- Replaces Flake8, isort, and more
+- Recommended for quick feedback
+
+## 🔹 Performance
+
+**CPU-Optimized:**
+
+- Uses pre-trained models (no GPU training required)
+- Smaller model variants (CodeBERT-base, MiniLM)
+- Batch processing for efficiency
+- Optional ONNX runtime for faster inference
+
+**Expected Analysis Time:**
+
+- Small repo (10 files, ~1000 LOC): < 30 seconds
+- Medium repo (100 files, ~10,000 LOC): < 3 minutes
+- Large repo (1000 files, ~100,000 LOC): < 15 minutes
+
+## 🔹 Project Structure
+
+```
+ai_code_review/
+├── config.py                 # Configuration management
+├── app.py                    # Flask web application
+├── code_analysis.py          # Main analysis pipeline
+├── requirements.txt          # Dependencies
+├── .env.example              # Environment template
+├── static_analysis/          # AST parser, multi-linter
+├── embeddings/               # Code embedder, vector store
+├── llm_agents/               # LLM agent implementations
+├── ml_models/                # ML models (future)
+├── dl_models/                # Deep learning models (future)
+├── meta_reasoner/            # Issue aggregation (future)
+├── templates/                # HTML templates
+├── static/                   # CSS, JS
+└── tests/                    # Unit and integration tests
+```
+
+## 🔹 API Costs
+
+**OpenAI (if using API-based features):**
+
+- Embeddings: `text-embedding-3-small` (~$0.02 per 1M tokens)
+- LLM: `gpt-4-turbo-preview` (~$10 per 1M input tokens)
+
+**Free Alternatives:**
+
+- Use `EMBEDDING_PROVIDER=local` for free embeddings
+- Caching reduces redundant API calls
+- Feature flags allow disabling expensive components
+
+## 🔹 Future Enhancements
+
+- [ ] ML risk prediction models
+- [ ] Deep learning with CodeBERT/GraphCodeBERT
+- [ ] GitHub integration and PR review bot
+- [ ] Interactive web dashboard
+- [ ] Feedback loop and model retraining
+- [ ] Multi-language support expansion
+- [ ] IDE plugin integration
+
+## 🔹 Contributing
 
 Contributions are welcome!
 
-Fork the repo
+1. Fork the repo
+2. Create your branch (`git checkout -b feature/xyz`)
+3. Commit your changes (`git commit -m "Add feature"`)
+4. Push to the branch (`git push origin feature/xyz`)
+5. Open a Pull Request
 
-Create your branch (git checkout -b feature/xyz)
+## 🔹 License
 
-Commit your changes (git commit -m "Add feature")
+MIT License
 
-Push to the branch (git push origin feature/xyz)
+## 🔹 Acknowledgments
 
-Open a Pull Request
+- Built with OpenAI GPT-4 and Anthropic Claude
+- Uses HuggingFace Transformers
+- FAISS for vector search
+- Bandit, Semgrep, Pylint, Ruff for static analysis

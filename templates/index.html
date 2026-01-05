@@ -28,6 +28,12 @@
       </button>
     </form>
 
+    {% if error %}
+    <div class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+      <strong>Error:</strong> {{ error }}
+    </div>
+    {% endif %}
+
     <div class="mt-10 text-sm text-gray-500">
       <p>You can upload a folder as a .zip file or even a single Python file. Our AI will scan and review it for issues, smells, and security flaws.</p>
     </div>
