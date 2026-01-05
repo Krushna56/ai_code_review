@@ -1,0 +1,46 @@
+{
+  "summary": {
+    "total_issues": 0,
+    "by_severity": {
+      "critical": 0,
+      "high": 0,
+      "medium": 0,
+      "low": 0,
+      "info": 0
+    },
+    "issues": [],
+    "tools_run": [
+      "bandit",
+      "semgrep",
+      "pylint",
+      "ruff"
+    ],
+    "tools_succeeded": []
+  },
+  "details": {
+    "bandit": {
+      "tool": "bandit",
+      "success": false,
+      "issues": [],
+      "error": "No module named 'pbr'"
+    },
+    "semgrep": {
+      "tool": "semgrep",
+      "success": false,
+      "issues": [],
+      "error": "Semgrep not installed. Install with: pip install semgrep"
+    },
+    "pylint": {
+      "tool": "pylint",
+      "success": false,
+      "issues": [],
+      "error": null
+    },
+    "ruff": {
+      "tool": "ruff",
+      "success": false,
+      "issues": [],
+      "error": "Ruff not installed. Install with: pip install ruff"
+    }
+  }
+}

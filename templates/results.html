@@ -1,81 +1,328 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Code Review Results</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Code Review Results - AI Code Review Platform</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        pre {
-            background-color: #f5f5f5;
-            border: 1px solid #ddd;
-            padding: 10px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        .highlight {
-            background-color: #ffeeba;
-            padding: 2px 4px;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-
-        .code-block {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .filename {
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .summary-card {
-            background-color: #e9f7ef;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-left: 5px solid #28a745;
-        }
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px 0;
+      }
+      .main-container {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        padding: 30px;
+        margin: 20px auto;
+        max-width: 1400px;
+      }
+      .summary-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+      }
+      .stat-box {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+      }
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+      }
+      .stat-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+      }
+      .severity-badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+      .severity-critical {
+        background: #dc3545;
+        color: white;
+      }
+      .severity-high {
+        background: #fd7e14;
+        color: white;
+      }
+      .severity-medium {
+        background: #ffc107;
+        color: black;
+      }
+      .severity-low {
+        background: #17a2b8;
+        color: white;
+      }
+      .severity-info {
+        background: #6c757d;
+        color: white;
+      }
+      .code-block {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 15px;
+        max-height: 400px;
+        overflow-y: auto;
+        font-family: "Courier New", monospace;
+        font-size: 0.9rem;
+      }
+      .highlight {
+        background-color: #ffeeba;
+        padding: 2px 4px;
+        border-radius: 4px;
+        font-weight: bold;
+      }
+      .issue-card {
+        border-left: 4px solid #667eea;
+        padding: 15px;
+        margin-bottom: 15px;
+        background: #f8f9fa;
+        border-radius: 5px;
+      }
+      .chart-container {
+        position: relative;
+        height: 300px;
+        margin-bottom: 30px;
+      }
+      .tab-content {
+        padding: 20px 0;
+      }
+      .nav-tabs .nav-link {
+        color: #667eea;
+        font-weight: 500;
+      }
+      .nav-tabs .nav-link.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+      }
     </style>
-</head>
-<body class="container my-5">
+  </head>
+  <body>
+    <div class="main-container">
+      <h1 class="mb-4">🧠 AI Code Review Results</h1>
 
-    <h1 class="mb-4">🧠 AI Code Review Summary</h1>
-
-    <div class="summary-card">
-        <p><strong>🐞 Bugs Fixed:</strong> {{ summary.bugs_fixed }}</p>
-        <p><strong>🧹 Smells Removed:</strong> {{ summary.smells_removed }}</p>
-        <p><strong>🔐 Security Issues Found:</strong> {{ summary.security_issues }}</p>
-        <p><strong>📁 Files Updated:</strong> {{ summary.files_updated }}</p>
-    </div>
-
-    <h2 class="mb-3">🔍 File-by-File Analysis</h2>
-
-    {% for filename, file in details.items() %}
-        <div class="mb-5">
-            <div class="filename">{{ filename }}</div>
-            <div class="row">
-                <div class="col-md-6">
-                    <h5>Before</h5>
-                    <div class="code-block">
-                        <pre>{{ file.before }}</pre>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <h5>After (with highlights)</h5>
-                    <div class="code-block">
-                        <pre>{{ file.after | safe }}</pre>
-                    </div>
-                </div>
+      <!-- Summary Cards -->
+      <div class="summary-card">
+        <div class="row">
+          <div class="col-md-3 col-6 mb-3">
+            <div class="stat-box">
+              <div class="stat-number">{{ summary.files_analyzed }}</div>
+              <div class="stat-label">Files Analyzed</div>
             </div>
+          </div>
+          <div class="col-md-3 col-6 mb-3">
+            <div class="stat-box">
+              <div class="stat-number">{{ summary.bugs_fixed }}</div>
+              <div class="stat-label">Issues Found</div>
+            </div>
+          </div>
+          <div class="col-md-3 col-6 mb-3">
+            <div class="stat-box">
+              <div class="stat-number">{{ summary.security_issues }}</div>
+              <div class="stat-label">Security Issues</div>
+            </div>
+          </div>
+          <div class="col-md-3 col-6 mb-3">
+            <div class="stat-box">
+              <div class="stat-number">{{ summary.code_quality_issues }}</div>
+              <div class="stat-label">Quality Issues</div>
+            </div>
+          </div>
         </div>
-    {% endfor %}
+      </div>
 
-    <h2 class="mb-3">🔐 Security Report</h2>
-    <div class="code-block">
-        <pre>{{ security }}</pre>
+      <!-- Charts -->
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <h4>Issues by Severity</h4>
+          <div class="chart-container">
+            <canvas id="severityChart"></canvas>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <h4>Issues by Source</h4>
+          <div class="chart-container">
+            <canvas id="sourceChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active" data-bs-toggle="tab" href="#security"
+            >🔐 Security Report</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="tab" href="#files"
+            >📁 File Analysis</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="tab" href="#issues"
+            >⚠️ All Issues</a
+          >
+        </li>
+      </ul>
+
+      <div class="tab-content">
+        <!-- Security Tab -->
+        <div id="security" class="tab-pane fade show active">
+          <div class="code-block mt-3">
+            <pre>{{ security }}</pre>
+          </div>
+        </div>
+
+        <!-- Files Tab -->
+        <div id="files" class="tab-pane fade">
+          {% for filename, file in details.items() %}
+          <div class="mb-4 mt-3">
+            <h5>📄 {{ filename }}</h5>
+            {% if file.metrics %}
+            <div class="row mb-3">
+              <div class="col-md-2">
+                <strong>LOC:</strong> {{ file.metrics.loc }}
+              </div>
+              <div class="col-md-2">
+                <strong>Functions:</strong> {{ file.metrics.functions }}
+              </div>
+              <div class="col-md-2">
+                <strong>Classes:</strong> {{ file.metrics.classes }}
+              </div>
+              <div class="col-md-3">
+                <strong>Complexity:</strong> {{ file.metrics.complexity }}
+              </div>
+            </div>
+            {% endif %}
+            <div class="row">
+              <div class="col-md-6">
+                <h6>Before</h6>
+                <div class="code-block">
+                  <pre>{{ file.before }}</pre>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <h6>After (Formatted)</h6>
+                <div class="code-block">
+                  <pre>{{ file.after | safe }}</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Issues Tab -->
+        <div id="issues" class="tab-pane fade">
+          <div class="mt-3">
+            {% if linter_results and linter_results.issues %} {% for issue in
+            linter_results.issues[:20] %}
+            <div class="issue-card">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <span
+                    class="severity-badge severity-{{ issue.severity|lower }}"
+                  >
+                    {{ issue.severity|upper }}
+                  </span>
+                  <span class="badge bg-secondary ms-2"
+                    >{{ issue.tool|upper }}</span
+                  >
+                </div>
+                <small class="text-muted"
+                  >{{ issue.file }}:{{ issue.line }}</small
+                >
+              </div>
+              <p class="mt-2 mb-0">{{ issue.message or issue.issue_text }}</p>
+            </div>
+            {% endfor %} {% if linter_results.issues|length > 20 %}
+            <p class="text-muted">
+              ...and {{ linter_results.issues|length - 20 }} more issues
+            </p>
+            {% endif %} {% else %}
+            <div class="alert alert-success">✅ No issues found!</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
     </div>
 
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Safely get chart data
+        {% if linter_results %}
+            {% if linter_results.get('by_severity') %}
+        const severityData = {{ linter_results.get('by_severity',  {})|tojson }};
+            {% else %}
+        const severityData = {};
+            {% endif %}
+            {% if linter_results.get('by_source') %}
+        const sourceData = {{linter_results.get('by_source', {})|tojson }};
+            {% else %}
+        const sourceData = {};
+            {% endif %}
+        {% else %}
+        const severityData = {};
+        const sourceData = {};
+        {% endif %}
+        
+        // Severity Chart
+        new Chart(document.getElementById('severityChart'), {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(severityData),
+                datasets: [{
+                    data: Object.values(severityData),
+                    backgroundColor: ['#dc3545', '#fd7e14', '#ffc107', '#17a2b8', '#6c757d']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        // Source Chart
+        new Chart(document.getElementById('sourceChart'), {
+            type: 'bar',
+            data: {
+                labels: Object.keys(sourceData),
+                datasets: [{
+                    label: 'Issues',
+                    data: Object.values(sourceData),
+                    backgroundColor: '#667eea'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+  </body>
 </html>
