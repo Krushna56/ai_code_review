@@ -1,0 +1,80 @@
+{
+  "results": [
+    {
+      "filename": "uploads\\723340d7-d943-4875-9445-ac5c44d55754\\test.py",
+      "test_name": "blacklist",
+      "test_id": "B404",
+      "issue_severity": "LOW",
+      "issue_cwe": {
+        "id": 78,
+        "link": "https://cwe.mitre.org/data/definitions/78.html"
+      },
+      "issue_confidence": "HIGH",
+      "issue_text": "Consider possible security implications associated with the subprocess module.",
+      "line_number": 3,
+      "line_range": [
+        3
+      ],
+      "col_offset": 0,
+      "end_col_offset": 17,
+      "code": "2 import sys\n3 import subprocess\n4 from utils import add_numbers\n"
+    },
+    {
+      "filename": "uploads\\723340d7-d943-4875-9445-ac5c44d55754\\test.py",
+      "test_name": "start_process_with_a_shell",
+      "test_id": "B605",
+      "issue_severity": "LOW",
+      "issue_cwe": {
+        "id": 78,
+        "link": "https://cwe.mitre.org/data/definitions/78.html"
+      },
+      "issue_confidence": "HIGH",
+      "issue_text": "Starting a process with a shell: Seems safe, but may be changed in the future, consider rewriting without shell",
+      "line_number": 16,
+      "line_range": [
+        16
+      ],
+      "col_offset": 4,
+      "end_col_offset": 32,
+      "code": "15     # insecure: os.system\n16     os.system(\"echo Hello User\")\n17 \n"
+    },
+    {
+      "filename": "uploads\\723340d7-d943-4875-9445-ac5c44d55754\\test.py",
+      "test_name": "start_process_with_partial_path",
+      "test_id": "B607",
+      "issue_severity": "LOW",
+      "issue_cwe": {
+        "id": 78,
+        "link": "https://cwe.mitre.org/data/definitions/78.html"
+      },
+      "issue_confidence": "HIGH",
+      "issue_text": "Starting a process with a partial executable path",
+      "line_number": 16,
+      "line_range": [
+        16
+      ],
+      "col_offset": 4,
+      "end_col_offset": 32,
+      "code": "15     # insecure: os.system\n16     os.system(\"echo Hello User\")\n17 \n"
+    },
+    {
+      "filename": "uploads\\723340d7-d943-4875-9445-ac5c44d55754\\test.py",
+      "test_name": "subprocess_popen_with_shell_equals_true",
+      "test_id": "B602",
+      "issue_severity": "HIGH",
+      "issue_cwe": {
+        "id": 78,
+        "link": "https://cwe.mitre.org/data/definitions/78.html"
+      },
+      "issue_confidence": "HIGH",
+      "issue_text": "subprocess call with shell=True identified, security issue.",
+      "line_number": 20,
+      "line_range": [
+        20
+      ],
+      "col_offset": 4,
+      "end_col_offset": 52,
+      "code": "19     user_input = input(\"enter filename: \")\n20     subprocess.call(\"cat \" + user_input, shell=True)\n21 \n"
+    }
+  ]
+}
