@@ -19,10 +19,11 @@ for directory in [UPLOAD_FOLDER, PROCESSED_FOLDER, MODELS_DIR, VECTOR_DB_DIR]:
 # API Keys
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
 ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY', '')
+MISTRAL_API_KEY = os.getenv('MISTRAL_API_KEY', '')
 
 # LLM Configuration
-LLM_PROVIDER = os.getenv('LLM_PROVIDER', 'openai')  # 'openai' or 'anthropic'
-LLM_MODEL = os.getenv('LLM_MODEL', 'gpt-4-turbo-preview')  # or 'claude-3-opus-20240229'
+LLM_PROVIDER = os.getenv('LLM_PROVIDER', 'openai')  # 'openai', 'anthropic', or 'mistral'
+LLM_MODEL = os.getenv('LLM_MODEL', 'gpt-4-turbo-preview')  # 'claude-3-opus-20240229', 'codestral-latest', etc.
 LLM_TEMPERATURE = float(os.getenv('LLM_TEMPERATURE', '0.2'))
 LLM_MAX_TOKENS = int(os.getenv('LLM_MAX_TOKENS', '2000'))
 

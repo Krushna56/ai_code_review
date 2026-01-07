@@ -36,6 +36,10 @@ class BaseAgent(ABC):
                 from anthropic import Anthropic
                 self.client = Anthropic(api_key=config.ANTHROPIC_API_KEY)
                 logger.info(f"Initialized Anthropic client with model: {self.model}")
+            elif self.provider == 'mistral':
+                from mistralai import Mistral
+                self.client = Mistral(api_key=config.MISTRAL_API_KEY)
+                logger.info(f"Initialized Mistral AI client with model: {self.model}")
             else:
                 raise ValueError(f"Unknown LLM provider: {self.provider}")
         except Exception as e:
@@ -58,6 +62,8 @@ class BaseAgent(ABC):
                 return self._generate_openai(prompt, system_prompt)
             elif self.provider == 'anthropic':
                 return self._generate_anthropic(prompt, system_prompt)
+            elif self.provider == 'mistral':
+                return self._generate_mistral(prompt, system_prompt)
         except Exception as e:
             logger.error(f"Error generating response: {e}")
             return None
@@ -91,6 +97,24 @@ class BaseAgent(ABC):
         )
         
         return response.content[0].text
+    
+    def _generate_mistral(self, prompt: str, system_prompt: Optional[str] = None) -> str:
+        """Generate using Mistral AI API"""
+        messages = []
+        
+        if system_prompt:
+            messages.append({"role": "system", "content": system_prompt})
+        
+        messages.append({"role": "user", "content": prompt})
+        
+        response = self.client.chat.complete(
+            model=self.model,
+            messages=messages,
+            temperature=self.temperature,
+            max_tokens=self.max_tokens
+        )
+        
+        return response.choices[0].message.content
     
     @abstractmethod
     def analyze(self, code: str, context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:

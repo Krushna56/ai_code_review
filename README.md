@@ -1,42 +1,42 @@
-# AI-Powered Code Review Platform 🧠💻
+# AI-Powered Code Review Platform
 
 A next-generation AI-driven code review platform using hybrid ML + LLM architecture. Combines classical machine learning, deep learning models, semantic embeddings, and specialized LLM agents to provide comprehensive, context-aware code reviews.
 
-## 🔹 Features
+Features
 
-✅ **Multi-Layer Static Analysis**
+**Multi-Layer Static Analysis**
 
 - AST parsing with comprehensive code metrics (LOC, WMC, DIT, LCOM, Complexity)
 - Multiple linters: Bandit (security), Semgrep (patterns), Pylint (quality), Ruff (style)
 - Automated code formatting with autopep8
 
-✅ **Semantic Code Understanding**
+**Semantic Code Understanding**
 
 - Code embeddings using OpenAI or local sentence-transformers
 - FAISS vector store for semantic code search
 - RAG-enhanced context for LLM agents
 
-✅ **Intelligent LLM Agents**
+**Intelligent LLM Agents**
 
 - SecurityReviewer: Deep security vulnerability analysis
 - RefactorAgent: Code quality and refactoring suggestions
 - Chain-of-thought prompting with contextual awareness
 
-✅ **Flexible Configuration**
+**Flexible Configuration**
 
 - CPU-optimized for systems without GPU
 - Feature flags to enable/disable components
 - Support for OpenAI and Anthropic LLMs
 - Local or API-based embeddings
 
-✅ **Comprehensive Reporting**
+**Comprehensive Reporting**
 
 - Detailed metrics and analysis results
 - Before/after code diffs with highlighting
 - Severity-based issue prioritization
 - JSON, Markdown, and HTML export
 
-## 🔹 Installation
+## Installation
 
 ### Prerequisites
 
@@ -92,7 +92,7 @@ Edit `.env` to customize:
 - `ENABLE_LLM_AGENTS=true` - AI-powered insights
 - `ENABLE_SEMANTIC_SEARCH=true` - Vector-based code search
 
-## 🔹 Usage
+## Usage
 
 ### Web Interface
 
@@ -135,7 +135,7 @@ result = security_agent.analyze(code)
 print(result['analysis'])
 ```
 
-## 🔹 Architecture
+## Architecture
 
 ### Layers
 
@@ -160,7 +160,7 @@ print(result['analysis'])
    - Confidence scoring
    - Structured reporting
 
-## 🔹 Static Analysis Tools
+## Static Analysis Tools
 
 ### Bandit (Security)
 
@@ -185,7 +185,7 @@ print(result['analysis'])
 - Replaces Flake8, isort, and more
 - Recommended for quick feedback
 
-## 🔹 Performance
+## Performance
 
 **CPU-Optimized:**
 
@@ -200,7 +200,7 @@ print(result['analysis'])
 - Medium repo (100 files, ~10,000 LOC): < 3 minutes
 - Large repo (1000 files, ~100,000 LOC): < 15 minutes
 
-## 🔹 Project Structure
+## Project Structure
 
 ```
 ai_code_review/
@@ -220,7 +220,7 @@ ai_code_review/
 └── tests/                    # Unit and integration tests
 ```
 
-## 🔹 API Costs
+## API Costs
 
 **OpenAI (if using API-based features):**
 
@@ -233,7 +233,7 @@ ai_code_review/
 - Caching reduces redundant API calls
 - Feature flags allow disabling expensive components
 
-## 🔹 Future Enhancements
+## Future Enhancements
 
 - [ ] ML risk prediction models
 - [ ] Deep learning with CodeBERT/GraphCodeBERT
@@ -243,7 +243,7 @@ ai_code_review/
 - [ ] Multi-language support expansion
 - [ ] IDE plugin integration
 
-## 🔹 Contributing
+## Contributing
 
 Contributions are welcome!
 
@@ -253,11 +253,11 @@ Contributions are welcome!
 4. Push to the branch (`git push origin feature/xyz`)
 5. Open a Pull Request
 
-## 🔹 License
+## License
 
 MIT License
 
-## 🔹 Acknowledgments
+## Acknowledgments
 
 - Built with OpenAI GPT-4 and Anthropic Claude
 - Uses HuggingFace Transformers
