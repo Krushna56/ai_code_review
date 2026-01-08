@@ -1,0 +1,145 @@
+{
+  "severity_distribution": {
+    "type": "pie",
+    "labels": [
+      "CRITICAL"
+    ],
+    "datasets": [
+      {
+        "data": [
+          1
+        ],
+        "backgroundColor": [
+          "#dc2626"
+        ],
+        "borderWidth": 2,
+        "borderColor": "#ffffff"
+      }
+    ],
+    "total": 1
+  },
+  "owasp_coverage": {
+    "type": "bar",
+    "labels": [
+      "Cryptographic Failures"
+    ],
+    "datasets": [
+      {
+        "label": "Findings per OWASP Category",
+        "data": [
+          1
+        ],
+        "backgroundColor": "#3b82f6",
+        "borderColor": "#1d4ed8",
+        "borderWidth": 1
+      }
+    ],
+    "category_ids": [
+      "A02:2021"
+    ]
+  },
+  "vulnerability_trends": {
+    "type": "line",
+    "labels": [
+      "2025-12-09",
+      "2025-12-14",
+      "2025-12-19",
+      "2025-12-24",
+      "2025-12-29",
+      "2026-01-03",
+      "2026-01-08"
+    ],
+    "datasets": [
+      {
+        "label": "CRITICAL",
+        "data": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "borderColor": "#dc2626",
+        "backgroundColor": "#dc262640",
+        "tension": 0.3,
+        "fill": true
+      }
+    ]
+  },
+  "file_risk_scores": {
+    "type": "horizontalBar",
+    "labels": [
+      "uploads\\a51c32f7-c126-426b-b83a-38aad7d96feb\\test.py"
+    ],
+    "datasets": [
+      {
+        "label": "Average Risk Score",
+        "data": [
+          85.0
+        ],
+        "backgroundColor": "#ef4444",
+        "borderColor": "#dc2626",
+        "borderWidth": 1
+      },
+      {
+        "label": "Finding Count",
+        "data": [
+          1
+        ],
+        "backgroundColor": "#3b82f6",
+        "borderColor": "#1d4ed8",
+        "borderWidth": 1
+      }
+    ],
+    "full_paths": [
+      "uploads\\a51c32f7-c126-426b-b83a-38aad7d96feb\\test.py"
+    ]
+  },
+  "dependency_stats": {
+    "total_dependencies": 0,
+    "vulnerable_dependencies": 0,
+    "ecosystem_breakdown": {
+      "type": "bar",
+      "labels": [],
+      "datasets": [
+        {
+          "label": "Total Dependencies",
+          "data": [],
+          "backgroundColor": "#3b82f6"
+        },
+        {
+          "label": "Vulnerable",
+          "data": [],
+          "backgroundColor": "#ef4444"
+        }
+      ]
+    },
+    "health_percentage": 100
+  },
+  "top_issues": [
+    {
+      "id": "SECRET-1",
+      "type": "secret",
+      "severity": "CRITICAL",
+      "risk_score": 85,
+      "title": "Hardcoded keyword_PASSWORD Detected",
+      "file": "uploads\\a51c32f7-c126-426b-b83a-38aad7d96feb\\test.py",
+      "line": 95,
+      "owasp": "A02:2021"
+    }
+  ],
+  "remediation_progress": {
+    "total_issues": 1,
+    "by_difficulty": {
+      "EASY": 1
+    },
+    "estimated_easy_percentage": 100.0,
+    "gauges": {
+      "overall_completion": 0,
+      "critical_completion": 0,
+      "dependencies_completion": 0
+    }
+  }
+}

@@ -1,0 +1,23 @@
+[
+  {
+    "finding_id": "SECRET-1",
+    "fix_type": "template",
+    "difficulty": "EASY",
+    "estimated_time": "5-10 minutes",
+    "steps": [
+      "Remove the hardcoded secret from the source code",
+      "Add the secret to a `.env` file (ensure it's in .gitignore)",
+      "Load the secret from environment variables",
+      "Update deployment configuration to include the environment variable"
+    ],
+    "code_example": {
+      "before": "# \u274c Hardcoded secret\nAPI_KEY = \"sk-1234567890abcdef\"  \nDATABASE_PASSWORD = \"mysecretpassword\"\n",
+      "after": "# \u2705 Use environment variables\nimport os\n\nAPI_KEY = os.getenv(\"API_KEY\")\nDATABASE_PASSWORD = os.getenv(\"DATABASE_PASSWORD\")\n\n# Add to .env file (ensure it's in .gitignore):\n# API_KEY=sk-1234567890abcdef\n# DATABASE_PASSWORD=mysecretpassword\n",
+      "language": "python"
+    },
+    "references": [
+      "https://owasp.org/www-community/vulnerabilities/Use_of_hard-coded_password",
+      "https://12factor.net/config"
+    ]
+  }
+]

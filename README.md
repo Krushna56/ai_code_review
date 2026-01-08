@@ -2,9 +2,30 @@
 
 A next-generation AI-driven code review platform using hybrid ML + LLM architecture. Combines classical machine learning, deep learning models, semantic embeddings, and specialized LLM agents to provide comprehensive, context-aware code reviews.
 
-Features
+## Features
 
-**Dependency Vulnerability Scanning** (Phase 4 - NEW!)
+**All 6 Phases Integrated!** 🎉
+
+**Multi-Layer Static Analysis** (Phase 1)
+
+- AST parsing with comprehensive code metrics (LOC, WMC, DIT, LCOM, Complexity)
+- Multiple linters: Bandit (security), Semgrep (patterns), Pylint (quality), Ruff (style)
+- Automated code formatting with autopep8
+
+**Semantic Code Understanding** (Phase 2)
+
+- Code embeddings using OpenAI or local sentence-transformers
+- Qdrant/FAISS vector store for semantic code search
+- RAG-enhanced context for LLM agents
+
+**Intelligent LLM Agents** (Phase 3)
+
+- SecurityReviewer: Deep security vulnerability analysis
+- RefactorAgent: Code quality and refactoring suggestions
+- Chain-of-thought prompting with contextual awareness
+- Natural language Q&A for security questions
+
+**Dependency Vulnerability Scanning** (Phase 4)
 
 - Automatic dependency detection (Maven, Gradle, npm, Python)
 - CVE detection using OSV API
@@ -12,7 +33,7 @@ Features
 - Severity-based risk scoring
 - Comprehensive security reports
 
-**Security Reporting & Recommendations** (Phase 5 - NEW!)
+**Security Reporting & Recommendations** (Phase 5)
 
 - Executive security summaries with risk scoring
 - Automated fix suggestions for common vulnerabilities
@@ -21,29 +42,19 @@ Features
 - OWASP Top 10 breakdown and analysis
 - Remediation plans with effort estimates
 
-**Multi-Layer Static Analysis**
+**Web Dashboard UI** (Phase 6)
 
-- AST parsing with comprehensive code metrics (LOC, WMC, DIT, LCOM, Complexity)
-- Multiple linters: Bandit (security), Semgrep (patterns), Pylint (quality), Ruff (style)
-- Automated code formatting with autopep8
-
-**Semantic Code Understanding**
-
-- Code embeddings using OpenAI or local sentence-transformers
-- FAISS vector store for semantic code search
-- RAG-enhanced context for LLM agents
-
-**Intelligent LLM Agents**
-
-- SecurityReviewer: Deep security vulnerability analysis
-- RefactorAgent: Code quality and refactoring suggestions
-- Chain-of-thought prompting with contextual awareness
+- Interactive security dashboard with real-time visualizations
+- Severity distribution, OWASP coverage, vulnerability trends
+- File risk scores and prioritized findings
+- Remediation plan with actionable items
+- Filterable findings table with detailed views
 
 **Flexible Configuration**
 
 - CPU-optimized for systems without GPU
 - Feature flags to enable/disable components
-- Support for OpenAI and Anthropic LLMs
+- Support for OpenAI, Anthropic, and Mistral LLMs
 - Local or API-based embeddings
 
 **Comprehensive Reporting**
@@ -52,6 +63,29 @@ Features
 - Before/after code diffs with highlighting
 - Severity-based issue prioritization
 - JSON, Markdown, and HTML export
+
+## Quick Start
+
+Get started with the AI-Powered Code Review Platform in 3 simple steps:
+
+```bash
+# 1. Install dependencies
+pip install -r requirements.txt
+
+# 2. Configure (create .env from example)
+copy .env.example .env
+# Edit .env and add your API keys
+
+# 3. Run comprehensive analysis
+python main.py analyze ./your-project -o ./results
+```
+
+**Or launch the web dashboard:**
+
+```bash
+python main.py web
+# Open http://localhost:5000 in your browser
+```
 
 ## Installation
 
@@ -108,10 +142,36 @@ Edit `.env` to customize:
 - `ENABLE_RUFF=true` - Fast Python linter
 - `ENABLE_LLM_AGENTS=true` - AI-powered insights
 - `ENABLE_SEMANTIC_SEARCH=true` - Vector-based code search
+- `ENABLE_CVE_DETECTION=true` - Dependency vulnerability scanning
+- `ENABLE_SECURITY_REPORTING=true` - Comprehensive security reports
 
 ## Usage
 
-### Web Interface
+### Main Entry Point (Recommended)
+
+**Run comprehensive analysis:**
+
+```bash
+python main.py analyze ./my-project -o ./results
+```
+
+**Launch web dashboard:**
+
+```bash
+python main.py web
+```
+
+**Run phase demos:**
+
+```bash
+# Phase 4: CVE Detection
+python main.py demo 4 --path ./tests/fixtures/dependencies
+
+# Phase 5: Security Reporting
+python main.py demo 5
+```
+
+### Web Interface (Phase 6)
 
 ```bash
 python app.py
@@ -276,14 +336,15 @@ ai_code_review/
 - [x] OWASP Top 10 mapping (Phase 4 - COMPLETE)
 - [x] Security reporting with fix suggestions (Phase 5 - COMPLETE)
 - [x] Dashboard data exports (Phase 5 - COMPLETE)
-- [ ] Web dashboard UI (Phase 6)
+- [x] Web dashboard UI (Phase 6 - COMPLETE)
 - [ ] ML risk prediction models
-- [ ] Deep learning with CodeBERT/GraphCodeBET
+- [ ] Deep learning with CodeBERT/GraphCodeBERT
 - [ ] GitHub integration and PR review bot
-- [ ] Interactive web dashboard
 - [ ] Feedback loop and model retraining
 - [ ] Multi-language support expansion
 - [ ] IDE plugin integration
+- [ ] CI/CD pipeline integration
+- [ ] Advanced remediation automation
 
 ## Contributing
 

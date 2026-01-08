@@ -69,6 +69,14 @@ ENABLE_DL_ANALYSIS = os.getenv('ENABLE_DL_ANALYSIS', 'false').lower() == 'true' 
 ENABLE_LLM_AGENTS = os.getenv('ENABLE_LLM_AGENTS', 'true').lower() == 'true'
 ENABLE_SEMANTIC_SEARCH = os.getenv('ENABLE_SEMANTIC_SEARCH', 'true').lower() == 'true'
 
+# Phase 4 & 5 Feature Flags
+ENABLE_CVE_DETECTION = os.getenv('ENABLE_CVE_DETECTION', 'true').lower() == 'true'
+ENABLE_SECURITY_REPORTING = os.getenv('ENABLE_SECURITY_REPORTING', 'true').lower() == 'true'
+
+# CVE Detection Configuration
+CVE_CACHE_DIR = VECTOR_DB_DIR / 'cve_cache'
+CVE_CACHE_DIR.mkdir(exist_ok=True)
+
 # Performance Configuration
 MAX_WORKERS = int(os.getenv('MAX_WORKERS', '4'))
 CACHE_EMBEDDINGS = os.getenv('CACHE_EMBEDDINGS', 'true').lower() == 'true'
