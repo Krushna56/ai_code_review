@@ -6,6 +6,7 @@ import uuid
 import logging
 
 from code_analysis import analyze_codebase
+from services.report_service import get_report_service
 
 # Configure logging
 logging.basicConfig(
@@ -149,6 +150,140 @@ def api_analyze():
 def health():
     """Health check endpoint"""
     return jsonify({'status': 'healthy', 'version': '1.0'}), 200
+
+
+@app.route('/api/query', methods=['POST'])
+def api_query():
+    """API endpoint for natural language security queries"""
+    try:
+        data = request.get_json()
+        if not data or 'question' not in data:
+            return jsonify({'error': 'No question provided'}), 400
+        
+        question = data['question']
+        max_results = data.get('max_results', 5)
+        
+        logger.info(f"API query: {question}")
+        
+        # Import here to avoid circular dependencies
+        from query.query_handler import QueryHandler
+        from indexing.code_indexer import CodeIndexer
+        
+        indexer = CodeIndexer()
+        handler = QueryHandler(indexer=indexer)
+        
+        response = handler.query(question, k=max_results)
+        
+        return jsonify(response), 200
+        
+    except Exception as e:
+        logger.error(f"Query API error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+# ====================
+# Phase 6: Dashboard Routes
+# ====================
+
+@app.route('/dashboard')
+def dashboard():
+    """Security dashboard page"""
+    try:
+        service = get_report_service()
+        summary = service.get_summary()
+        return render_template('dashboard.html', summary=summary)
+    except Exception as e:
+        logger.error(f"Dashboard error: {e}", exc_info=True)
+        return render_template('dashboard.html', error=str(e))
+
+
+@app.route('/api/security/summary')
+def api_security_summary():
+    """Get executive summary data"""
+    try:
+        service = get_report_service()
+        summary = service.get_summary()
+        return jsonify(summary), 200
+    except Exception as e:
+        logger.error(f"Summary API error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/security/charts')
+def api_security_charts():
+    """Get all dashboard charts data"""
+    try:
+        service = get_report_service()
+        charts = service.get_dashboard_data()
+        return jsonify(charts), 200
+    except Exception as e:
+        logger.error(f"Charts API error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/security/findings')
+def api_security_findings():
+    """Get security findings with filtering and pagination"""
+    try:
+        service = get_report_service()
+        
+        # Get query parameters
+        severity = request.args.get('severity')
+        owasp_category = request.args.get('owasp_category')
+        limit = int(request.args.get('limit', 100))
+        offset = int(request.args.get('offset', 0))
+        
+        findings = service.get_findings(
+            severity=severity,
+            owasp_category=owasp_category,
+            limit=limit,
+            offset=offset
+        )
+        
+        return jsonify(findings), 200
+    except Exception as e:
+        logger.error(f"Findings API error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/security/finding/<finding_id>')
+def api_security_finding_detail(finding_id):
+    """Get detailed information for a specific finding"""
+    try:
+        service = get_report_service()
+        finding = service.get_finding_by_id(finding_id)
+        
+        if finding:
+            return jsonify(finding), 200
+        else:
+            return jsonify({'error': 'Finding not found'}), 404
+    except Exception as e:
+        logger.error(f"Finding detail API error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/security/remediation')
+def api_security_remediation():
+    """Get prioritized remediation plan"""
+    try:
+        service = get_report_service()
+        plan = service.get_remediation_plan()
+        return jsonify({'remediation_plan': plan}), 200
+    except Exception as e:
+        logger.error(f"Remediation API error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/security/refresh')
+def api_security_refresh():
+    """Clear cache and refresh dashboard data"""
+    try:
+        service = get_report_service()
+        service.clear_cache()
+        return jsonify({'status': 'cache cleared'}), 200
+    except Exception as e:
+        logger.error(f"Refresh API error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
 
 
 @app.errorhandler(413)

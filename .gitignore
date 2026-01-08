@@ -1,3 +1,5 @@
 uploads/gitignore.txt
 # Ignore all files in the uploads directory
 uploads/*
+* .env
+* .env.env.example

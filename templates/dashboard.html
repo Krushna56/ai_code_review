@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Dashboard - AI Code Review Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1>🔒 Security Dashboard</h1>
+                <div class="header-actions">
+                    <button onclick="refreshDashboard()" class="btn-refresh">🔄 Refresh</button>
+                    <a href="/" class="btn-home">🏠 Home</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Risk Score Banner -->
+        <div class="risk-banner" id="riskBanner">
+            <div class="risk-score-container">
+                <div class="risk-label">Overall Risk Level</div>
+                <div class="risk-score" id="riskScore">LOADING...</div>
+                <div class="risk-details" id="riskDetails">
+                    Score: <span id="riskScoreValue">--</span>/100
+                </div>
+            </div>
+            <div class="last-scan">
+                Last Scan: <span id="lastScan">--</span>
+            </div>
+       </div>
+
+        <!-- Metrics Cards -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon">📊</div>
+                <div class="metric-content">
+                    <div class="metric-label">Total Findings</div>
+                    <div class="metric-value" id="totalFindings">0</div>
+                </div>
+            </div>
+            
+            <div class="metric-card critical-card">
+                <div class="metric-icon">🔴</div>
+                <div class="metric-content">
+                    <div class="metric-label">Critical/High</div>
+                    <div class="metric-value" id="criticalHigh">0</div>
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-icon">🛡️</div>
+                <div class="metric-content">
+                    <div class="metric-label">CVE Vulnerabilities</div>
+                    <div class="metric-value" id="cveCount">0</div>
+                </div>
+            </div>
+            
+            <div class="metric-card health-card">
+                <div class="metric-icon">💚</div>
+                <div class="metric-content">
+                    <div class="metric-label">Dependency Health</div>
+                    <div class="metric-value" id="dependencyHealth">0%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-grid">
+            <!-- Severity Distribution -->
+            <div class="chart-card">
+                <h3>Severity Distribution</h3>
+                <div class="chart-container">
+                    <canvas id="severityChart"></canvas>
+                </div>
+            </div>
+
+            <!-- OWASP Top 10 Coverage -->
+            <div class="chart-card wide">
+                <h3>OWASP Top 10 Coverage</h3>
+                <div class="chart-container">
+                    <canvas id="owaspChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Vulnerability Trends -->
+            <div class="chart-card wide">
+                <h3>Vulnerability Trends</h3>
+                <div class="chart-container">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+
+            <!-- File Risk Scores -->
+            <div class="chart-card">
+                <h3>Top Vulnerable Files</h3>
+                <div class="chart-container">
+                    <canvas id="fileRiskChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Findings Table -->
+        <div class="findings-section">
+            <div class="section-header">
+                <h2>Security Findings</h2>
+                <div class="filters">
+                    <select id="severityFilter" onchange="filterFindings()">
+                        <option value="">All Severities</option>
+                        <option value="CRITICAL">Critical</option>
+                        <option value="HIGH">High</option>
+                        <option value="MEDIUM">Medium</option>
+                        <option value="LOW">Low</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table class="findings-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Severity</th>
+                            <th>Title</th>
+                            <th>OWASP</th>
+                            <th>File</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="findingsTableBody">
+                        <tr>
+                            <td colspan="6" class="loading">Loading findings...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Remediation Plan -->
+        <div class="remediation-section">
+            <h2>🔧 Remediation Plan</h2>
+            <div id="remediationList" class="remediation-list">
+                <div class="loading">Loading remediation plan...</div>
+            </div>
+        </div>
+
+        <!-- Finding Detail Modal -->
+        <div id="findingModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <div id="modalBody">
+                    <!-- Dynamic content loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script>
+        // Initialize dashboard on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboard();
+            
+            // Auto-refresh every 60 seconds (optional)
+            // setInterval(refreshDashboard, 60000);
+        });
+    </script>
+</body>
+</html>

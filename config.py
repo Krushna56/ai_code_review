@@ -28,13 +28,22 @@ LLM_TEMPERATURE = float(os.getenv('LLM_TEMPERATURE', '0.2'))
 LLM_MAX_TOKENS = int(os.getenv('LLM_MAX_TOKENS', '2000'))
 
 # Embedding Configuration
-EMBEDDING_PROVIDER = os.getenv('EMBEDDING_PROVIDER', 'local')  # 'openai' or 'local'
+EMBEDDING_PROVIDER = os.getenv('EMBEDDING_PROVIDER', 'local')  # 'openai', 'local', or 'codestral'
 OPENAI_EMBEDDING_MODEL = os.getenv('OPENAI_EMBEDDING_MODEL', 'text-embedding-3-small')
 LOCAL_EMBEDDING_MODEL = os.getenv('LOCAL_EMBEDDING_MODEL', 'all-MiniLM-L6-v2')
+CODESTRAL_EMBED_MODEL = os.getenv('CODESTRAL_EMBED_MODEL', 'mistral-embed')  # Codestral Embed
 
 # Vector DB Configuration
+VECTOR_DB_TYPE = os.getenv('VECTOR_DB_TYPE', 'qdrant')  # 'faiss' or 'qdrant'
 FAISS_INDEX_PATH = VECTOR_DB_DIR / 'code_index.faiss'
 FAISS_METADATA_PATH = VECTOR_DB_DIR / 'code_metadata.json'
+
+# Qdrant Configuration
+QDRANT_HOST = os.getenv('QDRANT_HOST', 'localhost')
+QDRANT_PORT = int(os.getenv('QDRANT_PORT', '6333'))
+QDRANT_COLLECTION = os.getenv('QDRANT_COLLECTION', 'code_chunks')
+QDRANT_USE_MEMORY = os.getenv('QDRANT_USE_MEMORY', 'true').lower() == 'true'  # In-memory for development
+
 VECTOR_SEARCH_K = int(os.getenv('VECTOR_SEARCH_K', '5'))
 
 # ML Model Configuration
@@ -77,3 +86,22 @@ SUPPORTED_EXTENSIONS = ['.py', '.js', '.java', '.go', '.cpp', '.c', '.rb', '.php
 RISK_THRESHOLD_HIGH = float(os.getenv('RISK_THRESHOLD_HIGH', '0.7'))
 RISK_THRESHOLD_MEDIUM = float(os.getenv('RISK_THRESHOLD_MEDIUM', '0.4'))
 CONFIDENCE_THRESHOLD = float(os.getenv('CONFIDENCE_THRESHOLD', '0.6'))
+
+# Security Q&A System Configuration
+# CVE Tracking
+CVE_PROVIDER = os.getenv('CVE_PROVIDER', 'osv')  # 'osv' or 'snyk'
+SNYK_API_KEY = os.getenv('SNYK_API_KEY', '')
+CVE_CHECK_INTERVAL_HOURS = int(os.getenv('CVE_CHECK_INTERVAL_HOURS', '24'))
+
+# Query System
+QUERY_MAX_RESULTS = int(os.getenv('QUERY_MAX_RESULTS', '10'))
+QUERY_MIN_SIMILARITY = float(os.getenv('QUERY_MIN_SIMILARITY', '0.5'))
+QUERY_CONTEXT_CHUNKS = int(os.getenv('QUERY_CONTEXT_CHUNKS', '5'))
+
+# Code Chunking
+CHUNK_STRATEGY = os.getenv('CHUNK_STRATEGY', 'function')  # 'function', 'class', or 'file'
+MAX_CHUNK_SIZE = int(os.getenv('MAX_CHUNK_SIZE', '1000'))  # lines
+
+# Git Webhook
+WEBHOOK_SECRET = os.getenv('WEBHOOK_SECRET', '')
+ENABLE_AUTO_REINDEX = os.getenv('ENABLE_AUTO_REINDEX', 'false').lower() == 'true'

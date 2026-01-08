@@ -4,6 +4,23 @@ A next-generation AI-driven code review platform using hybrid ML + LLM architect
 
 Features
 
+**Dependency Vulnerability Scanning** (Phase 4 - NEW!)
+
+- Automatic dependency detection (Maven, Gradle, npm, Python)
+- CVE detection using OSV API
+- OWASP Top 10 2021 category mapping
+- Severity-based risk scoring
+- Comprehensive security reports
+
+**Security Reporting & Recommendations** (Phase 5 - NEW!)
+
+- Executive security summaries with risk scoring
+- Automated fix suggestions for common vulnerabilities
+- Multi-format reports (JSON, Markdown)
+- Dashboard-ready data exports for visualization
+- OWASP Top 10 breakdown and analysis
+- Remediation plans with effort estimates
+
 **Multi-Layer Static Analysis**
 
 - AST parsing with comprehensive code metrics (LOC, WMC, DIT, LCOM, Complexity)
@@ -116,6 +133,25 @@ print(results['summary'])
 print(results['security'])
 ```
 
+### CVE Detection
+
+```bash
+# Scan project dependencies for CVEs
+python cli.py cve-check ./my-java-project
+
+# Save results to JSON
+python cli.py cve-check ./my-nodejs-app --output cve-results.json
+```
+
+Supported dependency files:
+
+- Maven: `pom.xml`
+- Gradle: `build.gradle`, `build.gradle.kts`
+- npm: `package.json`, `package-lock.json`
+- Python: `requirements.txt`, `Pipfile`, `pyproject.toml`
+
+````
+
 ### Python API
 
 ```python
@@ -133,7 +169,7 @@ with open("example.py") as f:
 
 result = security_agent.analyze(code)
 print(result['analysis'])
-```
+````
 
 ## Architecture
 
@@ -235,8 +271,14 @@ ai_code_review/
 
 ## Future Enhancements
 
+- [x] Dependency vulnerability scanning (Phase 4 - COMPLETE)
+- [x] CVE detection with OSV API (Phase 4 - COMPLETE)
+- [x] OWASP Top 10 mapping (Phase 4 - COMPLETE)
+- [x] Security reporting with fix suggestions (Phase 5 - COMPLETE)
+- [x] Dashboard data exports (Phase 5 - COMPLETE)
+- [ ] Web dashboard UI (Phase 6)
 - [ ] ML risk prediction models
-- [ ] Deep learning with CodeBERT/GraphCodeBERT
+- [ ] Deep learning with CodeBERT/GraphCodeBET
 - [ ] GitHub integration and PR review bot
 - [ ] Interactive web dashboard
 - [ ] Feedback loop and model retraining

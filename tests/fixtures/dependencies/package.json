@@ -1,0 +1,14 @@
+{
+  "name": "test-project",
+  "version": "1.0.0",
+  "description": "Test project with vulnerable dependencies",
+  "dependencies": {
+    "lodash": "4.17.15",
+    "express": "4.17.1",
+    "axios": "0.21.0"
+  },
+  "devDependencies": {
+    "jest": "27.0.0",
+    "webpack": "5.0.0"
+  }
+}

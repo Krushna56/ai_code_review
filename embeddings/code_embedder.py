@@ -30,6 +30,8 @@ class CodeEmbedder:
             self._init_openai()
         elif self.provider == 'local':
             self._init_local()
+        elif self.provider == 'codestral':
+            self._init_codestral()
         else:
             raise ValueError(f"Unknown embedding provider: {self.provider}")
     
@@ -55,6 +57,17 @@ class CodeEmbedder:
             logger.error(f"Failed to initialize sentence-transformers: {e}")
             raise
     
+    def _init_codestral(self):
+        """Initialize Codestral (Mistral) embeddings"""
+        try:
+            from mistralai.client import MistralClient
+            self.client = MistralClient(api_key=config.MISTRAL_API_KEY)
+            self.model = config.CODESTRAL_EMBED_MODEL
+            logger.info(f"Initialized Codestral embeddings with model: {self.model}")
+        except Exception as e:
+            logger.error(f"Failed to initialize Codestral: {e}")
+            raise
+    
     def embed(self, text: str) -> Optional[np.ndarray]:
         """
         Generate embedding for a single text
@@ -74,6 +87,8 @@ class CodeEmbedder:
         try:
             if self.provider == 'openai':
                 embedding = self._embed_openai(text)
+            elif self.provider == 'codestral':
+                embedding = self._embed_codestral(text)
             else:  # local
                 embedding = self._embed_local(text)
             
@@ -119,6 +134,8 @@ class CodeEmbedder:
             try:
                 if self.provider == 'openai':
                     new_embeddings = self._embed_openai_batch(uncached_texts)
+                elif self.provider == 'codestral':
+                    new_embeddings = self._embed_codestral_batch(uncached_texts)
                 else:  # local
                     new_embeddings = self._embed_local_batch(uncached_texts)
                 
@@ -158,9 +175,26 @@ class CodeEmbedder:
         embeddings = self.model.encode(texts, convert_to_numpy=True, show_progress_bar=True)
         return [emb.astype(np.float32) for emb in embeddings]
     
+    def _embed_codestral(self, text: str) -> np.ndarray:
+        """Generate embedding using Codestral API"""
+        response = self.client.embeddings(
+            model=self.model,
+            input=[text]
+        )
+        return np.array(response.data[0].embedding, dtype=np.float32)
+    
+    def _embed_codestral_batch(self, texts: List[str]) -> List[np.ndarray]:
+        """Generate embeddings for batch using Codestral API"""
+        response = self.client.embeddings(
+            model=self.model,
+            input=texts
+        )
+        return [np.array(item.embedding, dtype=np.float32) for item in response.data]
+    
     def _get_cache_key(self, text: str) -> str:
         """Generate cache key for text"""
-        content = f"{self.provider}:{self.model if self.provider == 'openai' else self.model_name}:{text}"
+        model_name = self.model if self.provider in ['openai', 'codestral'] else self.model_name
+        content = f"{self.provider}:{model_name}:{text}"
         return hashlib.md5(content.encode()).hexdigest()
     
     def _get_from_cache(self, text: str) -> Optional[np.ndarray]:
@@ -191,6 +225,9 @@ class CodeEmbedder:
         if self.provider == 'openai':
             # text-embedding-3-small: 1536, text-embedding-3-large: 3072
             return 1536 if 'small' in self.model else 3072
+        elif self.provider == 'codestral':
+            # Codestral Embed: 1024 dimensions
+            return 1024
         else:
             # all-MiniLM-L6-v2: 384, all-mpnet-base-v2: 768
             return self.model.get_sentence_embedding_dimension()

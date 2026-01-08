@@ -45,3 +45,20 @@ reportlab==4.0.7
 
 # Web
 Jinja2==3.1.2
+
+# Vector DB (for Q&A system)
+qdrant-client==1.7.0
+
+# Code Parsing (multi-language support)
+tree-sitter==0.20.4
+tree-sitter-languages==1.8.0
+
+# Security Analysis
+detect-secrets==1.4.0
+osv==0.3.1
+
+# Scheduling (for monitoring)
+APScheduler==3.10.4
+
+# Enhanced embeddings (optional - for Codestral)
+# Mistral API already included above for Codestral Embed support
