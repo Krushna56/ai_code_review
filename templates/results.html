@@ -165,19 +165,13 @@
       <!-- Tabs -->
       <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item">
-          <a class="nav-link active" data-bs-toggle="tab" href="#security"
-            >🔐 Security Report</a
-          >
+          <a class="nav-link active" data-bs-toggle="tab" href="#security">🔐 Security Report</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" data-bs-toggle="tab" href="#files"
-            >📁 File Analysis</a
-          >
+          <a class="nav-link" data-bs-toggle="tab" href="#files">📁 File Analysis</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" data-bs-toggle="tab" href="#issues"
-            >⚠️ All Issues</a
-          >
+          <a class="nav-link" data-bs-toggle="tab" href="#issues">⚠️ All Issues</a>
         </li>
       </ul>
 
@@ -241,13 +235,9 @@
                   >
                     {{ issue.severity|upper }}
                   </span>
-                  <span class="badge bg-secondary ms-2"
-                    >{{ issue.tool|upper }}</span
-                  >
+                  <span class="badge bg-secondary ms-2">{{ issue.tool|upper }}</span>
                 </div>
-                <small class="text-muted"
-                  >{{ issue.file }}:{{ issue.line }}</small
-                >
+                <small class="text-muted">{{ issue.file }}:{{ issue.line }}</small>
               </div>
               <p class="mt-2 mb-0">{{ issue.message or issue.issue_text }}</p>
             </div>
@@ -273,7 +263,7 @@
         const severityData = {};
             {% endif %}
             {% if linter_results.get('by_source') %}
-        const sourceData = {{linter_results.get('by_source', {})|tojson }};
+        const sourceData = {{ linter_results.get('by_source', {})|tojson }};
             {% else %}
         const sourceData = {};
             {% endif %}

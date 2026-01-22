@@ -432,36 +432,59 @@ body {
   color: var(--text-secondary);
 }
 
-/* Utility Classes */
-.loading,
-.no-data,
-.error {
-  text-align: center;
-  padding: 40px;
-  color: var(--text-secondary);
+/* Feedback Buttons */
+.feedback-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .charts-grid {
-    grid-template-columns: 1fr;
-  }
+.btn-feedback {
+  padding: 4px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  .chart-card.wide {
-    grid-column: span 1;
-  }
+.btn-feedback:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.1);
+}
 
-  .metrics-grid {
-    grid-template-columns: 1fr;
-  }
+.btn-feedback.active-pos {
+  background: rgba(132, 204, 22, 0.2);
+  border-color: var(--color-low);
+  color: var(--color-low);
+}
 
-  .header-content {
-    flex-direction: column;
-    gap: 15px;
-  }
+.btn-feedback.active-neg {
+  background: rgba(220, 38, 38, 0.2);
+  border-color: var(--color-critical);
+  color: var(--color-critical);
+}
 
-  .risk-banner {
-    flex-direction: column;
-    text-align: center;
-  }
+.feedback-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #1e293b;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 2000;
+  display: none;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }

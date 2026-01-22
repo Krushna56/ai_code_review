@@ -1,43 +1,412 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Code Review Agent</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 font-sans">
 
-  <div class="max-w-3xl mx-auto mt-16 p-8 bg-white shadow-lg rounded-lg">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">🚀 AI Code Review Agent</h1>
-    
-    <form method="POST" enctype="multipart/form-data" class="space-y-6">
-      <div>
-        <label for="codebase" class="block text-lg font-medium text-gray-700 mb-2">Upload your codebase</label>
-        <input 
-          type="file" 
-          name="codebase" 
-          id="codebase" 
-          class="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
-          required 
-        />
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Code Review Platform - Gen AI Powered</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 50%, #1e293b 100%);
+      min-height: 100vh;
+      color: #f8fafc;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem;
+      position: relative;
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: #cbd5e1;
+      margin-bottom: 3rem;
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeInUp 0.8s ease-out 0.4s both;
+    }
+
+    .btn {
+      padding: 1rem 2rem;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
+      box-shadow: 0 4px 6px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(10px);
+      color: #f8fafc;
+      border: 1px solid #334155;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(51, 65, 85, 0.8);
+      border-color: #475569;
+    }
+
+    /* Features Grid */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin: 4rem 0;
+      animation: fadeInUp 0.8s ease-out 0.6s both;
+    }
+
+    .feature-card {
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid #334155;
+      border-radius: 1rem;
+      padding: 2rem;
+      transition: all 300ms ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+      border-color: #6366f1;
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: #f8fafc;
+    }
+
+    .feature-description {
+      color: #cbd5e1;
+      line-height: 1.6;
+    }
+
+    /* Upload Section */
+    .upload-section {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(10px);
+      border: 2px dashed #475569;
+      border-radius: 1.5rem;
+      padding: 3rem;
+      text-align: center;
+      margin: 3rem 0;
+      transition: all 300ms ease;
+    }
+
+    .upload-section:hover {
+      border-color: #6366f1;
+      background: rgba(30, 41, 59, 0.8);
+    }
+
+    .upload-section.dragover {
+      border-color: #a78bfa;
+      background: rgba(99, 102, 241, 0.1);
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .upload-label {
+      font-size: 1.125rem;
+      color: #cbd5e1;
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+
+    /* Stats Section */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin: 3rem 0;
+    }
+
+    .stat-card {
+      text-align: center;
+      padding: 1.5rem;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+      color: #94a3b8;
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Error Message */
+    .error-message {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid #ef4444;
+      border-radius: 0.75rem;
+      padding: 1rem 1.5rem;
+      margin: 2rem 0;
+      color: #fca5a5;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.5rem;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      .cta-buttons {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Hero Section -->
+    <div class="hero">
+      <h1 class="hero-title">🚀 AI Code Review Platform</h1>
+      <p class="hero-subtitle">
+        Next-generation AI-powered code analysis with interactive chat, streaming responses, and comprehensive security
+        scanning
+      </p>
+
+      <div class="cta-buttons">
+        <a href="/chat" class="btn btn-primary">
+          💬 Start Interactive Chat
+        </a>
+        <label for="codebase" class="btn btn-secondary">
+          📁 Upload for Analysis
+        </label>
+        <a href="/dashboard" class="btn btn-secondary">
+          📊 View Dashboard
+        </a>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-number">6</div>
+        <div class="stat-label">Analysis Layers</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">10+</div>
+        <div class="stat-label">Security Checks</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">3</div>
+        <div class="stat-label">AI Providers</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">∞</div>
+        <div class="stat-label">Code Languages</div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon">💬</div>
+        <h3 class="feature-title">Interactive AI Chat</h3>
+        <p class="feature-description">
+          Converse with AI about your code. Ask questions, get explanations, and receive real-time security insights
+          with streaming responses.
+        </p>
       </div>
 
-      <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition">
-        🔍 Analyze Code
-      </button>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3 class="feature-title">Security Analysis</h3>
+        <p class="feature-description">
+          Multi-layer security scanning with Bandit, Semgrep, and AI-powered vulnerability detection. OWASP Top 10
+          coverage included.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <h3 class="feature-title">Smart Refactoring</h3>
+        <p class="feature-description">
+          AI suggests code improvements, identifies code smells, and provides refactoring recommendations with
+          explanations.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3 class="feature-title">CVE Detection</h3>
+        <p class="feature-description">
+          Automatic dependency scanning and CVE vulnerability detection using OSV database with severity scoring.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3 class="feature-title">Visual Dashboard</h3>
+        <p class="feature-description">
+          Interactive dashboard with charts, metrics, and drill-down capabilities for comprehensive code insights.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <h3 class="feature-title">Semantic Search</h3>
+        <p class="feature-description">
+          Natural language code search powered by vector embeddings. Find code patterns and issues instantly.
+        </p>
+      </div>
+    </div>
+
+    <!-- Upload Section -->
+    <form method="POST" enctype="multipart/form-data" id="upload-form">
+      <div class="upload-section" id="upload-area">
+        <label for="codebase" class="upload-label">
+          📦 Drop your codebase here or click to browse
+        </label>
+        <p style="color: #94a3b8; font-size: 0.875rem; margin-bottom: 1.5rem;">
+          Supports ZIP files, individual code files, or entire directories
+        </p>
+        <input type="file" name="codebase" id="codebase" class="file-input" required>
+        <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
+          🔍 Analyze Code
+        </button>
+      </div>
     </form>
 
     {% if error %}
-    <div class="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-      <strong>Error:</strong> {{ error }}
+    <div class="error-message">
+      <strong>❌ Error:</strong> {{ error }}
     </div>
     {% endif %}
-
-    <div class="mt-10 text-sm text-gray-500">
-      <p>You can upload a folder as a .zip file or even a single Python file. Our AI will scan and review it for issues, smells, and security flaws.</p>
-    </div>
   </div>
 
+  <script>
+    // Drag and drop functionality
+    const uploadArea = document.getElementById('upload-area');
+    const fileInput = document.getElementById('codebase');
+
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, () => {
+        uploadArea.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, () => {
+        uploadArea.classList.remove('dragover');
+      }, false);
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      fileInput.files = files;
+    }, false);
+
+    // Click to upload
+    uploadArea.addEventListener('click', (e) => {
+      if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'LABEL') {
+        fileInput.click();
+      }
+    });
+
+    // Show selected file
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        const fileName = e.target.files[0].name;
+        uploadArea.querySelector('.upload-label').textContent = `📄 Selected: ${fileName}`;
+      }
+    });
+  </script>
 </body>
+
 </html>

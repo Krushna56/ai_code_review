@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 class DashboardExporter:
     """Export dashboard-ready visualization data"""
-    
+
     def export_all(
         self,
         security_findings: List[Dict[str, Any]],
@@ -24,12 +24,12 @@ class DashboardExporter:
     ) -> Dict[str, Any]:
         """
         Export all dashboard data
-        
+
         Args:
             security_findings: Security findings list
             cve_results: CVE vulnerabilities
             dependencies: Dependency list
-            
+
         Returns:
             Complete dashboard data package
         """
@@ -42,7 +42,7 @@ class DashboardExporter:
             'top_issues': self.export_top_issues(security_findings, cve_results),
             'remediation_progress': self.export_remediation_progress(security_findings, cve_results)
         }
-    
+
     def export_severity_distribution(
         self,
         findings: List[Dict[str, Any]],
@@ -50,21 +50,21 @@ class DashboardExporter:
     ) -> Dict[str, Any]:
         """
         Export severity distribution for pie/donut charts
-        
+
         Returns Chart.js compatible format
         """
         severity_counts = defaultdict(int)
-        
+
         # Count findings
         for item in findings + cves:
             severity = item.get('severity', 'UNKNOWN')
             severity_counts[severity] += 1
-        
+
         # Prepare chart data
         labels = []
         data = []
         colors = []
-        
+
         severity_config = {
             'CRITICAL': {'color': '#dc2626', 'order': 0},
             'HIGH': {'color': '#ea580c', 'order': 1},
@@ -72,15 +72,16 @@ class DashboardExporter:
             'LOW': {'color': '#84cc16', 'order': 3},
             'UNKNOWN': {'color': '#6b7280', 'order': 4}
         }
-        
+
         # Sort by severity order
         for severity in sorted(severity_counts.keys(), key=lambda x: severity_config.get(x, {}).get('order', 99)):
             count = severity_counts[severity]
             if count > 0:
                 labels.append(severity)
                 data.append(count)
-                colors.append(severity_config.get(severity, {}).get('color', '#6b7280'))
-        
+                colors.append(severity_config.get(
+                    severity, {}).get('color', '#6b7280'))
+
         return {
             'type': 'pie',
             'labels': labels,
@@ -92,7 +93,7 @@ class DashboardExporter:
             }],
             'total': sum(data)
         }
-    
+
     def export_owasp_heatmap(
         self,
         findings: List[Dict[str, Any]],
@@ -103,25 +104,25 @@ class DashboardExporter:
         """
         owasp_counts = defaultdict(int)
         owasp_names = {}
-        
+
         # Count by OWASP category
         for item in findings + cves:
             owasp_cat = item.get('owasp_category')
             if owasp_cat:
                 owasp_counts[owasp_cat] += 1
                 owasp_names[owasp_cat] = item.get('owasp_name', owasp_cat)
-        
+
         # Prepare data
         categories = []
         labels = []
         data = []
-        
+
         # Sort by category ID
         for cat_id in sorted(owasp_counts.keys()):
             categories.append(cat_id)
             labels.append(owasp_names.get(cat_id, cat_id))
             data.append(owasp_counts[cat_id])
-        
+
         return {
             'type': 'bar',
             'labels': labels,
@@ -134,7 +135,7 @@ class DashboardExporter:
             }],
             'category_ids': categories
         }
-    
+
     def export_vulnerability_timeline(
         self,
         findings: List[Dict[str, Any]],
@@ -142,31 +143,32 @@ class DashboardExporter:
     ) -> Dict[str, Any]:
         """
         Export vulnerability timeline data for line charts
-        
+
         Note: For actual timeline, findings would need timestamps.
         This provides a simulated timeline based on severity.
         """
         # Group by severity for trend visualization
         from datetime import datetime, timedelta
-        
+
         # Simulate timeline data (in real scenario, use actual timestamps)
         base_date = datetime.now() - timedelta(days=30)
-        dates = [(base_date + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(0, 31, 5)]
-        
+        dates = [(base_date + timedelta(days=i)).strftime('%Y-%m-%d')
+                 for i in range(0, 31, 5)]
+
         severity_trends = {
             'CRITICAL': [],
             'HIGH': [],
             'MEDIUM': [],
             'LOW': []
         }
-        
+
         # Get current counts
         severity_counts = defaultdict(int)
         for item in findings + cves:
             severity = item.get('severity', 'UNKNOWN')
             if severity in severity_trends:
                 severity_counts[severity] += 1
-        
+
         # Simulate trend (in practice, query historical data)
         for i, date in enumerate(dates):
             for severity in severity_trends.keys():
@@ -174,7 +176,7 @@ class DashboardExporter:
                 ratio = (i + 1) / len(dates)
                 count = int(severity_counts.get(severity, 0) * ratio)
                 severity_trends[severity].append(count)
-        
+
         datasets = []
         colors = {
             'CRITICAL': '#dc2626',
@@ -182,24 +184,25 @@ class DashboardExporter:
             'MEDIUM': '#eab308',
             'LOW': '#84cc16'
         }
-        
+
         for severity, values in severity_trends.items():
             if any(v > 0 for v in values):
                 datasets.append({
                     'label': severity,
                     'data': values,
                     'borderColor': colors[severity],
-                    'backgroundColor': colors[severity] + '40',  # 40 = 25% opacity
+                    # 40 = 25% opacity
+                    'backgroundColor': colors[severity] + '40',
                     'tension': 0.3,
                     'fill': True
                 })
-        
+
         return {
             'type': 'line',
             'labels': dates,
             'datasets': datasets
         }
-    
+
     def export_file_risk_scores(
         self,
         findings: List[Dict[str, Any]]
@@ -208,29 +211,31 @@ class DashboardExporter:
         Export file-level risk scores for horizontal bar chart
         """
         file_scores = defaultdict(lambda: {'count': 0, 'risk_score': 0})
-        
+
         # Aggregate by file
         for finding in findings:
             file_path = finding.get('file_path', 'unknown')
             file_scores[file_path]['count'] += 1
-            file_scores[file_path]['risk_score'] += finding.get('risk_score', 0)
-        
+            file_scores[file_path]['risk_score'] += finding.get(
+                'risk_score', 0)
+
         # Calculate average risk scores
         for file_path, data in file_scores.items():
             if data['count'] > 0:
                 data['avg_risk'] = data['risk_score'] / data['count']
-        
+
         # Get top 10 files by average risk
         top_files = sorted(
             file_scores.items(),
             key=lambda x: x[1]['avg_risk'],
             reverse=True
         )[:10]
-        
-        labels = [file_path.split('/')[-1] for file_path, _ in top_files]  # Just filename
+
+        labels = [file_path.split('/')[-1]
+                  for file_path, _ in top_files]  # Just filename
         risk_scores = [data['avg_risk'] for _, data in top_files]
         finding_counts = [data['count'] for _, data in top_files]
-        
+
         return {
             'type': 'horizontalBar',
             'labels': labels,
@@ -252,7 +257,7 @@ class DashboardExporter:
             ],
             'full_paths': [file_path for file_path, _ in top_files]
         }
-    
+
     def export_dependency_stats(
         self,
         dependencies: List[Dict[str, Any]],
@@ -264,21 +269,21 @@ class DashboardExporter:
         # Count by ecosystem
         ecosystem_counts = defaultdict(int)
         vulnerable_ecosystems = defaultdict(int)
-        
+
         vulnerable_packages = set(cve.get('package_name') for cve in cves)
-        
+
         for dep in dependencies:
             ecosystem = dep.get('ecosystem', 'unknown')
             ecosystem_counts[ecosystem] += 1
-            
+
             if dep.get('package_name') in vulnerable_packages:
                 vulnerable_ecosystems[ecosystem] += 1
-        
+
         # Ecosystem breakdown
         ecosystems = list(ecosystem_counts.keys())
         total_counts = [ecosystem_counts[e] for e in ecosystems]
         vulnerable_counts = [vulnerable_ecosystems[e] for e in ecosystems]
-        
+
         return {
             'total_dependencies': len(dependencies),
             'vulnerable_dependencies': len(vulnerable_packages),
@@ -299,11 +304,12 @@ class DashboardExporter:
                 ]
             },
             'health_percentage': round(
-                ((len(dependencies) - len(vulnerable_packages)) / len(dependencies) * 100) if len(dependencies) > 0 else 100,
+                ((len(dependencies) - len(vulnerable_packages)) /
+                 len(dependencies) * 100) if len(dependencies) > 0 else 100,
                 2
             )
         }
-    
+
     def export_top_issues(
         self,
         findings: List[Dict[str, Any]],
@@ -314,7 +320,7 @@ class DashboardExporter:
         Export top issues for dashboard cards/lists
         """
         all_issues = []
-        
+
         # Format findings
         for finding in findings:
             all_issues.append({
@@ -327,7 +333,7 @@ class DashboardExporter:
                 'line': finding.get('line_number', 0),
                 'owasp': finding.get('owasp_category')
             })
-        
+
         # Format CVEs
         for cve in cves:
             all_issues.append({
@@ -340,12 +346,12 @@ class DashboardExporter:
                 'line': 0,
                 'owasp': cve.get('owasp_category')
             })
-        
+
         # Sort by risk score
         all_issues.sort(key=lambda x: x['risk_score'], reverse=True)
-        
+
         return all_issues[:limit]
-    
+
     def export_remediation_progress(
         self,
         findings: List[Dict[str, Any]],
@@ -355,10 +361,10 @@ class DashboardExporter:
         Export remediation progress for progress bars/gauges
         """
         total_issues = len(findings) + len(cves)
-        
+
         # Count by difficulty (estimate)
         by_difficulty = defaultdict(int)
-        
+
         for finding in findings:
             # Estimate difficulty based on type
             finding_type = finding.get('type', '')
@@ -370,17 +376,18 @@ class DashboardExporter:
                 difficulty = 'MEDIUM'
             else:
                 difficulty = 'MEDIUM'
-            
+
             by_difficulty[difficulty] += 1
-        
+
         # CVEs are usually easy (just upgrade)
         by_difficulty['EASY'] += len(cves)
-        
+
         return {
             'total_issues': total_issues,
             'by_difficulty': dict(by_difficulty),
             'estimated_easy_percentage': round(
-                (by_difficulty['EASY'] / total_issues * 100) if total_issues > 0 else 0,
+                (by_difficulty['EASY'] / total_issues *
+                 100) if total_issues > 0 else 0,
                 2
             ),
             'gauges': {
@@ -398,12 +405,12 @@ def export_dashboard_data(
 ) -> Dict[str, Any]:
     """
     Convenience function to export all dashboard data
-    
+
     Args:
         security_findings: Security findings
         cve_results: CVE vulnerabilities
         dependencies: Dependencies list
-        
+
     Returns:
         Complete dashboard data package
     """

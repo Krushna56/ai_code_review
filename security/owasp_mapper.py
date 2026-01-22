@@ -22,7 +22,7 @@ class OWASPCategory:
 
 class OWASPMapper:
     """Map security issues to OWASP Top 10 2021 categories"""
-    
+
     # OWASP Top 10 2021 Categories
     OWASP_CATEGORIES = {
         "A01:2021": OWASPCategory(
@@ -86,7 +86,7 @@ class OWASPMapper:
             reference_url="https://owasp.org/Top10/A10_2021-Server-Side_Request_Forgery_%28SSRF%29/"
         )
     }
-    
+
     # Comprehensive CWE to OWASP mapping
     CWE_OWASP_MAPPING = {
         # A01:2021 - Broken Access Control
@@ -121,7 +121,7 @@ class OWASPMapper:
         "CWE-863": "A01:2021",  # Incorrect Authorization
         "CWE-913": "A01:2021",  # Improper Control of Dynamically-Managed Code Resources
         "CWE-922": "A01:2021",  # Insecure Storage of Sensitive Information
-        
+
         # A02:2021 - Cryptographic Failures
         "CWE-259": "A02:2021",  # Use of Hard-coded Password
         "CWE-260": "A02:2021",  # Password in Configuration File
@@ -160,7 +160,7 @@ class OWASPMapper:
         "CWE-780": "A02:2021",  # Use of RSA Algorithm without OAEP
         "CWE-798": "A02:2021",  # Use of Hard-coded Credentials
         "CWE-916": "A02:2021",  # Use of Password Hash With Insufficient Computational Effort
-        
+
         # A03:2021 - Injection
         "CWE-73": "A03:2021",   # External Control of File Name or Path
         "CWE-74": "A03:2021",   # Improper Neutralization of Special Elements
@@ -190,8 +190,9 @@ class OWASPMapper:
         "CWE-610": "A03:2021",  # Externally Controlled Reference
         "CWE-643": "A03:2021",  # Improper Neutralization of Data within XPath Expressions
         "CWE-652": "A03:2021",  # Improper Neutralization of Data within XQuery Expressions
-        "CWE-917": "A03:2021",  # Improper Neutralization of Special Elements used in an Expression Language Statement
-        
+        # Improper Neutralization of Special Elements used in an Expression Language Statement
+        "CWE-917": "A03:2021",
+
         # A04:2021 - Insecure Design
         "CWE-209": "A04:2021",  # Information Exposure Through Error Message
         "CWE-256": "A04:2021",  # Unprotected Storage of Credentials
@@ -206,7 +207,7 @@ class OWASPMapper:
         "CWE-656": "A04:2021",  # Reliance on Security Through Obscurity
         "CWE-657": "A04:2021",  # Violation of Secure Design Principles
         "CWE-799": "A04:2021",  # Improper Control of Interaction Frequency
-        
+
         # A05:2021 - Security Misconfiguration
         "CWE-2": "A05:2021",    # Environment
         "CWE-11": "A05:2021",   # ASP.NET Misconfiguration
@@ -225,14 +226,15 @@ class OWASPMapper:
         "CWE-756": "A05:2021",  # Missing Custom Error Page
         "CWE-776": "A05:2021",  # Improper Restriction of Recursive Entity References in DTDs
         "CWE-942": "A05:2021",  # Overly Permissive Cross-domain Whitelist
-        "CWE-1004": "A05:2021", # Sensitive Cookie Without 'HttpOnly' Flag
-        "CWE-1032": "A05:2021", # OWASP Top Ten 2017 Category A6 - Security Misconfiguration
-        "CWE-1174": "A05:2021", # ASP.NET Misconfiguration: Improper Model Validation
-        
+        "CWE-1004": "A05:2021",  # Sensitive Cookie Without 'HttpOnly' Flag
+        "CWE-1032": "A05:2021",  # OWASP Top Ten 2017 Category A6 - Security Misconfiguration
+        "CWE-1174": "A05:2021",  # ASP.NET Misconfiguration: Improper Model Validation
+
         # A06:2021 - Vulnerable and Outdated Components
-        "CWE-1035": "A06:2021", # OWASP Top Ten 2017 Category A9 - Using Components with Known Vulnerabilities
-        "CWE-1104": "A06:2021", # Use of Unmaintained Third Party Components
-        
+        # OWASP Top Ten 2017 Category A9 - Using Components with Known Vulnerabilities
+        "CWE-1035": "A06:2021",
+        "CWE-1104": "A06:2021",  # Use of Unmaintained Third Party Components
+
         # A07:2021 - Identification and Authentication Failures
         "CWE-255": "A07:2021",  # Credentials Management
         "CWE-259": "A07:2021",  # Use of Hard-coded Password
@@ -255,8 +257,8 @@ class OWASPMapper:
         "CWE-798": "A07:2021",  # Use of Hard-coded Credentials
         "CWE-804": "A07:2021",  # Guessable CAPTCHA
         "CWE-916": "A07:2021",  # Use of Password Hash With Insufficient Computational Effort
-        "CWE-1216": "A07:2021", # Lockout Mechanism Errors
-        
+        "CWE-1216": "A07:2021",  # Lockout Mechanism Errors
+
         # A08:2021 - Software and Data Integrity Failures
         "CWE-345": "A08:2021",  # Insufficient Verification of Data Authenticity
         "CWE-353": "A08:2021",  # Missing Support for Integrity Check
@@ -267,18 +269,19 @@ class OWASPMapper:
         "CWE-784": "A08:2021",  # Reliance on Cookies without Validation and Integrity Checking
         "CWE-829": "A08:2021",  # Inclusion of Functionality from Untrusted Control Sphere
         "CWE-830": "A08:2021",  # Inclusion of Web Functionality from Untrusted Source
-        "CWE-915": "A08:2021",  # Improperly Controlled Modification of Dynamically-Determined Object Attributes
-        
+        # Improperly Controlled Modification of Dynamically-Determined Object Attributes
+        "CWE-915": "A08:2021",
+
         # A09:2021 - Security Logging and Monitoring Failures
         "CWE-117": "A09:2021",  # Improper Output Neutralization for Logs
         "CWE-223": "A09:2021",  # Omission of Security-relevant Information
         "CWE-532": "A09:2021",  # Information Exposure Through Log Files
         "CWE-778": "A09:2021",  # Insufficient Logging
-        
+
         # A10:2021 - Server-Side Request Forgery (SSRF)
         "CWE-918": "A10:2021",  # Server-Side Request Forgery (SSRF)
     }
-    
+
     # Vulnerability type to OWASP mapping (for non-CWE classifications)
     VULN_TYPE_OWASP_MAPPING = {
         # Injection-related
@@ -288,107 +291,108 @@ class OWASPMapper:
         "ldap_injection": "A03:2021",
         "xml_injection": "A03:2021",
         "code_injection": "A03:2021",
-        
+
         # Cryptography-related
         "weak_crypto": "A02:2021",
         "hardcoded_secret": "A02:2021",
         "insecure_random": "A02:2021",
         "cleartext_storage": "A02:2021",
         "weak_hash": "A02:2021",
-        
+
         # Access control
         "path_traversal": "A01:2021",
         "csrf": "A01:2021",
         "open_redirect": "A01:2021",
         "missing_auth": "A01:2021",
-        
+
         # Authentication
         "weak_password": "A07:2021",
         "session_fixation": "A07:2021",
         "broken_auth": "A07:2021",
-        
+
         # Deserialization
         "deserialization": "A08:2021",
         "unsafe_deserialization": "A08:2021",
-        
+
         # SSRF
         "ssrf": "A10:2021",
-        
+
         # Configuration
         "misconfiguration": "A05:2021",
         "xxe": "A05:2021",
         "debug_mode": "A05:2021",
-        
+
         # Outdated components
         "cve": "A06:2021",
         "vulnerable_dependency": "A06:2021",
         "outdated_component": "A06:2021",
     }
-    
+
     def map_cwe_to_owasp(self, cwe_id: str) -> Optional[str]:
         """
         Map CWE ID to OWASP Top 10 2021 category
-        
+
         Args:
             cwe_id: CWE identifier (e.g., "CWE-89")
-            
+
         Returns:
             OWASP category ID or None if not mapped
         """
         # Normalize CWE ID
         if not cwe_id.startswith("CWE-"):
             cwe_id = f"CWE-{cwe_id}"
-        
+
         return self.CWE_OWASP_MAPPING.get(cwe_id)
-    
+
     def map_vulnerability_type(self, vuln_type: str) -> Optional[str]:
         """
         Map vulnerability type to OWASP category
-        
+
         Args:
             vuln_type: Vulnerability type (e.g., "sql_injection")
-            
+
         Returns:
             OWASP category ID or None if not mapped
         """
         vuln_type_lower = vuln_type.lower().replace(" ", "_").replace("-", "_")
         return self.VULN_TYPE_OWASP_MAPPING.get(vuln_type_lower)
-    
+
     def get_owasp_details(self, category_id: str) -> Optional[OWASPCategory]:
         """
         Get detailed information about an OWASP category
-        
+
         Args:
             category_id: OWASP category ID (e.g., "A03:2021")
-            
+
         Returns:
             OWASPCategory object or None if not found
         """
         return self.OWASP_CATEGORIES.get(category_id)
-    
+
     def add_owasp_context(self, vulnerability: Dict[str, Any]) -> Dict[str, Any]:
         """
         Enrich vulnerability with OWASP category information
-        
+
         Args:
             vulnerability: Vulnerability dictionary
-            
+
         Returns:
             Enriched vulnerability dictionary
         """
         owasp_category_id = None
-        
+
         # Try mapping from CWE IDs
         if 'cwe_ids' in vulnerability and vulnerability['cwe_ids']:
             for cwe_id in vulnerability['cwe_ids']:
                 owasp_category_id = self.map_cwe_to_owasp(cwe_id)
                 if owasp_category_id:
                     break
-        
+
         # Try mapping from vulnerability type
         if not owasp_category_id and 'type' in vulnerability:
-            owasp_category_id = self.map_vulnerability_type(vulnerability['type'])
-        
+            owasp_category_id = self.map_vulnerability_type(
+                vulnerability['type'])
+
         # Add OWASP information
         if owasp_category_id:
             category = self.get_owasp_details(owasp_category_id)
@@ -400,17 +404,17 @@ class OWASPMapper:
         else:
             vulnerability['owasp_category'] = None
             vulnerability['owasp_name'] = "Not Mapped"
-        
+
         return vulnerability
 
 
 def enrich_with_owasp(vulnerabilities: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """
     Convenience function to enrich vulnerabilities with OWASP context
-    
+
     Args:
         vulnerabilities: List of vulnerability dictionaries
-        
+
     Returns:
         List of enriched vulnerabilities
     """

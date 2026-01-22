@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Code Chat - AI Code Review Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
+    <!-- Prism.js for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <!-- Marked.js for markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+
+<body class="chat-page">
+    <div class="chat-container">
+        <!-- Left Panel: Code Viewer -->
+        <div class="code-panel">
+            <div class="panel-header">
+                <h2>📄 Code Context</h2>
+                <div class="code-actions">
+                    <a href="/" class="btn-icon" title="Back to Home" style="text-decoration: none;">
+                        🏠 Home
+                    </a>
+                    <button class="btn-icon" id="upload-code" title="Upload code file">
+                        📁 Upload
+                    </button>
+                    <button class="btn-icon" id="clear-code" title="Clear code">
+                        🗑️ Clear
+                    </button>
+                </div>
+            </div>
+
+            <div class="code-viewer" id="code-viewer">
+                <div class="empty-state">
+                    <div class="empty-icon">💻</div>
+                    <h3>No Code Loaded</h3>
+                    <p>Upload a code file or paste code to analyze with AI</p>
+                    <label for="file-input" class="btn-primary">
+                        Choose File
+                    </label>
+                    <input type="file" id="file-input" accept=".py,.js,.java,.go,.cpp,.c,.rb,.php,.ts,.jsx,.tsx"
+                        style="display: none;">
+                </div>
+
+                <div class="code-content" id="code-content" style="display: none;">
+                    <div class="code-header">
+                        <span class="filename" id="filename">untitled</span>
+                        <span class="file-size" id="file-size">0 KB</span>
+                    </div>
+                    <pre><code class="language-python" id="code-display"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Chat Interface -->
+        <div class="chat-panel">
+            <div class="panel-header">
+                <h2>🤖 AI Assistant</h2>
+                <div class="chat-actions">
+                    <a href="/dashboard" class="btn-icon" title="View Security Dashboard"
+                        style="text-decoration: none;">
+                        📊 Dashboard
+                    </a>
+                    <button class="btn-icon" id="export-chat" title="Export conversation">
+                        📥 Export
+                    </button>
+                    <button class="btn-icon" id="new-session" title="New chat session">
+                        ➕ New
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="chat-messages">
+                <div class="welcome-message">
+                    <div class="ai-avatar">🤖</div>
+                    <div class="message-content">
+                        <h3>Welcome to AI Code Chat!</h3>
+                        <p>I'm your AI assistant for code security and quality analysis. I can help you:</p>
+                        <ul>
+                            <li>🔒 Find security vulnerabilities</li>
+                            <li>🔄 Suggest refactoring improvements</li>
+                            <li>📖 Explain complex code patterns</li>
+                            <li>🐛 Identify potential bugs</li>
+                        </ul>
+                        <p class="hint">Upload some code to get started, or ask me anything!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Typing Indicator -->
+            <div class="typing-indicator" id="typing-indicator" style="display: none;">
+                <div class="ai-avatar">🤖</div>
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="chat-input-container">
+                <div class="chat-input-wrapper">
+                    <textarea id="chat-input" class="chat-input"
+                        placeholder="Ask about security, refactoring, or code explanation..." rows="1"></textarea>
+                    <button class="send-button" id="send-button" title="Send message (Enter)">
+                        <span class="send-icon">▶</span>
+                    </button>
+                </div>
+                <div class="input-hints">
+                    <span class="hint-item">💡 Try: "Find security issues"</span>
+                    <span class="hint-item">💡 Try: "How can I improve this?"</span>
+                    <span class="hint-item">💡 Try: "Explain this function"</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>Initializing chat session...</p>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="{{ url_for('static', filename='js/stream-handler.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+</body>
+
+</html>

@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class FixGenerator:
     """Generate fix suggestions for security vulnerabilities"""
-    
+
     # Fix templates for common vulnerability types
     FIX_TEMPLATES = {
         'hardcoded_secret': {
@@ -101,7 +101,7 @@ class FixGenerator:
             ]
         }
     }
-    
+
     def generate_fix_suggestion(
         self,
         finding: Dict[str, Any],
@@ -109,22 +109,24 @@ class FixGenerator:
     ) -> Dict[str, Any]:
         """
         Generate fix suggestion for a security finding
-        
+
         Args:
             finding: Security finding dictionary
             context: Additional context (framework, language, etc.)
-            
+
         Returns:
             Fix suggestion with steps, code examples, and references
         """
         finding_type = self._normalize_finding_type(finding.get('type', ''))
-        
+
         # Get base template
-        template = self.FIX_TEMPLATES.get(finding_type, self._get_default_template())
-        
+        template = self.FIX_TEMPLATES.get(
+            finding_type, self._get_default_template())
+
         # Generate code example if applicable
-        code_example = self._generate_code_example(finding, finding_type, context)
-        
+        code_example = self._generate_code_example(
+            finding, finding_type, context)
+
         # Build fix suggestion
         fix_suggestion = {
             'finding_id': finding.get('id'),
@@ -135,15 +137,15 @@ class FixGenerator:
             'code_example': code_example,
             'references': template['references']
         }
-        
+
         # Add CVE-specific remediation if applicable
         if finding.get('cve_id'):
             cve_fix = self._generate_cve_fix(finding)
             if cve_fix:
                 fix_suggestion.update(cve_fix)
-        
+
         return fix_suggestion
-    
+
     def _normalize_finding_type(self, finding_type: str) -> str:
         """Normalize finding type to template key"""
         # Map various finding type names to template keys
@@ -164,10 +166,10 @@ class FixGenerator:
             'deserialize': 'insecure_deserialization',
             'pickle': 'insecure_deserialization'
         }
-        
+
         normalized = finding_type.lower().replace(' ', '_').replace('-', '_')
         return type_mapping.get(normalized, normalized)
-    
+
     def _get_default_template(self) -> Dict[str, Any]:
         """Get default template for unknown vulnerability types"""
         return {
@@ -184,7 +186,7 @@ class FixGenerator:
                 'https://cwe.mitre.org/'
             ]
         }
-    
+
     def _generate_code_example(
         self,
         finding: Dict[str, Any],
@@ -193,7 +195,7 @@ class FixGenerator:
     ) -> Optional[Dict[str, str]]:
         """Generate before/after code example"""
         language = context.get('language', 'python') if context else 'python'
-        
+
         if finding_type == 'hardcoded_secret':
             return self._generate_secret_fix_example(finding, language)
         elif finding_type == 'sql_injection':
@@ -202,9 +204,9 @@ class FixGenerator:
             return self._generate_xss_fix_example(language)
         elif finding_type == 'weak_crypto':
             return self._generate_crypto_fix_example(language)
-        
+
         return None
-    
+
     def _generate_secret_fix_example(self, finding: Dict[str, Any], language: str) -> Dict[str, str]:
         """Generate example for hardcoded secret fix"""
         if language == 'python':
@@ -251,9 +253,9 @@ String DB_PASSWORD = System.getenv("DB_PASSWORD");
         else:
             before = "# Hardcoded secret detected"
             after = "# Use environment variables or secrets manager"
-        
+
         return {'before': before, 'after': after, 'language': language}
-    
+
     def _generate_sql_injection_fix_example(self, language: str) -> Dict[str, str]:
         """Generate example for SQL injection fix"""
         if language == 'python':
@@ -295,9 +297,9 @@ ResultSet rs = pstmt.executeQuery();
         else:
             before = "# String concatenation in SQL query"
             after = "# Use parameterized queries or ORM"
-        
+
         return {'before': before, 'after': after, 'language': language}
-    
+
     def _generate_xss_fix_example(self, language: str) -> Dict[str, str]:
         """Generate example for XSS fix"""
         if language == 'python':
@@ -325,9 +327,9 @@ element.innerHTML = DOMPurify.sanitize(userInput);
         else:
             before = "# Direct output of user input"
             after = "# Use output encoding/escaping"
-        
+
         return {'before': before, 'after': after, 'language': language}
-    
+
     def _generate_crypto_fix_example(self, language: str) -> Dict[str, str]:
         """Generate example for weak cryptography fix"""
         if language == 'python':
@@ -367,23 +369,23 @@ String hash = encoder.encode(password);
         else:
             before = "# Weak algorithm (MD5, DES, SHA-1)"
             after = "# Use strong algorithms (bcrypt, AES-256, SHA-256+)"
-        
+
         return {'before': before, 'after': after, 'language': language}
-    
+
     def _generate_cve_fix(self, finding: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """Generate CVE-specific remediation"""
         fixed_versions = finding.get('fixed_versions', [])
         package_name = finding.get('package_name')
         ecosystem = finding.get('ecosystem', 'unknown')
-        
+
         if not fixed_versions or not package_name:
             return None
-        
+
         # Generate upgrade command
         upgrade_cmd = self._generate_upgrade_command(
             ecosystem, package_name, fixed_versions[0]
         )
-        
+
         return {
             'cve_remediation': {
                 'action': f"Upgrade {package_name} to version {fixed_versions[0]} or later",
@@ -393,7 +395,7 @@ String hash = encoder.encode(password);
                 'references': finding.get('references', [])
             }
         }
-    
+
     def _generate_upgrade_command(
         self,
         ecosystem: str,
@@ -402,7 +404,7 @@ String hash = encoder.encode(password);
     ) -> str:
         """Generate package manager-specific upgrade command"""
         ecosystem = ecosystem.lower()
-        
+
         if ecosystem == 'pypi':
             return f"pip install {package}=={version}"
         elif ecosystem == 'npm':
@@ -413,7 +415,7 @@ String hash = encoder.encode(password);
             return f"Update build.gradle: implementation '{package}:{version}'"
         else:
             return f"Upgrade {package} to {version}"
-    
+
     def generate_code_diff(
         self,
         before_code: str,
@@ -422,20 +424,20 @@ String hash = encoder.encode(password);
     ) -> str:
         """
         Generate unified diff format
-        
+
         Args:
             before_code: Vulnerable code
             after_code: Fixed code
             language: Programming language for syntax
-            
+
         Returns:
             Diff string
         """
         from difflib import unified_diff
-        
+
         before_lines = before_code.splitlines(keepends=True)
         after_lines = after_code.splitlines(keepends=True)
-        
+
         diff = unified_diff(
             before_lines,
             after_lines,
@@ -443,9 +445,9 @@ String hash = encoder.encode(password);
             tofile='after (fixed)',
             lineterm=''
         )
-        
+
         return '\n'.join(diff)
-    
+
     def batch_generate_fixes(
         self,
         findings: List[Dict[str, Any]],
@@ -453,38 +455,39 @@ String hash = encoder.encode(password);
     ) -> List[Dict[str, Any]]:
         """
         Generate fixes for multiple findings
-        
+
         Args:
             findings: List of security findings
             context: Shared context
-            
+
         Returns:
             List of fix suggestions
         """
         fixes = []
-        
+
         for finding in findings:
             try:
                 fix = self.generate_fix_suggestion(finding, context)
                 fixes.append(fix)
             except Exception as e:
-                logger.error(f"Error generating fix for {finding.get('id')}: {e}")
+                logger.error(f"Error generating fix for {
+                             finding.get('id')}: {e}")
                 fixes.append({
                     'finding_id': finding.get('id'),
                     'error': str(e)
                 })
-        
+
         return fixes
 
 
 def generate_fix(finding: Dict[str, Any], context: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """
     Convenience function to generate a fix suggestion
-    
+
     Args:
         finding: Security finding
         context: Additional context
-        
+
     Returns:
         Fix suggestion
     """

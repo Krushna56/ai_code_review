@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
+
 <body>
     <div class="dashboard-container">
         <!-- Header -->
@@ -14,8 +16,9 @@
             <div class="header-content">
                 <h1>🔒 Security Dashboard</h1>
                 <div class="header-actions">
-                    <button onclick="refreshDashboard()" class="btn-refresh">🔄 Refresh</button>
                     <a href="/" class="btn-home">🏠 Home</a>
+                    <a href="/chat" class="btn-home">💬 Chat</a>
+                    <button onclick="refreshDashboard()" class="btn-refresh">🔄 Refresh</button>
                 </div>
             </div>
         </header>
@@ -32,7 +35,7 @@
             <div class="last-scan">
                 Last Scan: <span id="lastScan">--</span>
             </div>
-       </div>
+        </div>
 
         <!-- Metrics Cards -->
         <div class="metrics-grid">
@@ -43,7 +46,7 @@
                     <div class="metric-value" id="totalFindings">0</div>
                 </div>
             </div>
-            
+
             <div class="metric-card critical-card">
                 <div class="metric-icon">🔴</div>
                 <div class="metric-content">
@@ -51,7 +54,7 @@
                     <div class="metric-value" id="criticalHigh">0</div>
                 </div>
             </div>
-            
+
             <div class="metric-card">
                 <div class="metric-icon">🛡️</div>
                 <div class="metric-content">
@@ -59,7 +62,7 @@
                     <div class="metric-value" id="cveCount">0</div>
                 </div>
             </div>
-            
+
             <div class="metric-card health-card">
                 <div class="metric-icon">💚</div>
                 <div class="metric-content">
@@ -118,7 +121,7 @@
                     </select>
                 </div>
             </div>
-            
+
             <div class="table-container">
                 <table class="findings-table">
                     <thead>
@@ -128,6 +131,7 @@
                             <th>Title</th>
                             <th>OWASP</th>
                             <th>File</th>
+                            <th>Feedback</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -159,15 +163,19 @@
         </div>
     </div>
 
+    <!-- Feedback Toast -->
+    <div id="feedbackToast" class="feedback-toast">Feedback saved!</div>
+
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
     <script>
         // Initialize dashboard on page load
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             loadDashboard();
-            
+
             // Auto-refresh every 60 seconds (optional)
             // setInterval(refreshDashboard, 60000);
         });
     </script>
 </body>
+
 </html>

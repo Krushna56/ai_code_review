@@ -32,12 +32,12 @@ class SecurityFinding:
     remediation: str = ""
     confidence: float = 1.0  # 0.0 to 1.0
     risk_score: float = 0.0
-    
+
     def __post_init__(self):
         """Initialize mutable defaults"""
         if self.cwe_ids is None:
             self.cwe_ids = []
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary"""
         return asdict(self)
@@ -45,7 +45,7 @@ class SecurityFinding:
 
 class SecurityAggregator:
     """Aggregate and prioritize security findings"""
-    
+
     SEVERITY_WEIGHTS = {
         'CRITICAL': 10,
         'HIGH': 7,
@@ -53,15 +53,15 @@ class SecurityAggregator:
         'LOW': 2,
         'UNKNOWN': 1
     }
-    
+
     def __init__(self):
         """Initialize security aggregator"""
         self.findings: List[SecurityFinding] = []
-    
+
     def add_secrets(self, secrets: List[Dict[str, Any]]):
         """
         Add secret detection findings
-        
+
         Args:
             secrets: List of detected secrets
         """
@@ -71,7 +71,8 @@ class SecurityAggregator:
                 type="secret",
                 severity=secret.get('severity', 'HIGH'),
                 title=f"Hardcoded {secret.get('type', 'Secret')} Detected",
-                description=f"Found hardcoded {secret.get('type', 'secret')}: {secret.get('keyword', '')}",
+                description=f"Found hardcoded {secret.get('type', 'secret')}: {
+                    secret.get('keyword', '')}",
                 file_path=secret.get('file_path', ''),
                 line_number=secret.get('line_number', 0),
                 owasp_category="A02:2021",
@@ -81,11 +82,11 @@ class SecurityAggregator:
                 confidence=secret.get('confidence', 0.9)
             )
             self.findings.append(finding)
-    
+
     def add_patterns(self, patterns: List[Dict[str, Any]]):
         """
         Add insecure pattern findings
-        
+
         Args:
             patterns: List of detected insecure patterns
         """
@@ -105,11 +106,11 @@ class SecurityAggregator:
                 confidence=pattern.get('confidence', 0.8)
             )
             self.findings.append(finding)
-    
+
     def add_cves(self, cves: Dict[str, List[Dict[str, Any]]]):
         """
         Add CVE findings
-        
+
         Args:
             cves: Dictionary mapping package IDs to CVE vulnerabilities
         """
@@ -130,11 +131,11 @@ class SecurityAggregator:
                     confidence=1.0
                 )
                 self.findings.append(finding)
-    
+
     def add_static_analysis(self, issues: List[Dict[str, Any]]):
         """
         Add static analysis findings
-        
+
         Args:
             issues: List of static analysis issues
         """
@@ -154,14 +155,14 @@ class SecurityAggregator:
                 confidence=issue.get('confidence', 0.7)
             )
             self.findings.append(finding)
-    
+
     def _generate_cve_remediation(self, cve: Dict[str, Any]) -> str:
         """
         Generate remediation advice for CVE
-        
+
         Args:
             cve: CVE vulnerability dictionary
-            
+
         Returns:
             Remediation string
         """
@@ -171,49 +172,51 @@ class SecurityAggregator:
             return f"Upgrade to a fixed version: {versions_str}"
         else:
             return "Check vendor advisory for patches or workarounds."
-    
+
     def deduplicate_issues(self) -> List[SecurityFinding]:
         """
         Remove duplicate findings
-        
+
         Returns:
             Deduplicated list of findings
         """
         seen = set()
         unique_findings = []
-        
+
         for finding in self.findings:
             # Create unique key based on type, file, line, and title
-            key = (finding.type, finding.file_path, finding.line_number, finding.title)
-            
+            key = (finding.type, finding.file_path,
+                   finding.line_number, finding.title)
+
             if key not in seen:
                 seen.add(key)
                 unique_findings.append(finding)
             else:
                 logger.debug(f"Duplicate finding removed: {finding.title}")
-        
-        logger.info(f"Deduplicated {len(self.findings)} → {len(unique_findings)} findings")
+
+        logger.info(f"Deduplicated {len(self.findings)} → {
+                    len(unique_findings)} findings")
         self.findings = unique_findings
         return unique_findings
-    
+
     def calculate_risk_scores(self):
         """Calculate risk scores for all findings"""
         for finding in self.findings:
             finding.risk_score = self._calculate_risk_score(finding)
-    
+
     def _calculate_risk_score(self, finding: SecurityFinding) -> float:
         """
         Calculate risk score for a finding
-        
+
         Args:
             finding: Security finding
-            
+
         Returns:
             Risk score (0-100)
         """
         # Base score from severity
         severity_weight = self.SEVERITY_WEIGHTS.get(finding.severity, 1)
-        
+
         # Exploitability weight (CVEs and secrets are more exploitable)
         exploitability_weight = 1.0
         if finding.type == 'cve':
@@ -222,16 +225,16 @@ class SecurityAggregator:
             exploitability_weight = 1.3
         elif finding.type == 'pattern':
             exploitability_weight = 1.2
-        
+
         # Prevalence weight (critical OWASP categories)
         prevalence_weight = 1.0
         critical_categories = ['A01:2021', 'A02:2021', 'A03:2021', 'A06:2021']
         if finding.owasp_category in critical_categories:
             prevalence_weight = 1.2
-        
+
         # Detectability (higher confidence = easier to detect = higher priority)
         detectability_weight = finding.confidence
-        
+
         # Calculate composite score
         risk_score = (
             severity_weight * 0.4 +
@@ -239,34 +242,35 @@ class SecurityAggregator:
             prevalence_weight * 0.2 +
             detectability_weight * 0.1
         ) * 10  # Scale to 0-100
-        
+
         return min(risk_score, 100.0)
-    
+
     def prioritize_by_severity(self) -> List[SecurityFinding]:
         """
         Sort findings by risk score and severity
-        
+
         Returns:
             Sorted list of findings
         """
         # First calculate risk scores
         self.calculate_risk_scores()
-        
+
         # Sort by risk score (descending), then severity
-        severity_order = {'CRITICAL': 0, 'HIGH': 1, 'MEDIUM': 2, 'LOW': 3, 'UNKNOWN': 4}
-        
+        severity_order = {'CRITICAL': 0, 'HIGH': 1,
+                          'MEDIUM': 2, 'LOW': 3, 'UNKNOWN': 4}
+
         sorted_findings = sorted(
             self.findings,
             key=lambda f: (-f.risk_score, severity_order.get(f.severity, 5))
         )
-        
+
         self.findings = sorted_findings
         return sorted_findings
-    
+
     def generate_security_summary(self) -> Dict[str, Any]:
         """
         Generate executive summary of security findings
-        
+
         Returns:
             Summary dictionary
         """
@@ -274,24 +278,24 @@ class SecurityAggregator:
         severity_counts = defaultdict(int)
         for finding in self.findings:
             severity_counts[finding.severity] += 1
-        
+
         # Count by type
         type_counts = defaultdict(int)
         for finding in self.findings:
             type_counts[finding.type] += 1
-        
+
         # Count by OWASP category
         owasp_counts = defaultdict(int)
         for finding in self.findings:
             if finding.owasp_category:
                 owasp_counts[finding.owasp_category] += 1
-        
+
         # Top 5 critical findings
         top_critical = [
             f.to_dict() for f in self.findings
             if f.severity in ['CRITICAL', 'HIGH']
         ][:5]
-        
+
         summary = {
             'total_issues': len(self.findings),
             'by_severity': dict(severity_counts),
@@ -300,18 +304,18 @@ class SecurityAggregator:
             'top_critical_findings': top_critical,
             'average_risk_score': sum(f.risk_score for f in self.findings) / len(self.findings) if self.findings else 0
         }
-        
+
         return summary
-    
+
     def get_findings(self) -> List[Dict[str, Any]]:
         """
         Get all findings as dictionaries
-        
+
         Returns:
             List of finding dictionaries
         """
         return [f.to_dict() for f in self.findings]
-    
+
     def aggregate_all(
         self,
         secrets: List[Dict[str, Any]] = None,
@@ -321,40 +325,40 @@ class SecurityAggregator:
     ) -> Dict[str, Any]:
         """
         Aggregate findings from all sources
-        
+
         Args:
             secrets: Secret detection findings
             patterns: Insecure pattern findings
             cves: CVE findings
             static_issues: Static analysis findings
-            
+
         Returns:
             Aggregated security report
         """
         # Clear existing findings
         self.findings = []
-        
+
         # Add findings from each source
         if secrets:
             self.add_secrets(secrets)
-        
+
         if patterns:
             self.add_patterns(patterns)
-        
+
         if cves:
             self.add_cves(cves)
-        
+
         if static_issues:
             self.add_static_analysis(static_issues)
-        
+
         # Process findings
         self.deduplicate_issues()
         self.prioritize_by_severity()
-        
+
         # Generate report
         summary = self.generate_security_summary()
         findings = self.get_findings()
-        
+
         return {
             'summary': summary,
             'findings': findings
@@ -369,13 +373,13 @@ def aggregate_security_findings(
 ) -> Dict[str, Any]:
     """
     Convenience function to aggregate security findings
-    
+
     Args:
         secrets: Secret detection findings
         patterns: Insecure pattern findings
         cves: CVE findings
         static_issues: Static analysis findings
-        
+
     Returns:
         Aggregated security report
     """

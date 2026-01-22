@@ -64,6 +64,15 @@ A next-generation AI-driven code review platform using hybrid ML + LLM architect
 - Severity-based issue prioritization
 - JSON, Markdown, and HTML export
 
+**🎉 NEW: Interactive Chat & Gen AI Features** (Phase 1)
+
+- **Conversational AI**: Multi-turn code discussions with context retention
+- **Streaming Responses**: Real-time LLM output with Server-Sent Events
+- **Smart Intent Detection**: Automatic routing to security or refactoring agents
+- **Persistent History**: SQLite-backed conversation storage
+- **Export Capabilities**: Save conversations as Markdown or JSON
+- **API v2**: RESTful endpoints for chat, streaming, and semantic search
+
 ## Quick Start
 
 Get started with the AI-Powered Code Review Platform in 3 simple steps:
@@ -236,17 +245,14 @@ print(result['analysis'])
 ### Layers
 
 1. **Static Intelligence Layer**
-
    - AST parsing and metrics extraction
    - Multi-linter integration (Bandit, Semgrep, Pylint, Ruff)
 
 2. **Embedding Layer**
-
    - Code embeddings (OpenAI or local)
    - FAISS vector store for semantic search
 
 3. **LLM Agent Layer**
-
    - SecurityReviewer for vulnerability analysis
    - RefactorAgent for code quality improvements
    - RAG-enhanced context

@@ -1,7 +1,0 @@
-Formatted Files: 1
-Bugs Fixed: 1
-Code Smells Removed: 1
-Security Issues: 1
-
---- Security Report ---
-Bandit error: Command '['bandit', '-r', 'uploads\\629b470d-6074-4128-82b2-cc3c102f98c5', '-f', 'json']' returned non-zero exit status 1.

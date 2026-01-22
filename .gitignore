@@ -1,5 +1,46 @@
-uploads/gitignore.txt
-# Ignore all files in the uploads directory
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+*.pyc
+
+# Runtime directories
 uploads/*
-* .env
-* .env.env.example
+processed/*
+.cache/
+vector_db/
+
+# Reports and outputs (keep directories, ignore contents)
+output/*.json
+output/*.md
+reports/
+
+# Environment
+.env
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Images and media (unless in docs)
+*.png
+*.jpg
+*.jpeg
+*.gif
+!docs/**/*.png
+!docs/**/*.jpg
+
+# Git
+.git/
+.gitignore.bak

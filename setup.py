@@ -15,9 +15,10 @@ def run_command(cmd, description):
     print(f"\n{'='*60}")
     print(f"[*] {description}")
     print(f"{'='*60}")
-    
+
     try:
-        result = subprocess.run(cmd, shell=True, check=True, capture_output=True, text=True)
+        result = subprocess.run(
+            cmd, shell=True, check=True, capture_output=True, text=True)
         print(result.stdout)
         print(f"[OK] {description} completed successfully!")
         return True
@@ -31,9 +32,11 @@ def check_python_version():
     """Check if Python version is 3.8+"""
     version = sys.version_info
     if version.major < 3 or (version.major == 3 and version.minor < 8):
-        print(f"[ERROR] Python 3.8+ required. You have Python {version.major}.{version.minor}")
+        print(
+            f"[ERROR] Python 3.8+ required. You have Python {version.major}.{version.minor}")
         return False
-    print(f"[OK] Python {version.major}.{version.minor}.{version.micro} detected")
+    print(f"[OK] Python {version.major}.{
+          version.minor}.{version.micro} detected")
     return True
 
 
@@ -61,11 +64,11 @@ def main():
        AI-Powered Code Review Platform - Setup Script
     ============================================================
     """)
-    
+
     # Check Python version
     if not check_python_version():
         sys.exit(1)
-    
+
     # Install dependencies
     if not run_command(
         f"{sys.executable} -m pip install -r requirements.txt",
@@ -73,17 +76,18 @@ def main():
     ):
         print("\n[WARNING] Some dependencies failed to install.")
         print("   Try: pip install -r requirements.txt")
-    
+
     # Create .env file
     create_env_file()
-    
+
     # Create necessary directories
     print("\n[*] Creating directories...")
-    directories = ['uploads', 'processed', 'models', 'vector_db', 'vector_db/embedding_cache']
+    directories = ['uploads', 'processed', 'models',
+                   'vector_db', 'vector_db/embedding_cache']
     for dir_name in directories:
         Path(dir_name).mkdir(exist_ok=True)
         print(f"   [OK] {dir_name}/")
-    
+
     print(f"\n{'='*60}")
     print("[SUCCESS] Setup Complete!")
     print(f"{'='*60}")

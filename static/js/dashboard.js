@@ -263,6 +263,26 @@ async function loadFindings(severity = null) {
                   getFileName(finding.file_path || finding.package || "N/A")
                 )}</code></td>
                 <td>
+                    <div class="feedback-actions">
+                        <button onclick="submitFeedback('${
+                          finding.id || finding.cve_id
+                        }', 'positive', event)" 
+                                class="btn-feedback ${
+                                  finding.user_feedback === "positive"
+                                    ? "active-pos"
+                                    : ""
+                                }" title="Correct">👍</button>
+                        <button onclick="submitFeedback('${
+                          finding.id || finding.cve_id
+                        }', 'negative', event)" 
+                                class="btn-feedback ${
+                                  finding.user_feedback === "negative"
+                                    ? "active-neg"
+                                    : ""
+                                }" title="False Positive">👎</button>
+                    </div>
+                </td>
+                <td>
                     <button onclick="viewFinding('${
                       finding.id || finding.cve_id
                     }')" class="btn-view">View</button>
@@ -379,6 +399,27 @@ async function viewFinding(findingId) {
                       )}</p></div>`
                     : ""
                 }
+                <div class="detail-row">
+                    <strong>Was this finding helpful?</strong>
+                    <div class="feedback-actions" style="margin-top: 10px;">
+                        <button onclick="submitFeedback('${
+                          finding.id || finding.cve_id
+                        }', 'positive', event)" 
+                                class="btn-feedback ${
+                                  finding.user_feedback === "positive"
+                                    ? "active-pos"
+                                    : ""
+                                }" title="Correct">👍 Correct</button>
+                        <button onclick="submitFeedback('${
+                          finding.id || finding.cve_id
+                        }', 'negative', event)" 
+                                class="btn-feedback ${
+                                  finding.user_feedback === "negative"
+                                    ? "active-neg"
+                                    : ""
+                                }" title="False Positive">👎 False Positive</button>
+                    </div>
+                </div>
             </div>
         `;
 
@@ -446,12 +487,73 @@ function escapeHtml(text) {
 
 function showError(message) {
   console.error(message);
-  // Could implement toast notification here
+  showToast(message);
 }
 
 function showSuccess(message) {
   console.log(message);
-  // Could implement toast notification here
+  showToast(message);
+}
+
+/**
+ * Submit user feedback for a finding
+ */
+async function submitFeedback(findingId, type, event) {
+  if (event) {
+    event.stopPropagation();
+  }
+
+  try {
+    const response = await fetch("/api/feedback", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        finding_id: findingId,
+        feedback_type: type,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      showToast(
+        `Feedback saved: ${type === "positive" ? "Correct" : "False Positive"}`
+      );
+
+      // Update button styles if possible
+      const btn = event ? event.currentTarget : null;
+      if (btn) {
+        const parent = btn.parentElement;
+        parent.querySelectorAll(".btn-feedback").forEach((b) => {
+          b.classList.remove("active-pos", "active-neg");
+        });
+        btn.classList.add(type === "positive" ? "active-pos" : "active-neg");
+      }
+    } else {
+      console.error("Error saving feedback:", result.error);
+      showToast("Failed to save feedback");
+    }
+  } catch (error) {
+    console.error("Error submitting feedback:", error);
+    showToast("Error submitting feedback");
+  }
+}
+
+/**
+ * Show toast notification
+ */
+function showToast(message) {
+  const toast = document.getElementById("feedbackToast");
+  if (!toast) return;
+
+  toast.textContent = message;
+  toast.style.display = "block";
+
+  setTimeout(() => {
+    toast.style.display = "none";
+  }, 3000);
 }
 
 // Close modal when clicking outside

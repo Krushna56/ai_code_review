@@ -9,13 +9,13 @@ from typing import Dict, Any, List, Optional
 
 class RAGPromptTemplates:
     """Collection of RAG prompt templates for security analysis"""
-    
+
     @staticmethod
-    def hardcoded_secrets_prompt(code_chunks: List[Dict[str, Any]], 
-                                query: str) -> str:
+    def hardcoded_secrets_prompt(code_chunks: List[Dict[str, Any]],
+                                 query: str) -> str:
         """Prompt for hardcoded secrets analysis"""
         context = RAGPromptTemplates._format_code_context(code_chunks)
-        
+
         return f"""You are a security analyst reviewing code for hardcoded secrets and credentials.
 
 **User Question**: {query}
@@ -40,13 +40,13 @@ class RAGPromptTemplates:
 - **Best Practices**: General advice for secret management
 
 Be specific and cite exact file locations and line numbers from the code provided above."""
-    
+
     @staticmethod
-    def sql_injection_prompt(code_chunks: List[Dict[str, Any]], 
-                            query: str) -> str:
+    def sql_injection_prompt(code_chunks: List[Dict[str, Any]],
+                             query: str) -> str:
         """Prompt for SQL injection analysis"""
         context = RAGPromptTemplates._format_code_context(code_chunks)
-        
+
         return f"""You are a security expert analyzing code for SQL injection vulnerabilities.
 
 **User Question**: {query}
@@ -75,13 +75,13 @@ Be specific and cite exact file locations and line numbers from the code provide
 - **Mitigation Strategy**: Overall recommendations
 
 Focus on actionable, developer-friendly guidance."""
-    
+
     @staticmethod
-    def xss_vulnerability_prompt(code_chunks: List[Dict[str, Any]], 
-                                query: str) -> str:
+    def xss_vulnerability_prompt(code_chunks: List[Dict[str, Any]],
+                                 query: str) -> str:
         """Prompt for XSS vulnerability analysis"""
         context = RAGPromptTemplates._format_code_context(code_chunks)
-        
+
         return f"""You are a web security specialist analyzing code for Cross-Site Scripting (XSS) vulnerabilities.
 
 **User Question**: {query}
@@ -111,13 +111,13 @@ Focus on actionable, developer-friendly guidance."""
 - **Executive Summary**: XSS risk overview
 - **Findings**: Detailed vulnerability list
 - **Remediation**: Specific fixes with code examples"""
-    
+
     @staticmethod
-    def insecure_crypto_prompt(code_chunks: List[Dict[str, Any]], 
-                              query: str) -> str:
+    def insecure_crypto_prompt(code_chunks: List[Dict[str, Any]],
+                               query: str) -> str:
         """Prompt for cryptography analysis"""
         context = RAGPromptTemplates._format_code_context(code_chunks)
-        
+
         return f"""You are a cryptography security expert reviewing code for insecure cryptographic practices.
 
 **User Question**: {query}
@@ -148,13 +148,13 @@ Focus on actionable, developer-friendly guidance."""
 - **Crypto Issues Found**: Summary table
 - **Detailed Analysis**: Each issue with remediation
 - **Modern Best Practices**: Recommended cryptographic stack"""
-    
+
     @staticmethod
-    def location_finder_prompt(code_chunks: List[Dict[str, Any]], 
-                              query: str) -> str:
+    def location_finder_prompt(code_chunks: List[Dict[str, Any]],
+                               query: str) -> str:
         """Prompt for locating specific implementations"""
         context = RAGPromptTemplates._format_code_context(code_chunks)
-        
+
         return f"""You are a code navigation assistant helping locate specific implementations.
 
 **User Question**: {query}
@@ -179,13 +179,13 @@ Focus on actionable, developer-friendly guidance."""
 - **Related Components**: Other files/functions involved
 - **Implementation Notes**: Key details about how it works
 - **Security Observations**: Any security-relevant patterns (if applicable)"""
-    
+
     @staticmethod
-    def general_security_prompt(code_chunks: List[Dict[str, Any]], 
-                               query: str) -> str:
+    def general_security_prompt(code_chunks: List[Dict[str, Any]],
+                                query: str) -> str:
         """General security analysis prompt"""
         context = RAGPromptTemplates._format_code_context(code_chunks)
-        
+
         return f"""You are a senior security engineer conducting a comprehensive code security review.
 
 **User Question**: {query}
@@ -216,42 +216,43 @@ Focus on actionable, developer-friendly guidance."""
 - **High/Medium Issues**: Important findings
 - **Best Practices**: General security improvements
 - **Implementation Roadmap**: Prioritized fix order"""
-    
+
     @staticmethod
     def _format_code_context(code_chunks: List[Dict[str, Any]]) -> str:
         """Format code chunks into readable context"""
         formatted = []
-        
+
         for i, chunk in enumerate(code_chunks, 1):
-            file_loc = f"{chunk.get('file', 'Unknown')}:{chunk.get('start_line', '?')}-{chunk.get('end_line', '?')}"
+            file_loc = f"{chunk.get('file', 'Unknown')}:{chunk.get(
+                'start_line', '?')}-{chunk.get('end_line', '?')}"
             chunk_type = chunk.get('type', 'code')
             name = chunk.get('name', 'N/A')
             score = chunk.get('score', 0)
-            
+
             formatted.append(f"""
 ### Code Chunk {i} (Relevance: {score:.2f})
-**File**: `{file_loc}`  
-**Type**: {chunk_type}  
+**File**: `{file_loc}`
+**Type**: {chunk_type}
 **Name**: {name}
 
 ```{chunk.get('language', 'text')}
 {chunk.get('code', 'No code available')}
 ```
 """)
-        
+
         return "\n".join(formatted)
-    
+
     @staticmethod
-    def get_prompt_for_intent(intent: str, code_chunks: List[Dict[str, Any]], 
-                             query: str) -> str:
+    def get_prompt_for_intent(intent: str, code_chunks: List[Dict[str, Any]],
+                              query: str) -> str:
         """
         Get appropriate prompt template based on intent
-        
+
         Args:
             intent: Detected query intent
             code_chunks: Retrieved code chunks
             query: User's question
-            
+
         Returns:
             Formatted prompt
         """
@@ -263,6 +264,7 @@ Focus on actionable, developer-friendly guidance."""
             'location': RAGPromptTemplates.location_finder_prompt,
             'general': RAGPromptTemplates.general_security_prompt,
         }
-        
-        prompt_func = prompt_map.get(intent, RAGPromptTemplates.general_security_prompt)
+
+        prompt_func = prompt_map.get(
+            intent, RAGPromptTemplates.general_security_prompt)
         return prompt_func(code_chunks, query)

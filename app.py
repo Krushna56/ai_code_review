@@ -7,6 +7,11 @@ import logging
 
 from code_analysis import analyze_codebase
 from services.report_service import get_report_service
+from services.feedback_service import get_feedback_service
+
+
+# Import API v2 routes
+from api.v2_routes import api_v2
 
 # Configure logging
 logging.basicConfig(
@@ -19,6 +24,9 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['PROCESSED_FOLDER'] = 'processed'
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max file size
+
+# Register API v2 blueprint
+app.register_blueprint(api_v2)
 
 # Ensure directories exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -45,7 +53,7 @@ def index():
             if 'codebase' not in request.files:
                 logger.warning("No file part in request")
                 return render_template('index.html', error="No file uploaded")
-            
+
             uploaded_file = request.files['codebase']
             if uploaded_file.filename == '':
                 logger.warning("Empty filename")
@@ -81,8 +89,10 @@ def index():
                                    summary=analysis_result['summary'],
                                    details=analysis_result['details'],
                                    security=analysis_result['security'],
-                                   linter_results=analysis_result.get('linter_results', {}),
-                                   comprehensive_report=analysis_result.get('comprehensive_report'),
+                                   linter_results=analysis_result.get(
+                                       'linter_results', {}),
+                                   comprehensive_report=analysis_result.get(
+                                       'comprehensive_report'),
                                    uid=uid)
 
         except Exception as e:
@@ -90,6 +100,12 @@ def index():
             return render_template('index.html', error=f"Analysis failed: {str(e)}")
 
     return render_template('index.html')
+
+
+@app.route('/chat')
+def chat():
+    """Interactive chat interface route"""
+    return render_template('chat.html')
 
 
 @app.route('/download/<uid>/<filename>')
@@ -113,7 +129,7 @@ def api_analyze():
     try:
         if 'codebase' not in request.files:
             return jsonify({'error': 'No file uploaded'}), 400
-        
+
         uploaded_file = request.files['codebase']
         if uploaded_file.filename == '':
             return jsonify({'error': 'No file selected'}), 400
@@ -133,7 +149,7 @@ def api_analyze():
             extract_zip(file_path, input_path)
 
         analysis_result = analyze_codebase(input_path, output_path)
-        
+
         return jsonify({
             'uid': uid,
             'summary': analysis_result['summary'],
@@ -159,23 +175,23 @@ def api_query():
         data = request.get_json()
         if not data or 'question' not in data:
             return jsonify({'error': 'No question provided'}), 400
-        
+
         question = data['question']
         max_results = data.get('max_results', 5)
-        
+
         logger.info(f"API query: {question}")
-        
+
         # Import here to avoid circular dependencies
         from query.query_handler import QueryHandler
         from indexing.code_indexer import CodeIndexer
-        
+
         indexer = CodeIndexer()
         handler = QueryHandler(indexer=indexer)
-        
+
         response = handler.query(question, k=max_results)
-        
+
         return jsonify(response), 200
-        
+
     except Exception as e:
         logger.error(f"Query API error: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500
@@ -226,20 +242,20 @@ def api_security_findings():
     """Get security findings with filtering and pagination"""
     try:
         service = get_report_service()
-        
+
         # Get query parameters
         severity = request.args.get('severity')
         owasp_category = request.args.get('owasp_category')
         limit = int(request.args.get('limit', 100))
         offset = int(request.args.get('offset', 0))
-        
+
         findings = service.get_findings(
             severity=severity,
             owasp_category=owasp_category,
             limit=limit,
             offset=offset
         )
-        
+
         return jsonify(findings), 200
     except Exception as e:
         logger.error(f"Findings API error: {e}", exc_info=True)
@@ -252,7 +268,7 @@ def api_security_finding_detail(finding_id):
     try:
         service = get_report_service()
         finding = service.get_finding_by_id(finding_id)
-        
+
         if finding:
             return jsonify(finding), 200
         else:
@@ -283,6 +299,35 @@ def api_security_refresh():
         return jsonify({'status': 'cache cleared'}), 200
     except Exception as e:
         logger.error(f"Refresh API error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/feedback', methods=['POST'])
+def api_save_feedback():
+    """Save user feedback for a finding"""
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'error': 'No data provided'}), 400
+        
+        finding_id = data.get('finding_id')
+        feedback_type = data.get('feedback_type')
+        comment = data.get('comment', '')
+        code_snippet = data.get('code_snippet', '')
+        
+        if not finding_id or not feedback_type:
+            return jsonify({'error': 'finding_id and feedback_type are required'}), 400
+            
+        service = get_feedback_service()
+        success = service.save_feedback(finding_id, feedback_type, comment, code_snippet)
+        
+        if success:
+            return jsonify({'message': 'Feedback saved successfully'}), 200
+        else:
+            return jsonify({'error': 'Failed to save feedback'}), 500
+            
+    except Exception as e:
+        logger.error(f"Feedback API error: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
 
