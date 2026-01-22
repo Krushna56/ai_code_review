@@ -44,7 +44,7 @@
 
 .chat-container {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     height: 100vh;
     gap: 0;
 }
@@ -571,7 +571,7 @@
 @media (max-width: 1024px) {
     .chat-container {
         grid-template-columns: 1fr;
-        grid-template-rows: 40vh 1fr;
+        grid-template-rows: 50vh 50vh;
     }
     
     .code-panel {

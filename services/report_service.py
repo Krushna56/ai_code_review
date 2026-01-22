@@ -7,6 +7,7 @@ Handles loading, caching, and transforming security data for API endpoints.
 
 import json
 import logging
+import re
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 from datetime import datetime, timedelta
@@ -63,9 +64,12 @@ class ReportService:
                         with open(report_path, 'r') as f:
                             report = json.load(f)
 
+                        # Redact the entire report for safety
+                        report = self._redact_recursive(report)
+
                         # Cache the report
                         self._set_cache('latest_report', report)
-                        logger.info(f"Loaded report from {report_path}")
+                        logger.info(f"Loaded and redacted report from {report_path}")
                         return report
                     except Exception as e:
                         logger.error(f"Error loading report {report_path}: {e}")
@@ -250,6 +254,43 @@ class ReportService:
             return []
 
         return report.get('remediation_plan', [])
+
+    def _redact_recursive(self, data: Any) -> Any:
+        """Recursively redact sensitive data from any structure"""
+        if isinstance(data, dict):
+            # Do not redact IDs as they are used for lookups
+            return {k: self._redact_recursive(v) if k not in ['id', 'finding_id', 'cve_id'] else v for k, v in data.items()}
+        elif isinstance(data, list):
+            return [self._redact_recursive(i) for i in data]
+        elif isinstance(data, str):
+            return self._redact_text(data)
+        else:
+            return data
+
+    def _redact_finding(self, finding: Dict[str, Any]) -> Dict[str, Any]:
+        """Redact sensitive information from a finding"""
+        return self._redact_recursive(finding)
+
+    def _redact_text(self, text: Any) -> str:
+        """Mask sensitive patterns in text"""
+        if not text or not isinstance(text, str):
+            return str(text) if text else ""
+            
+        # Redact OpenAI Keys
+        text = re.sub(r'sk-[a-zA-Z0-9]{20,}', r'sk-****', text)
+        text = re.sub(r'sk-proj-[a-zA-Z0-9_-]{20,}', r'sk-proj-****', text)
+        
+        # Redact common assignment patterns for secrets
+        # Matches: KEY="secret", KEY: 'secret', etc.
+        patterns = [
+            r'(?i)([a-z0-9_-]*(?:password|secret|key|token|auth|token)\s*[:=]\s*["\'])([^"\']+)(["\'])',
+            r'(?i)([a-z0-9_-]*(?:password|secret|key|token|auth|token)\s*[:=]\s*)([a-z0-9_-]{8,})'
+        ]
+        
+        for p in patterns:
+            text = re.sub(p, r'\1[REDACTED]', text)
+            
+        return text
 
     def _get_fix_suggestion(self, finding_id: str) -> Optional[Dict[str, Any]]:
         """Load fix suggestion for a finding"""

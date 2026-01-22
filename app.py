@@ -4,6 +4,8 @@ import shutil
 import zipfile
 import uuid
 import logging
+import subprocess
+import json
 
 from code_analysis import analyze_codebase
 from services.report_service import get_report_service
@@ -31,6 +33,48 @@ app.register_blueprint(api_v2)
 # Ensure directories exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(app.config['PROCESSED_FOLDER'], exist_ok=True)
+
+LAST_ANALYSIS_PATH_FILE = 'last_analysis_path.txt'
+
+def sync_results_to_dashboard(processed_path):
+    """Sync analysis results to the global output directory for dashboard"""
+    try:
+        global_output = 'output'
+        os.makedirs(global_output, exist_ok=True)
+        
+        # Files to sync
+        files_to_sync = ['security_report.json', 'dashboard_data.json', 'security_report.md']
+        
+        for filename in files_to_sync:
+            src = os.path.join(processed_path, filename)
+            dst = os.path.join(global_output, filename)
+            if os.path.exists(src):
+                shutil.copy2(src, dst)
+                logger.info(f"Synced {filename} to {global_output}")
+                
+        # Clear report service cache to force reload
+        get_report_service().clear_cache()
+        
+    except Exception as e:
+        logger.error(f"Error syncing results to dashboard: {e}")
+
+def save_last_analysis_path(path):
+    """Save the last analyzed path for manual refresh"""
+    try:
+        with open(LAST_ANALYSIS_PATH_FILE, 'w') as f:
+            f.write(path)
+    except Exception as e:
+        logger.error(f"Error saving last analysis path: {e}")
+
+def get_last_analysis_path():
+    """Get the last analyzed path"""
+    try:
+        if os.path.exists(LAST_ANALYSIS_PATH_FILE):
+            with open(LAST_ANALYSIS_PATH_FILE, 'r') as f:
+                return f.read().strip()
+    except Exception as e:
+        logger.error(f"Error reading last analysis path: {e}")
+    return None
 
 
 def extract_zip(zip_path, extract_to):
@@ -85,6 +129,10 @@ def index():
             # Store UID in session for downloads
             analysis_result['uid'] = uid
 
+            # Sync to dashboard and save path
+            sync_results_to_dashboard(output_path)
+            save_last_analysis_path(input_path)
+
             return render_template('results.html',
                                    summary=analysis_result['summary'],
                                    details=analysis_result['details'],
@@ -102,10 +150,49 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/chat')
-def chat():
-    """Interactive chat interface route"""
-    return render_template('chat.html')
+@app.route('/api/analyze/repo', methods=['POST'])
+def api_analyze_repo():
+    """Clone a GitHub repository and run analysis"""
+    try:
+        data = request.json
+        if not data or 'repo_url' not in data:
+            return jsonify({'error': 'No repository URL provided'}), 400
+
+        repo_url = data['repo_url']
+        logger.info(f"Cloning repository: {repo_url}")
+
+        # Generate unique ID for this analysis
+        uid = str(uuid.uuid4())
+        input_path = os.path.join(app.config['UPLOAD_FOLDER'], uid)
+        output_path = os.path.join(app.config['PROCESSED_FOLDER'], uid)
+
+        os.makedirs(input_path, exist_ok=True)
+        os.makedirs(output_path, exist_ok=True)
+
+        # Clone repository
+        try:
+            # Add --depth 1 for faster cloning
+            subprocess.run(['git', 'clone', '--depth', '1', repo_url, input_path], 
+                           check=True, capture_output=True, text=True)
+            logger.info(f"Cloned {repo_url} to {input_path}")
+        except subprocess.CalledProcessError as e:
+            logger.error(f"Git clone failed: {e.stderr}")
+            return jsonify({'error': f"Failed to clone repository: {e.stderr}"}), 500
+
+        # Run analysis
+        logger.info(f"Starting analysis for cloned repo {uid}")
+        analysis_result = analyze_codebase(input_path, output_path)
+        
+        # Sync to dashboard and save path
+        sync_results_to_dashboard(output_path)
+        save_last_analysis_path(input_path)
+
+        analysis_result['uid'] = uid
+        return jsonify(analysis_result), 200
+
+    except Exception as e:
+        logger.error(f"Error during repo analysis: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/download/<uid>/<filename>')
@@ -292,11 +379,29 @@ def api_security_remediation():
 
 @app.route('/api/security/refresh')
 def api_security_refresh():
-    """Clear cache and refresh dashboard data"""
+    """Trigger a full re-analysis and refresh dashboard data"""
     try:
-        service = get_report_service()
-        service.clear_cache()
-        return jsonify({'status': 'cache cleared'}), 200
+        last_path = get_last_analysis_path()
+        if not last_path or not os.path.exists(last_path):
+            logger.warning("No recent analysis path found for refresh")
+            # Just clear cache if no path found
+            get_report_service().clear_cache()
+            return jsonify({'status': 'cache cleared', 'details': 'No source found for re-scan'}), 200
+
+        logger.info(f"Refreshing analysis for: {last_path}")
+        
+        # Create a new output folder for this refresh
+        uid = f"refresh_{str(uuid.uuid4())[:8]}"
+        output_path = os.path.join(app.config['PROCESSED_FOLDER'], uid)
+        os.makedirs(output_path, exist_ok=True)
+
+        # Re-run analysis
+        analysis_result = analyze_codebase(last_path, output_path)
+        
+        # Sync results
+        sync_results_to_dashboard(output_path)
+        
+        return jsonify({'status': 'refreshed', 'summary': analysis_result.get('summary')}), 200
     except Exception as e:
         logger.error(f"Refresh API error: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500

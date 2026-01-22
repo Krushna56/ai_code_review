@@ -39,6 +39,7 @@
       font-weight: 800;
       background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 1rem;
       animation: fadeInUp 0.8s ease-out;
@@ -137,6 +138,15 @@
       line-height: 1.6;
     }
 
+    /* Analysis Options Grid */
+    .analysis-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      gap: 2rem;
+      margin: 3rem 0;
+      animation: fadeInUp 0.8s ease-out 0.5s both;
+    }
+
     /* Upload Section */
     .upload-section {
       background: rgba(30, 41, 59, 0.6);
@@ -188,6 +198,7 @@
       font-weight: 700;
       background: linear-gradient(135deg, #60a5fa, #a78bfa);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
@@ -337,21 +348,39 @@
       </div>
     </div>
 
-    <!-- Upload Section -->
-    <form method="POST" enctype="multipart/form-data" id="upload-form">
-      <div class="upload-section" id="upload-area">
-        <label for="codebase" class="upload-label">
-          📦 Drop your codebase here or click to browse
-        </label>
-        <p style="color: #94a3b8; font-size: 0.875rem; margin-bottom: 1.5rem;">
-          Supports ZIP files, individual code files, or entire directories
-        </p>
-        <input type="file" name="codebase" id="codebase" class="file-input" required>
-        <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
-          🔍 Analyze Code
-        </button>
+    <!-- Upload & Repo Section -->
+    <div class="analysis-options">
+      <form method="POST" enctype="multipart/form-data" id="upload-form">
+        <div class="upload-section" id="upload-area">
+          <label for="codebase" class="upload-label">
+            📦 Drop your codebase here or click to browse
+          </label>
+          <p style="color: #94a3b8; font-size: 0.875rem; margin-bottom: 1.5rem;">
+            Supports ZIP files, individual code files, or entire directories
+          </p>
+          <input type="file" name="codebase" id="codebase" class="file-input">
+          <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
+            🔍 Analyze Uploaded Code
+          </button>
+        </div>
+      </form>
+
+      <div class="repo-section">
+        <div class="upload-section" style="border-style: solid; border-width: 1px;">
+          <label class="upload-label">🔗 Analyze from Repository URL</label>
+          <div style="display: flex; gap: 10px; max-width: 600px; margin: 0 auto;">
+            <input type="text" id="repo-url" placeholder="https://github.com/user/repo"
+              style="flex: 1; padding: 0.75rem 1rem; border-radius: 0.5rem; background: rgba(0,0,0,0.2); border: 1px solid #334155; color: white;">
+            <button onclick="analyzeRepo()" class="btn btn-primary" id="repo-btn">
+              ⭐ Clone & Analyze
+            </button>
+          </div>
+          <p style="color: #94a3b8; font-size: 0.875rem; margin-top: 1rem;">
+            Provide a public GitHub/GitLab repository URL for a full security scan
+          </p>
+        </div>
       </div>
-    </form>
+    </div>
 
     {% if error %}
     <div class="error-message">
@@ -406,6 +435,40 @@
         uploadArea.querySelector('.upload-label').textContent = `📄 Selected: ${fileName}`;
       }
     });
+
+    async function analyzeRepo() {
+      const repoUrl = document.getElementById('repo-url').value;
+      if (!repoUrl) {
+        alert('Please enter a repository URL');
+        return;
+      }
+
+      const btn = document.getElementById('repo-btn');
+      const originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = '⏳ Cloning & Analyzing...';
+
+      try {
+        const response = await fetch('/api/analyze/repo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ repo_url: repoUrl })
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          window.location.href = '/dashboard';
+        } else {
+          alert('Error: ' + (result.error || 'Unknown error occurred'));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Failed to start analysis: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+    }
   </script>
 </body>
 

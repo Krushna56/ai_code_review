@@ -79,6 +79,12 @@ body {
   transform: translateY(-2px);
 }
 
+.btn-refresh:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: rgba(100, 116, 139, 0.3);
+}
+
 /* Risk Banner */
 .risk-banner {
   background: rgba(255, 255, 255, 0.05);

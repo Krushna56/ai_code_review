@@ -442,17 +442,30 @@ function filterFindings() {
  * Refresh dashboard
  */
 async function refreshDashboard() {
+  const btn = document.querySelector(".btn-refresh");
+  const originalText = btn.innerHTML;
+  
   try {
-    // Clear cache on server
-    await fetch("/api/security/refresh");
-
-    // Reload all data
-    await loadDashboard();
-
-    showSuccess("Dashboard refreshed");
+    btn.disabled = true;
+    btn.innerHTML = "⏳ Scanning...";
+    
+    // Clear cache and trigger full re-scan
+    const response = await fetch("/api/security/refresh");
+    const result = await response.json();
+    
+    if (response.ok) {
+        // Reload all data
+        await loadDashboard();
+        showToast("Dashboard updated with fresh scan results");
+    } else {
+        showError("Refresh failed: " + (result.error || "Unknown error"));
+    }
   } catch (error) {
     console.error("Error refreshing dashboard:", error);
     showError("Failed to refresh dashboard");
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalText;
   }
 }
 

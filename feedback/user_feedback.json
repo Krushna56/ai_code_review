@@ -1,0 +1,30 @@
+{
+  "SECRET-1": {
+    "finding_id": "SECRET-1",
+    "feedback_type": "positive",
+    "comment": "",
+    "code_snippet": "",
+    "timestamp": "2026-01-22T21:35:30.736954"
+  },
+  "SECRET-2": {
+    "finding_id": "SECRET-2",
+    "feedback_type": "negative",
+    "comment": "",
+    "code_snippet": "",
+    "timestamp": "2026-01-22T21:34:26.359819"
+  },
+  "SECRET-3": {
+    "finding_id": "SECRET-3",
+    "feedback_type": "negative",
+    "comment": "",
+    "code_snippet": "",
+    "timestamp": "2026-01-22T21:35:25.711718"
+  },
+  "SECRET-17": {
+    "finding_id": "SECRET-17",
+    "feedback_type": "positive",
+    "comment": "",
+    "code_snippet": "",
+    "timestamp": "2026-01-22T22:03:31.480477"
+  }
+}
