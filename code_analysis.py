@@ -51,8 +51,7 @@ logger = logging.getLogger(__name__)
 
 def highlight_code_diff(original_code, modified_code):
     """
-    Highlights differences in modified code using <span class="highlight">.
-    Only highlights added or changed lines.
+    Highlights differences between original and modified code.
     """
     original_lines = original_code.splitlines()
     modified_lines = modified_code.splitlines()
@@ -61,12 +60,13 @@ def highlight_code_diff(original_code, modified_code):
     highlighted = []
     for line in diff:
         if line.startswith('+ '):
-            highlighted.append(f'<span class="highlight">{line[2:]}</span>')
+            highlighted.append(f'<span class="highlight-added">{line}</span>')
+        elif line.startswith('- '):
+            highlighted.append(f'<span class="highlight-removed">{line}</span>')
         elif line.startswith('? '):
             continue
-        elif line.startswith('  '):
+        else:
             highlighted.append(line[2:])
-        # Do not include removed lines
     return '\n'.join(highlighted)
 
 
@@ -82,16 +82,22 @@ class CodeAnalyzer:
             try:
                 self.embedder = CodeEmbedder()
                 self.vector_store = None  # Initialized per analysis
+            except ImportError as e:
+                logger.warning(f"Embeddings dependencies not found: {e}. Disabling semantic search.")
+                config.ENABLE_SEMANTIC_SEARCH = False
             except Exception as e:
-                logger.warning(f"Failed to initialize embeddings: {e}")
+                logger.error(f"Failed to initialize embeddings: {e}", exc_info=True)
                 config.ENABLE_SEMANTIC_SEARCH = False
         
         if config.ENABLE_LLM_AGENTS:
             try:
                 self.security_agent = SecurityReviewer()
                 self.refactor_agent = RefactorAgent()
+            except ImportError as e:
+                logger.warning(f"LLM agent dependencies not found: {e}. Disabling LLM agents.")
+                config.ENABLE_LLM_AGENTS = False
             except Exception as e:
-                logger.warning(f"Failed to initialize LLM agents: {e}")
+                logger.error(f"Failed to initialize LLM agents: {e}", exc_info=True)
                 config.ENABLE_LLM_AGENTS = False
     
     def analyze_file(self, file_path: str) -> Dict[str, Any]:
@@ -126,10 +132,14 @@ class CodeAnalyzer:
                 )
             
             return result
-            
+
+        except (IOError, UnicodeDecodeError) as e:
+            logger.error(f"Error reading or processing file {file_path}: {e}")
+            result['error'] = f"File access error: {e}"
+            return result
         except Exception as e:
-            logger.error(f"Error analyzing file {file_path}: {e}")
-            result['error'] = str(e)
+            logger.error(f"Unexpected error analyzing file {file_path}: {e}", exc_info=True)
+            result['error'] = f"An unexpected error occurred: {e}"
             return result
     
     def _run_llm_analysis(self, code: str, metrics: Dict, static_issues: List) -> Dict[str, Any]:
@@ -150,9 +160,12 @@ class CodeAnalyzer:
             refactor_result = self.refactor_agent.analyze(code, context)
             insights['refactoring'] = refactor_result
             
+        except ImportError as e:
+            logger.warning(f"LLM dependencies not available: {e}")
+            insights['error'] = "LLM dependencies not installed."
         except Exception as e:
-            logger.error(f"Error in LLM analysis: {e}")
-            insights['error'] = str(e)
+            logger.error(f"Error in LLM analysis: {e}", exc_info=True)
+            insights['error'] = f"An unexpected error occurred during LLM analysis: {e}"
         
         return insights
 
@@ -214,8 +227,10 @@ def analyze_codebase(input_path, output_path):
                     summary["bugs_fixed"] += 1
                     summary["files_updated"] += 1
                     
+                except (IOError, UnicodeDecodeError) as e:
+                    logger.error(f"Error reading or writing file {rel_path}: {e}")
                 except Exception as e:
-                    logger.error(f"Error processing {rel_path}: {e}")
+                    logger.error(f"Unexpected error processing {rel_path}: {e}", exc_info=True)
     
     # Run multi-linter analysis
     logger.info("Running static analysis tools...")
@@ -251,7 +266,7 @@ def analyze_codebase(input_path, output_path):
             
             logger.info(f"Comprehensive report saved to {report_path}")
         except Exception as e:
-            logger.error(f"Error generating comprehensive report: {e}")
+            logger.error(f"Error generating comprehensive report: {e}", exc_info=True)
     
     # Generate security report
     security_report = _generate_security_report(aggregated)
