@@ -7,20 +7,21 @@
   --color-low: #84cc16;
   --color-unknown: #6b7280;
 
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --bg-card: #334155;
-  --text-primary: #f1f5f9;
-  --text-secondary: #cbd5e1;
+  --bg-primary: #25343F;
+  --bg-secondary: #2d3e4f;
+  --bg-card: #354555;
+  --text-primary: #EAEFEF;
+  --text-secondary: #BFC9D1;
+  --accent-color: #FF9B51;
 }
 
 /* Monochrome / High Contrast Theme */
 body.monochrome {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8fafc;
+  --bg-primary: #EAEFEF;
+  --bg-secondary: #EAEFEF;
   --bg-card: #ffffff;
-  --text-primary: #000000;
-  --text-secondary: #334155;
+  --text-primary: #25343F;
+  --text-secondary: #25343F;
 
   --color-critical: #000000;
   --color-high: #1a1a1a;
@@ -28,7 +29,7 @@ body.monochrome {
   --color-low: #737373;
   --color-unknown: #a3a3a3;
 
-  background: #ffffff;
+  background: #EAEFEF;
 }
 
 /* Border overrides for monochrome visibility */
@@ -70,6 +71,20 @@ body.monochrome .btn-home:hover {
   background: #f1f1f1;
 }
 
+/* Monochrome text overrides for maximum visibility */
+body.monochrome .risk-label,
+body.monochrome .metric-label,
+body.monochrome .risk-details,
+body.monochrome .stat-label,
+body.monochrome .detail-row strong,
+body.monochrome .remediation-details {
+  color: #000000 !important;
+}
+
+body.monochrome .last-scan {
+  color: #1a1a1a !important;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -80,15 +95,33 @@ body {
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
     Arial, sans-serif;
-  background: linear-gradient(135deg, var(--bg-primary) 0%, #1e1b4b 100%);
+  background: linear-gradient(135deg, var(--bg-primary) 0%, #2d3e4f 50%, #354555 100%);
+  background-attachment: fixed;
   color: var(--text-primary);
   min-height: 100vh;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 15% 25%, rgba(255, 155, 81, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 85% 75%, rgba(191, 201, 209, 0.06) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .dashboard-container {
   max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
+  position: relative;
+  z-index: 1;
 }
 
 /* Header */

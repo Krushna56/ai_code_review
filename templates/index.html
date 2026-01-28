@@ -5,7 +5,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Code Review Platform - Gen AI Powered</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <style>
     * {
       margin: 0;
@@ -15,16 +14,34 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #000000;
+      background: linear-gradient(135deg, #25343F 0%, #2d3e4f 50%, #354555 100%);
+      background-attachment: fixed;
       min-height: 100vh;
-      color: #f8fafc;
+      color: #EAEFEF;
       overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(255, 155, 81, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(191, 201, 209, 0.05) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
     }
 
     .container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 2rem;
+      position: relative;
+      z-index: 1;
     }
 
     /* Hero Section */
@@ -37,7 +54,7 @@
     .hero-title {
       font-size: 3.5rem;
       font-weight: 800;
-      background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+      background: linear-gradient(135deg, #FF9B51, #ff8a38, #25343F);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -47,7 +64,7 @@
 
     .hero-subtitle {
       font-size: 1.25rem;
-      color: #cbd5e1;
+      color: #BFC9D1;
       margin-bottom: 3rem;
       animation: fadeInUp 0.8s ease-out 0.2s both;
     }
@@ -75,26 +92,27 @@
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #6366f1, #8b5cf6);
-      color: white;
-      box-shadow: 0 4px 6px rgba(99, 102, 241, 0.3);
+      background: #FF9B51;
+      color: #25343F;
+      box-shadow: 0 4px 6px rgba(255, 155, 81, 0.3);
     }
 
     .btn-primary:hover {
+      background: #ff8a38;
       transform: translateY(-2px);
-      box-shadow: 0 10px 15px rgba(99, 102, 241, 0.4);
+      box-shadow: 0 10px 15px rgba(255, 155, 81, 0.4);
     }
 
     .btn-secondary {
-      background: rgba(30, 41, 59, 0.8);
+      background: rgba(191, 201, 209, 0.15);
       backdrop-filter: blur(10px);
-      color: #f8fafc;
-      border: 1px solid #334155;
+      color: #EAEFEF;
+      border: 1px solid #BFC9D1;
     }
 
     .btn-secondary:hover {
-      background: rgba(51, 65, 85, 0.8);
-      border-color: #475569;
+      background: rgba(191, 201, 209, 0.25);
+      border-color: #BFC9D1;
     }
 
     /* Features Grid */
@@ -107,9 +125,9 @@
     }
 
     .feature-card {
-      background: rgba(30, 41, 59, 0.8);
+      background: rgba(45, 62, 79, 0.8);
       backdrop-filter: blur(10px);
-      border: 1px solid #334155;
+      border: 1px solid rgba(191, 201, 209, 0.3);
       border-radius: 1rem;
       padding: 2rem;
       transition: all 300ms ease;
@@ -117,8 +135,8 @@
 
     .feature-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
-      border-color: #6366f1;
+      box-shadow: 0 10px 30px rgba(255, 155, 81, 0.2);
+      border-color: #FF9B51;
     }
 
     .feature-icon {
@@ -130,11 +148,11 @@
       font-size: 1.25rem;
       font-weight: 600;
       margin-bottom: 0.75rem;
-      color: #f8fafc;
+      color: #EAEFEF;
     }
 
     .feature-description {
-      color: #cbd5e1;
+      color: #BFC9D1;
       line-height: 1.6;
     }
 
@@ -156,24 +174,28 @@
 
     /* Upload Section */
     .upload-section {
-      background: rgba(30, 41, 59, 0.6);
+      background: rgba(45, 62, 79, 0.6);
       backdrop-filter: blur(10px);
-      border: 2px dashed #475569;
+      border: 2px dashed #BFC9D1;
       border-radius: 1.5rem;
       padding: 3rem;
       text-align: center;
       margin: 3rem 0;
       transition: all 300ms ease;
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .upload-section:hover {
-      border-color: #6366f1;
-      background: rgba(30, 41, 59, 0.8);
+      border-color: #FF9B51;
+      background: rgba(45, 62, 79, 0.8);
     }
 
     .upload-section.dragover {
-      border-color: #a78bfa;
-      background: rgba(99, 102, 241, 0.1);
+      border-color: #FF9B51;
+      background: rgba(255, 155, 81, 0.1);
     }
 
     .file-input {
@@ -182,7 +204,7 @@
 
     .upload-label {
       font-size: 1.125rem;
-      color: #cbd5e1;
+      color: #BFC9D1;
       margin-bottom: 1.5rem;
       display: block;
     }
@@ -207,14 +229,14 @@
     .stat-number {
       font-size: 2.5rem;
       font-weight: 700;
-      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      background: linear-gradient(135deg, #FF9B51, #ff8a38);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     .stat-label {
-      color: #94a3b8;
+      color: #BFC9D1;
       font-size: 0.875rem;
       margin-top: 0.5rem;
     }
@@ -262,44 +284,80 @@
 
     /* Light Mode Styles */
     body.light-mode {
-      background: #f8fafc;
-      color: #000000;
+      background: linear-gradient(135deg, #EAEFEF 0%, #d8e3e8 50%, #BFC9D1 100%);
+      background-attachment: fixed;
+      color: #25343F;
+    }
+
+    body.light-mode::before {
+      background:
+        radial-gradient(circle at 20% 30%, rgba(255, 155, 81, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(37, 52, 63, 0.05) 0%, transparent 50%);
     }
 
     body.light-mode .hero-title {
-      background: none;
-      -webkit-text-fill-color: #000000;
-      color: #000000;
+      background: linear-gradient(135deg, #FF9B51, #ff8a38, #25343F);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     body.light-mode .hero-subtitle,
-    body.light-mode .upload-label,
-    body.light-mode .feature-description,
+    body.light-mode .upload-label {
+      color: #25343F;
+      opacity: 0.8;
+    }
+
+    body.light-mode .feature-description {
+      color: #25343F;
+      opacity: 0.7;
+    }
+
     body.light-mode .stat-label {
-      color: #000000;
+      color: #25343F;
+      opacity: 0.7;
     }
 
     body.light-mode .btn-secondary,
     body.light-mode .feature-card,
     body.light-mode .upload-section {
       background: white;
-      border-color: #e2e8f0;
-      color: #000000;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      border-color: #BFC9D1;
+      color: #25343F;
+      box-shadow: 0 2px 8px rgba(37, 52, 63, 0.08);
     }
 
     body.light-mode .feature-title {
-      color: #000000;
+      color: #25343F;
+      font-weight: 700;
+    }
+
+    body.light-mode .upload-section {
+      min-height: 260px;
+    }
+
+    body.light-mode .feature-card {
+      min-height: auto;
     }
 
     body.light-mode .upload-section p {
-      color: #64748b !important;
+      color: #25343F !important;
+      opacity: 0.7;
     }
 
     body.light-mode #repo-url {
       background: white !important;
-      border-color: #cbd5e1 !important;
-      color: #1e293b !important;
+      border-color: #BFC9D1 !important;
+      color: #25343F !important;
+    }
+
+    body.light-mode #repo-url::placeholder {
+      color: #BFC9D1 !important;
+    }
+
+    body.light-mode .repo-section .upload-section {
+      border-style: solid;
+      border-width: 1px;
     }
 
     /* Theme Toggle Button */
@@ -333,12 +391,30 @@
     body.light-mode .theme-toggle:hover {
       background: #f1f5f9;
     }
+
+    /* Light mode user navigation styling */
+    body.light-mode .user-nav-container>div {
+      background: rgba(0, 0, 0, 0.05) !important;
+      border-color: rgba(0, 0, 0, 0.1) !important;
+      color: #1e293b !important;
+    }
+
+    body.light-mode .user-nav-container a {
+      background: rgba(239, 68, 68, 0.15) !important;
+      border-color: rgba(239, 68, 68, 0.3) !important;
+      color: #dc2626 !important;
+    }
+
+    body.light-mode .user-nav-container a:hover {
+      background: rgba(239, 68, 68, 0.25) !important;
+    }
   </style>
 </head>
 
 <body>
   <!-- User Navigation -->
-  <div style="position: absolute; top: 20px; left: 20px; z-index: 1000; display: flex; align-items: center; gap: 15px;">
+  <div class="user-nav-container"
+    style="position: absolute; top: 20px; left: 20px; z-index: 1000; display: flex; align-items: center; gap: 15px;">
     <div
       style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.5rem 1rem; border-radius: 2rem; color: #f8fafc; font-size: 0.9rem;">
       👤 {{ current_user.email or current_user.github_username }}
@@ -374,10 +450,22 @@
             <p style="color: #94a3b8; font-size: 0.875rem; margin-bottom: 1.5rem;">
               Supports ZIP files, individual code files, or entire directories
             </p>
-            <input type="file" name="codebase" id="codebase" class="file-input">
-            <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
-              🔍 Analyze Uploaded Code
-            </button>
+            <input type="file" name="codebase" id="codebase" class="file-input" multiple
+              accept=".py,.js,.java,.cpp,.c,.html,.css,.json,.xml,.yaml,.yml,.sh,.md,.txt,.zip">
+            <input type="file" name="codebase" id="codebase-folder" class="file-input" webkitdirectory directory
+              multiple style="display: none;">
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;">
+              <button type="button" onclick="document.getElementById('codebase').click()" class="btn btn-secondary">
+                📄 Select Files
+              </button>
+              <button type="button" onclick="document.getElementById('codebase-folder').click()"
+                class="btn btn-secondary">
+                📁 Select Folder
+              </button>
+              <button type="submit" class="btn btn-primary" id="analyze-btn">
+                🔍 Analyze Code
+              </button>
+            </div>
           </div>
         </form>
 
@@ -509,6 +597,30 @@
       // Drag and drop functionality
       const uploadArea = document.getElementById('upload-area');
       const fileInput = document.getElementById('codebase');
+      const folderInput = document.getElementById('codebase-folder');
+      const uploadLabel = uploadArea.querySelector('.upload-label');
+      const originalLabelText = uploadLabel.textContent;
+
+      // Sync folder input to file input when folder is selected
+      folderInput.addEventListener('change', (e) => {
+        if (folderInput.files.length > 0) {
+          // Transfer files from folder input to file input
+          const dt = new DataTransfer();
+          for (let file of folderInput.files) {
+            dt.items.add(file);
+          }
+          fileInput.files = dt.files;
+          updateLabel(fileInput.files.length);
+        }
+      });
+
+      function updateLabel(count) {
+        if (count > 0) {
+          uploadLabel.textContent = `✅ ${count} file${count > 1 ? 's' : ''} selected`;
+        } else {
+          uploadLabel.textContent = originalLabelText;
+        }
+      }
 
       ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         uploadArea.addEventListener(eventName, preventDefaults, false);
@@ -535,22 +647,42 @@
         const dt = e.dataTransfer;
         const files = dt.files;
         fileInput.files = files;
+        updateLabel(files.length);
       }, false);
 
-      // Click to upload
-      uploadArea.addEventListener('click', (e) => {
-        if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'LABEL') {
-          fileInput.click();
-        }
-      });
+      // Click to upload - removed to prevent conflict with buttons
+      // uploadArea.addEventListener('click', (e) => {
+      //   if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'LABEL') {
+      //     fileInput.click();
+      //   }
+      // });
+
 
       // Show selected file
       fileInput.addEventListener('change', (e) => {
         if (e.target.files.length > 0) {
-          const fileName = e.target.files[0].name;
-          uploadArea.querySelector('.upload-label').textContent = `📄 Selected: ${fileName}`;
+          updateLabel(e.target.files.length);
         }
       });
+
+      // Form validation before submission
+      const uploadForm = document.getElementById('upload-form');
+      uploadForm.addEventListener('submit', (e) => {
+        const files = fileInput.files;
+        if (!files || files.length === 0) {
+          e.preventDefault();
+          alert('Please select at least one file or folder to analyze');
+          return false;
+        }
+
+        // Show loading state on button
+        const analyzeBtn = document.getElementById('analyze-btn');
+        analyzeBtn.disabled = true;
+        analyzeBtn.innerHTML = '⏳ Uploading...';
+
+        return true;
+      });
+
 
       async function analyzeRepo() {
         const repoUrl = document.getElementById('repo-url').value;

@@ -403,10 +403,224 @@
                 right: 0;
             }
         }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-content {
+            text-align: center;
+            max-width: 500px;
+            padding: 2rem;
+        }
+
+        .scanner-animation {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+
+        .scan-circle {
+            width: 100%;
+            height: 100%;
+            border: 3px solid rgba(59, 130, 246, 0.2);
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .scan-circle-inner {
+            width: 80%;
+            height: 80%;
+            border: 3px solid rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            position: absolute;
+            top: 10%;
+            left: 10%;
+        }
+
+        .scan-line {
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #3b82f6, transparent);
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform-origin: center;
+            animation: scan 2s linear infinite;
+        }
+
+        @keyframes scan {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .scan-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.6;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+
+        .loading-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .loading-status {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(59, 130, 246, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s ease;
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200px 0;
+            }
+
+            100% {
+                background-position: 200px 0;
+            }
+        }
+
+        .scanning-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            text-align: left;
+        }
+
+        .scan-step {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        .scan-step.active {
+            opacity: 1;
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--text-primary);
+        }
+
+        .scan-step.complete {
+            opacity: 0.7;
+            color: #34d399;
+        }
+
+        .scan-step i {
+            font-size: 1.2rem;
+        }
     </style>
 </head>
 
 <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-content">
+            <div class="scanner-animation">
+                <div class="scan-circle"></div>
+                <div class="scan-circle-inner"></div>
+                <div class="scan-line"></div>
+                <div class="scan-icon">🔍</div>
+            </div>
+            <h2 class="loading-title">Analyzing Your Code</h2>
+            <p class="loading-status" id="loading-status">Initializing security scan...</p>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div class="scanning-steps">
+                <div class="scan-step" id="step-1">
+                    <i class="fa-solid fa-file-code"></i>
+                    <span>Parsing code files</span>
+                </div>
+                <div class="scan-step" id="step-2">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Running security scanners</span>
+                </div>
+                <div class="scan-step" id="step-3">
+                    <i class="fa-solid fa-bug"></i>
+                    <span>Detecting vulnerabilities</span>
+                </div>
+                <div class="scan-step" id="step-4">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Generating reports</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Navbar -->
     <nav class="navbar">
         <div class="navbar-brand">
@@ -513,6 +727,79 @@
         const fileTreeData = {{ file_tree | tojson | safe }};
         let currentSessionId = localStorage.getItem('chat_session_id');
 
+        // Loading overlay control
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const progressBar = document.getElementById('progress-bar');
+        const loadingStatus = document.getElementById('loading-status');
+        let currentStep = 0;
+
+        const scanningMessages = [
+            "Initializing security scan...",
+            "Parsing code files...",
+            "Running security scanners...",
+            "Detecting vulnerabilities...",
+            "Analyzing OWASP coverage...",
+            "Generating comprehensive reports...",
+            "Finalizing analysis..."
+        ];
+
+        function updateLoadingProgress(progress) {
+            progressBar.style.width = progress + '%';
+
+            // Update steps based on progress
+            if (progress >= 10 && currentStep < 1) {
+                activateStep(1);
+                loadingStatus.textContent = scanningMessages[1];
+                currentStep = 1;
+            }
+            if (progress >= 30 && currentStep < 2) {
+                completeStep(1);
+                activateStep(2);
+                loadingStatus.textContent = scanningMessages[2];
+                currentStep = 2;
+            }
+            if (progress >= 60 && currentStep < 3) {
+                completeStep(2);
+                activateStep(3);
+                loadingStatus.textContent = scanningMessages[3];
+                currentStep = 3;
+            }
+            if (progress >= 85 && currentStep < 4) {
+                completeStep(3);
+                activateStep(4);
+                loadingStatus.textContent = scanningMessages[4];
+                currentStep = 4;
+            }
+        }
+
+        function activateStep(stepNum) {
+            const step = document.getElementById(`step-${stepNum}`);
+            if (step) step.classList.add('active');
+        }
+
+        function completeStep(stepNum) {
+            const step = document.getElementById(`step-${stepNum}`);
+            if (step) {
+                step.classList.remove('active');
+                step.classList.add('complete');
+                const icon = step.querySelector('i');
+                if (icon) icon.className = 'fa-solid fa-check';
+            }
+        }
+
+        function hideLoadingOverlay() {
+            loadingOverlay.classList.add('hidden');
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+            }, 500);
+        }
+
+        function showLoadingOverlay() {
+            loadingOverlay.style.display = 'flex';
+            loadingOverlay.classList.remove('hidden');
+        }
+
+
         // --- 1. File Tree Logic ---
         function renderFileTree() {
             const container = document.getElementById('file-tree-content');
@@ -592,7 +879,22 @@
                 const badge = document.getElementById('status-badge');
                 const btn = document.getElementById('dashboard-btn');
 
+                // Update progress bar
+                if (data.progress) {
+                    updateLoadingProgress(data.progress);
+                }
+
                 if (data.status === 'complete') {
+                    // Complete all steps
+                    updateLoadingProgress(100);
+                    completeStep(4);
+                    loadingStatus.textContent = "Analysis complete!";
+
+                    // Hide loading overlay after a short delay
+                    setTimeout(() => {
+                        hideLoadingOverlay();
+                    }, 1500);
+
                     badge.classList.add('complete');
                     badge.innerHTML = '<i class="fa-solid fa-check"></i> Analysis Ready';
                     btn.disabled = false;
@@ -602,6 +904,8 @@
 
                     return true; // Done
                 } else if (data.status === 'error') {
+                    loadingStatus.textContent = "Analysis failed";
+                    hideLoadingOverlay();
                     badge.innerHTML = '<i class="fa-solid fa-xmark"></i> Failed';
                     badge.style.color = '#ef4444';
                     return true;
@@ -611,6 +915,9 @@
         }
 
         if (uid) {
+            // Show loading overlay
+            showLoadingOverlay();
+
             // Start polling
             const poll = setInterval(async () => {
                 const done = await checkStatus();
@@ -620,6 +927,7 @@
             renderFileTree();
         } else {
             document.getElementById('status-badge').style.display = 'none';
+            hideLoadingOverlay();
         }
 
         // --- 3. Chat Logic (Simplified) ---

@@ -17,7 +17,11 @@
                 <h1>🔒 Security Dashboard</h1>
                 <div class="header-actions">
                     <a href="/" class="btn-home">🏠 Home</a>
+                    {% if uid %}
+                    <a href="/chat?uid={{ uid }}" class="btn-home">💬 Chat</a>
+                    {% else %}
                     <a href="/chat" class="btn-home">💬 Chat</a>
+                    {% endif %}
                     <button onclick="toggleTheme()" class="btn-home" id="themeToggle">🌗 Contrast</button>
                     <button onclick="refreshDashboard()" class="btn-refresh">🔄 Refresh</button>
                     <a href="{{ url_for('auth.logout') }}" class="btn-home"

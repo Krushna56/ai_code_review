@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, send_from_directory, jsonify, send_file, url_for
+from flask import Flask, render_template, request, redirect, send_from_directory, jsonify, send_file, url_for, session
 import os
 import shutil
 import zipfile
@@ -201,13 +201,17 @@ def index():
     """Main route for file upload and analysis"""
     if request.method == 'POST':
         try:
+            # Clear previous session data for new upload
+            session.pop('current_uid', None)
+            
             # Validate file upload
             if 'codebase' not in request.files:
                 logger.warning("No file part in request")
                 return render_template('index.html', error="No file uploaded")
 
-            uploaded_file = request.files['codebase']
-            if uploaded_file.filename == '':
+            # Get all uploaded files (supports multiple files and folders)
+            uploaded_files = request.files.getlist('codebase')
+            if not uploaded_files or all(f.filename == '' for f in uploaded_files):
                 logger.warning("Empty filename")
                 return render_template('index.html', error="No file selected")
 
@@ -219,15 +223,34 @@ def index():
             os.makedirs(input_path, exist_ok=True)
             os.makedirs(output_path, exist_ok=True)
 
-            # Save uploaded file
-            filename = uploaded_file.filename if uploaded_file.filename else 'upload'
-            file_path = os.path.join(input_path, filename)
-            uploaded_file.save(file_path)
-            logger.info(f"Saved file: {filename}")
-
-            # Extract if ZIP
-            if zipfile.is_zipfile(file_path):
-                extract_zip(file_path, input_path)
+            # Save all uploaded files
+            has_zip = False
+            logger.info(f"Processing {len(uploaded_files)} uploaded files")
+            for uploaded_file in uploaded_files:
+                if uploaded_file.filename == '':
+                    continue
+                    
+                # Preserve folder structure for folder uploads
+                filename = uploaded_file.filename
+                logger.info(f"Processing file: {filename}")
+                
+                # Create subdirectories if needed
+                file_path = os.path.join(input_path, filename)
+                
+                # Only create parent directory if filename contains a path separator
+                file_dir = os.path.dirname(file_path)
+                if file_dir and file_dir != input_path:
+                    os.makedirs(file_dir, exist_ok=True)
+                    logger.info(f"Created directory: {file_dir}")
+                
+                uploaded_file.save(file_path)
+                logger.info(f"Saved file: {filename} to {file_path}")
+                
+                # Check if any file is a ZIP
+                if zipfile.is_zipfile(file_path):
+                    has_zip = True
+                    extract_zip(file_path, input_path)
+                    logger.info(f"Extracted ZIP: {filename}")
 
             # Generate file tree for explorer
             file_tree = generate_file_tree(input_path)
@@ -241,6 +264,11 @@ def index():
             thread.daemon = True
             thread.start()
             logger.info(f"Started background analysis for {uid}")
+            
+            # Store UID in session for persistence across page navigations
+            session['current_uid'] = uid
+            session.modified = True
+            logger.info(f"Stored UID {uid} in session")
 
             # Redirect to chat with file context
             return redirect(f'/chat?uid={uid}')
@@ -353,6 +381,11 @@ def api_analyze_repo():
         thread.start()
         logger.info(f"Started background analysis for cloned repo {uid}")
         
+        # Store UID in session
+        session['current_uid'] = uid
+        session.modified = True
+        logger.info(f"Stored repo UID {uid} in session")
+        
         # Return success with redirect to chat
         return jsonify({
             'status': 'success',
@@ -453,10 +486,16 @@ def api_analyze():
 @login_required
 def chat():
     """Interactive chat page with optional file context"""
-    uid = request.args.get('uid')
+    # Try to get UID from URL first, then from session
+    uid = request.args.get('uid') or session.get('current_uid')
     file_tree = []
     
     if uid:
+        # Store/update in session for future use
+        session['current_uid'] = uid
+        session.modified = True
+        logger.info(f"Chat route using UID: {uid} (from {'URL' if request.args.get('uid') else 'session'})")
+        
         # Load file tree for the uploaded code
         input_path = os.path.join(app.config['UPLOAD_FOLDER'], uid)
         logger.info(f"Loading file tree for UID: {uid}, path: {input_path}")
@@ -472,7 +511,7 @@ def chat():
             if file_tree:
                 logger.info(f"Sample files: {[f['path'] for f in file_tree[:3]]}")
     else:
-        logger.info("No UID provided to chat route")
+        logger.info("No UID provided to chat route (not in URL or session)")
     
     return render_template('chat.html', uid=uid, file_tree=file_tree)
 
@@ -530,7 +569,9 @@ def dashboard():
     try:
         service = get_report_service()
         summary = service.get_summary()
-        return render_template('dashboard.html', summary=summary)
+        uid = session.get('current_uid')  # Get UID from session
+        logger.info(f"Dashboard route using UID: {uid}")
+        return render_template('dashboard.html', summary=summary, uid=uid)
     except Exception as e:
         logger.error(f"Dashboard error: {e}", exc_info=True)
         return render_template('dashboard.html', error=str(e))
