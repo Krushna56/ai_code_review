@@ -77,17 +77,12 @@ def cmd_analyze(args):
 
     summary = results.get('summary', {})
     print(f"Files Analyzed: {summary.get('files_analyzed', 0)}")
-    print(f"[Quality] Code Quality Issues: {
-          summary.get('code_quality_issues', 0)}")
+    print(f"[Quality] Code Quality Issues: {summary.get('code_quality_issues', 0)}")
     print(f"[Security] Security Issues: {summary.get('security_issues', 0)}")
-    print(f"[CVE] CVE Vulnerabilities: {
-          summary.get('cve_vulnerabilities', 0)}")
-    print(f"[Secrets] Hardcoded Secrets: {
-          summary.get('hardcoded_secrets', 0)}")
-    print(f"[Deps] Dependencies Scanned: {
-          summary.get('total_dependencies', 0)}")
-    print(f"[Vuln] Vulnerable Packages: {
-          summary.get('vulnerable_packages', 0)}")
+    print(f"[CVE] CVE Vulnerabilities: {summary.get('cve_vulnerabilities', 0)}")
+    print(f"[Secrets] Hardcoded Secrets: {summary.get('hardcoded_secrets', 0)}")
+    print(f"[Deps] Dependencies Scanned: {summary.get('total_dependencies', 0)}")
+    print(f"[Vuln] Vulnerable Packages: {summary.get('vulnerable_packages', 0)}")
 
     print(f"\nResults saved to: {output_path}")
     print(f"\nGenerated Files:")
