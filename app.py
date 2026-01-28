@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, send_from_directory, jsonify, send_file
+from flask import Flask, render_template, request, redirect, send_from_directory, jsonify, send_file, url_for
 import os
 import shutil
 import zipfile
@@ -6,10 +6,17 @@ import uuid
 import logging
 import subprocess
 import json
+import threading
+from collections import defaultdict
+from pathlib import Path
 
+from flask_login import LoginManager, login_required, current_user
+import config
 from code_analysis import analyze_codebase
 from services.report_service import get_report_service
 from services.feedback_service import get_feedback_service
+from models.user import User
+from auth import auth_bp
 
 
 # Import API v2 routes
@@ -26,13 +33,39 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['PROCESSED_FOLDER'] = 'processed'
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max file size
+app.config['SECRET_KEY'] = config.SECRET_KEY
 
-# Register API v2 blueprint
+# Session configuration - prevent auto-login across server restarts
+app.config['SESSION_PERMANENT'] = False
+app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 hour
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+
+# Initialize Flask-Login
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'auth.login'
+login_manager.login_message = 'Please log in to access this page.'
+login_manager.login_message_category = 'info'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get_by_id(int(user_id))
+
+# Register blueprints
+app.register_blueprint(auth_bp)
 app.register_blueprint(api_v2)
 
 # Ensure directories exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(app.config['PROCESSED_FOLDER'], exist_ok=True)
+
+# Initialize authentication database
+User.init_db()
+logger.info("Authentication database initialized")
+
+# Analysis status tracking (in-memory)
+analysis_status = defaultdict(lambda: {'status': 'pending', 'progress': 0, 'error': None})
 
 LAST_ANALYSIS_PATH_FILE = 'last_analysis_path.txt'
 
@@ -77,6 +110,54 @@ def get_last_analysis_path():
     return None
 
 
+def generate_file_tree(base_path, relative_path=""):
+    """Generate a nested dictionary representing the file structure with relative paths"""
+    full_path = os.path.join(base_path, relative_path)
+    item_name = os.path.basename(relative_path) if relative_path else "Project Root"
+    
+    tree = {'name': item_name, 'type': 'directory', 'children': []}
+    
+    try:
+        items = sorted(os.listdir(full_path))
+        for item in items:
+            item_rel_path = os.path.join(relative_path, item)
+            item_full_path = os.path.join(base_path, item_rel_path)
+            
+            if os.path.isdir(item_full_path):
+                tree['children'].append(generate_file_tree(base_path, item_rel_path))
+            else:
+                tree['children'].append({
+                    'name': item,
+                    'type': 'file',
+                    'path': item_rel_path.replace('\\', '/')  # Ensure forward slashes for web
+                })
+    except Exception as e:
+        logger.error(f"Error generating file tree: {e}")
+        
+    return tree
+
+
+def flatten_file_tree(tree_node, result=None):
+    """Flatten nested file tree into a list of file objects for frontend"""
+    if result is None:
+        result = []
+    
+    if tree_node.get('type') == 'file':
+        # Add file to result
+        result.append({
+            'name': tree_node['name'],
+            'path': tree_node['path'],
+            'type': 'file'
+        })
+    elif tree_node.get('type') == 'directory' and 'children' in tree_node:
+        # Recursively process children
+        for child in tree_node['children']:
+            flatten_file_tree(child, result)
+    
+    return result
+
+
+
 def extract_zip(zip_path, extract_to):
     """Extract ZIP file to directory"""
     try:
@@ -88,7 +169,34 @@ def extract_zip(zip_path, extract_to):
         raise
 
 
+def run_analysis_background(input_path, output_path, uid):
+    """Run analysis in background thread"""
+    try:
+        logger.info(f"Background analysis started for {uid}")
+        analysis_status[uid]['status'] = 'running'
+        analysis_status[uid]['progress'] = 10
+        
+        # Run analysis
+        analysis_result = analyze_codebase(input_path, output_path)
+        analysis_status[uid]['progress'] = 80
+        
+        # Sync to dashboard
+        sync_results_to_dashboard(output_path)
+        save_last_analysis_path(input_path)
+        analysis_status[uid]['progress'] = 90
+        
+        # Mark as complete
+        analysis_status[uid]['status'] = 'complete'
+        analysis_status[uid]['progress'] = 100
+        logger.info(f"Background analysis complete for {uid}")
+    except Exception as e:
+        logger.error(f"Background analysis error for {uid}: {e}", exc_info=True)
+        analysis_status[uid]['status'] = 'error'
+        analysis_status[uid]['error'] = str(e)
+
+
 @app.route('/', methods=['GET', 'POST'])
+@login_required
 def index():
     """Main route for file upload and analysis"""
     if request.method == 'POST':
@@ -121,33 +229,83 @@ def index():
             if zipfile.is_zipfile(file_path):
                 extract_zip(file_path, input_path)
 
-            # Run analysis
-            logger.info(f"Starting analysis for {uid}")
-            analysis_result = analyze_codebase(input_path, output_path)
-            logger.info(f"Analysis complete for {uid}")
+            # Generate file tree for explorer
+            file_tree = generate_file_tree(input_path)
 
-            # Store UID in session for downloads
-            analysis_result['uid'] = uid
+            # Start analysis in background
+            analysis_status[uid] = {'status': 'running', 'progress': 0, 'error': None}
+            thread = threading.Thread(
+                target=run_analysis_background,
+                args=(input_path, output_path, uid)
+            )
+            thread.daemon = True
+            thread.start()
+            logger.info(f"Started background analysis for {uid}")
 
-            # Sync to dashboard and save path
-            sync_results_to_dashboard(output_path)
-            save_last_analysis_path(input_path)
-
-            return render_template('results.html',
-                                   summary=analysis_result['summary'],
-                                   details=analysis_result['details'],
-                                   security=analysis_result['security'],
-                                   linter_results=analysis_result.get(
-                                       'linter_results', {}),
-                                   comprehensive_report=analysis_result.get(
-                                       'comprehensive_report'),
-                                   uid=uid)
+            # Redirect to chat with file context
+            return redirect(f'/chat?uid={uid}')
 
         except Exception as e:
-            logger.error(f"Error during analysis: {e}", exc_info=True)
-            return render_template('index.html', error=f"Analysis failed: {str(e)}")
+            logger.error(f"Error during upload: {e}", exc_info=True)
+            return render_template('index.html', error=str(e))
 
     return render_template('index.html')
+
+
+@app.route('/api/file/content/<uid>/<path:filepath>')
+@login_required
+def get_file_content(uid, filepath):
+    """Get file content for code viewer"""
+    try:
+        input_path = os.path.join(app.config['UPLOAD_FOLDER'], uid)
+        file_path = os.path.join(input_path, filepath)
+        
+        # Security check: prevent directory traversal
+        if not os.path.abspath(file_path).startswith(os.path.abspath(input_path)):
+            return jsonify({'error': 'Invalid file path'}), 403
+        
+        if not os.path.exists(file_path):
+            return jsonify({'error': 'File not found'}), 404
+        
+        # Read file content
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+        except UnicodeDecodeError:
+            # Try with different encoding
+            with open(file_path, 'r', encoding='latin-1') as f:
+                content = f.read()
+        
+        # Detect language from extension
+        ext = filepath.split('.')[-1].lower()
+        language_map = {
+            'py': 'python', 'js': 'javascript', 'java': 'java',
+            'cpp': 'cpp', 'c': 'c', 'html': 'html', 'css': 'css',
+            'json': 'json', 'xml': 'xml', 'yaml': 'yaml', 'yml': 'yaml',
+            'sh': 'bash', 'md': 'markdown', 'txt': 'plaintext'
+        }
+        language = language_map.get(ext, 'plaintext')
+        
+        return jsonify({
+            'content': content,
+            'language': language,
+            'path': filepath
+        })
+    except Exception as e:
+        logger.error(f"Error reading file: {e}")
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/analysis/status/<uid>')
+@login_required
+def get_analysis_status(uid):
+    """Check analysis status"""
+    try:
+        status = analysis_status.get(uid, {'status': 'not_found'})
+        return jsonify(status)
+    except Exception as e:
+        logger.error(f"Error getting status: {e}")
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/api/analyze/repo', methods=['POST'])
@@ -181,14 +339,27 @@ def api_analyze_repo():
 
         # Run analysis
         logger.info(f"Starting analysis for cloned repo {uid}")
-        analysis_result = analyze_codebase(input_path, output_path)
         
-        # Sync to dashboard and save path
-        sync_results_to_dashboard(output_path)
-        save_last_analysis_path(input_path)
-
-        analysis_result['uid'] = uid
-        return jsonify(analysis_result), 200
+        # Generate file tree
+        file_tree = generate_file_tree(input_path)
+        
+        # Start analysis in background
+        analysis_status[uid] = {'status': 'running', 'progress': 0, 'error': None}
+        thread = threading.Thread(
+            target=run_analysis_background,
+            args=(input_path, output_path, uid)
+        )
+        thread.daemon = True
+        thread.start()
+        logger.info(f"Started background analysis for cloned repo {uid}")
+        
+        # Return success with redirect to chat
+        return jsonify({
+            'status': 'success',
+            'message': 'Repository cloned successfully',
+            'uid': uid,
+            'redirect': f'/chat?uid={uid}'
+        }), 200
 
     except Exception as e:
         logger.error(f"Error during repo analysis: {e}", exc_info=True)
@@ -208,6 +379,35 @@ def download_report(uid, filename):
     except Exception as e:
         logger.error(f"Error downloading file: {e}")
         return str(e), 500
+
+
+@app.route('/api/file/<uid>')
+def api_get_file_content(uid):
+    """Get content of a specific file"""
+    try:
+        if 'path' not in request.args:
+            return jsonify({'error': 'Path parameter required'}), 400
+            
+        rel_path = request.args.get('path')
+        # specific security check to prevent directory traversal
+        if '..' in rel_path or rel_path.startswith('/'):
+             return jsonify({'error': 'Invalid path'}), 400
+
+        base_path = os.path.join(app.config['UPLOAD_FOLDER'], uid)
+        file_path = os.path.join(base_path, rel_path)
+        
+        if not os.path.exists(file_path):
+             return jsonify({'error': 'File not found'}), 404
+             
+        # Read file content
+        with open(file_path, 'r', encoding='utf-8', errors='replace') as f:
+            content = f.read()
+            
+        return jsonify({'content': content, 'path': rel_path}), 200
+        
+    except Exception as e:
+        logger.error(f"Error reading file detail: {e}")
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/api/analyze', methods=['POST'])
@@ -247,6 +447,41 @@ def api_analyze():
     except Exception as e:
         logger.error(f"API error: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500
+
+
+@app.route('/chat')
+@login_required
+def chat():
+    """Interactive chat page with optional file context"""
+    uid = request.args.get('uid')
+    file_tree = []
+    
+    if uid:
+        # Load file tree for the uploaded code
+        input_path = os.path.join(app.config['UPLOAD_FOLDER'], uid)
+        logger.info(f"Loading file tree for UID: {uid}, path: {input_path}")
+        logger.info(f"Path exists: {os.path.exists(input_path)}")
+        
+        if os.path.exists(input_path):
+            tree_structure = generate_file_tree(input_path)
+            logger.info(f"Generated tree with {len(tree_structure.get('children', []))} children")
+            
+            file_tree = flatten_file_tree(tree_structure)
+            logger.info(f"Flattened to {len(file_tree)} files")
+            
+            if file_tree:
+                logger.info(f"Sample files: {[f['path'] for f in file_tree[:3]]}")
+    else:
+        logger.info("No UID provided to chat route")
+    
+    return render_template('chat.html', uid=uid, file_tree=file_tree)
+
+
+@app.route('/code-viewer/<uid>')
+@login_required
+def code_viewer_redirect(uid):
+    """Legacy redirect for code viewer"""
+    return redirect(url_for('chat', uid=uid))
 
 
 @app.route('/health')
@@ -289,6 +524,7 @@ def api_query():
 # ====================
 
 @app.route('/dashboard')
+@login_required
 def dashboard():
     """Security dashboard page"""
     try:

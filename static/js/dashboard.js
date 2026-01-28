@@ -42,7 +42,7 @@ async function loadSummary() {
     document.getElementById("riskScoreValue").textContent =
       riskScore.toFixed(2);
     document.getElementById("lastScan").textContent = formatDate(
-      data.last_scan
+      data.last_scan,
     );
 
     // Update risk banner color
@@ -250,17 +250,17 @@ async function loadFindings(severity = null) {
         (finding) => `
             <tr>
                 <td><code>${escapeHtml(
-                  finding.id || finding.cve_id || "N/A"
+                  finding.id || finding.cve_id || "N/A",
                 )}</code></td>
                 <td><span class="severity-badge severity-${(
                   finding.severity || "unknown"
                 ).toLowerCase()}">${finding.severity || "UNKNOWN"}</span></td>
                 <td>${escapeHtml(
-                  finding.title || finding.summary || "No title"
+                  finding.title || finding.summary || "No title",
                 )}</td>
                 <td>${escapeHtml(finding.owasp_name || "Not Mapped")}</td>
                 <td><code>${escapeHtml(
-                  getFileName(finding.file_path || finding.package || "N/A")
+                  getFileName(finding.file_path || finding.package || "N/A"),
                 )}</code></td>
                 <td>
                     <div class="feedback-actions">
@@ -288,7 +288,7 @@ async function loadFindings(severity = null) {
                     }')" class="btn-view">View</button>
                 </td>
             </tr>
-        `
+        `,
       )
       .join("");
   } catch (error) {
@@ -328,7 +328,7 @@ async function loadRemediationPlan() {
                       item.severity || "unknown"
                     ).toLowerCase()}">${item.severity}</span>
                     <span class="remediation-title">${escapeHtml(
-                      item.title
+                      item.title,
                     )}</span>
                 </div>
                 <div class="remediation-details">
@@ -337,7 +337,7 @@ async function loadRemediationPlan() {
                     <p>${escapeHtml(item.action)}</p>
                 </div>
             </div>
-        `
+        `,
       )
       .join("");
   } catch (error) {
@@ -364,7 +364,7 @@ async function viewFinding(findingId) {
             <div class="finding-details">
                 <div class="detail-row">
                     <strong>ID:</strong> <code>${escapeHtml(
-                      finding.id || finding.cve_id
+                      finding.id || finding.cve_id,
                     )}</code>
                 </div>
                 <div class="detail-row">
@@ -375,27 +375,27 @@ async function viewFinding(findingId) {
                 </div>
                 <div class="detail-row">
                     <strong>OWASP Category:</strong> ${escapeHtml(
-                      finding.owasp_name || "Not Mapped"
+                      finding.owasp_name || "Not Mapped",
                     )}
                 </div>
                 ${
                   finding.file_path
                     ? `<div class="detail-row"><strong>File:</strong> <code>${escapeHtml(
-                        finding.file_path
+                        finding.file_path,
                       )}:${finding.line_number || 0}</code></div>`
                     : ""
                 }
                 ${
                   finding.description
                     ? `<div class="detail-row"><strong>Description:</strong> <p>${escapeHtml(
-                        finding.description
+                        finding.description,
                       )}</p></div>`
                     : ""
                 }
                 ${
                   finding.summary
                     ? `<div class="detail-row"><strong>Summary:</strong> <p>${escapeHtml(
-                        finding.summary
+                        finding.summary,
                       )}</p></div>`
                     : ""
                 }
@@ -444,21 +444,21 @@ function filterFindings() {
 async function refreshDashboard() {
   const btn = document.querySelector(".btn-refresh");
   const originalText = btn.innerHTML;
-  
+
   try {
     btn.disabled = true;
     btn.innerHTML = "⏳ Scanning...";
-    
+
     // Clear cache and trigger full re-scan
     const response = await fetch("/api/security/refresh");
     const result = await response.json();
-    
+
     if (response.ok) {
-        // Reload all data
-        await loadDashboard();
-        showToast("Dashboard updated with fresh scan results");
+      // Reload all data
+      await loadDashboard();
+      showToast("Dashboard updated with fresh scan results");
     } else {
-        showError("Refresh failed: " + (result.error || "Unknown error"));
+      showError("Refresh failed: " + (result.error || "Unknown error"));
     }
   } catch (error) {
     console.error("Error refreshing dashboard:", error);
@@ -532,7 +532,7 @@ async function submitFeedback(findingId, type, event) {
 
     if (response.ok) {
       showToast(
-        `Feedback saved: ${type === "positive" ? "Correct" : "False Positive"}`
+        `Feedback saved: ${type === "positive" ? "Correct" : "False Positive"}`,
       );
 
       // Update button styles if possible
@@ -576,3 +576,32 @@ window.onclick = function (event) {
     modal.style.display = "none";
   }
 };
+
+/**
+ * Toggle Monochrome Theme
+ */
+function toggleTheme() {
+  const body = document.body;
+  const isMonochrome = body.classList.toggle("monochrome");
+
+  // Update button text/icon
+  const btn = document.getElementById("themeToggle");
+  if (btn) {
+    btn.innerHTML = isMonochrome ? "🌗 Color" : "🌗 Contrast"; // Toggling back to "Color" implies exiting contrast mode
+  }
+
+  // Save preference
+  localStorage.setItem("theme", isMonochrome ? "monochrome" : "default");
+}
+
+/**
+ * Initialize Theme on Load
+ */
+document.addEventListener("DOMContentLoaded", function () {
+  const savedTheme = localStorage.getItem("theme");
+  if (savedTheme === "monochrome") {
+    document.body.classList.add("monochrome");
+    const btn = document.getElementById("themeToggle");
+    if (btn) btn.innerHTML = "🌗 Color";
+  }
+});

@@ -18,7 +18,10 @@
                 <div class="header-actions">
                     <a href="/" class="btn-home">🏠 Home</a>
                     <a href="/chat" class="btn-home">💬 Chat</a>
+                    <button onclick="toggleTheme()" class="btn-home" id="themeToggle">🌗 Contrast</button>
                     <button onclick="refreshDashboard()" class="btn-refresh">🔄 Refresh</button>
+                    <a href="{{ url_for('auth.logout') }}" class="btn-home"
+                        style="background: rgba(239, 68, 68, 0.2); border-color: #ef4444;">🚪 Logout</a>
                 </div>
             </div>
         </header>

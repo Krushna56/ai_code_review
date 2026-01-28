@@ -4,136 +4,704 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Code Chat - AI Code Review Platform</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
-    <!-- Prism.js for syntax highlighting -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
-    <!-- Marked.js for markdown rendering -->
+    <title>AI Code Review - Workspace</title>
+    <!-- Highlight.js for syntax highlighting -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Markdown rendering -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --bg-panel: #1e293b;
+            --border-color: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --success: #10b981;
+            --header-height: 60px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        .navbar {
+            height: var(--header-height);
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            z-index: 10;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.25rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .navbar-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 0.875rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background: var(--border-color);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-primary:disabled {
+            background: var(--border-color);
+            border-color: var(--border-color);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .btn-logout {
+            color: #fca5a5;
+            border-color: rgba(239, 68, 68, 0.4);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-badge.complete {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border-color: rgba(16, 185, 129, 0.4);
+        }
+
+        /* Main Layout */
+        .workspace {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - var(--header-height));
+            overflow: hidden;
+        }
+
+        /* 1. File Explorer (Left) */
+        .file-explorer {
+            width: 280px;
+            background: var(--bg-dark);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .panel-title {
+            padding: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .file-tree {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+
+        .file-item {
+            padding: 0.4rem 0.75rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1px;
+        }
+
+        .file-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .file-item.active {
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+        }
+
+        .folder-label {
+            padding: 0.4rem 0.75rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        /* 2. Code Viewer (Middle) */
+        .code-viewer {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #1e1e1e;
+            /* Editor dark bg */
+            min-width: 0;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .editor-header {
+            height: 40px;
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--auth-secondary);
+        }
+
+        .editor-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            position: relative;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-secondary);
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        pre {
+            margin: 0;
+        }
+
+        code {
+            font-family: 'Fira Code', 'cascadia code', monospace !important;
+            font-size: 14px;
+            line-height: 1.5;
+            background: transparent !important;
+        }
+
+        /* 3. Chat Panel (Right) */
+        .chat-panel {
+            width: 400px;
+            background: var(--bg-panel);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            display: flex;
+            gap: 0.75rem;
+            max-width: 95%;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+            align-self: flex-end;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            background: #2d3748;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            border-top-left-radius: 0.25rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .message.user .message-content {
+            background: var(--accent);
+            color: white;
+            border-radius: 1rem;
+            border-top-right-radius: 0.25rem;
+        }
+
+        .chat-input-area {
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-panel);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--bg-dark);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        #chat-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            resize: none;
+            height: 24px;
+            min-height: 24px;
+            max-height: 100px;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .send-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 12px;
+            height: 12px;
+            border: 2px solid currentColor;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Resizing logic (simple media queries for now) */
+        @media (max-width: 1024px) {
+            .file-explorer {
+                width: 220px;
+            }
+
+            .chat-panel {
+                width: 320px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .file-explorer {
+                display: none;
+            }
+
+            /* Hide files on mobile for now */
+            .chat-panel {
+                width: 100%;
+                position: absolute;
+                height: 100%;
+                right: -100%;
+                transition: 0.3s;
+            }
+
+            .chat-panel.open {
+                right: 0;
+            }
+        }
+    </style>
 </head>
 
-<body class="chat-page">
-    <div class="chat-container">
-        <!-- Left Panel: Code Viewer -->
-        <div class="code-panel">
-            <div class="panel-header">
-                <h2>📄 Code Context</h2>
-                <div class="code-actions">
-                    <a href="/" class="btn-icon" title="Back to Home" style="text-decoration: none;">
-                        🏠 Home
-                    </a>
-                    <button class="btn-icon" id="upload-code" title="Upload code file">
-                        📁 Upload
-                    </button>
-                    <button class="btn-icon" id="clear-code" title="Clear code">
-                        🗑️ Clear
-                    </button>
-                </div>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <i class="fa-solid fa-code-branch"></i>
+            AI Code Review
+        </div>
+
+        <div class="navbar-actions">
+            <!-- Analysis Status -->
+            <div id="status-badge" class="status-badge">
+                <div class="spinner"></div>
+                <span>Analyzing...</span>
             </div>
 
-            <div class="code-viewer" id="code-viewer">
+            <button id="dashboard-btn" class="btn btn-primary" disabled onclick="window.location.href='/dashboard'">
+                <i class="fa-solid fa-chart-line"></i> Dashboard
+            </button>
+            <a href="/" class="btn">
+                <i class="fa-solid fa-home"></i> Home
+            </a>
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-logout">
+                <i class="fa-solid fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </nav>
+
+    <!-- Workspace -->
+    <div class="workspace">
+        <!-- 1. File Explorer -->
+        <div class="file-explorer" id="file-explorer">
+            <div class="panel-title">
+                <i class="fa-solid fa-folder-tree"></i> Project Files
+            </div>
+            <div class="file-tree" id="file-tree-content">
+                <!-- Fallback if no files -->
+                {% if file_tree %}
+                <!-- JS will populate better structure, but here's basics -->
+                {% else %}
+                <div style="padding:1rem; color:#666; font-size:0.9rem;">
+                    <i class="fa-solid fa-cloud-upload"></i> No files connected
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 2. Code Viewer -->
+        <div class="code-viewer">
+            <div class="editor-header">
+                <span id="current-filename"><i class="fa-regular fa-file"></i> No file selected</span>
+            </div>
+            <div class="editor-content" id="code-content-area">
                 <div class="empty-state">
-                    <div class="empty-icon">💻</div>
-                    <h3>No Code Loaded</h3>
-                    <p>Upload a code file or paste code to analyze with AI</p>
-                    <label for="file-input" class="btn-primary">
-                        Choose File
-                    </label>
-                    <input type="file" id="file-input" accept=".py,.js,.java,.go,.cpp,.c,.rb,.php,.ts,.jsx,.tsx"
-                        style="display: none;">
-                </div>
-
-                <div class="code-content" id="code-content" style="display: none;">
-                    <div class="code-header">
-                        <span class="filename" id="filename">untitled</span>
-                        <span class="file-size" id="file-size">0 KB</span>
-                    </div>
-                    <pre><code class="language-python" id="code-display"></code></pre>
+                    <i class="fa-brands fa-python"></i>
+                    <h3>Select a file to view code</h3>
+                    <p>Analysis is running in the background.</p>
                 </div>
             </div>
         </div>
 
-        <!-- Right Panel: Chat Interface -->
+        <!-- 3. Chat Panel -->
         <div class="chat-panel">
-            <div class="panel-header">
-                <h2>🤖 AI Assistant</h2>
-                <div class="chat-actions">
-                    <a href="/dashboard" class="btn-icon" title="View Security Dashboard"
-                        style="text-decoration: none;">
-                        📊 Dashboard
-                    </a>
-                    <button class="btn-icon" id="export-chat" title="Export conversation">
-                        📥 Export
-                    </button>
-                    <button class="btn-icon" id="new-session" title="New chat session">
-                        ➕ New
-                    </button>
-                </div>
+            <div class="panel-title">
+                <i class="fa-solid fa-robot"></i> AI Assistant
             </div>
-
-            <!-- Chat Messages -->
             <div class="chat-messages" id="chat-messages">
-                <div class="welcome-message">
-                    <div class="ai-avatar">🤖</div>
+                <div class="message">
+                    <div class="avatar">🤖</div>
                     <div class="message-content">
-                        <h3>Welcome to AI Code Chat!</h3>
-                        <p>I'm your AI assistant for code security and quality analysis. I can help you:</p>
-                        <ul>
-                            <li>🔒 Find security vulnerabilities</li>
-                            <li>🔄 Suggest refactoring improvements</li>
-                            <li>📖 Explain complex code patterns</li>
-                            <li>🐛 Identify potential bugs</li>
+                        Hello! I'm analyzing your code in the background. Once complete, I'll have access to all
+                        security findings, vulnerabilities, and OWASP coverage data. You can ask me questions like:
+                        <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                            <li>What security vulnerabilities did you find?</li>
+                            <li>Show me the critical issues</li>
+                            <li>What's the OWASP Top 10 coverage?</li>
+                            <li>Explain the CVE vulnerabilities</li>
                         </ul>
-                        <p class="hint">Upload some code to get started, or ask me anything!</p>
+                        You can also select a file from the left to discuss specific code.
                     </div>
                 </div>
             </div>
 
-            <!-- Typing Indicator -->
-            <div class="typing-indicator" id="typing-indicator" style="display: none;">
-                <div class="ai-avatar">🤖</div>
-                <div class="typing-dots">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
+            <!-- Typing Indicator (Hidden by default) -->
+            <div class="typing-indicator" id="typing-indicator" style="display: none; padding: 0 1rem 1rem;">
+                <span style="font-size: 0.8rem; color: #666;">🤖 AI is thinking...</span>
             </div>
 
-            <!-- Input Area -->
-            <div class="chat-input-container">
-                <div class="chat-input-wrapper">
-                    <textarea id="chat-input" class="chat-input"
-                        placeholder="Ask about security, refactoring, or code explanation..." rows="1"></textarea>
-                    <button class="send-button" id="send-button" title="Send message (Enter)">
-                        <span class="send-icon">▶</span>
+            <div class="chat-input-area">
+                <div class="input-wrapper">
+                    <textarea id="chat-input" placeholder="Ask about security, bugs, or refactoring..."
+                        rows="1"></textarea>
+                    <button id="send-btn" class="send-btn">
+                        <i class="fa-solid fa-paper-plane"></i>
                     </button>
-                </div>
-                <div class="input-hints">
-                    <span class="hint-item">💡 Try: "Find security issues"</span>
-                    <span class="hint-item">💡 Try: "How can I improve this?"</span>
-                    <span class="hint-item">💡 Try: "Explain this function"</span>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loading-overlay" style="display: none;">
-        <div class="loading-spinner"></div>
-        <p>Initializing chat session...</p>
-    </div>
-
-    <!-- Toast Notifications -->
-    <div class="toast-container" id="toast-container"></div>
 
     <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
-    <script src="{{ url_for('static', filename='js/stream-handler.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        // Data from server
+        const uid = "{{ uid }}";
+        const fileTreeData = {{ file_tree | tojson | safe }};
+        let currentSessionId = localStorage.getItem('chat_session_id');
+
+        // --- 1. File Tree Logic ---
+        function renderFileTree() {
+            const container = document.getElementById('file-tree-content');
+            if (!fileTreeData || fileTreeData.length === 0) {
+                container.innerHTML = '<div style="padding:1rem; opacity:0.6;">No files available</div>';
+                return;
+            }
+
+            // Simple flat grouping for demo (Production would be recursive)
+            const grouped = {};
+            fileTreeData.forEach(file => {
+                const parts = file.path.split('/');
+                const dir = parts.length > 1 ? parts[0] : '/';
+                if (!grouped[dir]) grouped[dir] = [];
+                grouped[dir].push(file);
+            });
+
+            let html = '';
+            for (const [dir, files] of Object.entries(grouped)) {
+                if (dir !== '/') {
+                    html += `<div class="folder-label"><i class="fa-solid fa-folder"></i> ${dir}</div>`;
+                }
+                files.forEach(file => {
+                    const icon = getIcon(file.name);
+                    html += `<div class="file-item" onclick="loadCode('${file.path}', this)">
+                        <i class="${icon}"></i> ${file.name}
+                    </div>`;
+                });
+            }
+            container.innerHTML = html;
+        }
+
+        function getIcon(name) {
+            if (name.endsWith('.py')) return 'fa-brands fa-python';
+            if (name.endsWith('.js')) return 'fa-brands fa-js';
+            if (name.endsWith('.html')) return 'fa-brands fa-html5';
+            if (name.endsWith('.css')) return 'fa-brands fa-css3';
+            return 'fa-solid fa-file-code';
+        }
+
+        async function loadCode(path, element) {
+            // Update UI
+            document.querySelectorAll('.file-item').forEach(el => el.classList.remove('active'));
+            if (element) element.classList.add('active');
+
+            document.getElementById('current-filename').innerHTML = `<i class="fa-solid fa-file"></i> ${path}`;
+            document.getElementById('code-content-area').innerHTML =
+                `<div class="empty-state"><div class="spinner" style="width:30px;height:30px;"></div></div>`;
+
+            // Fetch Content
+            try {
+                const res = await fetch(`/api/file/content/${uid}/${path}`);
+                const data = await res.json();
+
+                if (data.error) throw new Error(data.error);
+
+                // Render Code
+                const escaped = data.content.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                document.getElementById('code-content-area').innerHTML =
+                    `<pre><code class="language-${data.language}">${escaped}</code></pre>`;
+
+                hljs.highlightAll();
+
+            } catch (err) {
+                document.getElementById('code-content-area').innerHTML =
+                    `<div class="empty-state" style="color:#ef4444"><i class="fa-solid fa-triangle-exclamation"></i><p>Error loading file: ${err.message}</p></div>`;
+            }
+        }
+
+        // --- 2. Dashboard status polling ---
+        async function checkStatus() {
+            if (!uid) return;
+            try {
+                const res = await fetch(`/api/analysis/status/${uid}`);
+                const data = await res.json();
+
+                const badge = document.getElementById('status-badge');
+                const btn = document.getElementById('dashboard-btn');
+
+                if (data.status === 'complete') {
+                    badge.classList.add('complete');
+                    badge.innerHTML = '<i class="fa-solid fa-check"></i> Analysis Ready';
+                    btn.disabled = false;
+
+                    // Notify user in chat that findings are now available
+                    appendMessage('ai', '✅ **Analysis Complete!** I now have access to all security findings and can answer your questions about vulnerabilities, OWASP coverage, and CVE details. Try asking me about the results!');
+
+                    return true; // Done
+                } else if (data.status === 'error') {
+                    badge.innerHTML = '<i class="fa-solid fa-xmark"></i> Failed';
+                    badge.style.color = '#ef4444';
+                    return true;
+                }
+            } catch (e) { console.error("Poll error", e); }
+            return false;
+        }
+
+        if (uid) {
+            // Start polling
+            const poll = setInterval(async () => {
+                const done = await checkStatus();
+                if (done) clearInterval(poll);
+            }, 3000);
+            checkStatus(); // Initial check
+            renderFileTree();
+        } else {
+            document.getElementById('status-badge').style.display = 'none';
+        }
+
+        // --- 3. Chat Logic (Simplified) ---
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const messages = document.getElementById('chat-messages');
+
+        // Create session if needed
+        async function initSession() {
+            if (!currentSessionId) {
+                try {
+                    const res = await fetch('/api/v2/chat/session', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            user_id: 'current_user', // Backend handles real user
+                            metadata: { uid: uid }
+                        })
+                    });
+                    const data = await res.json();
+                    currentSessionId = data.session_id;
+                    localStorage.setItem('chat_session_id', currentSessionId);
+                } catch (e) { console.error("Session init failed", e); }
+            }
+        }
+
+        async function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            if (!currentSessionId) await initSession();
+
+            // Append User Message
+            appendMessage('user', text);
+            chatInput.value = '';
+
+            // Show typing
+            document.getElementById('typing-indicator').style.display = 'block';
+
+            try {
+                const res = await fetch('/api/v2/chat/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        session_id: currentSessionId,
+                        message: text
+                    })
+                });
+                const data = await res.json();
+
+                document.getElementById('typing-indicator').style.display = 'none';
+                appendMessage('ai', data.content); // Simplified Markdown support needed here
+
+            } catch (e) {
+                document.getElementById('typing-indicator').style.display = 'none';
+                appendMessage('ai', "Sorry, I encountered an error. Please try again.");
+            }
+        }
+
+        function appendMessage(role, text) {
+            const div = document.createElement('div');
+            div.className = `message ${role}`;
+            div.innerHTML = `
+                <div class="avatar">${role === 'user' ? '👤' : '🤖'}</div>
+                <div class="message-content">${marked.parse(text)}</div>
+            `;
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Initialize session on load
+        initSession();
+
+    </script>
 </body>
 
 </html>

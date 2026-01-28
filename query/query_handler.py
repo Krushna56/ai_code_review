@@ -77,8 +77,19 @@ class QueryHandler:
             }
 
         # Use specialized RAG prompt based on intent
+        
+        # Inject Dashboard Data
+        from services.report_service import get_report_service
+        report_service = get_report_service()
+        latest_report = report_service.get_latest_report()
+        
+        findings = []
+        if latest_report:
+            findings.extend(latest_report.get('security_findings', []))
+            findings.extend(latest_report.get('cve_findings', []))
+
         prompt = RAGPromptTemplates.get_prompt_for_intent(
-            intent, results, question)
+            intent, results, question, findings=findings)
 
         # Generate answer using security reviewer with RAG prompt
         answer = self.security_reviewer.generate(

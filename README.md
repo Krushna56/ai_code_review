@@ -1,5 +1,7 @@
 # AI-Powered Code Review Platform
 
+> 📚 **[View Detailed Architecture Documentation](README_ARCHITECTURE.md)** - Complete system architecture, components, and technical details
+
 A next-generation AI-driven code review platform using hybrid ML + LLM architecture. Combines classical machine learning, deep learning models, semantic embeddings, and specialized LLM agents to provide comprehensive, context-aware code reviews.
 
 ## Features

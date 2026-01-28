@@ -182,13 +182,21 @@ Focus on actionable, developer-friendly guidance."""
 
     @staticmethod
     def general_security_prompt(code_chunks: List[Dict[str, Any]],
-                                query: str) -> str:
+                                query: str,
+                                findings: Optional[List[Dict[str, Any]]] = None) -> str:
         """General security analysis prompt"""
         context = RAGPromptTemplates._format_code_context(code_chunks)
+        
+        findings_context = ""
+        if findings:
+            findings_context = RAGPromptTemplates._format_findings_context(findings)
 
         return f"""You are a senior security engineer conducting a comprehensive code security review.
 
 **User Question**: {query}
+
+**Existing Dashboard Findings**:
+{findings_context}
 
 **Code to Review**:
 {context}
@@ -208,7 +216,7 @@ Focus on actionable, developer-friendly guidance."""
    - Exploitation scenario
    - Remediation guidance with code examples
 
-3. Provide prioritized recommendations
+3. Provide prioritized recommendations. Use the Existing Findings to provide context if the user asks about specific dashboard items.
 
 **Response Format**:
 - **Security Overview**: High-level summary
@@ -243,8 +251,27 @@ Focus on actionable, developer-friendly guidance."""
         return "\n".join(formatted)
 
     @staticmethod
+    def _format_findings_context(findings: List[Dict[str, Any]]) -> str:
+        """Format findings into readable context"""
+        if not findings:
+            return "No previous findings available."
+            
+        formatted = []
+        for i, f in enumerate(findings[:10], 1): # Limit to top 10 to fit context
+            formatted.append(f"""
+{i}. [{f.get('severity', 'UNKNOWN')}] {f.get('title', 'Issue')} 
+   File: {f.get('file_path', 'unknown')}:{f.get('line_number', '?')}
+   Type: {f.get('type', 'general')}
+""")
+        
+        if len(findings) > 10:
+            formatted.append(f"\n...and {len(findings) - 10} more findings.")
+            
+        return "".join(formatted)
+
+    @staticmethod
     def get_prompt_for_intent(intent: str, code_chunks: List[Dict[str, Any]],
-                              query: str) -> str:
+                              query: str, findings: Optional[List[Dict[str, Any]]] = None) -> str:
         """
         Get appropriate prompt template based on intent
 
@@ -252,6 +279,7 @@ Focus on actionable, developer-friendly guidance."""
             intent: Detected query intent
             code_chunks: Retrieved code chunks
             query: User's question
+            findings: Optional list of existing security findings
 
         Returns:
             Formatted prompt
@@ -262,9 +290,17 @@ Focus on actionable, developer-friendly guidance."""
             'xss': RAGPromptTemplates.xss_vulnerability_prompt,
             'pattern': RAGPromptTemplates.insecure_crypto_prompt,  # Can be refined
             'location': RAGPromptTemplates.location_finder_prompt,
-            'general': RAGPromptTemplates.general_security_prompt,
+            'general': lambda c, q: RAGPromptTemplates.general_security_prompt(c, q, findings),
         }
 
+        # For specific intents, we might not pass findings to keep prompt focused, 
+        # or we could update all signatures. For now, only general prompt uses findings.
         prompt_func = prompt_map.get(
-            intent, RAGPromptTemplates.general_security_prompt)
-        return prompt_func(code_chunks, query)
+            intent, lambda c, q: RAGPromptTemplates.general_security_prompt(c, q, findings))
+            
+        # Handle the lambda wrapper or direct function
+        if prompt_func.__code__.co_argcount == 2:
+             return prompt_func(code_chunks, query)
+        else:
+             # Fallback if we mapped to a function that doesn't accept findings (not reachable with current lambda setup but safe)
+             return prompt_func(code_chunks, query)

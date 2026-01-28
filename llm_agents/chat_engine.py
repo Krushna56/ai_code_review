@@ -5,8 +5,11 @@ Interactive conversational AI engine for code discussions with context retention
 """
 
 import logging
+import os
+import json
 from typing import Dict, Any, Optional, List, Generator
 from services.conversation_manager import ConversationManager
+from services.report_service import get_report_service
 from llm_agents.security_reviewer import SecurityReviewer
 from llm_agents.refactor_agent import RefactorAgent
 import config
@@ -22,12 +25,13 @@ class ChatEngine:
         self.conversation_manager = ConversationManager()
         self.security_reviewer = SecurityReviewer()
         self.refactor_agent = RefactorAgent()
+        self.report_service = get_report_service()
 
         # Context window management (in tokens)
         self.max_context_tokens = getattr(config, 'CHAT_CONTEXT_WINDOW', 4000)
         self.max_history_messages = getattr(config, 'CHAT_MAX_HISTORY', 50)
 
-        logger.info("Initialized ChatEngine")
+        logger.info("Initialized ChatEngine with dashboard integration")
 
     def start_session(self, user_id: str, metadata: Optional[Dict[str, Any]] = None) -> str:
         """
@@ -257,17 +261,54 @@ class ChatEngine:
         else:
             # Default to security reviewer for general queries
             return self.security_reviewer
+    
+    def _load_analysis_context(self, uid: str) -> Optional[Dict[str, Any]]:
+        """
+        Load analysis findings for a specific UID
+        
+        Args:
+            uid: Unique identifier for the analysis
+            
+        Returns:
+            Dictionary with findings data or None if not found
+        """
+        try:
+            # Try to load from processed folder
+            processed_path = os.path.join('processed', uid, 'security_report.json')
+            if os.path.exists(processed_path):
+                with open(processed_path, 'r', encoding='utf-8') as f:
+                    report_data = json.load(f)
+                    
+                security_findings = report_data.get('security_findings', [])
+                cve_findings = report_data.get('cve_findings', [])
+                executive_summary = report_data.get('executive_summary', {})
+                
+                logger.info(f"Loaded UID-specific findings for {uid}: {len(security_findings)} findings")
+                
+                return {
+                    'summary': executive_summary,
+                    'security_findings': security_findings[:10],  # Top 10 findings
+                    'cve_findings': cve_findings[:5],  # Top 5 CVEs
+                    'total_findings': len(security_findings),
+                    'total_cves': len(cve_findings),
+                    'has_data': True,
+                    'uid': uid
+                }
+        except Exception as e:
+            logger.warning(f"Could not load UID-specific findings for {uid}: {e}")
+        
+        return None
 
     def _build_context(self, session_id: str, code_context: Optional[str] = None) -> Dict[str, Any]:
         """
-        Build context from conversation history and code
+        Build context from conversation history, code, and dashboard data
 
         Args:
             session_id: Session identifier
             code_context: Optional code snippet
 
         Returns:
-            Context dictionary
+            Context dictionary with dashboard data included
         """
         # Get recent conversation history
         history = self.conversation_manager.get_conversation_history(
@@ -282,22 +323,104 @@ class ChatEngine:
 
         if code_context:
             context['code'] = code_context
+        
+        # Try to load UID-specific findings first
+        session_info = self.conversation_manager.get_session_info(session_id)
+        uid = None
+        if session_info and session_info.get('metadata'):
+            uid = session_info['metadata'].get('uid')
+        
+        if uid:
+            # Load UID-specific findings
+            uid_findings = self._load_analysis_context(uid)
+            if uid_findings:
+                context['dashboard_data'] = uid_findings
+                logger.debug(f"Loaded UID-specific findings for {uid}")
+                return context
+        
+        # Fallback to latest analysis data from dashboard
+        try:
+            latest_report = self.report_service.get_latest_report()
+            if latest_report and latest_report.get('executive_summary'):
+                security_findings = latest_report.get('security_findings', [])
+                cve_findings = latest_report.get('cve_findings', [])
+                
+                context['dashboard_data'] = {
+                    'summary': latest_report.get('executive_summary', {}),
+                    'security_findings': security_findings[:10],  # Top 10 findings
+                    'cve_findings': cve_findings[:5],  # Top 5 CVEs
+                    'total_findings': len(security_findings),
+                    'total_cves': len(cve_findings),
+                    'has_data': True
+                }
+                logger.debug(f"Loaded dashboard data: {len(security_findings)} findings, {len(cve_findings)} CVEs")
+        except Exception as e:
+            logger.warning(f"Could not load dashboard data for chat context: {e}")
+            context['dashboard_data'] = {'has_data': False}
 
         return context
 
     def _build_prompt(self, message: str, context: Dict[str, Any], intent: str) -> str:
         """
-        Build prompt with conversation history and context
+        Build prompt with dashboard data, conversation history, and context
 
         Args:
             message: User message
-            context: Context dictionary
+            context: Context dictionary (now includes dashboard_data)
             intent: Detected intent
 
         Returns:
-            Formatted prompt
+            Formatted prompt with dashboard stats
         """
         prompt_parts = []
+
+        # Add dashboard summary if available (FIRST - most important context)
+        if context.get('dashboard_data', {}).get('has_data'):
+            dashboard = context['dashboard_data']
+            summary = dashboard.get('summary', {})
+            
+            prompt_parts.append("# Latest Security Analysis Results\n")
+            prompt_parts.append(f"**Total Security Findings**: {dashboard.get('total_findings', 0)}\n")
+            prompt_parts.append(f"**CVE Vulnerabilities**: {dashboard.get('total_cves', 0)}\n")
+            prompt_parts.append(f"**Risk Score**: {summary.get('risk_score', 'N/A')}\n")
+            prompt_parts.append(f"**Risk Level**: {summary.get('overall_risk_level', 'UNKNOWN')}\n")
+            
+            # Add severity breakdown
+            severity_dist = summary.get('severity_distribution', {})
+            if severity_dist:
+                prompt_parts.append(f"**Critical Issues**: {severity_dist.get('CRITICAL', 0)}\n")
+                prompt_parts.append(f"**High Issues**: {severity_dist.get('HIGH', 0)}\n")
+                prompt_parts.append(f"**Medium Issues**: {severity_dist.get('MEDIUM', 0)}\n")
+                prompt_parts.append(f"**Low Issues**: {severity_dist.get('LOW', 0)}\n")
+            
+            # Add top security findings if available
+            security_findings = dashboard.get('security_findings', [])
+            if security_findings:
+                prompt_parts.append("\n## Top Security Findings:\n")
+                for i, finding in enumerate(security_findings[:5], 1):  # Top 5
+                    title = finding.get('title', 'Unknown Issue')
+                    severity = finding.get('severity', 'UNKNOWN')
+                    file_path = finding.get('file_path', 'N/A')
+                    line = finding.get('line_number', 'N/A')
+                    owasp_cat = finding.get('owasp_category', '')
+                    owasp_name = finding.get('owasp_name', '')
+                    
+                    prompt_parts.append(f"{i}. **{title}** ({severity})\n")
+                    prompt_parts.append(f"   - File: `{file_path}:{line}`\n")
+                    if owasp_cat:
+                        prompt_parts.append(f"   - OWASP: {owasp_cat} - {owasp_name}\n")
+            
+            # Add CVE findings if available
+            cve_findings = dashboard.get('cve_findings', [])
+            if cve_findings:
+                prompt_parts.append("\n## CVE Vulnerabilities:\n")
+                for i, cve in enumerate(cve_findings[:3], 1):  # Top 3
+                    cve_id = cve.get('cve_id', 'Unknown')
+                    package = cve.get('package', 'Unknown')
+                    severity = cve.get('severity', 'UNKNOWN')
+                    prompt_parts.append(f"{i}. **{cve_id}** in {package} ({severity})\n")
+            
+            prompt_parts.append("\n---\n\n")
 
         # Add conversation history if available
         if context.get('conversation_history'):

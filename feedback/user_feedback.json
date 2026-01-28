@@ -8,17 +8,17 @@
   },
   "SECRET-2": {
     "finding_id": "SECRET-2",
-    "feedback_type": "negative",
+    "feedback_type": "positive",
     "comment": "",
     "code_snippet": "",
-    "timestamp": "2026-01-22T21:34:26.359819"
+    "timestamp": "2026-01-26T18:43:44.070362"
   },
   "SECRET-3": {
     "finding_id": "SECRET-3",
-    "feedback_type": "negative",
+    "feedback_type": "positive",
     "comment": "",
     "code_snippet": "",
-    "timestamp": "2026-01-22T21:35:25.711718"
+    "timestamp": "2026-01-26T18:43:44.472368"
   },
   "SECRET-17": {
     "finding_id": "SECRET-17",
@@ -26,5 +26,33 @@
     "comment": "",
     "code_snippet": "",
     "timestamp": "2026-01-22T22:03:31.480477"
+  },
+  "SECRET-4": {
+    "finding_id": "SECRET-4",
+    "feedback_type": "positive",
+    "comment": "",
+    "code_snippet": "",
+    "timestamp": "2026-01-26T18:43:45.023630"
+  },
+  "SECRET-5": {
+    "finding_id": "SECRET-5",
+    "feedback_type": "positive",
+    "comment": "",
+    "code_snippet": "",
+    "timestamp": "2026-01-26T18:43:45.483769"
+  },
+  "SECRET-6": {
+    "finding_id": "SECRET-6",
+    "feedback_type": "negative",
+    "comment": "",
+    "code_snippet": "",
+    "timestamp": "2026-01-26T18:43:38.273007"
+  },
+  "SECRET-7": {
+    "finding_id": "SECRET-7",
+    "feedback_type": "positive",
+    "comment": "",
+    "code_snippet": "",
+    "timestamp": "2026-01-26T18:43:46.341311"
   }
 }

@@ -16,6 +16,18 @@ VECTOR_DB_DIR = BASE_DIR / 'vector_db'
 for directory in [UPLOAD_FOLDER, PROCESSED_FOLDER, MODELS_DIR, VECTOR_DB_DIR]:
     directory.mkdir(exist_ok=True)
 
+# Authentication Configuration
+SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
+DATABASE_URI = BASE_DIR / 'instance' / 'users.db'
+
+# GitHub OAuth Configuration
+GITHUB_CLIENT_ID = os.getenv('GITHUB_CLIENT_ID', '')
+GITHUB_CLIENT_SECRET = os.getenv('GITHUB_CLIENT_SECRET', '')
+GITHUB_AUTHORIZATION_URL = 'https://github.com/login/oauth/authorize'
+GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token'
+GITHUB_API_URL = 'https://api.github.com/user'
+
+
 # API Keys
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
 ANTHROPIC_API_KEY = os.getenv('ANTHROPIC_API_KEY', '')

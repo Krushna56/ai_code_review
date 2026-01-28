@@ -15,7 +15,7 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 50%, #1e293b 100%);
+      background: #000000;
       min-height: 100vh;
       color: #f8fafc;
       overflow-x: hidden;
@@ -140,11 +140,18 @@
 
     /* Analysis Options Grid */
     .analysis-options {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 2rem;
       margin: 3rem 0;
       animation: fadeInUp 0.8s ease-out 0.5s both;
+    }
+
+    .analysis-options>* {
+      flex: 1;
+      min-width: 300px;
+      max-width: 600px;
     }
 
     /* Upload Section */
@@ -182,13 +189,17 @@
 
     /* Stats Section */
     .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 1.5rem;
       margin: 3rem 0;
     }
 
     .stat-card {
+      flex: 1;
+      min-width: 150px;
+      max-width: 250px;
       text-align: center;
       padding: 1.5rem;
     }
@@ -248,228 +259,333 @@
         width: 100%;
       }
     }
+
+    /* Light Mode Styles */
+    body.light-mode {
+      background: #f8fafc;
+      color: #000000;
+    }
+
+    body.light-mode .hero-title {
+      background: none;
+      -webkit-text-fill-color: #000000;
+      color: #000000;
+    }
+
+    body.light-mode .hero-subtitle,
+    body.light-mode .upload-label,
+    body.light-mode .feature-description,
+    body.light-mode .stat-label {
+      color: #000000;
+    }
+
+    body.light-mode .btn-secondary,
+    body.light-mode .feature-card,
+    body.light-mode .upload-section {
+      background: white;
+      border-color: #e2e8f0;
+      color: #000000;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    body.light-mode .feature-title {
+      color: #000000;
+    }
+
+    body.light-mode .upload-section p {
+      color: #64748b !important;
+    }
+
+    body.light-mode #repo-url {
+      background: white !important;
+      border-color: #cbd5e1 !important;
+      color: #1e293b !important;
+    }
+
+    /* Theme Toggle Button */
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #f8fafc;
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+    }
+
+    .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    body.light-mode .theme-toggle {
+      background: white;
+      border-color: #e2e8f0;
+      color: #1e293b;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    body.light-mode .theme-toggle:hover {
+      background: #f1f5f9;
+    }
   </style>
 </head>
 
 <body>
+  <!-- User Navigation -->
+  <div style="position: absolute; top: 20px; left: 20px; z-index: 1000; display: flex; align-items: center; gap: 15px;">
+    <div
+      style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.5rem 1rem; border-radius: 2rem; color: #f8fafc; font-size: 0.9rem;">
+      👤 {{ current_user.email or current_user.github_username }}
+    </div>
+    <a href="{{ url_for('auth.logout') }}"
+      style="background: rgba(239, 68, 68, 0.2); backdrop-filter: blur(10px); border: 1px solid rgba(239, 68, 68, 0.4); padding: 0.5rem 1rem; border-radius: 2rem; color: #fca5a5; font-size: 0.9rem; text-decoration: none; transition: all 0.3s ease;">
+      🚪 Logout
+    </a>
+  </div>
+
+  <!-- Theme Toggle -->
+  <button class="theme-toggle" onclick="toggleTheme()" id="themeToggleBtn">
+    ☀️ Light Mode
+  </button>
+
   <div class="container">
     <!-- Hero Section -->
     <div class="hero">
       <h1 class="hero-title">🚀 AI Code Review Platform</h1>
       <p class="hero-subtitle">
-        Next-generation AI-powered code analysis with interactive chat, streaming responses, and comprehensive security
+        Next-generation AI-powered code analysis with interactive chat, streaming responses, and comprehensive
+        security
         scanning
       </p>
 
-      <div class="cta-buttons">
-        <a href="/chat" class="btn btn-primary">
-          💬 Start Interactive Chat
-        </a>
-        <label for="codebase" class="btn btn-secondary">
-          📁 Upload for Analysis
-        </label>
-        <a href="/dashboard" class="btn btn-secondary">
-          📊 View Dashboard
-        </a>
+      <!-- Upload & Repo Section Moved Here -->
+      <div class="analysis-options">
+        <form method="POST" enctype="multipart/form-data" id="upload-form">
+          <div class="upload-section" id="upload-area">
+            <label for="codebase" class="upload-label">
+              📦 Drop your codebase here or click to browse
+            </label>
+            <p style="color: #94a3b8; font-size: 0.875rem; margin-bottom: 1.5rem;">
+              Supports ZIP files, individual code files, or entire directories
+            </p>
+            <input type="file" name="codebase" id="codebase" class="file-input">
+            <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
+              🔍 Analyze Uploaded Code
+            </button>
+          </div>
+        </form>
+
+        <div class="repo-section">
+          <div class="upload-section" style="border-style: solid; border-width: 1px;">
+            <label class="upload-label">🔗 Analyze from Repository URL</label>
+            <div style="display: flex; gap: 10px; max-width: 600px; margin: 0 auto;">
+              <input type="text" id="repo-url" placeholder="https://github.com/user/repo"
+                style="flex: 1; padding: 0.75rem 1rem; border-radius: 0.5rem; background: rgba(0,0,0,0.2); border: 1px solid #334155; color: white;">
+              <button onclick="analyzeRepo()" class="btn btn-primary" id="repo-btn">
+                ⭐ Clone & Analyze
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Stats -->
     <div class="stats">
-      <div class="stat-card">
-        <div class="stat-number">6</div>
-        <div class="stat-label">Analysis Layers</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">10+</div>
-        <div class="stat-label">Security Checks</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">3</div>
-        <div class="stat-label">AI Providers</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-number">∞</div>
-        <div class="stat-label">Code Languages</div>
-      </div>
-    </div>
-
-    <!-- Features -->
-    <div class="features">
-      <div class="feature-card">
-        <div class="feature-icon">💬</div>
-        <h3 class="feature-title">Interactive AI Chat</h3>
-        <p class="feature-description">
-          Converse with AI about your code. Ask questions, get explanations, and receive real-time security insights
-          with streaming responses.
-        </p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">🔒</div>
-        <h3 class="feature-title">Security Analysis</h3>
-        <p class="feature-description">
-          Multi-layer security scanning with Bandit, Semgrep, and AI-powered vulnerability detection. OWASP Top 10
-          coverage included.
-        </p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">🔄</div>
-        <h3 class="feature-title">Smart Refactoring</h3>
-        <p class="feature-description">
-          AI suggests code improvements, identifies code smells, and provides refactoring recommendations with
-          explanations.
-        </p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">🎯</div>
-        <h3 class="feature-title">CVE Detection</h3>
-        <p class="feature-description">
-          Automatic dependency scanning and CVE vulnerability detection using OSV database with severity scoring.
-        </p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">📊</div>
-        <h3 class="feature-title">Visual Dashboard</h3>
-        <p class="feature-description">
-          Interactive dashboard with charts, metrics, and drill-down capabilities for comprehensive code insights.
-        </p>
-      </div>
-
-      <div class="feature-card">
-        <div class="feature-icon">🔍</div>
-        <h3 class="feature-title">Semantic Search</h3>
-        <p class="feature-description">
-          Natural language code search powered by vector embeddings. Find code patterns and issues instantly.
-        </p>
-      </div>
-    </div>
-
-    <!-- Upload & Repo Section -->
-    <div class="analysis-options">
-      <form method="POST" enctype="multipart/form-data" id="upload-form">
-        <div class="upload-section" id="upload-area">
-          <label for="codebase" class="upload-label">
-            📦 Drop your codebase here or click to browse
-          </label>
-          <p style="color: #94a3b8; font-size: 0.875rem; margin-bottom: 1.5rem;">
-            Supports ZIP files, individual code files, or entire directories
-          </p>
-          <input type="file" name="codebase" id="codebase" class="file-input">
-          <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">
-            🔍 Analyze Uploaded Code
-          </button>
+      <!-- ... stats content ... -->
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-number">6</div>
+          <div class="stat-label">Analysis Layers</div>
         </div>
-      </form>
+        <div class="stat-card">
+          <div class="stat-number">10+</div>
+          <div class="stat-label">Security Checks</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">3</div>
+          <div class="stat-label">AI Providers</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">∞</div>
+          <div class="stat-label">Code Languages</div>
+        </div>
+      </div>
 
-      <div class="repo-section">
-        <div class="upload-section" style="border-style: solid; border-width: 1px;">
-          <label class="upload-label">🔗 Analyze from Repository URL</label>
-          <div style="display: flex; gap: 10px; max-width: 600px; margin: 0 auto;">
-            <input type="text" id="repo-url" placeholder="https://github.com/user/repo"
-              style="flex: 1; padding: 0.75rem 1rem; border-radius: 0.5rem; background: rgba(0,0,0,0.2); border: 1px solid #334155; color: white;">
-            <button onclick="analyzeRepo()" class="btn btn-primary" id="repo-btn">
-              ⭐ Clone & Analyze
-            </button>
-          </div>
-          <p style="color: #94a3b8; font-size: 0.875rem; margin-top: 1rem;">
-            Provide a public GitHub/GitLab repository URL for a full security scan
+      <!-- Features -->
+      <div class="features">
+        <div class="feature-card">
+          <div class="feature-icon">💬</div>
+          <h3 class="feature-title">Interactive AI Chat</h3>
+          <p class="feature-description">
+            Converse with AI about your code. Ask questions, get explanations, and receive real-time security
+            insights
+            with streaming responses.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3 class="feature-title">Security Analysis</h3>
+          <p class="feature-description">
+            Multi-layer security scanning with Bandit, Semgrep, and AI-powered vulnerability detection. OWASP Top 10
+            coverage included.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔄</div>
+          <h3 class="feature-title">Smart Refactoring</h3>
+          <p class="feature-description">
+            AI suggests code improvements, identifies code smells, and provides refactoring recommendations with
+            explanations.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3 class="feature-title">CVE Detection</h3>
+          <p class="feature-description">
+            Automatic dependency scanning and CVE vulnerability detection using OSV database with severity scoring.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3 class="feature-title">Visual Dashboard</h3>
+          <p class="feature-description">
+            Interactive dashboard with charts, metrics, and drill-down capabilities for comprehensive code insights.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3 class="feature-title">Semantic Search</h3>
+          <p class="feature-description">
+            Natural language code search powered by vector embeddings. Find code patterns and issues instantly.
           </p>
         </div>
       </div>
+
+
+
+      {% if error %}
+      <div class="error-message">
+        <strong>❌ Error:</strong> {{ error }}
+      </div>
+      {% endif %}
     </div>
 
-    {% if error %}
-    <div class="error-message">
-      <strong>❌ Error:</strong> {{ error }}
-    </div>
-    {% endif %}
-  </div>
+    <script>
+      // Theme Toggle Logic
+      const themeBtn = document.getElementById('themeToggleBtn');
+      const body = document.body;
 
-  <script>
-    // Drag and drop functionality
-    const uploadArea = document.getElementById('upload-area');
-    const fileInput = document.getElementById('codebase');
-
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-      uploadArea.addEventListener(eventName, preventDefaults, false);
-    });
-
-    function preventDefaults(e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-
-    ['dragenter', 'dragover'].forEach(eventName => {
-      uploadArea.addEventListener(eventName, () => {
-        uploadArea.classList.add('dragover');
-      }, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-      uploadArea.addEventListener(eventName, () => {
-        uploadArea.classList.remove('dragover');
-      }, false);
-    });
-
-    uploadArea.addEventListener('drop', (e) => {
-      const dt = e.dataTransfer;
-      const files = dt.files;
-      fileInput.files = files;
-    }, false);
-
-    // Click to upload
-    uploadArea.addEventListener('click', (e) => {
-      if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'LABEL') {
-        fileInput.click();
-      }
-    });
-
-    // Show selected file
-    fileInput.addEventListener('change', (e) => {
-      if (e.target.files.length > 0) {
-        const fileName = e.target.files[0].name;
-        uploadArea.querySelector('.upload-label').textContent = `📄 Selected: ${fileName}`;
-      }
-    });
-
-    async function analyzeRepo() {
-      const repoUrl = document.getElementById('repo-url').value;
-      if (!repoUrl) {
-        alert('Please enter a repository URL');
-        return;
+      // Check saved preference
+      const currentTheme = localStorage.getItem('theme');
+      if (currentTheme === 'light') {
+        body.classList.add('light-mode');
+        themeBtn.textContent = '🌙 Dark Mode';
       }
 
-      const btn = document.getElementById('repo-btn');
-      const originalText = btn.textContent;
-      btn.disabled = true;
-      btn.textContent = '⏳ Cloning & Analyzing...';
-
-      try {
-        const response = await fetch('/api/analyze/repo', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ repo_url: repoUrl })
-        });
-
-        const result = await response.json();
-        if (response.ok) {
-          window.location.href = '/dashboard';
+      function toggleTheme() {
+        if (body.classList.contains('light-mode')) {
+          body.classList.remove('light-mode');
+          themeBtn.textContent = '☀️ Light Mode';
+          localStorage.setItem('theme', 'dark');
         } else {
-          alert('Error: ' + (result.error || 'Unknown error occurred'));
+          body.classList.add('light-mode');
+          themeBtn.textContent = '🌙 Dark Mode';
+          localStorage.setItem('theme', 'light');
         }
-      } catch (err) {
-        console.error(err);
-        alert('Failed to start analysis: ' + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = originalText;
       }
-    }
-  </script>
+
+      // Drag and drop functionality
+      const uploadArea = document.getElementById('upload-area');
+      const fileInput = document.getElementById('codebase');
+
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false);
+      });
+
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, () => {
+          uploadArea.classList.add('dragover');
+        }, false);
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, () => {
+          uploadArea.classList.remove('dragover');
+        }, false);
+      });
+
+      uploadArea.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        fileInput.files = files;
+      }, false);
+
+      // Click to upload
+      uploadArea.addEventListener('click', (e) => {
+        if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'LABEL') {
+          fileInput.click();
+        }
+      });
+
+      // Show selected file
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+          const fileName = e.target.files[0].name;
+          uploadArea.querySelector('.upload-label').textContent = `📄 Selected: ${fileName}`;
+        }
+      });
+
+      async function analyzeRepo() {
+        const repoUrl = document.getElementById('repo-url').value;
+        if (!repoUrl) {
+          alert('Please enter a repository URL');
+          return;
+        }
+
+        const btn = document.getElementById('repo-btn');
+        const originalText = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '⏳ Cloning & Analyzing...';
+
+        try {
+          const response = await fetch('/api/analyze/repo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ repo_url: repoUrl })
+          });
+
+          const result = await response.json();
+          if (response.ok) {
+            window.location.href = result.redirect || '/code-viewer/' + result.uid;
+          } else {
+            alert('Error: ' + (result.error || 'Unknown error occurred'));
+          }
+        } catch (err) {
+          console.error(err);
+          alert('Failed to start analysis: ' + err.message);
+        } finally {
+          btn.disabled = false;
+          btn.textContent = originalText;
+        }
+      }
+    </script>
 </body>
 
 </html>
