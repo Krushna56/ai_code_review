@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, send_from_directory, jsonify, send_file, url_for, session
+﻿from flask import Flask, render_template, request, redirect, send_from_directory, jsonify, send_file, url_for, session
 import os
 import shutil
 import zipfile
@@ -51,6 +51,11 @@ login_manager.login_message_category = 'info'
 @login_manager.user_loader
 def load_user(user_id):
     return User.get_by_id(int(user_id))
+
+# Make current_user available to all templates
+@app.context_processor
+def inject_user():
+    return dict(current_user=current_user)
 
 # Register blueprints
 app.register_blueprint(auth_bp)
