@@ -1,0 +1,492 @@
+{
+  "metadata": {
+    "generated_at": "2026-02-02T21:19:28.453934",
+    "version": "1.0",
+    "tool": "AI Code Review Platform",
+    "aggregation_stats": {
+      "total_issues": 33,
+      "unique_issues": 33,
+      "duplicates_found": 0,
+      "by_severity": {
+        "LOW": 16,
+        "warning": 17
+      },
+      "by_source": {
+        "bandit": 16,
+        "ruff": 17
+      }
+    }
+  },
+  "summary": {
+    "files_analyzed": 6,
+    "bugs_fixed": 6,
+    "security_issues": 0,
+    "code_quality_issues": 33,
+    "files_updated": 6
+  },
+  "issues": [
+    {
+      "id": "af2579100beb",
+      "source": "ruff",
+      "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\api_seeder.py",
+      "line": 8,
+      "severity": "warning",
+      "message": "`typing.List` imported but unused",
+      "code": "F401",
+      "rule_id": "",
+      "confidence": "medium",
+      "ranking_score": 4.95,
+      "rank": 1
+    },
+    {
+      "id": "eb2c25834db2",
+      "source": "ruff",
+      "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\api_seeder.py",
+      "line": 8,
+      "severity": "warning",
+      "message": "`typing.Optional` imported but unused",
+      "code": "F401",
+      "rule_id": "",
+      "confidence": "medium",
+      "ranking_score": 4.95,
+      "rank": 2
+    },
+    {
+      "id": "dcc8a0985521",
+      "source": "ruff",
+      "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\api_seeder.py",
+      "line": 9,
+      "severity": "warning",
+      "message": "`pathlib.Path` imported but unused",
+      "code": "F401",
+      "rule_id": "",
+      "confidence": "medium",
+      "ranking_score": 4.95,
+      "rank": 3
+    },
+    {
+      "id": "e82c80eb2e43",
+      "source": "ruff",
+      "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\api_seeder.py",
+      "line": 21,
+      "severity": "warning",
+      "message": "`config.get_environment_id` imported but unused",
+      "code": "F401",
+      "rule_id": "",
+      "confidence": "medium",
+      "ranking_score": 4.95,
+      "rank": 4
+    },
+    {
+      "id": "d376078bce54",
+      "source": "ruff",
+      "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\api_seeder.py",
+      "line": 195,
+      "severity": "warning",
+      "message": "f-string without any placeholders",
+      "code": "F541",
+      "rule_id": "",
+      "confidence": "medium",
+      "ranking_score": 4.95,
+      "rank": 5
+    },
+    {
+      "id": "a9fa978510af",
+      "source": "ruff",
+      "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\api_seeder.py",
+      "line": 239,
+      "severity": "warning",
+      "message": "f-string without any placeholders",
+      "code": "F541",
+      "rule_id": "",
+      "confidence": "medium",
+      "ranking_score": 4.95,
+      "rank": 6
+    },
+    {
+      "id": "933f482fd886",
+      "source": "ruff",
+      "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\api_seeder.py",
+      "line": 316,
+      "severity": "warning",
+      "message": "Local variable `created_person` is assigned to but never used",
+      "code": "F841",
+      "rule_id": "",
+      "confidence": "medium",
+      "ranking_score": 4.95,
+      "rank": 7
+    },
+    {
+      "id": "21799f9c59d0",
+      "source": "ruff",
+      "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\api_seeder.py",
+      "line": 361,
+      "severity": "warning",
+      "message": "Local variable `created_response` is assigned to but never used",
+      "code": "F841",
+      "rule_id": "",
+      "confidence": "medium",
+      "ranking_score": 4.95,
+      "rank": 8
+    },
+    {
+      "id": "33986c26313a",
+      "source": "ruff",
+      "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\api_seeder.py",
+      "line": 406,
+      "severity": "warning",
+      "message": "Local variable `env_info` is assigned to but never used",
+      "code": "F841",
+      "rule_id": "",
+      "confidence": "medium",
+      "ranking_score": 4.95,
+      "rank": 9
+    },
+    {
+      "id": "35f7146729f6",
+      "source": "ruff",
+      "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\api_seeder.py",
+      "line": 416,
+      "severity": "warning",
+      "message": "Local variable `survey_mapping` is assigned to but never used",
+      "code": "F841",
+      "rule_id": "",
+      "confidence": "medium",
+      "ranking_score": 4.95,
+      "rank": 10
+    },
+    {
+      "id": "6e15be90efa7",
+      "source": "ruff",
+      "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\api_seeder.py",
+      "line": 425,
+      "severity": "warning",
+      "message": "f-string without any placeholders",
+      "code": "F541",
+      "rule_id": "",
+      "confidence": "medium",
+      "ranking_score": 4.95,
+      "rank": 11
+    },
+    {
+      "id": "c2f3aa79ed62",
+      "source": "ruff",
+      "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\data_generator.py",
+      "line": 474,
+      "severity": "warning",
+      "message": "f-string without any placeholders",
+      "code": "F541",
+      "rule_id": "",
+      "confidence": "medium",
+      "ranking_score": 4.55,
+      "rank": 12
+    },
+    {
+      "id": "8cbbdcb41064",
+      "source": "ruff",
+      "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\data_generator.py",
+      "line": 478,
+      "severity": "warning",
+      "message": "f-string without any placeholders",
+      "code": "F541",
+      "rule_id": "",
+      "confidence": "medium",
+      "ranking_score": 4.55,
+      "rank": 13
+    },
+    {
+      "id": "4e72434c94dc",
+      "source": "ruff",
+      "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py",
+      "line": 10,
+      "severity": "warning",
+      "message": "`pathlib.Path` imported but unused",
+      "code": "F401",
+      "rule_id": "",
+      "confidence": "medium",
+      "ranking_score": 4.55,
+      "rank": 14
+    },
+    {
+      "id": "52276a4a6120",
+      "source": "ruff",
+      "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py",
+      "line": 11,
+      "severity": "warning",
+      "message": "`typing.Optional` imported but unused",
+      "code": "F401",
+      "rule_id": "",
+      "confidence": "medium",
+      "ranking_score": 4.55,
+      "rank": 15
+    },
+    {
+      "id": "9b30b9fcc836",
+      "source": "ruff",
+      "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py",
+      "line": 18,
+      "severity": "warning",
+      "message": "`config.FORMBRICKS_PORT` imported but unused",
+      "code": "F401",
+      "rule_id": "",
+      "confidence": "medium",
+      "ranking_score": 4.55,
+      "rank": 16
+    },
+    {
+      "id": "7664bd160537",
+      "source": "ruff",
+      "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\utils.py",
+      "line": 10,
+      "severity": "warning",
+      "message": "`typing.Optional` imported but unused",
+      "code": "F401",
+      "rule_id": "",
+      "confidence": "medium",
+      "ranking_score": 4.55,
+      "rank": 17
+    },
+    {
+      "id": "99d6f694f381",
+      "source": "bandit",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\data_generator.py",
+      "line": 149,
+      "severity": "LOW",
+      "message": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
+      "code": "148         for idx, q in enumerate(survey.get('questions', [])):\n149             question_id = f\"q{idx + 1}_{random.randint(1000, 9999)}\"\n150             question_type = q.get('type', 'openText')\n",
+      "rule_id": "B311",
+      "confidence": "HIGH",
+      "ranking_score": 3.4,
+      "rank": 18
+    },
+    {
+      "id": "b1501c8e9599",
+      "source": "bandit",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\data_generator.py",
+      "line": 171,
+      "severity": "LOW",
+      "message": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
+      "code": "170                     choices.append({\n171                         \"id\": f\"choice{choice_idx + 1}_{random.randint(1000, 9999)}\",\n172                         \"label\": {\"default\": choice_text}\n",
+      "rule_id": "B311",
+      "confidence": "HIGH",
+      "ranking_score": 3.4,
+      "rank": 19
+    },
+    {
+      "id": "9380ce175a29",
+      "source": "bandit",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\data_generator.py",
+      "line": 201,
+      "severity": "LOW",
+      "message": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
+      "code": "200         thank_you = survey.get('thankYouCard', {})\n201         ending_id = f\"end_{random.randint(1000, 9999)}\"\n202         formatted_ending = {\n",
+      "rule_id": "B311",
+      "confidence": "HIGH",
+      "ranking_score": 3.4,
+      "rank": 20
+    },
+    {
+      "id": "a83e2a049488",
+      "source": "bandit",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\data_generator.py",
+      "line": 289,
+      "severity": "LOW",
+      "message": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
+      "code": "288                 formatted_user = {\n289                     \"userId\": f\"user_{random.randint(10000, 99999)}\",\n290                     \"name\": user.get('name'),\n",
+      "rule_id": "B311",
+      "confidence": "HIGH",
+      "ranking_score": 3.4,
+      "rank": 21
+    },
+    {
+      "id": "2dee983f8209",
+      "source": "bandit",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\data_generator.py",
+      "line": 327,
+      "severity": "LOW",
+      "message": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
+      "code": "326             # Generate at least MIN_RESPONSES_PER_SURVEY responses per survey\n327             num_responses = random.randint(\n328                 MIN_RESPONSES_PER_SURVEY, min(3, len(users)))\n329             selected_users = random.sample(users, num_responses)\n",
+      "rule_id": "B311",
+      "confidence": "HIGH",
+      "ranking_score": 3.4,
+      "rank": 22
+    },
+    {
+      "id": "13bd8a27b0d7",
+      "source": "bandit",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\data_generator.py",
+      "line": 329,
+      "severity": "LOW",
+      "message": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
+      "code": "328                 MIN_RESPONSES_PER_SURVEY, min(3, len(users)))\n329             selected_users = random.sample(users, num_responses)\n330 \n",
+      "rule_id": "B311",
+      "confidence": "HIGH",
+      "ranking_score": 3.4,
+      "rank": 23
+    },
+    {
+      "id": "56f1dca45afb",
+      "source": "bandit",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\data_generator.py",
+      "line": 445,
+      "severity": "LOW",
+      "message": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
+      "code": "444             elif q_type == \"rating\":\n445                 response_data[q_id] = random.randint(\n446                     3, question.get('range', 5))\n447             elif q_type == \"nps\":\n",
+      "rule_id": "B311",
+      "confidence": "HIGH",
+      "ranking_score": 3.4,
+      "rank": 24
+    },
+    {
+      "id": "256309cb12ec",
+      "source": "bandit",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\data_generator.py",
+      "line": 448,
+      "severity": "LOW",
+      "message": "Standard pseudo-random generators are not suitable for security/cryptographic purposes.",
+      "code": "447             elif q_type == \"nps\":\n448                 response_data[q_id] = random.randint(7, 10)\n449 \n",
+      "rule_id": "B311",
+      "confidence": "HIGH",
+      "ranking_score": 3.4,
+      "rank": 25
+    },
+    {
+      "id": "b290416c9329",
+      "source": "bandit",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py",
+      "line": 6,
+      "severity": "LOW",
+      "message": "Consider possible security implications associated with the subprocess module.",
+      "code": "5 \n6 import subprocess\n7 import time\n",
+      "rule_id": "B404",
+      "confidence": "HIGH",
+      "ranking_score": 3.4,
+      "rank": 26
+    },
+    {
+      "id": "2f11af07b1ca",
+      "source": "bandit",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py",
+      "line": 110,
+      "severity": "LOW",
+      "message": "Starting a process with a partial executable path",
+      "code": "109             # Check if Docker is running\n110             subprocess.run(\n111                 ['docker', 'info'],\n112                 check=True,\n113                 capture_output=True,\n114                 text=True\n115             )\n116         except subprocess.CalledProcessError:\n",
+      "rule_id": "B607",
+      "confidence": "HIGH",
+      "ranking_score": 3.4,
+      "rank": 27
+    },
+    {
+      "id": "f4ffb54c57a3",
+      "source": "bandit",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py",
+      "line": 110,
+      "severity": "LOW",
+      "message": "subprocess call - check for execution of untrusted input.",
+      "code": "109             # Check if Docker is running\n110             subprocess.run(\n111                 ['docker', 'info'],\n112                 check=True,\n113                 capture_output=True,\n114                 text=True\n115             )\n116         except subprocess.CalledProcessError:\n",
+      "rule_id": "B603",
+      "confidence": "HIGH",
+      "ranking_score": 3.4,
+      "rank": 28
+    },
+    {
+      "id": "6c1d0ecca4a0",
+      "source": "bandit",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py",
+      "line": 127,
+      "severity": "LOW",
+      "message": "Starting a process with a partial executable path",
+      "code": "126             # Start containers in detached mode\n127             result = subprocess.run(\n128                 ['docker', 'compose', 'up', '-d'],\n129                 cwd=self.compose_file.parent,\n130                 check=True,\n131                 capture_output=True,\n132                 text=True\n133             )\n134 \n",
+      "rule_id": "B607",
+      "confidence": "HIGH",
+      "ranking_score": 3.4,
+      "rank": 29
+    },
+    {
+      "id": "560f30ac4c76",
+      "source": "bandit",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py",
+      "line": 127,
+      "severity": "LOW",
+      "message": "subprocess call - check for execution of untrusted input.",
+      "code": "126             # Start containers in detached mode\n127             result = subprocess.run(\n128                 ['docker', 'compose', 'up', '-d'],\n129                 cwd=self.compose_file.parent,\n130                 check=True,\n131                 capture_output=True,\n132                 text=True\n133             )\n134 \n",
+      "rule_id": "B603",
+      "confidence": "HIGH",
+      "ranking_score": 3.4,
+      "rank": 30
+    },
+    {
+      "id": "77d424abc43b",
+      "source": "bandit",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py",
+      "line": 159,
+      "severity": "LOW",
+      "message": "subprocess call - check for execution of untrusted input.",
+      "code": "158 \n159             result = subprocess.run(\n160                 cmd,\n161                 cwd=self.compose_file.parent,\n162                 check=True,\n163                 capture_output=True,\n164                 text=True\n165             )\n166 \n",
+      "rule_id": "B603",
+      "confidence": "HIGH",
+      "ranking_score": 3.4,
+      "rank": 31
+    },
+    {
+      "id": "7fb4f77acbff",
+      "source": "bandit",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py",
+      "line": 214,
+      "severity": "LOW",
+      "message": "Starting a process with a partial executable path",
+      "code": "213         try:\n214             result = subprocess.run(\n215                 ['docker', 'compose', 'ps', '--format', 'json'],\n216                 cwd=self.compose_file.parent,\n217                 check=True,\n218                 capture_output=True,\n219                 text=True\n220             )\n221 \n",
+      "rule_id": "B607",
+      "confidence": "HIGH",
+      "ranking_score": 3.4,
+      "rank": 32
+    },
+    {
+      "id": "6a9c10950b74",
+      "source": "bandit",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py",
+      "line": 214,
+      "severity": "LOW",
+      "message": "subprocess call - check for execution of untrusted input.",
+      "code": "213         try:\n214             result = subprocess.run(\n215                 ['docker', 'compose', 'ps', '--format', 'json'],\n216                 cwd=self.compose_file.parent,\n217                 check=True,\n218                 capture_output=True,\n219                 text=True\n220             )\n221 \n",
+      "rule_id": "B603",
+      "confidence": "HIGH",
+      "ranking_score": 3.4,
+      "rank": 33
+    }
+  ],
+  "statistics": {
+    "total_issues": 33,
+    "by_severity": {
+      "warning": 17,
+      "LOW": 16
+    },
+    "by_source": {
+      "ruff": 17,
+      "bandit": 16
+    },
+    "files_with_issues": 6,
+    "top_files": [
+      [
+        "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\api_seeder.py",
+        11
+      ],
+      [
+        "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\data_generator.py",
+        8
+      ],
+      [
+        "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py",
+        8
+      ],
+      [
+        "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py",
+        3
+      ],
+      [
+        "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\data_generator.py",
+        2
+      ]
+    ]
+  }
+}

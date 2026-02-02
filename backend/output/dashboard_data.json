@@ -1,0 +1,219 @@
+{
+  "severity_distribution": {
+    "type": "pie",
+    "labels": [
+      "HIGH"
+    ],
+    "datasets": [
+      {
+        "data": [
+          7
+        ],
+        "backgroundColor": [
+          "#ea580c"
+        ],
+        "borderWidth": 2,
+        "borderColor": "#ffffff"
+      }
+    ],
+    "total": 7
+  },
+  "owasp_coverage": {
+    "type": "bar",
+    "labels": [
+      "Cryptographic Failures"
+    ],
+    "datasets": [
+      {
+        "label": "Findings per OWASP Category",
+        "data": [
+          7
+        ],
+        "backgroundColor": "#3b82f6",
+        "borderColor": "#1d4ed8",
+        "borderWidth": 1
+      }
+    ],
+    "category_ids": [
+      "A02:2021"
+    ]
+  },
+  "vulnerability_trends": {
+    "type": "line",
+    "labels": [
+      "2026-01-03",
+      "2026-01-08",
+      "2026-01-13",
+      "2026-01-18",
+      "2026-01-23",
+      "2026-01-28",
+      "2026-02-02"
+    ],
+    "datasets": [
+      {
+        "label": "HIGH",
+        "data": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "borderColor": "#ea580c",
+        "backgroundColor": "#ea580c40",
+        "tension": 0.3,
+        "fill": true
+      }
+    ]
+  },
+  "file_risk_scores": {
+    "type": "horizontalBar",
+    "labels": [
+      "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\api_seeder.py",
+      "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\data_generator.py",
+      "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py"
+    ],
+    "datasets": [
+      {
+        "label": "Average Risk Score",
+        "data": [
+          85.0,
+          85.0,
+          85.0
+        ],
+        "backgroundColor": "#ef4444",
+        "borderColor": "#dc2626",
+        "borderWidth": 1
+      },
+      {
+        "label": "Finding Count",
+        "data": [
+          1,
+          3,
+          3
+        ],
+        "backgroundColor": "#3b82f6",
+        "borderColor": "#1d4ed8",
+        "borderWidth": 1
+      }
+    ],
+    "full_paths": [
+      "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\api_seeder.py",
+      "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\data_generator.py",
+      "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py"
+    ]
+  },
+  "dependency_stats": {
+    "total_dependencies": 5,
+    "vulnerable_dependencies": 0,
+    "ecosystem_breakdown": {
+      "type": "bar",
+      "labels": [
+        "pypi"
+      ],
+      "datasets": [
+        {
+          "label": "Total Dependencies",
+          "data": [
+            5
+          ],
+          "backgroundColor": "#3b82f6"
+        },
+        {
+          "label": "Vulnerable",
+          "data": [
+            0
+          ],
+          "backgroundColor": "#ef4444"
+        }
+      ]
+    },
+    "health_percentage": 100.0
+  },
+  "top_issues": [
+    {
+      "id": "SECRET-1",
+      "type": "secret",
+      "severity": "HIGH",
+      "risk_score": 85,
+      "title": "Hardcoded high_entropy Detected",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\api_seeder.py",
+      "line": 429,
+      "owasp": "A02:2021"
+    },
+    {
+      "id": "SECRET-2",
+      "type": "secret",
+      "severity": "HIGH",
+      "risk_score": 85,
+      "title": "Hardcoded high_entropy Detected",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\data_generator.py",
+      "line": 47,
+      "owasp": "A02:2021"
+    },
+    {
+      "id": "SECRET-3",
+      "type": "secret",
+      "severity": "HIGH",
+      "risk_score": 85,
+      "title": "Hardcoded high_entropy Detected",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\data_generator.py",
+      "line": 233,
+      "owasp": "A02:2021"
+    },
+    {
+      "id": "SECRET-4",
+      "type": "secret",
+      "severity": "HIGH",
+      "risk_score": 85,
+      "title": "Hardcoded high_entropy Detected",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\data_generator.py",
+      "line": 420,
+      "owasp": "A02:2021"
+    },
+    {
+      "id": "SECRET-5",
+      "type": "secret",
+      "severity": "HIGH",
+      "risk_score": 85,
+      "title": "Hardcoded high_entropy Detected",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py",
+      "line": 33,
+      "owasp": "A02:2021"
+    },
+    {
+      "id": "SECRET-6",
+      "type": "secret",
+      "severity": "HIGH",
+      "risk_score": 85,
+      "title": "Hardcoded high_entropy Detected",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py",
+      "line": 92,
+      "owasp": "A02:2021"
+    },
+    {
+      "id": "SECRET-7",
+      "type": "secret",
+      "severity": "HIGH",
+      "risk_score": 85,
+      "title": "Hardcoded high_entropy Detected",
+      "file": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py",
+      "line": 198,
+      "owasp": "A02:2021"
+    }
+  ],
+  "remediation_progress": {
+    "total_issues": 7,
+    "by_difficulty": {
+      "EASY": 7
+    },
+    "estimated_easy_percentage": 100.0,
+    "gauges": {
+      "overall_completion": 0,
+      "critical_completion": 0,
+      "dependencies_completion": 0
+    }
+  }
+}

@@ -1,0 +1,281 @@
+{
+  "metadata": {
+    "generated_at": "2026-02-02T21:19:28.458976",
+    "generator": "AI Code Review Platform - Phase 5",
+    "version": "1.0",
+    "report_type": "security_analysis",
+    "project": "a826e1c1-826c-47cf-8716-ed1e3a30c0dd",
+    "scan_type": "full",
+    "total_files": 6
+  },
+  "executive_summary": {
+    "overall_risk_level": "LOW",
+    "risk_score": 4.2,
+    "total_findings": 7,
+    "severity_distribution": {
+      "HIGH": 7
+    },
+    "cve_count": 0,
+    "security_issue_count": 7,
+    "total_dependencies": 5,
+    "vulnerable_dependencies": 0,
+    "affected_components": 3,
+    "top_critical_issues": [
+      {
+        "id": "SECRET-1",
+        "severity": "HIGH",
+        "title": "Hardcoded high_entropy Detected"
+      },
+      {
+        "id": "SECRET-2",
+        "severity": "HIGH",
+        "title": "Hardcoded high_entropy Detected"
+      },
+      {
+        "id": "SECRET-3",
+        "severity": "HIGH",
+        "title": "Hardcoded high_entropy Detected"
+      },
+      {
+        "id": "SECRET-4",
+        "severity": "HIGH",
+        "title": "Hardcoded high_entropy Detected"
+      },
+      {
+        "id": "SECRET-5",
+        "severity": "HIGH",
+        "title": "Hardcoded high_entropy Detected"
+      }
+    ]
+  },
+  "owasp_breakdown": {
+    "A02:2021": {
+      "category_name": "Cryptographic Failures",
+      "total_findings": 7,
+      "severity_distribution": {
+        "HIGH": 7
+      },
+      "max_severity": "HIGH",
+      "sample_findings": [
+        {
+          "id": "SECRET-1",
+          "severity": "HIGH",
+          "title": "Hardcoded high_entropy Detected"
+        },
+        {
+          "id": "SECRET-2",
+          "severity": "HIGH",
+          "title": "Hardcoded high_entropy Detected"
+        },
+        {
+          "id": "SECRET-3",
+          "severity": "HIGH",
+          "title": "Hardcoded high_entropy Detected"
+        }
+      ]
+    }
+  },
+  "cve_findings": [],
+  "security_findings": [
+    {
+      "id": "SECRET-1",
+      "type": "secret",
+      "severity": "HIGH",
+      "risk_score": 85,
+      "title": "Hardcoded high_entropy Detected",
+      "description": "Sensitive data hardcoded in source",
+      "file_path": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\api_seeder.py",
+      "line_number": 429,
+      "owasp_category": "A02:2021",
+      "owasp_name": "Cryptographic Failures",
+      "cwe_ids": [
+        "CWE-798"
+      ],
+      "remediation": "Move sensitive data to environment variables or secure vault",
+      "confidence": 0.9
+    },
+    {
+      "id": "SECRET-2",
+      "type": "secret",
+      "severity": "HIGH",
+      "risk_score": 85,
+      "title": "Hardcoded high_entropy Detected",
+      "description": "Sensitive data hardcoded in source",
+      "file_path": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\data_generator.py",
+      "line_number": 47,
+      "owasp_category": "A02:2021",
+      "owasp_name": "Cryptographic Failures",
+      "cwe_ids": [
+        "CWE-798"
+      ],
+      "remediation": "Move sensitive data to environment variables or secure vault",
+      "confidence": 0.9
+    },
+    {
+      "id": "SECRET-3",
+      "type": "secret",
+      "severity": "HIGH",
+      "risk_score": 85,
+      "title": "Hardcoded high_entropy Detected",
+      "description": "Sensitive data hardcoded in source",
+      "file_path": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\data_generator.py",
+      "line_number": 233,
+      "owasp_category": "A02:2021",
+      "owasp_name": "Cryptographic Failures",
+      "cwe_ids": [
+        "CWE-798"
+      ],
+      "remediation": "Move sensitive data to environment variables or secure vault",
+      "confidence": 0.9
+    },
+    {
+      "id": "SECRET-4",
+      "type": "secret",
+      "severity": "HIGH",
+      "risk_score": 85,
+      "title": "Hardcoded high_entropy Detected",
+      "description": "Sensitive data hardcoded in source",
+      "file_path": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\data_generator.py",
+      "line_number": 420,
+      "owasp_category": "A02:2021",
+      "owasp_name": "Cryptographic Failures",
+      "cwe_ids": [
+        "CWE-798"
+      ],
+      "remediation": "Move sensitive data to environment variables or secure vault",
+      "confidence": 0.9
+    },
+    {
+      "id": "SECRET-5",
+      "type": "secret",
+      "severity": "HIGH",
+      "risk_score": 85,
+      "title": "Hardcoded high_entropy Detected",
+      "description": "Sensitive data hardcoded in source",
+      "file_path": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py",
+      "line_number": 33,
+      "owasp_category": "A02:2021",
+      "owasp_name": "Cryptographic Failures",
+      "cwe_ids": [
+        "CWE-798"
+      ],
+      "remediation": "Move sensitive data to environment variables or secure vault",
+      "confidence": 0.9
+    },
+    {
+      "id": "SECRET-6",
+      "type": "secret",
+      "severity": "HIGH",
+      "risk_score": 85,
+      "title": "Hardcoded high_entropy Detected",
+      "description": "Sensitive data hardcoded in source",
+      "file_path": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py",
+      "line_number": 92,
+      "owasp_category": "A02:2021",
+      "owasp_name": "Cryptographic Failures",
+      "cwe_ids": [
+        "CWE-798"
+      ],
+      "remediation": "Move sensitive data to environment variables or secure vault",
+      "confidence": 0.9
+    },
+    {
+      "id": "SECRET-7",
+      "type": "secret",
+      "severity": "HIGH",
+      "risk_score": 85,
+      "title": "Hardcoded high_entropy Detected",
+      "description": "Sensitive data hardcoded in source",
+      "file_path": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\docker_manager.py",
+      "line_number": 198,
+      "owasp_category": "A02:2021",
+      "owasp_name": "Cryptographic Failures",
+      "cwe_ids": [
+        "CWE-798"
+      ],
+      "remediation": "Move sensitive data to environment variables or secure vault",
+      "confidence": 0.9
+    }
+  ],
+  "dependency_health": {
+    "total_dependencies": 5,
+    "vulnerable_dependencies": 0,
+    "by_ecosystem": {
+      "pypi": 5
+    },
+    "vulnerable_by_ecosystem": {},
+    "health_score": 100.0
+  },
+  "remediation_plan": [
+    {
+      "priority": 115,
+      "type": "security_finding",
+      "id": "SECRET-1",
+      "severity": "HIGH",
+      "title": "Hardcoded high_entropy Detected",
+      "action": "Move sensitive data to environment variables or secure vault",
+      "estimated_effort": "LOW",
+      "impact": "HIGH"
+    },
+    {
+      "priority": 115,
+      "type": "security_finding",
+      "id": "SECRET-2",
+      "severity": "HIGH",
+      "title": "Hardcoded high_entropy Detected",
+      "action": "Move sensitive data to environment variables or secure vault",
+      "estimated_effort": "LOW",
+      "impact": "HIGH"
+    },
+    {
+      "priority": 115,
+      "type": "security_finding",
+      "id": "SECRET-3",
+      "severity": "HIGH",
+      "title": "Hardcoded high_entropy Detected",
+      "action": "Move sensitive data to environment variables or secure vault",
+      "estimated_effort": "LOW",
+      "impact": "HIGH"
+    },
+    {
+      "priority": 115,
+      "type": "security_finding",
+      "id": "SECRET-4",
+      "severity": "HIGH",
+      "title": "Hardcoded high_entropy Detected",
+      "action": "Move sensitive data to environment variables or secure vault",
+      "estimated_effort": "LOW",
+      "impact": "HIGH"
+    },
+    {
+      "priority": 115,
+      "type": "security_finding",
+      "id": "SECRET-5",
+      "severity": "HIGH",
+      "title": "Hardcoded high_entropy Detected",
+      "action": "Move sensitive data to environment variables or secure vault",
+      "estimated_effort": "LOW",
+      "impact": "HIGH"
+    },
+    {
+      "priority": 115,
+      "type": "security_finding",
+      "id": "SECRET-6",
+      "severity": "HIGH",
+      "title": "Hardcoded high_entropy Detected",
+      "action": "Move sensitive data to environment variables or secure vault",
+      "estimated_effort": "LOW",
+      "impact": "HIGH"
+    },
+    {
+      "priority": 115,
+      "type": "security_finding",
+      "id": "SECRET-7",
+      "severity": "HIGH",
+      "title": "Hardcoded high_entropy Detected",
+      "action": "Move sensitive data to environment variables or secure vault",
+      "estimated_effort": "LOW",
+      "impact": "HIGH"
+    }
+  ]
+}

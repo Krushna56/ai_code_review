@@ -1,0 +1,50 @@
+{
+  "dependencies": [
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    }
+  ],
+  "vulnerabilities": []
+}

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Document Summarization Engine</title>
+    <meta
+      name="description"
+      content="Extract key elements and generate intelligent summaries from your documents using AI"
+    />
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Mermaid.js for diagram rendering -->
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+      window.mermaid = mermaid;
+    </script>
+  </head>
+  <body>
+    <!-- Hero Section -->
+    <div class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <h1 class="hero-title">
+            <span class="gradient-text">AI Document Summarizer</span>
+          </h1>
+          <p class="hero-subtitle">
+            Extract key elements and generate intelligent summaries from your
+            documents in seconds
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="container">
+      <!-- Settings Above Upload -->
+      <div class="settings-block">
+        <h4 class="settings-title">📋 Analysis Settings</h4>
+        <div class="settings-grid">
+          <!-- Document Type -->
+          <div class="setting-item">
+            <label for="documentTypeSelect">Document Type:</label>
+            <select id="documentTypeSelect" class="type-select">
+              <option value="general">📄 General</option>
+              <option value="legal">⚖️ Legal</option>
+              <option value="code">💻 Code</option>
+              <option value="book">📚 Book</option>
+              <option value="letter">✉️ Letter</option>
+              <option value="research">🔬 Research</option>
+            </select>
+          </div>
+          
+          <!-- Summary Type -->
+          <div class="setting-item">
+            <label for="summaryTypeSelect">Summary Type:</label>
+            <select id="summaryTypeSelect" class="type-select">
+              <option value="auto">⚡ Auto (4/page)</option>
+              <option value="quick">🔍 Quick</option>
+              <option value="detailed">📖 Detailed</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload Area -->
+      <div class="upload-section">
+        <div class="upload-card" id="uploadCard">
+          <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📁</div>
+            <h2>Drop your document here</h2>
+            <p>or click to browse</p>
+            <input
+              type="file"
+              id="fileInput"
+              accept=".pdf,.docx,.doc,.txt,.py,.js,.java,.cpp,.c,.cs,.go,.rb,.php,.ts,.jsx,.tsx,.swift,.kt,.rs,.html,.css,.sql"
+              hidden
+            />
+            <button class="btn-primary" id="browseBtn">Choose File</button>
+            
+            <div class="supported-formats">
+              <span>Supported formats:</span>
+              <div class="format-tags">
+                <span class="format-tag">PDF</span>
+                <span class="format-tag">DOCX</span>
+                <span class="format-tag">TXT</span>
+                <span class="format-tag">Code Files</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading State -->
+          <div class="loading-state" id="loadingState" style="display: none">
+            <div class="loader"></div>
+            <h3>Analyzing your document...</h3>
+            <p>Extracting key elements and generating summary</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div class="results-section" id="resultsSection" style="display: none">
+        <div class="results-card">
+          <div class="results-header">
+            <h2>📊 Analysis Results</h2>
+            <button class="btn-secondary" id="newDocBtn">
+              Analyze Another Document
+            </button>
+          </div>
+
+          <div class="document-info">
+            <div class="info-item">
+              <span class="info-label">Document:</span>
+              <span class="info-value" id="docName">-</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Pages:</span>
+              <span class="info-value" id="pageCount">-</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Words:</span>
+              <span class="info-value" id="wordCount">-</span>
+            </div>
+          </div>
+
+          <div class="summary-section">
+            <h3>📝 Quick Summary</h3>
+            <div class="summary-content" id="summaryContent">
+              <!-- Summary will be inserted here -->
+            </div>
+          </div>
+
+          <!-- Detailed Overview Section -->
+          <div class="overview-section" id="overviewSection" style="display: none">
+            <h3>📖 What Actually Happened</h3>
+            <div class="overview-content" id="overviewContent">
+              <!-- Detailed overview will be inserted here -->
+            </div>
+          </div>
+
+          <!-- Legal Analysis Section (only for legal documents) -->
+          <div class="legal-analysis-section" id="legalAnalysisSection" style="display: none">
+            <h3>⚠️ Loopholes & Conflicts</h3>
+            <div id="legalConflictsContainer">
+              <!-- Conflicts will be inserted here -->
+            </div>
+            <div id="legalLoopholesContainer">
+              <!-- Loopholes will be inserted here -->
+            </div>
+          </div>
+
+          <!-- Law References Section (only for legal documents) -->
+          <div class="law-references-section" id="lawReferencesSection" style="display: none">
+            <h3>📚 Laws Referenced</h3>
+            <div id="lawReferencesContainer">
+              <!-- Law references will be inserted here -->
+            </div>
+          </div>
+
+          <!-- Code Analysis Sections (only for code files) -->
+          <div class="code-analysis-section" id="codeAnalysisSection" style="display: none">
+            <!-- Code Metrics -->
+            <div class="metrics-section" id="metricsSection">
+              <h3>📊 Code Metrics</h3>
+              <div class="metrics-grid" id="metricsGrid">
+                <!-- Metrics will be inserted here -->
+              </div>
+            </div>
+
+            <!-- Logic Summary -->
+            <div class="logic-section" id="logicSection">
+              <h3>🧠 Logic Summary</h3>
+              <div class="logic-content" id="logicContent">
+                <!-- Logic analysis will be inserted here -->
+              </div>
+            </div>
+
+            <!-- Architecture -->
+            <div class="architecture-section" id="architectureSection">
+              <h3>🏗️ Architecture</h3>
+              <div class="architecture-content" id="architectureContent">
+                <!-- Architecture analysis will be inserted here -->
+              </div>
+            </div>
+
+            <!-- Diagram -->
+            <div class="diagram-section" id="diagramSection">
+              <h3>📈 Code Diagram</h3>
+              <div class="diagram-container" id="diagramContainer">
+                <!-- Mermaid diagram will be rendered here -->
+              </div>
+            </div>
+          </div>
+
+          <div class="key-elements-section" id="keyElementsSection">
+            <h3>🔑 Key Elements</h3>
+            <div class="key-elements-grid" id="keyElementsGrid">
+              <!-- Key elements will be inserted here -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Message -->
+      <div class="error-message" id="errorMessage" style="display: none">
+        <div class="error-content">
+          <span class="error-icon">⚠️</span>
+          <div>
+            <h4>Error</h4>
+            <p id="errorText">An error occurred</p>
+          </div>
+        </div>
+        <button class="btn-close" id="closeErrorBtn">✕</button>
+      </div>
+    </div>
+
+    
+
+    <script src="/script.js"></script>
+  </body>
+</html>
