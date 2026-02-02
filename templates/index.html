@@ -413,6 +413,7 @@
 
 <body>
   <!-- User Navigation -->
+  {% if current_user.is_authenticated %}
   <div class="user-nav-container"
     style="position: absolute; top: 20px; left: 20px; z-index: 1000; display: flex; align-items: center; gap: 15px;">
     <div
@@ -424,6 +425,19 @@
       🚪 Logout
     </a>
   </div>
+  {% else %}
+  <div class="user-nav-container"
+    style="position: absolute; top: 20px; left: 20px; z-index: 1000; display: flex; align-items: center; gap: 15px;">
+    <a href="{{ url_for('auth.login') }}"
+      style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.5rem 1rem; border-radius: 2rem; color: #f8fafc; font-size: 0.9rem; text-decoration: none; transition: all 0.3s ease;">
+      🔐 Login
+    </a>
+    <a href="{{ url_for('auth.register') }}"
+      style="background: rgba(255, 155, 81, 0.2); backdrop-filter: blur(10px); border: 1px solid rgba(255, 155, 81, 0.4); padding: 0.5rem 1rem; border-radius: 2rem; color: #FF9B51; font-size: 0.9rem; text-decoration: none; transition: all 0.3s ease;">
+      ✨ Sign Up
+    </a>
+  </div>
+  {% endif %}
 
   <!-- Theme Toggle -->
   <button class="theme-toggle" onclick="toggleTheme()" id="themeToggleBtn">
