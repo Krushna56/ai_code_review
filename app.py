@@ -202,7 +202,6 @@ def run_analysis_background(input_path, output_path, uid):
 
 
 @app.route('/', methods=['GET', 'POST'])
-@login_required
 def index():
     """Main route for file upload and analysis"""
     if request.method == 'POST':
@@ -213,13 +212,12 @@ def index():
             # Validate file upload
             if 'codebase' not in request.files:
                 logger.warning("No file part in request")
-                return render_template('index.html', error="No file uploaded")
+                return render_template('index.html', error="No file uploaded", current_user=current_user)
 
             # Get all uploaded files (supports multiple files and folders)
             uploaded_files = request.files.getlist('codebase')
             if not uploaded_files or all(f.filename == '' for f in uploaded_files):
-                logger.warning("Empty filename")
-                return render_template('index.html', error="No file selected")
+                return render_template('index.html', error="No file selected", current_user=current_user)
 
             # Generate unique ID for this analysis
             uid = str(uuid.uuid4())
@@ -281,9 +279,9 @@ def index():
 
         except Exception as e:
             logger.error(f"Error during upload: {e}", exc_info=True)
-            return render_template('index.html', error=str(e))
+            return render_template('index.html', error=str(e), current_user=current_user)
 
-    return render_template('index.html')
+    return render_template('index.html', current_user=current_user)
 
 
 @app.route('/api/file/content/<uid>/<path:filepath>')
