@@ -68,7 +68,7 @@ class BaseAgent(ABC):
             elif self.provider == 'mistral':
                 return self._generate_mistral(prompt, system_prompt)
         except Exception as e:
-            logger.error(f"Error generating response: {e}")
+            logger.error(f"Error generating response: {e}", exc_info=True)
             return None
 
     def _generate_openai(self, prompt: str, system_prompt: Optional[str] = None) -> str:

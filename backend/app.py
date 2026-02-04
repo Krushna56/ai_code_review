@@ -29,13 +29,28 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Override Flask's Request class to set Werkzeug multipart limits
+from flask import Request as FlaskRequest
+
+class LargeUploadRequest(FlaskRequest):
+    """Custom request class with increased multipart limits"""
+    max_content_length = config.MAX_CONTENT_LENGTH
+    max_form_memory_size = config.MAX_CONTENT_LENGTH  
+    max_form_parts = 100000  # Increased from default 1000
+
 app = Flask(__name__, 
             static_folder='../frontend/static',
             template_folder='../frontend/templates')
+app.request_class = LargeUploadRequest  # Use custom request class
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['PROCESSED_FOLDER'] = 'processed'
-app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max file size
+app.config['MAX_CONTENT_LENGTH'] = config.MAX_CONTENT_LENGTH
+app.config['MAX_FORM_MEMORY_SIZE'] = config.MAX_CONTENT_LENGTH  # Werkzeug multipart limit
+app.config['MAX_FORM_PARTS'] = 100000  # Werkzeug 3.x: max parts in multipart upload
 app.config['SECRET_KEY'] = config.SECRET_KEY
+logger.info(f"Configured MAX_CONTENT_LENGTH: {app.config['MAX_CONTENT_LENGTH']} bytes")
+logger.info(f"Configured MAX_FORM_MEMORY_SIZE: {app.config['MAX_FORM_MEMORY_SIZE']} bytes")
+logger.info(f"Configured MAX_FORM_PARTS: {app.config['MAX_FORM_PARTS']}")
 
 # Session configuration - prevent auto-login across server restarts
 app.config['SESSION_PERMANENT'] = False
@@ -208,6 +223,10 @@ def index():
     """Main route for file upload and analysis"""
     if request.method == 'POST':
         try:
+            logger.info("=== UPLOAD REQUEST RECEIVED ===")
+            logger.info(f"Content-Type: {request.content_type}")
+            logger.info(f"Content-Length: {request.content_length}")
+            
             # Clear previous session data for new upload
             session.pop('current_uid', None)
             
@@ -218,6 +237,8 @@ def index():
 
             # Get all uploaded files (supports multiple files and folders)
             uploaded_files = request.files.getlist('codebase')
+            logger.info(f"Number of files received: {len(uploaded_files)}")
+            
             if not uploaded_files or all(f.filename == '' for f in uploaded_files):
                 return render_template('index.html', error="No file selected", current_user=current_user)
 
@@ -722,7 +743,8 @@ def api_save_feedback():
 @app.errorhandler(413)
 def request_entity_too_large(error):
     """Handle file too large error"""
-    return render_template('index.html', error="File too large. Maximum size is 50MB"), 413
+    max_size_mb = app.config['MAX_CONTENT_LENGTH'] / (1024 * 1024)
+    return render_template('index.html', error=f"File too large. Maximum size is {int(max_size_mb)}MB"), 413
 
 
 @app.errorhandler(500)

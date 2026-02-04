@@ -47,7 +47,7 @@
     /* Hero Section */
     .hero {
       text-align: center;
-      padding: 4rem 2rem;
+      padding: 2rem 1rem;
       position: relative;
     }
 
@@ -161,8 +161,8 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 2rem;
-      margin: 3rem 0;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
       animation: fadeInUp 0.8s ease-out 0.5s both;
     }
 
@@ -180,11 +180,11 @@
       backdrop-filter: blur(10px);
       border: 2px dashed #BFC9D1;
       border-radius: 1.5rem;
-      padding: 3rem;
+      padding: 2rem;
       text-align: center;
-      margin: 3rem 0;
+      margin: 0;
       transition: all 300ms ease;
-      min-height: 260px;
+      min-height: 240px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -412,19 +412,131 @@
     body.light-mode .user-nav-container a:hover {
       background: rgba(239, 68, 68, 0.25) !important;
     }
+
+    body.light-mode .profile-menu {
+      background: rgba(255, 255, 255, 0.95) !important;
+      border-color: #e2e8f0 !important;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    body.light-mode .profile-btn {
+      color: #1e293b !important;
+      background: rgba(0, 0, 0, 0.05) !important;
+      border-color: rgba(0, 0, 0, 0.1) !important;
+    }
+
+    body.light-mode .profile-menu div[style*="color: #f8fafc"] {
+      color: #1e293b !important;
+    }
+
+    body.light-mode .profile-menu div[style*="background: rgba(0,0,0,0.2)"] {
+      background: rgba(0, 0, 0, 0.05) !important;
+    }
+
+    body.light-mode svg[style*="fill: white"] {
+      fill: #1e293b !important;
+    }
   </style>
 </head>
 
 <body>
   <!-- User Navigation -->
-  <div class="user-nav-container"
-    style="position: absolute; top: 20px; left: 20px; z-index: 1000; display: flex; align-items: center; gap: 15px;">
+  <div class="user-nav-container" style="position: absolute; top: 20px; left: 20px; z-index: 1000;">
     {% if current_user.is_authenticated %}
-    <a href="{{ url_for('auth.logout') }}"
-      style="background: rgba(239, 68, 68, 0.2); backdrop-filter: blur(10px); border: 1px solid rgba(239, 68, 68, 0.4); padding: 0.5rem 1rem; border-radius: 2rem; color: #fca5a5; font-size: 0.9rem; text-decoration: none; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px;">
-      🚪 Logout
-    </a>
+    <div class="profile-dropdown" style="position: relative;">
+      <button class="profile-btn" onclick="toggleProfile()"
+        style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.5rem 1rem; border-radius: 2rem; color: #f8fafc; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease;">
+        <span
+          style="background: linear-gradient(135deg, #FF9B51, #ff8a38); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #25343F; font-weight: bold;">
+          {{ (current_user.email or current_user.github_username or 'U')[0] | upper }}
+        </span>
+        {{ current_user.email or current_user.github_username }}
+        <span style="font-size: 0.8rem; opacity: 0.7;">▼</span>
+      </button>
+
+      <div class="profile-menu" id="profileMenu"
+        style="display: none; position: absolute; top: 110%; left: 0; min-width: 260px; background: rgba(37, 52, 63, 0.95); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; padding: 1rem; box-shadow: 0 10px 40px rgba(0,0,0,0.3); transform-origin: top left; animation: menuOpen 0.2s ease-out;">
+        <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+          <div style="color: #94a3b8; font-size: 0.75rem; margin-bottom: 0.25rem;">SIGNED IN AS</div>
+          <div style="color: #f8fafc; font-weight: 600; overflow: hidden; text-overflow: ellipsis;">{{
+            current_user.email or 'No Email' }}</div>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <div style="color: #94a3b8; font-size: 0.75rem; margin-bottom: 0.5rem;">CONNECTIONS</div>
+
+          <!-- GitHub Connection -->
+          <div
+            style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: rgba(0,0,0,0.2); border-radius: 0.5rem; margin-bottom: 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <svg height="20" viewBox="0 0 16 16" version="1.1" width="20" aria-hidden="true" style="fill: white;">
+                <path fill-rule="evenodd"
+                  d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
+                </path>
+              </svg>
+              <div>
+                <div style="font-size: 0.85rem; font-weight: 500;">GitHub</div>
+                {% if current_user.github_username %}
+                <div style="font-size: 0.75rem; color: #4ade80;">{{ current_user.github_username }}</div>
+                {% else %}
+                <div style="font-size: 0.75rem; color: #94a3b8;">Not connected</div>
+                {% endif %}
+              </div>
+            </div>
+            {% if current_user.github_username %}
+            <span style="font-size: 1.2rem; color: #4ade80;">✓</span>
+            {% else %}
+            <a href="{{ url_for('auth.github_login') }}"
+              style="font-size: 0.75rem; color: #FF9B51; text-decoration: none; padding: 0.25rem 0.75rem; border: 1px solid rgba(255, 155, 81, 0.4); border-radius: 1rem; transition: all 0.2s ease;">Link</a>
+            {% endif %}
+          </div>
+        </div>
+
+        <a href="{{ url_for('auth.logout') }}"
+          style="display: block; width: 100%; padding: 0.75rem; text-align: center; background: rgba(239, 68, 68, 0.1); color: #fca5a5; text-decoration: none; border-radius: 0.5rem; font-size: 0.9rem; transition: all 0.2s ease;"
+          onmouseover="this.style.background='rgba(239, 68, 68, 0.2)'"
+          onmouseout="this.style.background='rgba(239, 68, 68, 0.1)'">
+          Sign Out
+        </a>
+      </div>
+    </div>
+
+    <!-- Script to toggle menu -->
+    <script>
+      function toggleProfile() {
+        const menu = document.getElementById('profileMenu');
+        menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+      }
+
+      // Close when clicking outside
+      document.addEventListener('click', function (e) {
+        const dropdown = document.querySelector('.profile-dropdown');
+        const menu = document.getElementById('profileMenu');
+        if (dropdown && !dropdown.contains(e.target) && menu.style.display === 'block') {
+          menu.style.display = 'none';
+        }
+      });
+    </script>
+
+    <style>
+      @keyframes menuOpen {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+
     {% else %}
+    <a href="{{ url_for('auth.login') }}"
+      style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.5rem 1rem; border-radius: 2rem; color: #f8fafc; font-size: 0.9rem; text-decoration: none; transition: all 0.3s ease;">
+      🔐 Login
+    </a>
     <a href="{{ url_for('auth.github_login') }}"
       style="background: #24292e; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.5rem 1rem; border-radius: 2rem; color: white; font-size: 0.9rem; text-decoration: none; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px;">
       <svg height="20" viewBox="0 0 16 16" version="1.1" width="20" aria-hidden="true" style="fill: white;">
@@ -446,8 +558,7 @@
     <!-- Hero Section -->
     <div class="hero">
       <h1 class="hero-title">
-        <img src="{{ url_for('static', filename='rocket.png') }}" alt="Rocket"
-          style="height: 1.2em; vertical-align: bottom; mix-blend-mode: screen; filter: drop-shadow(0 0 15px rgba(255, 155, 81, 0.6));">
+
         AI Code Review Platform
       </h1>
       <p class="hero-subtitle">
@@ -468,14 +579,11 @@
             </p>
             <input type="file" name="codebase" id="codebase" class="file-input" multiple
               accept=".py,.js,.java,.cpp,.c,.html,.css,.json,.xml,.yaml,.yml,.sh,.md,.txt,.zip">
-            <input type="file" name="codebase" id="codebase-folder" class="file-input" webkitdirectory directory
-              multiple style="display: none;">
             <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;">
-              <button type="button" onclick="document.getElementById('codebase').click()" class="btn btn-secondary">
+              <button type="button" onclick="selectFiles()" class="btn btn-secondary">
                 📄 Select Files
               </button>
-              <button type="button" onclick="document.getElementById('codebase-folder').click()"
-                class="btn btn-secondary">
+              <button type="button" onclick="selectFolder()" class="btn btn-secondary">
                 📁 Select Folder
               </button>
               <button type="submit" class="btn btn-primary" id="analyze-btn">
@@ -613,24 +721,26 @@
       // Drag and drop functionality
       const uploadArea = document.getElementById('upload-area');
       const fileInput = document.getElementById('codebase');
-      const folderInput = document.getElementById('codebase-folder');
       const uploadLabel = uploadArea.querySelector('.upload-label');
       const originalLabelText = uploadLabel.textContent;
 
-      // Sync folder input to file input when folder is selected
-      folderInput.addEventListener('change', (e) => {
-        if (folderInput.files.length > 0) {
-          // Transfer files from folder input to file input
-          const dt = new DataTransfer();
-          for (let file of folderInput.files) {
-            dt.items.add(file);
-          }
-          fileInput.files = dt.files;
-          updateLabel(fileInput.files.length);
-        }
-      });
+      // Functions to handle file and folder selection
+      function selectFiles() {
+        console.log('Select Files button clicked');
+        fileInput.removeAttribute('webkitdirectory');
+        fileInput.removeAttribute('directory');
+        fileInput.click();
+      }
+
+      function selectFolder() {
+        console.log('Select Folder button clicked');
+        fileInput.setAttribute('webkitdirectory', '');
+        fileInput.setAttribute('directory', '');
+        fileInput.click();
+      }
 
       function updateLabel(count) {
+        console.log(`Files selected: ${count}`);
         if (count > 0) {
           uploadLabel.textContent = `✅ ${count} file${count > 1 ? 's' : ''} selected`;
         } else {
@@ -685,11 +795,18 @@
       const uploadForm = document.getElementById('upload-form');
       uploadForm.addEventListener('submit', (e) => {
         const files = fileInput.files;
+        console.log(`Form submit: ${files ? files.length : 0} files selected`);
+
         if (!files || files.length === 0) {
           e.preventDefault();
           alert('Please select at least one file or folder to analyze');
           return false;
         }
+
+        // Show file count to user
+        console.log(`Uploading ${files.length} files...`);
+        document.getElementById('analyze-btn').textContent = `⏳ Uploading ${files.length} files...`;
+        document.getElementById('analyze-btn').disabled = true;
 
         // Show loading state on button
         const analyzeBtn = document.getElementById('analyze-btn');

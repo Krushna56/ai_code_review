@@ -99,6 +99,9 @@ EMBEDDING_CACHE_DIR.mkdir(exist_ok=True)
 LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
 LOG_FILE = BASE_DIR / 'app.log'
 
+# Upload Configuration
+MAX_CONTENT_LENGTH = int(os.getenv('MAX_CONTENT_LENGTH', 20 * 1024 * 1024 * 1024)) # 20GB default
+
 # Supported file extensions
 SUPPORTED_EXTENSIONS = ['.py', '.js', '.java', '.go', '.cpp', '.c', '.rb', '.php']
 

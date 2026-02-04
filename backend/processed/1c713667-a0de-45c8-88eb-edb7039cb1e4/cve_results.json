@@ -1,0 +1,2921 @@
+{
+  "dependencies": [
+    {
+      "package_name": "log4j-core",
+      "version": "2.14.1",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\tests\\fixtures\\dependencies\\pom.xml",
+      "line_number": 0,
+      "scope": "compile",
+      "group_id": "org.apache.logging.log4j"
+    },
+    {
+      "package_name": "junit",
+      "version": "4.13.2",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\tests\\fixtures\\dependencies\\pom.xml",
+      "line_number": 0,
+      "scope": "test",
+      "group_id": "junit"
+    },
+    {
+      "package_name": "jackson-databind",
+      "version": "2.9.0",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\tests\\fixtures\\dependencies\\pom.xml",
+      "line_number": 0,
+      "scope": "compile",
+      "group_id": "com.fasterxml.jackson.core"
+    },
+    {
+      "package_name": "log4j-core",
+      "version": "2.14.1",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\tests\\fixtures\\dependencies\\pom.xml",
+      "line_number": 0,
+      "scope": "compile",
+      "group_id": "org.apache.logging.log4j"
+    },
+    {
+      "package_name": "junit",
+      "version": "4.13.2",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\tests\\fixtures\\dependencies\\pom.xml",
+      "line_number": 0,
+      "scope": "test",
+      "group_id": "junit"
+    },
+    {
+      "package_name": "jackson-databind",
+      "version": "2.9.0",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\tests\\fixtures\\dependencies\\pom.xml",
+      "line_number": 0,
+      "scope": "compile",
+      "group_id": "com.fasterxml.jackson.core"
+    },
+    {
+      "package_name": "log4j-core",
+      "version": "2.14.1",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\tests\\fixtures\\dependencies\\pom.xml",
+      "line_number": 0,
+      "scope": "compile",
+      "group_id": "org.apache.logging.log4j"
+    },
+    {
+      "package_name": "junit",
+      "version": "4.13.2",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\tests\\fixtures\\dependencies\\pom.xml",
+      "line_number": 0,
+      "scope": "test",
+      "group_id": "junit"
+    },
+    {
+      "package_name": "jackson-databind",
+      "version": "2.9.0",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\tests\\fixtures\\dependencies\\pom.xml",
+      "line_number": 0,
+      "scope": "compile",
+      "group_id": "com.fasterxml.jackson.core"
+    },
+    {
+      "package_name": "commons-lang3",
+      "version": "3.12.0",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\tests\\fixtures\\dependencies\\build.gradle",
+      "line_number": 7,
+      "scope": "implementation",
+      "group_id": "org.apache.commons"
+    },
+    {
+      "package_name": "guava",
+      "version": "30.0-jre",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\tests\\fixtures\\dependencies\\build.gradle",
+      "line_number": 8,
+      "scope": "implementation",
+      "group_id": "com.google.guava"
+    },
+    {
+      "package_name": "spring-core",
+      "version": "5.3.8",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\tests\\fixtures\\dependencies\\build.gradle",
+      "line_number": 9,
+      "scope": "implementation",
+      "group_id": "org.springframework"
+    },
+    {
+      "package_name": "junit",
+      "version": "4.13.2",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\tests\\fixtures\\dependencies\\build.gradle",
+      "line_number": 11,
+      "scope": "testImplementation",
+      "group_id": "junit"
+    },
+    {
+      "package_name": "mockito-core",
+      "version": "3.11.2",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\tests\\fixtures\\dependencies\\build.gradle",
+      "line_number": 12,
+      "scope": "testImplementation",
+      "group_id": "org.mockito"
+    },
+    {
+      "package_name": "commons-lang3",
+      "version": "3.12.0",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\tests\\fixtures\\dependencies\\build.gradle",
+      "line_number": 7,
+      "scope": "implementation",
+      "group_id": "org.apache.commons"
+    },
+    {
+      "package_name": "guava",
+      "version": "30.0-jre",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\tests\\fixtures\\dependencies\\build.gradle",
+      "line_number": 8,
+      "scope": "implementation",
+      "group_id": "com.google.guava"
+    },
+    {
+      "package_name": "spring-core",
+      "version": "5.3.8",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\tests\\fixtures\\dependencies\\build.gradle",
+      "line_number": 9,
+      "scope": "implementation",
+      "group_id": "org.springframework"
+    },
+    {
+      "package_name": "junit",
+      "version": "4.13.2",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\tests\\fixtures\\dependencies\\build.gradle",
+      "line_number": 11,
+      "scope": "testImplementation",
+      "group_id": "junit"
+    },
+    {
+      "package_name": "mockito-core",
+      "version": "3.11.2",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\tests\\fixtures\\dependencies\\build.gradle",
+      "line_number": 12,
+      "scope": "testImplementation",
+      "group_id": "org.mockito"
+    },
+    {
+      "package_name": "commons-lang3",
+      "version": "3.12.0",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\tests\\fixtures\\dependencies\\build.gradle",
+      "line_number": 7,
+      "scope": "implementation",
+      "group_id": "org.apache.commons"
+    },
+    {
+      "package_name": "guava",
+      "version": "30.0-jre",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\tests\\fixtures\\dependencies\\build.gradle",
+      "line_number": 8,
+      "scope": "implementation",
+      "group_id": "com.google.guava"
+    },
+    {
+      "package_name": "spring-core",
+      "version": "5.3.8",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\tests\\fixtures\\dependencies\\build.gradle",
+      "line_number": 9,
+      "scope": "implementation",
+      "group_id": "org.springframework"
+    },
+    {
+      "package_name": "junit",
+      "version": "4.13.2",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\tests\\fixtures\\dependencies\\build.gradle",
+      "line_number": 11,
+      "scope": "testImplementation",
+      "group_id": "junit"
+    },
+    {
+      "package_name": "mockito-core",
+      "version": "3.11.2",
+      "ecosystem": "maven",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\tests\\fixtures\\dependencies\\build.gradle",
+      "line_number": 12,
+      "scope": "testImplementation",
+      "group_id": "org.mockito"
+    },
+    {
+      "package_name": "lodash",
+      "version": "4.17.15",
+      "ecosystem": "npm",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\tests\\fixtures\\dependencies\\package.json",
+      "line_number": 0,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "express",
+      "version": "4.17.1",
+      "ecosystem": "npm",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\tests\\fixtures\\dependencies\\package.json",
+      "line_number": 0,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "axios",
+      "version": "0.21.0",
+      "ecosystem": "npm",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\tests\\fixtures\\dependencies\\package.json",
+      "line_number": 0,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "jest",
+      "version": "27.0.0",
+      "ecosystem": "npm",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\tests\\fixtures\\dependencies\\package.json",
+      "line_number": 0,
+      "scope": "dev",
+      "group_id": null
+    },
+    {
+      "package_name": "webpack",
+      "version": "5.0.0",
+      "ecosystem": "npm",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\tests\\fixtures\\dependencies\\package.json",
+      "line_number": 0,
+      "scope": "dev",
+      "group_id": null
+    },
+    {
+      "package_name": "lodash",
+      "version": "4.17.15",
+      "ecosystem": "npm",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\tests\\fixtures\\dependencies\\package.json",
+      "line_number": 0,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "express",
+      "version": "4.17.1",
+      "ecosystem": "npm",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\tests\\fixtures\\dependencies\\package.json",
+      "line_number": 0,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "axios",
+      "version": "0.21.0",
+      "ecosystem": "npm",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\tests\\fixtures\\dependencies\\package.json",
+      "line_number": 0,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "jest",
+      "version": "27.0.0",
+      "ecosystem": "npm",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\tests\\fixtures\\dependencies\\package.json",
+      "line_number": 0,
+      "scope": "dev",
+      "group_id": null
+    },
+    {
+      "package_name": "webpack",
+      "version": "5.0.0",
+      "ecosystem": "npm",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\tests\\fixtures\\dependencies\\package.json",
+      "line_number": 0,
+      "scope": "dev",
+      "group_id": null
+    },
+    {
+      "package_name": "lodash",
+      "version": "4.17.15",
+      "ecosystem": "npm",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\tests\\fixtures\\dependencies\\package.json",
+      "line_number": 0,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "express",
+      "version": "4.17.1",
+      "ecosystem": "npm",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\tests\\fixtures\\dependencies\\package.json",
+      "line_number": 0,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "axios",
+      "version": "0.21.0",
+      "ecosystem": "npm",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\tests\\fixtures\\dependencies\\package.json",
+      "line_number": 0,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "jest",
+      "version": "27.0.0",
+      "ecosystem": "npm",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\tests\\fixtures\\dependencies\\package.json",
+      "line_number": 0,
+      "scope": "dev",
+      "group_id": null
+    },
+    {
+      "package_name": "webpack",
+      "version": "5.0.0",
+      "ecosystem": "npm",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\tests\\fixtures\\dependencies\\package.json",
+      "line_number": 0,
+      "scope": "dev",
+      "group_id": null
+    },
+    {
+      "package_name": "Flask",
+      "version": "3.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Werkzeug",
+      "version": "3.0.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "autopep8",
+      "version": "2.0.4",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "bandit",
+      "version": "1.7.5",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 6,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "scikit-learn",
+      "version": "1.3.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 9,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "xgboost",
+      "version": "2.0.3",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 10,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "torch",
+      "version": "2.1.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 11,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "transformers",
+      "version": "4.36.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 12,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.6.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 15,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "sentence-transformers",
+      "version": "2.2.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 16,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Flask-Login",
+      "version": "0.6.3",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 19,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Flask-WTF",
+      "version": "1.2.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 20,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "WTForms",
+      "version": "3.1.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 21,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "email-validator",
+      "version": "2.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 22,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "bcrypt",
+      "version": "4.1.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 23,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests-oauthlib",
+      "version": "1.3.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 24,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "faiss-cpu",
+      "version": "1.8.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 28,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "tree-sitter",
+      "version": "0.20.4",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 31,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "semgrep",
+      "version": "1.52.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 32,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pylint",
+      "version": "3.0.3",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 33,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "ruff",
+      "version": "0.1.9",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 34,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "radon",
+      "version": "6.0.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 35,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "anthropic",
+      "version": "0.8.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 38,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "mistralai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 39,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 42,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 43,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "numpy",
+      "version": "1.26.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 44,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pandas",
+      "version": "1.5.3",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 45,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pytest",
+      "version": "7.4.3",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 48,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pytest-mock",
+      "version": "3.12.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 49,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "markdown",
+      "version": "3.5.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 52,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "reportlab",
+      "version": "4.0.7",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 53,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Jinja2",
+      "version": "3.1.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 56,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "qdrant-client",
+      "version": "1.7.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 59,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "tree-sitter",
+      "version": "0.20.4",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 62,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "detect-secrets",
+      "version": "1.4.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 66,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "osv",
+      "version": "0.1.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 67,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "APScheduler",
+      "version": "3.10.4",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\requirements.txt",
+      "line_number": 70,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\779cf7a0-2f4e-4aa6-a2aa-c550f559b2f4\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\779cf7a0-2f4e-4aa6-a2aa-c550f559b2f4\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\779cf7a0-2f4e-4aa6-a2aa-c550f559b2f4\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\779cf7a0-2f4e-4aa6-a2aa-c550f559b2f4\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\779cf7a0-2f4e-4aa6-a2aa-c550f559b2f4\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\7df3016b-176d-4f9f-8ff0-068e3c12060c\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\7df3016b-176d-4f9f-8ff0-068e3c12060c\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\7df3016b-176d-4f9f-8ff0-068e3c12060c\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\7df3016b-176d-4f9f-8ff0-068e3c12060c\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\7df3016b-176d-4f9f-8ff0-068e3c12060c\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\f2397ad3-8a51-49f0-9bfb-d3e9e1096b06\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\f2397ad3-8a51-49f0-9bfb-d3e9e1096b06\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\f2397ad3-8a51-49f0-9bfb-d3e9e1096b06\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\f2397ad3-8a51-49f0-9bfb-d3e9e1096b06\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\f2397ad3-8a51-49f0-9bfb-d3e9e1096b06\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\f8be8a6d-8210-40e6-93a6-b1de85f6db67\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\f8be8a6d-8210-40e6-93a6-b1de85f6db67\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\f8be8a6d-8210-40e6-93a6-b1de85f6db67\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\f8be8a6d-8210-40e6-93a6-b1de85f6db67\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\f8be8a6d-8210-40e6-93a6-b1de85f6db67\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Flask",
+      "version": "3.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Werkzeug",
+      "version": "3.0.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "autopep8",
+      "version": "2.0.4",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "bandit",
+      "version": "1.7.5",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 6,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "scikit-learn",
+      "version": "1.3.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 9,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "xgboost",
+      "version": "2.0.3",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 10,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "torch",
+      "version": "2.1.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 11,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "transformers",
+      "version": "4.36.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 12,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.6.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 15,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "sentence-transformers",
+      "version": "2.2.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 16,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Flask-Login",
+      "version": "0.6.3",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 19,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Flask-WTF",
+      "version": "1.2.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 20,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "WTForms",
+      "version": "3.1.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 21,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "email-validator",
+      "version": "2.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 22,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "bcrypt",
+      "version": "4.1.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 23,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests-oauthlib",
+      "version": "1.3.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 24,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "faiss-cpu",
+      "version": "1.8.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 28,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "tree-sitter",
+      "version": "0.20.4",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 31,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "semgrep",
+      "version": "1.52.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 32,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pylint",
+      "version": "3.0.3",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 33,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "ruff",
+      "version": "0.1.9",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 34,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "radon",
+      "version": "6.0.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 35,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "anthropic",
+      "version": "0.8.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 38,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "mistralai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 39,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 42,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 43,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "numpy",
+      "version": "1.26.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 44,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pandas",
+      "version": "1.5.3",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 45,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pytest",
+      "version": "7.4.3",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 48,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pytest-mock",
+      "version": "3.12.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 49,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "markdown",
+      "version": "3.5.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 52,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "reportlab",
+      "version": "4.0.7",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 53,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Jinja2",
+      "version": "3.1.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 56,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "qdrant-client",
+      "version": "1.7.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 59,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "tree-sitter",
+      "version": "0.20.4",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 62,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "detect-secrets",
+      "version": "1.4.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 66,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "osv",
+      "version": "0.1.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 67,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "APScheduler",
+      "version": "3.10.4",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\requirements.txt",
+      "line_number": 70,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Flask",
+      "version": "2.0.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\tests\\fixtures\\dependencies\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.25.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\tests\\fixtures\\dependencies\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Django",
+      "version": "2.2.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\tests\\fixtures\\dependencies\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Pillow",
+      "version": "8.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\tests\\fixtures\\dependencies\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "PyYAML",
+      "version": "5.3.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\tests\\fixtures\\dependencies\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "cryptography",
+      "version": "3.3.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\4b3f413e-57f5-4123-ab86-174fd62db020\\backend\\tests\\fixtures\\dependencies\\requirements.txt",
+      "line_number": 6,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Flask",
+      "version": "3.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Werkzeug",
+      "version": "3.0.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "autopep8",
+      "version": "2.0.4",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "bandit",
+      "version": "1.7.5",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 6,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "scikit-learn",
+      "version": "1.3.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 9,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "xgboost",
+      "version": "2.0.3",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 10,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "torch",
+      "version": "2.1.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 11,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "transformers",
+      "version": "4.36.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 12,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.6.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 15,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "sentence-transformers",
+      "version": "2.2.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 16,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Flask-Login",
+      "version": "0.6.3",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 19,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Flask-WTF",
+      "version": "1.2.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 20,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "WTForms",
+      "version": "3.1.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 21,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "email-validator",
+      "version": "2.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 22,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "bcrypt",
+      "version": "4.1.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 23,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests-oauthlib",
+      "version": "1.3.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 24,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "faiss-cpu",
+      "version": "1.8.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 28,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "tree-sitter",
+      "version": "0.20.4",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 31,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "semgrep",
+      "version": "1.52.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 32,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pylint",
+      "version": "3.0.3",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 33,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "ruff",
+      "version": "0.1.9",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 34,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "radon",
+      "version": "6.0.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 35,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "anthropic",
+      "version": "0.8.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 38,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "mistralai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 39,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 42,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 43,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "numpy",
+      "version": "1.26.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 44,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pandas",
+      "version": "1.5.3",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 45,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pytest",
+      "version": "7.4.3",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 48,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pytest-mock",
+      "version": "3.12.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 49,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "markdown",
+      "version": "3.5.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 52,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "reportlab",
+      "version": "4.0.7",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 53,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Jinja2",
+      "version": "3.1.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 56,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "qdrant-client",
+      "version": "1.7.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 59,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "tree-sitter",
+      "version": "0.20.4",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 62,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "detect-secrets",
+      "version": "1.4.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 66,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "osv",
+      "version": "0.1.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 67,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "APScheduler",
+      "version": "3.10.4",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\requirements.txt",
+      "line_number": 70,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Flask",
+      "version": "2.0.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\tests\\fixtures\\dependencies\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.25.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\tests\\fixtures\\dependencies\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Django",
+      "version": "2.2.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\tests\\fixtures\\dependencies\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Pillow",
+      "version": "8.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\tests\\fixtures\\dependencies\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "PyYAML",
+      "version": "5.3.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\tests\\fixtures\\dependencies\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "cryptography",
+      "version": "3.3.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\uploads\\2c78a70e-6a87-4b76-ab63-afa18b094903\\backend\\tests\\fixtures\\dependencies\\requirements.txt",
+      "line_number": 6,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\1cc92e20-5002-4385-ac6f-5b908818d971\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\1cc92e20-5002-4385-ac6f-5b908818d971\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\1cc92e20-5002-4385-ac6f-5b908818d971\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\1cc92e20-5002-4385-ac6f-5b908818d971\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\1cc92e20-5002-4385-ac6f-5b908818d971\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\216c6e3a-c542-49c1-9ae9-bbad4670cbc8\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\216c6e3a-c542-49c1-9ae9-bbad4670cbc8\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\216c6e3a-c542-49c1-9ae9-bbad4670cbc8\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\216c6e3a-c542-49c1-9ae9-bbad4670cbc8\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\216c6e3a-c542-49c1-9ae9-bbad4670cbc8\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\3329e1a3-51a8-4b58-8d4f-c6b4883b07eb\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\3329e1a3-51a8-4b58-8d4f-c6b4883b07eb\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\3329e1a3-51a8-4b58-8d4f-c6b4883b07eb\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\3329e1a3-51a8-4b58-8d4f-c6b4883b07eb\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\3329e1a3-51a8-4b58-8d4f-c6b4883b07eb\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\425b07f9-ca3a-4a28-a456-8e1950d8f494\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\425b07f9-ca3a-4a28-a456-8e1950d8f494\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\425b07f9-ca3a-4a28-a456-8e1950d8f494\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\425b07f9-ca3a-4a28-a456-8e1950d8f494\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\425b07f9-ca3a-4a28-a456-8e1950d8f494\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\6a64bb48-25af-4327-87c0-6d0ac4327cd6\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\6a64bb48-25af-4327-87c0-6d0ac4327cd6\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\6a64bb48-25af-4327-87c0-6d0ac4327cd6\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\6a64bb48-25af-4327-87c0-6d0ac4327cd6\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\6a64bb48-25af-4327-87c0-6d0ac4327cd6\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\6b5734a6-fa8b-4a64-b4f4-7d73032dd5dd\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\6b5734a6-fa8b-4a64-b4f4-7d73032dd5dd\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\6b5734a6-fa8b-4a64-b4f4-7d73032dd5dd\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\6b5734a6-fa8b-4a64-b4f4-7d73032dd5dd\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\6b5734a6-fa8b-4a64-b4f4-7d73032dd5dd\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\76c51347-0673-442f-aa69-c4865450681d\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\76c51347-0673-442f-aa69-c4865450681d\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\76c51347-0673-442f-aa69-c4865450681d\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\76c51347-0673-442f-aa69-c4865450681d\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\76c51347-0673-442f-aa69-c4865450681d\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\824038f4-da1d-44d5-a52f-58bf16a1b88d\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\824038f4-da1d-44d5-a52f-58bf16a1b88d\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\824038f4-da1d-44d5-a52f-58bf16a1b88d\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\824038f4-da1d-44d5-a52f-58bf16a1b88d\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\824038f4-da1d-44d5-a52f-58bf16a1b88d\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\886a685b-d9ae-4d87-b320-3404d005a996\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\886a685b-d9ae-4d87-b320-3404d005a996\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\886a685b-d9ae-4d87-b320-3404d005a996\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\886a685b-d9ae-4d87-b320-3404d005a996\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\886a685b-d9ae-4d87-b320-3404d005a996\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\8dbb7c85-e58f-4d26-b96e-10575b017fd9\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\8dbb7c85-e58f-4d26-b96e-10575b017fd9\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\8dbb7c85-e58f-4d26-b96e-10575b017fd9\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\8dbb7c85-e58f-4d26-b96e-10575b017fd9\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\8dbb7c85-e58f-4d26-b96e-10575b017fd9\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\9366e0b6-30b2-4197-bbc6-d8ac962ebd11\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\9366e0b6-30b2-4197-bbc6-d8ac962ebd11\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\9366e0b6-30b2-4197-bbc6-d8ac962ebd11\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\9366e0b6-30b2-4197-bbc6-d8ac962ebd11\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\9366e0b6-30b2-4197-bbc6-d8ac962ebd11\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\9626b814-a03f-42d2-9d84-e06ed5fd4745\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\9626b814-a03f-42d2-9d84-e06ed5fd4745\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\9626b814-a03f-42d2-9d84-e06ed5fd4745\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\9626b814-a03f-42d2-9d84-e06ed5fd4745\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\9626b814-a03f-42d2-9d84-e06ed5fd4745\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\9eab7659-343f-4696-a74e-2d8b32fb9089\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\9eab7659-343f-4696-a74e-2d8b32fb9089\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\9eab7659-343f-4696-a74e-2d8b32fb9089\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\9eab7659-343f-4696-a74e-2d8b32fb9089\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\9eab7659-343f-4696-a74e-2d8b32fb9089\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Flask",
+      "version": "3.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Werkzeug",
+      "version": "3.0.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "autopep8",
+      "version": "2.0.4",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "bandit",
+      "version": "1.7.5",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 6,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "scikit-learn",
+      "version": "1.3.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 9,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "xgboost",
+      "version": "2.0.3",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 10,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "torch",
+      "version": "2.1.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 11,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "transformers",
+      "version": "4.36.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 12,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.6.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 15,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "sentence-transformers",
+      "version": "2.2.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 16,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "faiss-cpu",
+      "version": "1.7.4",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 19,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "tree-sitter",
+      "version": "0.20.4",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 22,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "semgrep",
+      "version": "1.52.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 23,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pylint",
+      "version": "3.0.3",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 24,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "ruff",
+      "version": "0.1.9",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 25,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "radon",
+      "version": "6.0.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 26,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "anthropic",
+      "version": "0.8.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 29,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 32,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 33,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "numpy",
+      "version": "1.26.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 34,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pandas",
+      "version": "1.5.3",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 35,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pytest",
+      "version": "7.4.3",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 38,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pytest-mock",
+      "version": "3.12.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 39,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "markdown",
+      "version": "3.5.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 42,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "reportlab",
+      "version": "4.0.7",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 43,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Jinja2",
+      "version": "3.1.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a0b4b8bc-efd1-48ca-84cc-8ae77a3b85b6\\requirements.txt",
+      "line_number": 46,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\a826e1c1-826c-47cf-8716-ed1e3a30c0dd\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\c48b901c-2041-41b1-b2f9-6c81e5fe0002\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\c48b901c-2041-41b1-b2f9-6c81e5fe0002\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\c48b901c-2041-41b1-b2f9-6c81e5fe0002\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\c48b901c-2041-41b1-b2f9-6c81e5fe0002\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\c48b901c-2041-41b1-b2f9-6c81e5fe0002\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\c6380cff-c6f9-4bc6-908f-67d2207a7360\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\c6380cff-c6f9-4bc6-908f-67d2207a7360\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\c6380cff-c6f9-4bc6-908f-67d2207a7360\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\c6380cff-c6f9-4bc6-908f-67d2207a7360\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\c6380cff-c6f9-4bc6-908f-67d2207a7360\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\d03fd31f-852f-4270-b017-4d38e1501a35\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\d03fd31f-852f-4270-b017-4d38e1501a35\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\d03fd31f-852f-4270-b017-4d38e1501a35\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\d03fd31f-852f-4270-b017-4d38e1501a35\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\d03fd31f-852f-4270-b017-4d38e1501a35\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\dae7337b-2d49-410e-8657-ae8a7e050e0e\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\dae7337b-2d49-410e-8657-ae8a7e050e0e\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\dae7337b-2d49-410e-8657-ae8a7e050e0e\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\dae7337b-2d49-410e-8657-ae8a7e050e0e\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\dae7337b-2d49-410e-8657-ae8a7e050e0e\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "click",
+      "version": "8.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\dbb69e11-627a-41ae-91f6-788bb3c10aad\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.31.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\dbb69e11-627a-41ae-91f6-788bb3c10aad\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "openai",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\dbb69e11-627a-41ae-91f6-788bb3c10aad\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\dbb69e11-627a-41ae-91f6-788bb3c10aad\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "pyyaml",
+      "version": "6.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\dbb69e11-627a-41ae-91f6-788bb3c10aad\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Flask",
+      "version": "3.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\66ffb581-e111-4e3a-87e2-94feac1c735f\\ai engine\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Werkzeug",
+      "version": "3.0.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\66ffb581-e111-4e3a-87e2-94feac1c735f\\ai engine\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\66ffb581-e111-4e3a-87e2-94feac1c735f\\ai engine\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "PyPDF2",
+      "version": "3.0.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\66ffb581-e111-4e3a-87e2-94feac1c735f\\ai engine\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-docx",
+      "version": "1.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\66ffb581-e111-4e3a-87e2-94feac1c735f\\ai engine\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "google-generativeai",
+      "version": "0.3.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\66ffb581-e111-4e3a-87e2-94feac1c735f\\ai engine\\requirements.txt",
+      "line_number": 6,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Flask",
+      "version": "3.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Werkzeug",
+      "version": "3.0.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "PyPDF2",
+      "version": "3.0.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-docx",
+      "version": "1.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "google-generativeai",
+      "version": "0.3.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\requirements.txt",
+      "line_number": 6,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Flask",
+      "version": "2.0.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\tests\\fixtures\\dependencies\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "requests",
+      "version": "2.25.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\tests\\fixtures\\dependencies\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Django",
+      "version": "2.2.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\tests\\fixtures\\dependencies\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Pillow",
+      "version": "8.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\tests\\fixtures\\dependencies\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "PyYAML",
+      "version": "5.3.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\tests\\fixtures\\dependencies\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "cryptography",
+      "version": "3.3.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\1c713667-a0de-45c8-88eb-edb7039cb1e4\\ai_code_review\\backend\\tests\\fixtures\\dependencies\\requirements.txt",
+      "line_number": 6,
+      "scope": "runtime",
+      "group_id": null
+    }
+  ],
+  "vulnerabilities": []
+}

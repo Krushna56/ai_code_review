@@ -259,9 +259,9 @@ async function loadFindings(severity = null) {
                   finding.title || finding.summary || "No title",
                 )}</td>
                 <td>${escapeHtml(finding.owasp_name || "Not Mapped")}</td>
-                <td><code>${escapeHtml(
-                  getFileName(finding.file_path || finding.package || "N/A"),
-                )}</code></td>
+                <td><code title="${escapeHtml(finding.file_path || finding.package || "N/A")}">${escapeHtml(
+                  finding.file_path || finding.package || "N/A",
+                )}${finding.line_number ? ":" + finding.line_number : ""}</code></td>
                 <td>
                     <div class="feedback-actions">
                         <button onclick="submitFeedback('${

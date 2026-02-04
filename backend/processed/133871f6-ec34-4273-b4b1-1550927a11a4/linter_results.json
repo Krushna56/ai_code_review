@@ -1,0 +1,356 @@
+{
+  "summary": {
+    "total_issues": 7,
+    "by_severity": {
+      "critical": 0,
+      "high": 0,
+      "medium": 7,
+      "low": 0,
+      "info": 0
+    },
+    "by_source": {
+      "bandit": 2,
+      "ruff": 5
+    },
+    "issues": [
+      {
+        "file": "uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\app.py",
+        "line": 228,
+        "severity": "MEDIUM",
+        "confidence": "MEDIUM",
+        "test_id": "B104",
+        "issue_text": "Possible binding to all interfaces.",
+        "code": "227         # In debug mode, exclude uploads directory from file watching\n228         run_simple('0.0.0.0', 5000, app, use_reloader=True,\n229                    use_debugger=True, extra_files=[])\n230     else:\n",
+        "tool": "bandit"
+      },
+      {
+        "file": "uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\app.py",
+        "line": 231,
+        "severity": "MEDIUM",
+        "confidence": "MEDIUM",
+        "test_id": "B104",
+        "issue_text": "Possible binding to all interfaces.",
+        "code": "230     else:\n231         app.run(debug=False, host='0.0.0.0', port=5000)\n",
+        "tool": "bandit"
+      },
+      {
+        "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\backend\\uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\app.py",
+        "line": 1,
+        "column": 44,
+        "severity": "warning",
+        "code": "F401",
+        "message": "`flask.render_template` imported but unused",
+        "fix": {
+          "applicability": "safe",
+          "edits": [
+            {
+              "content": "from flask import Flask, request, jsonify, send_from_directory",
+              "end_location": {
+                "column": 80,
+                "row": 1
+              },
+              "location": {
+                "column": 1,
+                "row": 1
+              }
+            }
+          ],
+          "message": "Remove unused import: `flask.render_template`"
+        },
+        "tool": "ruff"
+      },
+      {
+        "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\backend\\uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\app.py",
+        "line": 220,
+        "column": 11,
+        "severity": "warning",
+        "code": "F541",
+        "message": "f-string without any placeholders",
+        "fix": {
+          "applicability": "safe",
+          "edits": [
+            {
+              "content": "\"Server starting on http://localhost:5000\"",
+              "end_location": {
+                "column": 54,
+                "row": 220
+              },
+              "location": {
+                "column": 11,
+                "row": 220
+              }
+            }
+          ],
+          "message": "Remove extraneous `f` prefix"
+        },
+        "tool": "ruff"
+      },
+      {
+        "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\backend\\uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\code_analyzer.py",
+        "line": 2,
+        "column": 26,
+        "severity": "warning",
+        "code": "F401",
+        "message": "`google.genai.types` imported but unused",
+        "fix": {
+          "applicability": "safe",
+          "edits": [
+            {
+              "content": "",
+              "end_location": {
+                "column": 1,
+                "row": 3
+              },
+              "location": {
+                "column": 1,
+                "row": 2
+              }
+            }
+          ],
+          "message": "Remove unused import: `google.genai.types`"
+        },
+        "tool": "ruff"
+      },
+      {
+        "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\backend\\uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\summarizer.py",
+        "line": 2,
+        "column": 26,
+        "severity": "warning",
+        "code": "F401",
+        "message": "`google.genai.types` imported but unused",
+        "fix": {
+          "applicability": "safe",
+          "edits": [
+            {
+              "content": "",
+              "end_location": {
+                "column": 1,
+                "row": 3
+              },
+              "location": {
+                "column": 1,
+                "row": 2
+              }
+            }
+          ],
+          "message": "Remove unused import: `google.genai.types`"
+        },
+        "tool": "ruff"
+      },
+      {
+        "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\backend\\uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\summarizer.py",
+        "line": 72,
+        "column": 9,
+        "severity": "warning",
+        "code": "F841",
+        "message": "Local variable `words` is assigned to but never used",
+        "fix": {
+          "applicability": "unsafe",
+          "edits": [
+            {
+              "content": "",
+              "end_location": {
+                "column": 17,
+                "row": 72
+              },
+              "location": {
+                "column": 9,
+                "row": 72
+              }
+            }
+          ],
+          "message": "Remove assignment to unused variable `words`"
+        },
+        "tool": "ruff"
+      }
+    ],
+    "tools_run": [
+      "bandit",
+      "semgrep",
+      "pylint",
+      "ruff"
+    ],
+    "tools_succeeded": [
+      "bandit",
+      "ruff"
+    ]
+  },
+  "details": {
+    "bandit": {
+      "tool": "bandit",
+      "success": true,
+      "issues": [
+        {
+          "file": "uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\app.py",
+          "line": 228,
+          "severity": "MEDIUM",
+          "confidence": "MEDIUM",
+          "test_id": "B104",
+          "issue_text": "Possible binding to all interfaces.",
+          "code": "227         # In debug mode, exclude uploads directory from file watching\n228         run_simple('0.0.0.0', 5000, app, use_reloader=True,\n229                    use_debugger=True, extra_files=[])\n230     else:\n",
+          "tool": "bandit"
+        },
+        {
+          "file": "uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\app.py",
+          "line": 231,
+          "severity": "MEDIUM",
+          "confidence": "MEDIUM",
+          "test_id": "B104",
+          "issue_text": "Possible binding to all interfaces.",
+          "code": "230     else:\n231         app.run(debug=False, host='0.0.0.0', port=5000)\n",
+          "tool": "bandit"
+        }
+      ],
+      "error": null
+    },
+    "semgrep": {
+      "tool": "semgrep",
+      "success": false,
+      "issues": [],
+      "error": "'charmap' codec can't encode character '\\u202a' in position 1401933: character maps to <undefined>\nTraceback (most recent call last):\n  File \"C:\\Program Files\\Python314\\Lib\\site-packages\\semgrep\\commands\\wrapper.py\", line 49, in wrapper\n    func(*args, **kwargs)\n    ~~~~^^^^^^^^^^^^^^^^^\n  File \"C:\\Program Files\\Python314\\Lib\\site-packages\\semgrep\\commands\\scan.py\", line 1025, in scan\n    ) = semgrep.run_scan.run_scan(\n        ~~~~~~~~~~~~~~~~~~~~~~~~~^\n        dump_command_for_core=dump_command_for_core,\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<48 lines>...\n        x_group_taint_rules=x_group_taint_rules,\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"C:\\Program Files\\Python314\\Lib\\site-packages\\semgrep\\tracing.py\", line 340, in inner\n    return f(*args, **kwargs)\n  File \"C:\\Program Files\\Python314\\Lib\\site-packages\\semgrep\\simple_profiling.py\", line 100, in wrapper\n    result = func(*args, **kwargs)\n  File \"C:\\Program Files\\Python314\\Lib\\site-packages\\semgrep\\run_scan.py\", line 1169, in run_scan\n    configs_obj, config_errors = Config.from_config_list(\n                                 ~~~~~~~~~~~~~~~~~~~~~~~^\n        config_strs or [],\n        ^^^^^^^^^^^^^^^^^^\n        project_url,\n        ^^^^^^^^^^^^\n        no_python_schema_validation=x_no_python_schema_validation,\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"C:\\Program Files\\Python314\\Lib\\site-packages\\semgrep\\tracing.py\", line 340, in inner\n    return f(*args, **kwargs)\n  File \"C:\\Program Files\\Python314\\Lib\\site-packages\\semgrep\\config_resolver.py\", line 641, in from_config_list\n    resolved_config, config_errors = resolve_config(\n                                     ~~~~~~~~~~~~~~^\n        config,\n        ^^^^^^^\n    ...<2 lines>...\n        no_python_schema_validation=no_python_schema_validation,\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"C:\\Program Files\\Python314\\Lib\\site-packages\\semgrep\\tracing.py\", line 340, in inner\n    return f(*args, **kwargs)\n  File \"C:\\Program Files\\Python314\\Lib\\site-packages\\semgrep\\config_resolver.py\", line 550, in resolve_config\n    config, errors = parse_config_files(\n                     ~~~~~~~~~~~~~~~~~~^\n        config_loader.load_config(),\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        force_jsonschema=force_jsonschema,\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        no_python_schema_validation=no_python_schema_validation,\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"C:\\Program Files\\Python314\\Lib\\site-packages\\semgrep\\tracing.py\", line 340, in inner\n    return f(*args, **kwargs)\n  File \"C:\\Program Files\\Python314\\Lib\\site-packages\\semgrep\\config_resolver.py\", line 523, in parse_config_files\n    config_data, config_errors = future.result()\n                                 ~~~~~~~~~~~~~^^\n  File \"C:\\Program Files\\Python314\\Lib\\concurrent\\futures\\_base.py\", line 443, in result\n    return self.__get_result()\n           ~~~~~~~~~~~~~~~~~^^\n  File \"C:\\Program Files\\Python314\\Lib\\concurrent\\futures\\_base.py\", line 395, in __get_result\n    raise self._exception\n  File \"C:\\Program Files\\Python314\\Lib\\concurrent\\futures\\thread.py\", line 86, in run\n    result = ctx.run(self.task)\n  File \"C:\\Program Files\\Python314\\Lib\\concurrent\\futures\\thread.py\", line 73, in run\n    return fn(*args, **kwargs)\n  File \"C:\\Program Files\\Python314\\Lib\\site-packages\\semgrep\\config_resolver.py\", line 478, in context_aware_parse_config_string\n    return parse_config_string(*args, **kwargs)\n  File \"C:\\Program Files\\Python314\\Lib\\site-packages\\semgrep\\tracing.py\", line 340, in inner\n    return f(*args, **kwargs)\n  File \"C:\\Program Files\\Python314\\Lib\\site-packages\\semgrep\\config_resolver.py\", line 975, in parse_config_string\n    fp.write(contents)\n    ~~~~~~~~^^^^^^^^^^\n  File \"C:\\Program Files\\Python314\\Lib\\encodings\\cp1252.py\", line 19, in encode\n    return codecs.charmap_encode(input,self.errors,encoding_table)[0]\n           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nUnicodeEncodeError: 'charmap' codec can't encode character '\\u202a' in position 1401933: character maps to <undefined>\n"
+    },
+    "pylint": {
+      "tool": "pylint",
+      "success": false,
+      "issues": [],
+      "error": null
+    },
+    "ruff": {
+      "tool": "ruff",
+      "success": true,
+      "issues": [
+        {
+          "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\backend\\uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\app.py",
+          "line": 1,
+          "column": 44,
+          "severity": "warning",
+          "code": "F401",
+          "message": "`flask.render_template` imported but unused",
+          "fix": {
+            "applicability": "safe",
+            "edits": [
+              {
+                "content": "from flask import Flask, request, jsonify, send_from_directory",
+                "end_location": {
+                  "column": 80,
+                  "row": 1
+                },
+                "location": {
+                  "column": 1,
+                  "row": 1
+                }
+              }
+            ],
+            "message": "Remove unused import: `flask.render_template`"
+          },
+          "tool": "ruff"
+        },
+        {
+          "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\backend\\uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\app.py",
+          "line": 220,
+          "column": 11,
+          "severity": "warning",
+          "code": "F541",
+          "message": "f-string without any placeholders",
+          "fix": {
+            "applicability": "safe",
+            "edits": [
+              {
+                "content": "\"Server starting on http://localhost:5000\"",
+                "end_location": {
+                  "column": 54,
+                  "row": 220
+                },
+                "location": {
+                  "column": 11,
+                  "row": 220
+                }
+              }
+            ],
+            "message": "Remove extraneous `f` prefix"
+          },
+          "tool": "ruff"
+        },
+        {
+          "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\backend\\uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\code_analyzer.py",
+          "line": 2,
+          "column": 26,
+          "severity": "warning",
+          "code": "F401",
+          "message": "`google.genai.types` imported but unused",
+          "fix": {
+            "applicability": "safe",
+            "edits": [
+              {
+                "content": "",
+                "end_location": {
+                  "column": 1,
+                  "row": 3
+                },
+                "location": {
+                  "column": 1,
+                  "row": 2
+                }
+              }
+            ],
+            "message": "Remove unused import: `google.genai.types`"
+          },
+          "tool": "ruff"
+        },
+        {
+          "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\backend\\uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\summarizer.py",
+          "line": 2,
+          "column": 26,
+          "severity": "warning",
+          "code": "F401",
+          "message": "`google.genai.types` imported but unused",
+          "fix": {
+            "applicability": "safe",
+            "edits": [
+              {
+                "content": "",
+                "end_location": {
+                  "column": 1,
+                  "row": 3
+                },
+                "location": {
+                  "column": 1,
+                  "row": 2
+                }
+              }
+            ],
+            "message": "Remove unused import: `google.genai.types`"
+          },
+          "tool": "ruff"
+        },
+        {
+          "file": "C:\\Users\\krush\\OneDrive\\Desktop\\ai_code_review\\backend\\uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\summarizer.py",
+          "line": 72,
+          "column": 9,
+          "severity": "warning",
+          "code": "F841",
+          "message": "Local variable `words` is assigned to but never used",
+          "fix": {
+            "applicability": "unsafe",
+            "edits": [
+              {
+                "content": "",
+                "end_location": {
+                  "column": 17,
+                  "row": 72
+                },
+                "location": {
+                  "column": 9,
+                  "row": 72
+                }
+              }
+            ],
+            "message": "Remove assignment to unused variable `words`"
+          },
+          "tool": "ruff"
+        }
+      ],
+      "error": null
+    }
+  }
+}

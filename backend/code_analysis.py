@@ -305,6 +305,55 @@ class CodeAnalyzer:
         return sections
 
 
+def _generate_secret_description(secret_type: str, context: Optional[str] = None) -> str:
+    """Generate detailed description for a secret finding"""
+    
+    definitions = {
+        'api_key': {
+            'meaning': 'An API key was found hardcoded directly in the source code.',
+            'reason': 'Hardcoded keys can be easily harvested by attackers scanning public repositories.'
+        },
+        'password': {
+            'meaning': 'A password string was detected in plain text.',
+            'reason': 'Passwords should never be stored in code as it compromises account security.'
+        },
+        'private_key': {
+            'meaning': 'A private cryptographic key was found.',
+            'reason': 'Private keys are the root of trust; exposing them compromises all encrypted data.'
+        },
+        'token': {
+            'meaning': 'An authentication token was identified.',
+            'reason': 'Tokens provide access to services and should be treated as temporary credentials.'
+        },
+        'aws': {
+            'meaning': 'AWS credentials were detected.',
+            'reason': 'Leaked AWS keys can lead to massive resource theft and data breaches.'
+        },
+        'high_entropy': {
+            'meaning': 'A high-entropy string (possible secret) was detected.',
+            'reason': 'Randomized strings often indicate API keys or secrets that should be externalized.'
+        },
+        'generic': {
+            'meaning': 'Sensitive data appears to be hardcoded.',
+            'reason': 'Hardcoding secrets violates the separation of config and code.'
+        }
+    }
+    
+    # Find best match
+    info = definitions.get('generic')
+    for key, val in definitions.items():
+        if key in secret_type.lower():
+            info = val
+            break
+            
+    description = f"Meaning: {info['meaning']}\nReason: {info['reason']}"
+    
+    if context:
+        description += f"\n\nContext:\n{context.strip()}"
+        
+    return description
+
+
 def analyze_codebase(input_path, output_path):
     """
     Main analysis function - analyzes entire codebase
@@ -447,7 +496,7 @@ def analyze_codebase(input_path, output_path):
                                     'severity': secret.get('severity', 'HIGH').upper(),
                                     'risk_score': 85,
                                     'title': f"Hardcoded {secret['type']} Detected",
-                                    'description': secret.get('context', 'Sensitive data hardcoded in source'),
+                                    'description': _generate_secret_description(secret.get('type', 'generic'), secret.get('context')),
                                     'file_path': secret['file'],
                                     'line_number': secret.get('line', 0),
                                     'owasp_category': 'A02:2021',

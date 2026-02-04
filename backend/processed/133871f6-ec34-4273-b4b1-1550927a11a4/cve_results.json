@@ -1,0 +1,59 @@
+{
+  "dependencies": [
+    {
+      "package_name": "Flask",
+      "version": "3.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\requirements.txt",
+      "line_number": 1,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "Werkzeug",
+      "version": "3.0.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\requirements.txt",
+      "line_number": 2,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-dotenv",
+      "version": "1.0.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\requirements.txt",
+      "line_number": 3,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "PyPDF2",
+      "version": "3.0.1",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\requirements.txt",
+      "line_number": 4,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "python-docx",
+      "version": "1.1.0",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\requirements.txt",
+      "line_number": 5,
+      "scope": "runtime",
+      "group_id": null
+    },
+    {
+      "package_name": "google-generativeai",
+      "version": "0.3.2",
+      "ecosystem": "pypi",
+      "file_path": "uploads\\133871f6-ec34-4273-b4b1-1550927a11a4\\ai engine\\requirements.txt",
+      "line_number": 6,
+      "scope": "runtime",
+      "group_id": null
+    }
+  ],
+  "vulnerabilities": []
+}
