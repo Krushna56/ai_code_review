@@ -5,5 +5,12 @@
     "comment": "",
     "code_snippet": "",
     "timestamp": "2026-02-03T17:14:37.378267"
+  },
+  "SECRET-7": {
+    "finding_id": "SECRET-7",
+    "feedback_type": "negative",
+    "comment": "",
+    "code_snippet": "",
+    "timestamp": "2026-02-04T18:55:08.954823"
   }
 }

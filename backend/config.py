@@ -1,5 +1,6 @@
 # Production Configuration for Docker
 import os
+import tempfile
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -8,14 +9,19 @@ load_dotenv()
 
 # Base directories
 BASE_DIR = Path(__file__).parent
-UPLOAD_FOLDER = BASE_DIR / 'uploads'
-PROCESSED_FOLDER = BASE_DIR / 'processed'
+
+# Use system temp directory for uploads and processed files to prevent local storage fill-up
+TEMP_BASE_DIR = Path(tempfile.gettempdir()) / 'ai_code_review'
+UPLOAD_FOLDER = TEMP_BASE_DIR / 'uploads'
+PROCESSED_FOLDER = TEMP_BASE_DIR / 'processed'
+
+# Keep models and vector DB in permanent storage (they're reusable)
 MODELS_DIR = BASE_DIR / 'models'
 VECTOR_DB_DIR = BASE_DIR / 'vector_db'
 
-# Create directories if they don't exist
+# Create directories if they don't exist (parents=True creates parent dirs)
 for directory in [UPLOAD_FOLDER, PROCESSED_FOLDER, MODELS_DIR, VECTOR_DB_DIR]:
-    directory.mkdir(exist_ok=True)
+    directory.mkdir(parents=True, exist_ok=True)
 
 # Authentication Configuration
 SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
@@ -101,6 +107,10 @@ LOG_FILE = BASE_DIR / 'app.log'
 
 # Upload Configuration
 MAX_CONTENT_LENGTH = int(os.getenv('MAX_CONTENT_LENGTH', 20 * 1024 * 1024 * 1024)) # 20GB default
+
+# Temporary File Cleanup Configuration
+# Files older than this will be deleted on app startup (in hours)
+TEMP_FILE_RETENTION_HOURS = int(os.getenv('TEMP_FILE_RETENTION_HOURS', '24'))
 
 # Supported file extensions
 SUPPORTED_EXTENSIONS = ['.py', '.js', '.java', '.go', '.cpp', '.c', '.rb', '.php']

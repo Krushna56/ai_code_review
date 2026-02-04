@@ -7,6 +7,8 @@ import logging
 import subprocess
 import json
 import threading
+import time
+from datetime import datetime, timedelta
 from collections import defaultdict
 from pathlib import Path
 
@@ -28,6 +30,54 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+
+def cleanup_old_temp_files():
+    """Clean up temporary files older than the retention period"""
+    try:
+        retention_hours = config.TEMP_FILE_RETENTION_HOURS
+        cutoff_time = datetime.now() - timedelta(hours=retention_hours)
+        
+        logger.info(f"Starting cleanup of temp files older than {retention_hours} hours...")
+        
+        cleaned_files = 0
+        cleaned_size = 0
+        
+        # Clean up upload folder
+        for folder in [config.UPLOAD_FOLDER, config.PROCESSED_FOLDER]:
+            if not os.path.exists(folder):
+                continue
+                
+            for item in os.listdir(folder):
+                item_path = os.path.join(folder, item)
+                try:
+                    # Get modification time
+                    mod_time = datetime.fromtimestamp(os.path.getmtime(item_path))
+                    
+                    if mod_time < cutoff_time:
+                        # Calculate size before deletion
+                        if os.path.isdir(item_path):
+                            size = sum(f.stat().st_size for f in Path(item_path).rglob('*') if f.is_file())
+                            shutil.rmtree(item_path)
+                        else:
+                            size = os.path.getsize(item_path)
+                            os.remove(item_path)
+                        
+                        cleaned_files += 1
+                        cleaned_size += size
+                        logger.info(f"Deleted old temp item: {item}")
+                        
+                except Exception as e:
+                    logger.warning(f"Error cleaning up {item_path}: {e}")
+        
+        if cleaned_files > 0:
+            cleaned_size_mb = cleaned_size / (1024 * 1024)
+            logger.info(f"Cleanup complete: Removed {cleaned_files} items, freed {cleaned_size_mb:.2f} MB")
+        else:
+            logger.info("Cleanup complete: No old files to remove")
+            
+    except Exception as e:
+        logger.error(f"Error during temp file cleanup: {e}", exc_info=True)
 
 # Override Flask's Request class to set Werkzeug multipart limits
 from flask import Request as FlaskRequest
@@ -82,6 +132,15 @@ app.register_blueprint(api_v2)
 # Ensure directories exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(app.config['PROCESSED_FOLDER'], exist_ok=True)
+
+# Log temp directory locations
+logger.info(f"Using temporary storage at: {config.TEMP_BASE_DIR}")
+logger.info(f"Upload folder: {app.config['UPLOAD_FOLDER']}")
+logger.info(f"Processed folder: {app.config['PROCESSED_FOLDER']}")
+logger.info(f"Temp file retention: {config.TEMP_FILE_RETENTION_HOURS} hours")
+
+# Clean up old temporary files on startup
+cleanup_old_temp_files()
 
 # Initialize authentication database
 User.init_db()

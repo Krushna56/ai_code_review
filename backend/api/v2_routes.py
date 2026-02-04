@@ -15,10 +15,18 @@ logger = logging.getLogger(__name__)
 # Create blueprint
 api_v2 = Blueprint('api_v2', __name__, url_prefix='/api/v2')
 
-# Initialize services
-conversation_manager = ConversationManager()
-chat_engine = ChatEngine()
-streaming_service = StreamingService()
+# Initialize services with error handling
+try:
+    conversation_manager = ConversationManager()
+    chat_engine = ChatEngine()
+    streaming_service = StreamingService()
+    logger.info("Successfully initialized all chat services")
+except Exception as e:
+    logger.error(f"Error initializing chat services: {e}", exc_info=True)
+    # Set to None so we can provide helpful error messages in endpoints
+    conversation_manager = None
+    chat_engine = None
+    streaming_service = None
 
 
 @api_v2.route('/health', methods=['GET'])
@@ -56,6 +64,11 @@ def create_chat_session():
         }
     """
     try:
+        # Check if services are available
+        if chat_engine is None or conversation_manager is None:
+            logger.error("Chat services not initialized")
+            return jsonify({'error': 'Chat service is currently unavailable. Please check server logs.'}), 503
+        
         data = request.get_json()
 
         if not data or 'user_id' not in data:
