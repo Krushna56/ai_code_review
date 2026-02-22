@@ -373,84 +373,105 @@ class ChatEngine:
             Formatted prompt with dashboard stats
         """
         prompt_parts = []
+        
+        # Add instruction header
+        prompt_parts.append("=== ANALYSIS DATA PROVIDED BELOW ===\n")
+        prompt_parts.append("Answer the user's question using ONLY the data provided below. Be concise and specific.\n\n")
 
         # Add dashboard summary if available (FIRST - most important context)
         if context.get('dashboard_data', {}).get('has_data'):
             dashboard = context['dashboard_data']
             summary = dashboard.get('summary', {})
             
-            prompt_parts.append("# Latest Security Analysis Results\n")
-            prompt_parts.append(f"**Total Security Findings**: {dashboard.get('total_findings', 0)}\n")
-            prompt_parts.append(f"**CVE Vulnerabilities**: {dashboard.get('total_cves', 0)}\n")
-            prompt_parts.append(f"**Risk Score**: {summary.get('risk_score', 'N/A')}\n")
-            prompt_parts.append(f"**Risk Level**: {summary.get('overall_risk_level', 'UNKNOWN')}\n")
+            prompt_parts.append("# Security Analysis Summary\n")
+            prompt_parts.append(f"Total Security Findings: {dashboard.get('total_findings', 0)}\n")
+            prompt_parts.append(f"CVE Vulnerabilities: {dashboard.get('total_cves', 0)}\n")
+            prompt_parts.append(f"Risk Score: {summary.get('risk_score', 'N/A')}\n")
+            prompt_parts.append(f"Risk Level: {summary.get('overall_risk_level', 'UNKNOWN')}\n")
             
             # Add severity breakdown
             severity_dist = summary.get('severity_distribution', {})
             if severity_dist:
-                prompt_parts.append(f"**Critical Issues**: {severity_dist.get('CRITICAL', 0)}\n")
-                prompt_parts.append(f"**High Issues**: {severity_dist.get('HIGH', 0)}\n")
-                prompt_parts.append(f"**Medium Issues**: {severity_dist.get('MEDIUM', 0)}\n")
-                prompt_parts.append(f"**Low Issues**: {severity_dist.get('LOW', 0)}\n")
+                prompt_parts.append(f"Critical Issues: {severity_dist.get('CRITICAL', 0)}\n")
+                prompt_parts.append(f"High Issues: {severity_dist.get('HIGH', 0)}\n")
+                prompt_parts.append(f"Medium Issues: {severity_dist.get('MEDIUM', 0)}\n")
+                prompt_parts.append(f"Low Issues: {severity_dist.get('LOW', 0)}\n")
             
             # Add top security findings if available
             security_findings = dashboard.get('security_findings', [])
             if security_findings:
-                prompt_parts.append("\n## Top Security Findings:\n")
-                for i, finding in enumerate(security_findings[:5], 1):  # Top 5
+                prompt_parts.append("\n## Detailed Security Findings:\n")
+                for i, finding in enumerate(security_findings[:10], 1):  # Top 10
                     title = finding.get('title', 'Unknown Issue')
                     severity = finding.get('severity', 'UNKNOWN')
                     file_path = finding.get('file_path', 'N/A')
                     line = finding.get('line_number', 'N/A')
+                    description = finding.get('description', '')
+                    remediation = finding.get('remediation', '')
                     owasp_cat = finding.get('owasp_category', '')
                     owasp_name = finding.get('owasp_name', '')
                     
-                    prompt_parts.append(f"{i}. **{title}** ({severity})\n")
-                    prompt_parts.append(f"   - File: `{file_path}:{line}`\n")
+                    prompt_parts.append(f"{i}. {title} ({severity})\n")
+                    prompt_parts.append(f"   File: {file_path}:{line}\n")
+                    if description:
+                        prompt_parts.append(f"   Description: {description}\n")
+                    if remediation:
+                        prompt_parts.append(f"   Fix: {remediation}\n")
                     if owasp_cat:
-                        prompt_parts.append(f"   - OWASP: {owasp_cat} - {owasp_name}\n")
+                        prompt_parts.append(f"   OWASP: {owasp_cat} - {owasp_name}\n")
+                    prompt_parts.append("\n")
             
             # Add CVE findings if available
             cve_findings = dashboard.get('cve_findings', [])
             if cve_findings:
-                prompt_parts.append("\n## CVE Vulnerabilities:\n")
-                for i, cve in enumerate(cve_findings[:3], 1):  # Top 3
+                prompt_parts.append("## CVE Vulnerabilities:\n")
+                for i, cve in enumerate(cve_findings[:5], 1):  # Top 5
                     cve_id = cve.get('cve_id', 'Unknown')
                     package = cve.get('package', 'Unknown')
                     severity = cve.get('severity', 'UNKNOWN')
-                    prompt_parts.append(f"{i}. **{cve_id}** in {package} ({severity})\n")
+                    description = cve.get('description', '')
+                    prompt_parts.append(f"{i}. {cve_id} in {package} ({severity})\n")
+                    if description:
+                        prompt_parts.append(f"   {description}\n")
+                    prompt_parts.append("\n")
             
-            prompt_parts.append("\n---\n\n")
+            prompt_parts.append("---\n\n")
+        else:
+            prompt_parts.append("# No Analysis Data Available\n")
+            prompt_parts.append("No security analysis has been performed yet.\n\n")
 
-        # Add conversation history if available
+        # Add conversation history if available (condensed)
         if context.get('conversation_history'):
-            prompt_parts.append("# Previous Conversation\n")
-            for msg in context['conversation_history'][-5:]:  # Last 5 messages
-                role = msg['role'].capitalize()
-                content = msg['content'][:200]  # Truncate long messages
-                prompt_parts.append(f"**{role}**: {content}\n")
-            prompt_parts.append("\n---\n\n")
+            recent_history = context['conversation_history'][-3:]  # Last 3 messages only
+            if recent_history:
+                prompt_parts.append("## Recent Conversation:\n")
+                for msg in recent_history:
+                    role = msg['role'].capitalize()
+                    content = msg['content'][:150]  # Truncate
+                    prompt_parts.append(f"{role}: {content}\n")
+                prompt_parts.append("\n")
 
         # Add code context if available
         if context.get('code'):
-            prompt_parts.append("# Code Context\n")
-            prompt_parts.append("```python\n")
-            prompt_parts.append(context['code'])
+            prompt_parts.append("## Code Being Viewed:\n")
+            prompt_parts.append("```\n")
+            prompt_parts.append(context['code'][:1000])  # Limit code context
             prompt_parts.append("\n```\n\n")
 
-        # Add current message
-        prompt_parts.append("# Current Question\n")
+        # Add current message with emphasis
+        prompt_parts.append("=== USER QUESTION ===\n")
         prompt_parts.append(message)
+        prompt_parts.append("\n\nRemember: Answer concisely using ONLY the data provided above. If the question is about something not in the data, say 'I don't have data about that in the current analysis.'")
 
         return ''.join(prompt_parts)
 
-    def export_conversation(self, session_id: str, format: str = 'markdown') -> str:
+    def export_conversation(self, session_id: str, export_format: str = 'markdown') -> str:
         """
         Export conversation to a formatted string
 
         Args:
             session_id: Session identifier
-            format: 'markdown' or 'json'
+            export_format: 'markdown' or 'json'
 
         Returns:
             Formatted conversation string
@@ -459,7 +480,7 @@ class ChatEngine:
         history = self.conversation_manager.get_conversation_history(
             session_id)
 
-        if format == 'markdown':
+        if export_format == 'markdown':
             lines = [
                 f"# Chat Session: {session_id}",
                 f"**Created**: {session_info['created_at']}",
@@ -478,7 +499,7 @@ class ChatEngine:
 
             return '\n'.join(lines)
 
-        elif format == 'json':
+        elif export_format == 'json':
             import json
             return json.dumps({
                 'session_info': session_info,
@@ -486,4 +507,4 @@ class ChatEngine:
             }, indent=2)
 
         else:
-            raise ValueError(f"Unknown format: {format}")
+            raise ValueError(f"Unknown export format: {export_format}")

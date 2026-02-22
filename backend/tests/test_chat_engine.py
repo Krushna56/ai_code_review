@@ -77,10 +77,12 @@ class TestConversationManager:
         history = manager.get_conversation_history(session_id)
         assert len(history) == 4
 
-        # Get limited history
+        # Get limited history — limit returns the N most recent messages
         history_limited = manager.get_conversation_history(session_id, limit=2)
         assert len(history_limited) == 2
-        assert history_limited[0]['content'] == 'First message'
+        # The 2 most recent messages are 'Second message' (user) and 'Second response' (assistant)
+        assert history_limited[0]['content'] == 'Second message'
+        assert history_limited[1]['content'] == 'Second response'
 
     def test_delete_session(self, manager):
         """Test session deletion"""

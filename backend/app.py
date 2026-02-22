@@ -1,4 +1,4 @@
-﻿from flask import Flask, render_template, request, redirect, send_from_directory, jsonify, send_file, url_for, session
+from flask import Flask, render_template, request, redirect, send_from_directory, jsonify, send_file, url_for, session, g
 import os
 import shutil
 import zipfile
@@ -12,17 +12,19 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 from pathlib import Path
 
-from flask_login import LoginManager, login_required, current_user
 import config
 from code_analysis import analyze_codebase
 from services.report_service import get_report_service
 from services.feedback_service import get_feedback_service
 from models.user import User
 from auth import auth_bp
+from auth.jwt_utils import jwt_required
+from utils.file_filter import should_ignore_file, should_ignore_directory
 
 
 # Import API v2 routes
 from api.v2_routes import api_v2
+from api.file_issues import file_issues_bp
 
 # Configure logging
 logging.basicConfig(
@@ -103,31 +105,54 @@ logger.info(f"Configured MAX_FORM_MEMORY_SIZE: {app.config['MAX_FORM_MEMORY_SIZE
 logger.info(f"Configured MAX_FORM_PARTS: {app.config['MAX_FORM_PARTS']}")
 
 # Session configuration - prevent auto-login across server restarts
-app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_PERMANENT'] = True           # Give cookie an expiry so it survives OAuth redirects
 app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 hour
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SECURE'] = False      # Must be False for local http:// dev
 
-# Initialize Flask-Login
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'auth.login'
-login_manager.login_message = 'Please log in to access this page.'
-login_manager.login_message_category = 'info'
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.get_by_id(int(user_id))
-
-# Make current_user available to all templates
-@app.context_processor
-def inject_user():
-    from flask_login import current_user
-    return dict(current_user=current_user)
+# JWT is stateless — no server-side session manager needed
 
 # Register blueprints
 app.register_blueprint(auth_bp)
 app.register_blueprint(api_v2)
+app.register_blueprint(file_issues_bp)
+
+
+# -----------------------------------------------------------------------
+# Template context: inject current_user from JWT stored in session
+# -----------------------------------------------------------------------
+class _AnonymousUser:
+    """Stands in for current_user when no JWT is present."""
+    is_authenticated = False
+    email = None
+    github_username = None
+    id = None
+
+
+@app.context_processor
+def inject_current_user():
+    """
+    Make `current_user` available in all templates.
+    The JWT access token is stored in the session under 'jwt_access_token'
+    after a successful login (set by JS via the /auth/set-session endpoint,
+    or directly in the auth routes for server-side flows).
+    """
+    from auth.jwt_utils import JWTManager
+    import jwt as _jwt
+
+    token = session.get('jwt_access_token')
+    if token:
+        try:
+            payload = JWTManager.verify_token(token)
+            if not JWTManager.is_blacklisted(token):
+                user = User.get_by_id(int(payload['sub']))
+                if user:
+                    return dict(current_user=user)
+        except (_jwt.ExpiredSignatureError, _jwt.InvalidTokenError, Exception):
+            session.pop('jwt_access_token', None)
+
+    return dict(current_user=_AnonymousUser())
 
 # Ensure directories exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -154,7 +179,8 @@ LAST_ANALYSIS_PATH_FILE = 'last_analysis_path.txt'
 def sync_results_to_dashboard(processed_path):
     """Sync analysis results to the global output directory for dashboard"""
     try:
-        global_output = 'output'
+        # Use parent directory's output when running from backend/
+        global_output = os.path.join('..', 'output')
         os.makedirs(global_output, exist_ok=True)
         
         # Files to sync
@@ -206,8 +232,14 @@ def generate_file_tree(base_path, relative_path=""):
             item_full_path = os.path.join(base_path, item_rel_path)
             
             if os.path.isdir(item_full_path):
+                # Skip ignored directories
+                if should_ignore_directory(item_full_path):
+                    continue
                 tree['children'].append(generate_file_tree(base_path, item_rel_path))
             else:
+                # Skip ignored files
+                if should_ignore_file(item_full_path):
+                    continue
                 tree['children'].append({
                     'name': item,
                     'type': 'file',
@@ -292,14 +324,14 @@ def index():
             # Validate file upload
             if 'codebase' not in request.files:
                 logger.warning("No file part in request")
-                return render_template('index.html', error="No file uploaded", current_user=current_user)
+                return render_template('index.html', error="No file uploaded")
 
             # Get all uploaded files (supports multiple files and folders)
             uploaded_files = request.files.getlist('codebase')
             logger.info(f"Number of files received: {len(uploaded_files)}")
             
             if not uploaded_files or all(f.filename == '' for f in uploaded_files):
-                return render_template('index.html', error="No file selected", current_user=current_user)
+                return render_template('index.html', error="No file selected")
 
             # Generate unique ID for this analysis
             uid = str(uuid.uuid4())
@@ -356,53 +388,89 @@ def index():
             session.modified = True
             logger.info(f"Stored UID {uid} in session")
 
-            # Redirect to chat with file context
-            return redirect(f'/chat?uid={uid}')
+            # Redirect to processing page to show loading animation
+            return redirect(f'/processing?uid={uid}')
 
         except Exception as e:
             logger.error(f"Error during upload: {e}", exc_info=True)
-            return render_template('index.html', error=str(e), current_user=current_user)
+            return render_template('index.html', error=str(e),
+                                   jwt_token=session.get('jwt_access_token', ''))
 
-    return render_template('index.html', current_user=current_user)
+    return render_template('index.html', jwt_token=session.get('jwt_access_token', ''))
 
 
 @app.route('/api/file/content/<uid>/<path:filepath>')
-@login_required
+@jwt_required
 def get_file_content(uid, filepath):
     """Get file content for code viewer"""
     try:
-        input_path = os.path.join(app.config['UPLOAD_FOLDER'], uid)
-        file_path = os.path.join(input_path, filepath)
+        # Handle virtual reports path
+        if filepath.startswith('REPORTS/'):
+            filename = filepath.split('/', 1)[1]
+            base_path = os.path.join(app.config['PROCESSED_FOLDER'], uid)
+            file_path = os.path.join(base_path, filename)
+        else:
+            base_path = os.path.join(app.config['UPLOAD_FOLDER'], uid)
+            file_path = os.path.join(base_path, filepath)
         
         # Security check: prevent directory traversal
-        if not os.path.abspath(file_path).startswith(os.path.abspath(input_path)):
-            return jsonify({'error': 'Invalid file path'}), 403
+        if not os.path.abspath(file_path).startswith(os.path.abspath(base_path)):
+             return jsonify({'error': 'Invalid file path'}), 403
         
         if not os.path.exists(file_path):
             return jsonify({'error': 'File not found'}), 404
         
+        # Helper to check for binary files
+        def is_binary_file(filename):
+            binary_extensions = {
+                '.pdf', '.png', '.jpg', '.jpeg', '.gif', '.ico', 
+                '.zip', '.tar', '.gz', '.pyc', '.exe', '.dll', 
+                '.so', '.dylib', '.bin', '.pkl', '.db', '.sqlite'
+            }
+            return any(filename.lower().endswith(ext) for ext in binary_extensions)
+
+        if is_binary_file(filepath):
+             return jsonify({
+                 'content': '[Binary file cannot be viewed in text editor]', 
+                 'language': 'plaintext',
+                 'is_binary': True,
+                 'path': filepath
+             })
+
         # Read file content
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 content = f.read()
         except UnicodeDecodeError:
-            # Try with different encoding
-            with open(file_path, 'r', encoding='latin-1') as f:
-                content = f.read()
+            try:
+                # Try with different encoding
+                with open(file_path, 'r', encoding='latin-1') as f:
+                    content = f.read()
+            except Exception:
+                return jsonify({
+                     'content': '[File encoding not supported]', 
+                     'language': 'plaintext',
+                     'is_binary': True,
+                     'path': filepath
+                 })
         
         # Detect language from extension
         ext = filepath.split('.')[-1].lower()
         language_map = {
-            'py': 'python', 'js': 'javascript', 'java': 'java',
-            'cpp': 'cpp', 'c': 'c', 'html': 'html', 'css': 'css',
+            'py': 'python', 'js': 'javascript', 'java': 'java', 
+            'ts': 'typescript', 'tsx': 'typescript', 'jsx': 'javascript',
+            'cpp': 'cpp', 'c': 'c', 'h': 'c', 'hpp': 'cpp',
+            'html': 'html', 'css': 'css', 'scss': 'scss',
             'json': 'json', 'xml': 'xml', 'yaml': 'yaml', 'yml': 'yaml',
-            'sh': 'bash', 'md': 'markdown', 'txt': 'plaintext'
+            'sh': 'bash', 'md': 'markdown', 'txt': 'plaintext',
+            'sql': 'sql', 'dockerfile': 'dockerfile'
         }
         language = language_map.get(ext, 'plaintext')
         
         return jsonify({
             'content': content,
             'language': language,
+            'is_binary': False,
             'path': filepath
         })
     except Exception as e:
@@ -411,7 +479,7 @@ def get_file_content(uid, filepath):
 
 
 @app.route('/api/analysis/status/<uid>')
-@login_required
+@jwt_required
 def get_analysis_status(uid):
     """Check analysis status"""
     try:
@@ -423,6 +491,7 @@ def get_analysis_status(uid):
 
 
 @app.route('/api/analyze/repo', methods=['POST'])
+@jwt_required
 def api_analyze_repo():
     """Clone a GitHub repository and run analysis"""
     try:
@@ -472,12 +541,12 @@ def api_analyze_repo():
         session.modified = True
         logger.info(f"Stored repo UID {uid} in session")
         
-        # Return success with redirect to chat
+        # Return success with redirect to processing page
         return jsonify({
             'status': 'success',
             'message': 'Repository cloned successfully',
             'uid': uid,
-            'redirect': f'/chat?uid={uid}'
+            'redirect': f'/processing?uid={uid}'
         }), 200
 
     except Exception as e:
@@ -486,10 +555,17 @@ def api_analyze_repo():
 
 
 @app.route('/download/<uid>/<filename>')
+@jwt_required
 def download_report(uid, filename):
     """Download generated reports"""
     try:
-        file_path = os.path.join(app.config['PROCESSED_FOLDER'], uid, filename)
+        base_path = os.path.abspath(
+            os.path.join(app.config['PROCESSED_FOLDER'], uid)
+        )
+        file_path = os.path.abspath(os.path.join(base_path, filename))
+        # Prevent path traversal via crafted filenames
+        if not file_path.startswith(base_path):
+            return jsonify({'error': 'Invalid file path'}), 403
         if os.path.exists(file_path):
             return send_file(file_path, as_attachment=True)
         else:
@@ -501,22 +577,30 @@ def download_report(uid, filename):
 
 
 @app.route('/api/file/<uid>')
+@jwt_required
 def api_get_file_content(uid):
     """Get content of a specific file"""
     try:
         if 'path' not in request.args:
             return jsonify({'error': 'Path parameter required'}), 400
-            
-        rel_path = request.args.get('path')
-        # specific security check to prevent directory traversal
-        if '..' in rel_path or rel_path.startswith('/'):
-             return jsonify({'error': 'Invalid path'}), 400
 
-        base_path = os.path.join(app.config['UPLOAD_FOLDER'], uid)
-        file_path = os.path.join(base_path, rel_path)
-        
+        rel_path = request.args.get('path')
+
+        # Handle virtual reports path
+        if rel_path.startswith('REPORTS/'):
+            filename = rel_path.split('/', 1)[1]
+            base_path = os.path.join(app.config['PROCESSED_FOLDER'], uid)
+            file_path = os.path.join(base_path, filename)
+        else:
+            base_path = os.path.join(app.config['UPLOAD_FOLDER'], uid)
+            file_path = os.path.join(base_path, rel_path)
+
+        # Strict abspath-based path traversal check (consistent with get_file_content)
+        if not os.path.abspath(file_path).startswith(os.path.abspath(base_path)):
+            return jsonify({'error': 'Invalid file path'}), 403
+
         if not os.path.exists(file_path):
-             return jsonify({'error': 'File not found'}), 404
+            return jsonify({'error': 'File not found'}), 404
              
         # Read file content
         with open(file_path, 'r', encoding='utf-8', errors='replace') as f:
@@ -529,9 +613,51 @@ def api_get_file_content(uid):
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/files/<uid>')
+@jwt_required
+def api_get_files(uid):
+    """Get file tree structure for a given UID"""
+    try:
+        input_path = os.path.join(app.config['UPLOAD_FOLDER'], uid)
+        
+        if not os.path.exists(input_path):
+            logger.warning(f"Upload path not found for UID {uid}: {input_path}")
+            return jsonify({'error': 'Project not found', 'files': []}), 404
+        
+        # Generate file tree
+        tree_structure = generate_file_tree(input_path)
+        
+        # Flatten to file list
+        file_list = flatten_file_tree(tree_structure)
+
+        # Include reports from processed folder
+        processed_path = os.path.join(app.config['PROCESSED_FOLDER'], uid)
+        if os.path.exists(processed_path):
+             for item in os.listdir(processed_path):
+                  if item.endswith(('.json', '.md', '.txt')):
+                       file_list.append({
+                            'name': f"[REPORT] {item}",
+                            'path': f"REPORTS/{item}",
+                            'type': 'file'
+                       })
+        
+        logger.info(f"Returning {len(file_list)} files for UID {uid}")
+        
+        return jsonify({
+            'uid': uid,
+            'files': file_list,
+            'total': len(file_list)
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Error getting files for {uid}: {e}", exc_info=True)
+        return jsonify({'error': str(e), 'files': []}), 500
+
+
 @app.route('/api/analyze', methods=['POST'])
+@jwt_required
 def api_analyze():
-    """API endpoint for programmatic access"""
+    """API endpoint for programmatic access — runs analysis asynchronously"""
     try:
         if 'codebase' not in request.files:
             return jsonify({'error': 'No file uploaded'}), 400
@@ -554,14 +680,22 @@ def api_analyze():
         if zipfile.is_zipfile(file_path):
             extract_zip(file_path, input_path)
 
-        analysis_result = analyze_codebase(input_path, output_path)
+        # Run analysis asynchronously to avoid request timeout on large codebases
+        analysis_status[uid] = {'status': 'running', 'progress': 0, 'error': None}
+        thread = threading.Thread(
+            target=run_analysis_background,
+            args=(input_path, output_path, uid)
+        )
+        thread.daemon = True
+        thread.start()
+        logger.info(f"Started async API analysis for {uid}")
 
         return jsonify({
             'uid': uid,
-            'summary': analysis_result['summary'],
-            'comprehensive_report': analysis_result.get('comprehensive_report'),
+            'status': 'queued',
+            'status_url': f'/api/analysis/status/{uid}',
             'download_url': f'/download/{uid}/comprehensive_report.json'
-        })
+        }), 202
 
     except Exception as e:
         logger.error(f"API error: {e}", exc_info=True)
@@ -569,7 +703,7 @@ def api_analyze():
 
 
 @app.route('/chat')
-@login_required
+@jwt_required
 def chat():
     """Interactive chat page with optional file context"""
     # Try to get UID from URL first, then from session
@@ -602,8 +736,18 @@ def chat():
     return render_template('chat.html', uid=uid, file_tree=file_tree)
 
 
+@app.route('/processing')
+def processing():
+    """Processing page with loading animation"""
+    uid = request.args.get('uid')
+    if not uid:
+        return redirect('/')
+    return render_template('processing.html', uid=uid)
+
+
+
 @app.route('/code-viewer/<uid>')
-@login_required
+@jwt_required
 def code_viewer_redirect(uid):
     """Legacy redirect for code viewer"""
     return redirect(url_for('chat', uid=uid))
@@ -615,7 +759,82 @@ def health():
     return jsonify({'status': 'healthy', 'version': '1.0'}), 200
 
 
+# ====================
+# Chat Compatibility Routes
+# ====================
+
+@app.route('/api/chat/message', methods=['POST'])
+def api_chat_message_compat():
+    """
+    Compatibility route for chat messages
+    Handles legacy frontend that sends 'uid' instead of 'session_id'
+    """
+    try:
+        from api.v2_routes import chat_engine, conversation_manager
+        
+        # Check if services are available
+        if chat_engine is None or conversation_manager is None:
+            logger.error("Chat services not initialized")
+            return jsonify({'error': 'Chat service is currently unavailable. Please check server logs.'}), 503
+        
+        data = request.get_json()
+        
+        if not data or 'message' not in data:
+            return jsonify({'error': 'message is required'}), 400
+        
+        message = data['message']
+        uid = data.get('uid')
+        code_context = data.get('code_context')
+        
+        # Handle session management
+        session_id = data.get('session_id')
+        
+        if not session_id and uid:
+            # Legacy frontend: use uid to find or create session
+            # Use uid as user_id and check for existing sessions
+            existing_sessions = conversation_manager.get_user_sessions(uid, active_only=True)
+            
+            if existing_sessions:
+                # Use the most recent session
+                session_id = existing_sessions[0]['session_id']
+                logger.info(f"Using existing session {session_id} for uid {uid}")
+            else:
+                # Create a new session with uid in metadata
+                session_id = chat_engine.start_session(
+                    user_id=uid,
+                    metadata={'uid': uid}
+                )
+                logger.info(f"Created new session {session_id} for uid {uid}")
+        elif not session_id:
+            return jsonify({'error': 'session_id or uid is required'}), 400
+        
+        # Call the chat engine directly
+        response = chat_engine.send_message(
+            session_id=session_id,
+            message=message,
+            code_context=code_context,
+            stream=False
+        )
+        
+        # Return response in format expected by frontend
+        return jsonify({
+            'response': response.get('content'),
+            'message': response.get('content'),
+            'tokens_used': response.get('tokens_used'),
+            'intent': response.get('intent'),
+            'agent': response.get('agent')
+        }), 200
+        
+    except ValueError as e:
+        logger.error(f"Chat message validation error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 404
+    except Exception as e:
+        logger.error(f"Chat message error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/api/query', methods=['POST'])
+@jwt_required
 def api_query():
     """API endpoint for natural language security queries"""
     try:
@@ -649,7 +868,7 @@ def api_query():
 # ====================
 
 @app.route('/dashboard')
-@login_required
+@jwt_required
 def dashboard():
     """Security dashboard page"""
     try:
@@ -664,11 +883,15 @@ def dashboard():
 
 
 @app.route('/api/security/summary')
+@jwt_required
 def api_security_summary():
     """Get executive summary data"""
     try:
         service = get_report_service()
-        summary = service.get_summary()
+        # Extract UID from query params or session
+        uid = request.args.get('uid') or session.get('current_uid')
+        logger.info(f"Summary API using UID: {uid}")
+        summary = service.get_summary(uid=uid)
         return jsonify(summary), 200
     except Exception as e:
         logger.error(f"Summary API error: {e}", exc_info=True)
@@ -676,11 +899,15 @@ def api_security_summary():
 
 
 @app.route('/api/security/charts')
+@jwt_required
 def api_security_charts():
     """Get all dashboard charts data"""
     try:
         service = get_report_service()
-        charts = service.get_dashboard_data()
+        # Extract UID from query params or session
+        uid = request.args.get('uid') or session.get('current_uid')
+        logger.info(f"Charts API using UID: {uid}")
+        charts = service.get_dashboard_data(uid=uid)
         return jsonify(charts), 200
     except Exception as e:
         logger.error(f"Charts API error: {e}", exc_info=True)
@@ -688,6 +915,7 @@ def api_security_charts():
 
 
 @app.route('/api/security/findings')
+@jwt_required
 def api_security_findings():
     """Get security findings with filtering and pagination"""
     try:
@@ -698,12 +926,16 @@ def api_security_findings():
         owasp_category = request.args.get('owasp_category')
         limit = int(request.args.get('limit', 100))
         offset = int(request.args.get('offset', 0))
-
+        # Extract UID from query params or session
+        uid = request.args.get('uid') or session.get('current_uid')
+        logger.info(f"Findings API using UID: {uid}")
+        
         findings = service.get_findings(
             severity=severity,
             owasp_category=owasp_category,
             limit=limit,
-            offset=offset
+            offset=offset,
+            uid=uid
         )
 
         return jsonify(findings), 200
@@ -713,11 +945,15 @@ def api_security_findings():
 
 
 @app.route('/api/security/finding/<finding_id>')
+@jwt_required
 def api_security_finding_detail(finding_id):
     """Get detailed information for a specific finding"""
     try:
         service = get_report_service()
-        finding = service.get_finding_by_id(finding_id)
+        # Extract UID from query params or session
+        uid = request.args.get('uid') or session.get('current_uid')
+        logger.info(f"Finding detail API using UID: {uid}")
+        finding = service.get_finding_by_id(finding_id, uid=uid)
 
         if finding:
             return jsonify(finding), 200
@@ -729,11 +965,15 @@ def api_security_finding_detail(finding_id):
 
 
 @app.route('/api/security/remediation')
+@jwt_required
 def api_security_remediation():
     """Get prioritized remediation plan"""
     try:
         service = get_report_service()
-        plan = service.get_remediation_plan()
+        # Extract UID from query params or session
+        uid = request.args.get('uid') or session.get('current_uid')
+        logger.info(f"Remediation API using UID: {uid}")
+        plan = service.get_remediation_plan(uid=uid)
         return jsonify({'remediation_plan': plan}), 200
     except Exception as e:
         logger.error(f"Remediation API error: {e}", exc_info=True)
@@ -741,6 +981,7 @@ def api_security_remediation():
 
 
 @app.route('/api/security/refresh')
+@jwt_required
 def api_security_refresh():
     """Trigger a full re-analysis and refresh dashboard data"""
     try:
@@ -771,6 +1012,7 @@ def api_security_refresh():
 
 
 @app.route('/api/feedback', methods=['POST'])
+@jwt_required
 def api_save_feedback():
     """Save user feedback for a finding"""
     try:

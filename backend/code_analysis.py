@@ -20,6 +20,7 @@ from datetime import datetime
 import config
 from static_analysis.ast_parser import ASTParser
 from static_analysis.multi_linter import MultiLinter
+from utils.file_filter import should_ignore_file, should_ignore_directory, is_code_file
 
 # Optional imports based on feature flags
 if config.ENABLE_SEMANTIC_SEARCH:
@@ -367,7 +368,7 @@ def analyze_codebase(input_path, output_path):
     """
     summary = {
         "files_analyzed": 0,
-        "bugs_fixed": 0,
+        "files_formatted": 0,
         "security_issues": 0,
         "code_quality_issues": 0,
         "files_updated": 0
@@ -377,10 +378,18 @@ def analyze_codebase(input_path, output_path):
     analyzer = CodeAnalyzer()
 
     # Analyze Python files
-    for root, _, files in os.walk(input_path):
+    for root, dirs, files in os.walk(input_path):
+        # Filter out ignored directories (modify in-place to prevent os.walk from entering them)
+        dirs[:] = [d for d in dirs if not should_ignore_directory(os.path.join(root, d))]
+        
         for file in files:
             if file.endswith(".py"):
                 file_path = os.path.join(root, file)
+                
+                # Skip ignored files
+                if should_ignore_file(file_path):
+                    continue
+                
                 rel_path = os.path.relpath(file_path, input_path)
 
                 logger.info(f"Analyzing {rel_path}")
@@ -409,7 +418,7 @@ def analyze_codebase(input_path, output_path):
                     }
 
                     summary["files_analyzed"] += 1
-                    summary["bugs_fixed"] += 1
+                    summary["files_formatted"] += 1
                     summary["files_updated"] += 1
 
                 except Exception as e:
@@ -478,10 +487,19 @@ def analyze_codebase(input_path, output_path):
         try:
             logger.info("Scanning for hardcoded secrets...")
             secret_detector = SecretDetector()
-            for root, _, files in os.walk(input_path):
+            for root, dirs, files in os.walk(input_path):
+                # Filter out ignored directories
+                dirs[:] = [d for d in dirs if not should_ignore_directory(os.path.join(root, d))]
+                
                 for file in files:
-                    if file.endswith(('.py', '.java', '.js', '.go', '.rb', '.php', '.env', '.yml', '.yaml', '.json')):
-                        file_path = os.path.join(root, file)
+                    file_path = os.path.join(root, file)
+                    
+                    # Skip ignored files
+                    if should_ignore_file(file_path):
+                        continue
+                    
+                    # Only scan code files and environment files (but not JSON, MD, etc.)
+                    if file.endswith(('.py', '.java', '.js', '.go', '.rb', '.php', '.env')):
                         try:
                             with open(file_path, 'r', encoding='utf-8') as f:
                                 code = f.read()

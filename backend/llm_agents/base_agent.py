@@ -51,7 +51,10 @@ class BaseAgent(ABC):
 
     def generate(self, prompt: str, system_prompt: Optional[str] = None) -> Optional[str]:
         """
-        Generate response from LLM
+        Generate response from LLM with automatic fallback
+        
+        Tries the configured provider first, then falls back to other providers if it fails.
+        Fallback order: anthropic → mistral → openai
 
         Args:
             prompt: User prompt
@@ -60,16 +63,70 @@ class BaseAgent(ABC):
         Returns:
             Generated text
         """
-        try:
-            if self.provider == 'openai':
-                return self._generate_openai(prompt, system_prompt)
-            elif self.provider == 'anthropic':
-                return self._generate_anthropic(prompt, system_prompt)
-            elif self.provider == 'mistral':
-                return self._generate_mistral(prompt, system_prompt)
-        except Exception as e:
-            logger.error(f"Error generating response: {e}", exc_info=True)
-            return None
+        # Define fallback order based on current provider
+        if self.provider == 'anthropic':
+            providers_to_try = [
+                ('anthropic', 'claude-3-5-sonnet-20241022', config.ANTHROPIC_API_KEY),
+                ('mistral', 'mistral-large-latest', config.MISTRAL_API_KEY),
+                ('openai', 'gpt-4o', config.OPENAI_API_KEY)
+            ]
+        elif self.provider == 'mistral':
+            providers_to_try = [
+                ('mistral', 'mistral-large-latest', config.MISTRAL_API_KEY),
+                ('anthropic', 'claude-3-5-sonnet-20241022', config.ANTHROPIC_API_KEY),
+                ('openai', 'gpt-4o', config.OPENAI_API_KEY)
+            ]
+        else:  # openai or default
+            providers_to_try = [
+                ('openai', 'gpt-4o', config.OPENAI_API_KEY),
+                ('anthropic', 'claude-3-5-sonnet-20241022', config.ANTHROPIC_API_KEY),
+                ('mistral', 'mistral-large-latest', config.MISTRAL_API_KEY)
+            ]
+        
+        last_error = None
+        
+        for provider_name, model_name, api_key in providers_to_try:
+            if not api_key:  # Skip if API key not configured
+                continue
+                
+            try:
+                logger.info(f"Trying {provider_name} with model {model_name}")
+                
+                # Temporarily switch to this provider
+                original_provider = self.provider
+                original_model = self.model
+                self.provider = provider_name
+                self.model = model_name
+                
+                # Re-initialize client for the new provider
+                self._initialize_client()
+                
+                # Try to generate response
+                if provider_name == 'openai':
+                    result = self._generate_openai(prompt, system_prompt)
+                elif provider_name == 'anthropic':
+                    result = self._generate_anthropic(prompt, system_prompt)
+                elif provider_name == 'mistral':
+                    result = self._generate_mistral(prompt, system_prompt)
+                
+                logger.info(f"✅ Successfully generated response using {provider_name}")
+                return result
+                
+            except Exception as e:
+                last_error = e
+                error_msg = str(e)
+                
+                # Check if it's a quota/rate limit error
+                if '429' in error_msg or 'quota' in error_msg.lower() or 'rate' in error_msg.lower():
+                    logger.warning(f"❌ {provider_name} quota exceeded or rate limited, trying next provider...")
+                else:
+                    logger.warning(f"❌ {provider_name} failed: {error_msg}, trying next provider...")
+                
+                continue
+        
+        # All providers failed
+        logger.error(f"All API providers failed. Last error: {last_error}", exc_info=True)
+        return None
 
     def _generate_openai(self, prompt: str, system_prompt: Optional[str] = None) -> str:
         """Generate using OpenAI API"""

@@ -1,376 +1,848 @@
-# AI-Powered Code Review Platform
+# 🔍 AI Code Review Platform
 
-> 📚 **[View Detailed Architecture Documentation](README_ARCHITECTURE.md)** - Complete system architecture, components, and technical details
+An intelligent, AI-powered code analysis platform that combines static analysis, machine learning, and LLM-based agents to provide comprehensive security reviews, code quality assessments, and interactive code discussions.
 
-A next-generation AI-driven code review platform using hybrid ML + LLM architecture. Combines classical machine learning, deep learning models, semantic embeddings, and specialized LLM agents to provide comprehensive, context-aware code reviews.
+[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![Flask](https://img.shields.io/badge/Flask-3.0.0-green.svg)](https://flask.palletsprojects.com/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## Features
+---
 
-**All 6 Phases Integrated!** 🎉
+## 📋 Table of Contents
 
-**Multi-Layer Static Analysis** (Phase 1)
+- [Overview](#-overview)
+- [Key Features](#-key-features)
+- [Architecture](#-architecture)
+- [Technology Stack](#-technology-stack)
+- [Installation](#-installation)
+- [Configuration](#-configuration)
+- [Usage](#-usage)
+- [API Documentation](#-api-documentation)
+- [Project Structure](#-project-structure)
+- [Contributing](#-contributing)
 
-- AST parsing with comprehensive code metrics (LOC, WMC, DIT, LCOM, Complexity)
-- Multiple linters: Bandit (security), Semgrep (patterns), Pylint (quality), Ruff (style)
-- Automated code formatting with autopep8
+---
 
-**Semantic Code Understanding** (Phase 2)
+## 🌟 Overview
 
-- Code embeddings using OpenAI or local sentence-transformers
-- Qdrant/FAISS vector store for semantic code search
-- RAG-enhanced context for LLM agents
+The AI Code Review Platform is a comprehensive security and code quality analysis tool that leverages cutting-edge AI technologies to provide:
 
-**Intelligent LLM Agents** (Phase 3)
+- **Multi-layered Security Analysis**: Combines static analysis tools (Bandit, Semgrep, Ruff) with LLM-powered security reviews
+- **CVE Detection**: Automatic dependency vulnerability scanning using OSV database
+- **Secret Detection**: Identifies hardcoded credentials, API keys, and sensitive data
+- **Interactive AI Chat**: Conversational interface for code discussions with context awareness
+- **Vector-based Semantic Search**: Qdrant-powered code search using embeddings
+- **Comprehensive Reporting**: Detailed security reports with OWASP mapping and fix suggestions
 
-- SecurityReviewer: Deep security vulnerability analysis
-- RefactorAgent: Code quality and refactoring suggestions
-- Chain-of-thought prompting with contextual awareness
-- Natural language Q&A for security questions
+---
 
-**Dependency Vulnerability Scanning** (Phase 4)
+## ✨ Key Features
 
-- Automatic dependency detection (Maven, Gradle, npm, Python)
-- CVE detection using OSV API
-- OWASP Top 10 2021 category mapping
-- Severity-based risk scoring
-- Comprehensive security reports
+### 🔐 Security Analysis
 
-**Security Reporting & Recommendations** (Phase 5)
+- **Static Analysis**: Bandit, Semgrep, Ruff, and Pylint integration
+- **CVE Detection**: Automated vulnerability scanning for dependencies
+- **Secret Detection**: Identifies hardcoded credentials and API keys
+- **OWASP Mapping**: Maps findings to OWASP Top 10 categories
+- **CWE Classification**: Common Weakness Enumeration tagging
 
-- Executive security summaries with risk scoring
-- Automated fix suggestions for common vulnerabilities
-- Multi-format reports (JSON, Markdown)
-- Dashboard-ready data exports for visualization
-- OWASP Top 10 breakdown and analysis
-- Remediation plans with effort estimates
+### 🤖 AI-Powered Intelligence
 
-**Web Dashboard UI** (Phase 6)
+- **LLM Agents**: Specialized agents for security review and refactoring
+- **Multi-Provider Support**: OpenAI, Anthropic, Mistral, and Gemini
+- **Intelligent Chat**: Context-aware conversational AI for code discussions
+- **Intent Detection**: Automatic routing to specialized agents
 
-- Interactive security dashboard with real-time visualizations
-- Severity distribution, OWASP coverage, vulnerability trends
-- File risk scores and prioritized findings
-- Remediation plan with actionable items
-- Filterable findings table with detailed views
+### 🔍 Code Analysis
 
-**Flexible Configuration**
+- **AST Parsing**: Deep code structure analysis
+- **Complexity Metrics**: Cyclomatic complexity, maintainability index
+- **Code Formatting**: Automated PEP8 compliance with autopep8
+- **Multi-Language Support**: Python, JavaScript, Java, Go, C++, and more
 
-- CPU-optimized for systems without GPU
-- Feature flags to enable/disable components
-- Support for OpenAI, Anthropic, and Mistral LLMs
-- Local or API-based embeddings
+### 💾 Vector Database
 
-**Comprehensive Reporting**
+- **Qdrant Integration**: High-performance vector storage
+- **Semantic Search**: Find similar code patterns
+- **Code Embeddings**: Sentence transformers and OpenAI embeddings
+- **RAG Pipeline**: Retrieval-Augmented Generation for context-aware responses
 
-- Detailed metrics and analysis results
-- Before/after code diffs with highlighting
-- Severity-based issue prioritization
-- JSON, Markdown, and HTML export
+### 🎨 Modern UI
 
-**🎉 NEW: Interactive Chat & Gen AI Features** (Phase 1)
+- **VS Code-Style Interface**: Monaco editor integration
+- **File Explorer**: Interactive project navigation
+- **Real-time Analysis**: Live progress tracking
+- **Dashboard**: Visual security metrics and trends
 
-- **Conversational AI**: Multi-turn code discussions with context retention
-- **Streaming Responses**: Real-time LLM output with Server-Sent Events
-- **Smart Intent Detection**: Automatic routing to security or refactoring agents
-- **Persistent History**: SQLite-backed conversation storage
-- **Export Capabilities**: Save conversations as Markdown or JSON
-- **API v2**: RESTful endpoints for chat, streaming, and semantic search
+### 🔑 Authentication
 
-## Quick Start
+- **GitHub OAuth**: Secure authentication via GitHub
+- **Session Management**: Flask-Login integration
+- **User Management**: SQLite-based user database
 
-Get started with the AI-Powered Code Review Platform in 3 simple steps:
+---
 
-```bash
-# 1. Install dependencies
-pip install -r requirements.txt
+## 🏗️ Architecture
 
-# 2. Configure (create .env from example)
-copy .env.example .env
-# Edit .env and add your API keys
+### High-Level Architecture
 
-# 3. Run comprehensive analysis
-python main.py analyze ./your-project -o ./results
+```mermaid
+graph TB
+    subgraph "Frontend Layer"
+        UI[Web UI<br/>HTML/CSS/JS]
+        Monaco[Monaco Editor]
+        FileExplorer[File Explorer]
+    end
+
+    subgraph "API Layer"
+        Flask[Flask Application]
+        Auth[Authentication<br/>GitHub OAuth]
+        APIv2[API v2 Routes]
+    end
+
+    subgraph "Analysis Pipeline"
+        Upload[File Upload Handler]
+        StaticAnalysis[Static Analysis<br/>Bandit, Semgrep, Ruff]
+        ASTParser[AST Parser<br/>Metrics Extraction]
+        CVEScanner[CVE Scanner<br/>OSV Database]
+        SecretDetector[Secret Detector]
+    end
+
+    subgraph "AI/ML Layer"
+        LLMAgents[LLM Agents]
+        SecurityAgent[Security Reviewer]
+        RefactorAgent[Refactor Agent]
+        ChatEngine[Chat Engine]
+        IntentDetection[Intent Detection]
+    end
+
+    subgraph "Vector Database"
+        Embedder[Code Embedder<br/>Sentence Transformers]
+        Qdrant[(Qdrant<br/>Vector DB)]
+        RAG[RAG Engine]
+    end
+
+    subgraph "Reporting Layer"
+        MetaReasoner[Meta Reasoner<br/>Issue Aggregator]
+        ReportGen[Report Generator<br/>JSON/Markdown]
+        Dashboard[Dashboard Exporter]
+        FixGen[Fix Generator]
+    end
+
+    subgraph "Storage"
+        TempStorage[(Temporary Storage<br/>Uploads/Processed)]
+        UserDB[(SQLite<br/>User Database)]
+        Reports[(Reports<br/>JSON/MD)]
+    end
+
+    UI --> Flask
+    Monaco --> Flask
+    FileExplorer --> Flask
+
+    Flask --> Auth
+    Flask --> APIv2
+    Flask --> Upload
+
+    Upload --> StaticAnalysis
+    Upload --> ASTParser
+    Upload --> CVEScanner
+    Upload --> SecretDetector
+
+    StaticAnalysis --> MetaReasoner
+    ASTParser --> MetaReasoner
+    CVEScanner --> MetaReasoner
+    SecretDetector --> MetaReasoner
+
+    Flask --> ChatEngine
+    ChatEngine --> IntentDetection
+    IntentDetection --> SecurityAgent
+    IntentDetection --> RefactorAgent
+
+    SecurityAgent --> LLMAgents
+    RefactorAgent --> LLMAgents
+
+    Upload --> Embedder
+    Embedder --> Qdrant
+    ChatEngine --> RAG
+    RAG --> Qdrant
+
+    MetaReasoner --> ReportGen
+    ReportGen --> Dashboard
+    ReportGen --> FixGen
+
+    ReportGen --> Reports
+    Auth --> UserDB
+    Upload --> TempStorage
 ```
 
-**Or launch the web dashboard:**
+### Analysis Pipeline Flow
 
-```bash
-python main.py web
-# Open http://localhost:5000 in your browser
+```mermaid
+sequenceDiagram
+    participant User
+    participant WebUI
+    participant Flask
+    participant Analyzer
+    participant StaticTools
+    participant LLMAgents
+    participant VectorDB
+    participant Reporter
+
+    User->>WebUI: Upload Code/Repository
+    WebUI->>Flask: POST /api/analyze
+    Flask->>Analyzer: analyze_codebase()
+
+    par Static Analysis
+        Analyzer->>StaticTools: Run Bandit
+        Analyzer->>StaticTools: Run Semgrep
+        Analyzer->>StaticTools: Run Ruff
+        StaticTools-->>Analyzer: Linter Results
+    and CVE Detection
+        Analyzer->>StaticTools: Scan Dependencies
+        StaticTools-->>Analyzer: CVE Results
+    and Secret Detection
+        Analyzer->>StaticTools: Scan for Secrets
+        StaticTools-->>Analyzer: Secret Findings
+    end
+
+    Analyzer->>VectorDB: Generate Embeddings
+    VectorDB-->>Analyzer: Store Code Chunks
+
+    Analyzer->>LLMAgents: Security Review
+    LLMAgents-->>Analyzer: LLM Insights
+
+    Analyzer->>Reporter: Generate Reports
+    Reporter-->>Analyzer: JSON/MD Reports
+
+    Analyzer-->>Flask: Analysis Complete
+    Flask-->>WebUI: Redirect to Results
+    WebUI-->>User: Display Dashboard
 ```
 
-## Installation
+### Chat Engine Architecture
+
+```mermaid
+graph LR
+    subgraph "Chat Interface"
+        UserMsg[User Message]
+        CodeContext[Code Context]
+    end
+
+    subgraph "Chat Engine"
+        IntentDetect[Intent Detection]
+        AgentRouter[Agent Router]
+        ContextBuilder[Context Builder]
+        PromptBuilder[Prompt Builder]
+    end
+
+    subgraph "Specialized Agents"
+        SecurityAgent[Security Reviewer<br/>Vulnerability Analysis]
+        RefactorAgent[Refactor Agent<br/>Code Improvements]
+        ExplainAgent[Explain Agent<br/>Code Understanding]
+    end
+
+    subgraph "Context Sources"
+        ConvHistory[Conversation History]
+        DashboardData[Dashboard Data]
+        AnalysisResults[Analysis Results]
+        VectorSearch[Vector Search]
+    end
+
+    subgraph "LLM Providers"
+        OpenAI[OpenAI GPT-4]
+        Anthropic[Anthropic Claude]
+        Mistral[Mistral AI]
+        Gemini[Google Gemini]
+    end
+
+    UserMsg --> IntentDetect
+    CodeContext --> ContextBuilder
+
+    IntentDetect --> AgentRouter
+
+    AgentRouter --> SecurityAgent
+    AgentRouter --> RefactorAgent
+    AgentRouter --> ExplainAgent
+
+    ContextBuilder --> ConvHistory
+    ContextBuilder --> DashboardData
+    ContextBuilder --> AnalysisResults
+    ContextBuilder --> VectorSearch
+
+    ContextBuilder --> PromptBuilder
+    PromptBuilder --> SecurityAgent
+    PromptBuilder --> RefactorAgent
+    PromptBuilder --> ExplainAgent
+
+    SecurityAgent --> OpenAI
+    SecurityAgent --> Anthropic
+    SecurityAgent --> Mistral
+    SecurityAgent --> Gemini
+```
+
+### Data Flow Architecture
+
+```mermaid
+graph TD
+    subgraph "Input Sources"
+        FileUpload[File Upload]
+        GitRepo[GitHub Repository]
+        FolderUpload[Folder Upload]
+    end
+
+    subgraph "Processing"
+        ExtractZip[ZIP Extraction]
+        FileFilter[File Filtering<br/>Ignore Patterns]
+        FileTree[File Tree Generation]
+    end
+
+    subgraph "Analysis Stages"
+        Stage1[Stage 1: Static Analysis<br/>AST, Linters, Metrics]
+        Stage2[Stage 2: CVE Detection<br/>Dependency Scanning]
+        Stage3[Stage 3: Secret Detection<br/>Credential Scanning]
+        Stage4[Stage 4: LLM Analysis<br/>Security Review]
+        Stage5[Stage 5: Embedding<br/>Vector Storage]
+    end
+
+    subgraph "Aggregation"
+        MetaReason[Meta Reasoner<br/>Issue Aggregation]
+        Severity[Severity Ranking]
+        OWASP[OWASP Mapping]
+    end
+
+    subgraph "Output"
+        JSONReport[JSON Report]
+        MDReport[Markdown Report]
+        DashboardJSON[Dashboard Data]
+        FixSuggestions[Fix Suggestions]
+    end
+
+    FileUpload --> ExtractZip
+    GitRepo --> FileFilter
+    FolderUpload --> ExtractZip
+
+    ExtractZip --> FileFilter
+    FileFilter --> FileTree
+
+    FileTree --> Stage1
+    FileTree --> Stage2
+    FileTree --> Stage3
+
+    Stage1 --> Stage4
+    Stage2 --> Stage4
+    Stage3 --> Stage4
+
+    Stage4 --> Stage5
+
+    Stage1 --> MetaReason
+    Stage2 --> MetaReason
+    Stage3 --> MetaReason
+    Stage4 --> MetaReason
+
+    MetaReason --> Severity
+    Severity --> OWASP
+
+    OWASP --> JSONReport
+    OWASP --> MDReport
+    OWASP --> DashboardJSON
+    OWASP --> FixSuggestions
+```
+
+---
+
+## 🛠️ Technology Stack
+
+### Backend
+
+- **Framework**: Flask 3.0.0
+- **Language**: Python 3.9+
+- **Authentication**: Flask-Login, GitHub OAuth
+- **Database**: SQLite (User Management)
+
+### AI/ML
+
+- **LLM Providers**: OpenAI, Anthropic, Mistral, Google Gemini
+- **Embeddings**: Sentence Transformers, OpenAI Embeddings
+- **Vector Database**: Qdrant
+- **ML Frameworks**: scikit-learn, XGBoost, PyTorch, Transformers
+
+### Static Analysis
+
+- **Security**: Bandit, Semgrep
+- **Code Quality**: Ruff, Pylint, Radon
+- **Formatting**: autopep8
+- **Secret Detection**: detect-secrets
+
+### Frontend
+
+- **Editor**: Monaco Editor (VS Code)
+- **UI**: HTML5, CSS3, JavaScript
+- **Icons**: Font Awesome
+- **Styling**: Custom CSS with modern design
+
+### Infrastructure
+
+- **Containerization**: Docker, Docker Compose
+- **Vector DB**: Qdrant (containerized)
+- **Storage**: Temporary file system storage
+
+---
+
+## 📦 Installation
 
 ### Prerequisites
 
-- Python 3.8+
-- pip
+- Python 3.9 or higher
+- Docker and Docker Compose (for containerized deployment)
+- Git
 
-### Setup
+### Option 1: Docker Deployment (Recommended)
 
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/Krushna56/ai_code_review.git
+git clone https://github.com/yourusername/ai_code_review.git
 cd ai_code_review
 ```
 
-2. **Install dependencies**
+2. **Configure environment variables**
 
 ```bash
+cp backend/.env.example backend/.env
+# Edit backend/.env with your API keys
+```
+
+3. **Start the application**
+
+```bash
+docker-compose up -d
+```
+
+4. **Access the application**
+
+- Web UI: http://localhost:5000
+- Qdrant Dashboard: http://localhost:6333/dashboard
+
+### Option 2: Local Development
+
+1. **Clone the repository**
+
+```bash
+git clone https://github.com/yourusername/ai_code_review.git
+cd ai_code_review
+```
+
+2. **Create virtual environment**
+
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. **Install dependencies**
+
+```bash
+cd backend
 pip install -r requirements.txt
 ```
 
-3. **Configure environment**
+4. **Configure environment**
 
 ```bash
-# Copy the example environment file
-copy .env.example .env
-
-# Edit .env and add your API keys
-# Required: OPENAI_API_KEY or ANTHROPIC_API_KEY
-# Optional: Configure embedding provider, models, feature flags
+cp .env.example .env
+# Edit .env with your configuration
 ```
 
-### Configuration Options
-
-Edit `.env` to customize:
-
-**LLM Provider** (choose one):
-
-- `LLM_PROVIDER=openai` with `OPENAI_API_KEY`
-- `LLM_PROVIDER=anthropic` with `ANTHROPIC_API_KEY`
-
-**Embedding Provider**:
-
-- `EMBEDDING_PROVIDER=local` (free, uses sentence-transformers)
-- `EMBEDDING_PROVIDER=openai` (paid, higher quality)
-
-**Feature Flags**:
-
-- `ENABLE_BANDIT=true` - Security scanning
-- `ENABLE_SEMGREP=true` - Pattern-based analysis
-- `ENABLE_PYLINT=false` - Code quality (can be slow)
-- `ENABLE_RUFF=true` - Fast Python linter
-- `ENABLE_LLM_AGENTS=true` - AI-powered insights
-- `ENABLE_SEMANTIC_SEARCH=true` - Vector-based code search
-- `ENABLE_CVE_DETECTION=true` - Dependency vulnerability scanning
-- `ENABLE_SECURITY_REPORTING=true` - Comprehensive security reports
-
-## Usage
-
-### Main Entry Point (Recommended)
-
-**Run comprehensive analysis:**
+5. **Run Qdrant (required for vector search)**
 
 ```bash
-python main.py analyze ./my-project -o ./results
+docker run -p 6333:6333 qdrant/qdrant:latest
 ```
 
-**Launch web dashboard:**
+6. **Start the application**
 
 ```bash
-python main.py web
+python run.py
 ```
 
-**Run phase demos:**
+---
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+Create a `.env` file in the `backend` directory:
+
+```env
+# Flask Configuration
+SECRET_KEY=your-secret-key-here
+FLASK_ENV=development
+
+# LLM Configuration
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+MISTRAL_API_KEY=...
+GEMINI_API_KEY=...
+
+# LLM Provider Selection
+CHAT_PROVIDER=gemini          # For chat interface
+ANALYSIS_PROVIDER=mistral     # For code analysis
+ANALYSIS_FALLBACK_PROVIDER=anthropic
+
+# Embedding Configuration
+EMBEDDING_PROVIDER=local      # Options: local, openai, codestral
+LOCAL_EMBEDDING_MODEL=all-MiniLM-L6-v2
+
+# Vector Database
+VECTOR_DB_TYPE=qdrant
+QDRANT_HOST=localhost
+QDRANT_PORT=6333
+QDRANT_COLLECTION=code_chunks
+
+# Feature Flags
+ENABLE_ML_ANALYSIS=true
+ENABLE_LLM_AGENTS=true
+ENABLE_SEMANTIC_SEARCH=true
+ENABLE_CVE_DETECTION=true
+ENABLE_SECURITY_REPORTING=true
+
+# Static Analysis Tools
+ENABLE_BANDIT=true
+ENABLE_SEMGREP=true
+ENABLE_RUFF=true
+ENABLE_PYLINT=false
+
+# GitHub OAuth (Optional)
+GITHUB_CLIENT_ID=your-github-client-id
+GITHUB_CLIENT_SECRET=your-github-client-secret
+
+# Performance
+MAX_WORKERS=4
+CACHE_EMBEDDINGS=true
+MAX_CONTENT_LENGTH=21474836480  # 20GB
+
+# Temporary File Cleanup
+TEMP_FILE_RETENTION_HOURS=24
+```
+
+### Feature Flags
+
+| Flag                        | Description                              | Default |
+| --------------------------- | ---------------------------------------- | ------- |
+| `ENABLE_ML_ANALYSIS`        | Enable machine learning-based analysis   | `true`  |
+| `ENABLE_LLM_AGENTS`         | Enable LLM-powered security agents       | `true`  |
+| `ENABLE_SEMANTIC_SEARCH`    | Enable vector-based code search          | `true`  |
+| `ENABLE_CVE_DETECTION`      | Enable dependency vulnerability scanning | `true`  |
+| `ENABLE_SECURITY_REPORTING` | Enable comprehensive security reports    | `true`  |
+| `ENABLE_BANDIT`             | Enable Bandit security scanner           | `true`  |
+| `ENABLE_SEMGREP`            | Enable Semgrep static analysis           | `true`  |
+| `ENABLE_RUFF`               | Enable Ruff linter                       | `true`  |
+| `ENABLE_PYLINT`             | Enable Pylint analysis                   | `false` |
+
+---
+
+## 🚀 Usage
+
+### Web Interface
+
+1. **Upload Code**
+   - Navigate to http://localhost:5000
+   - Upload a ZIP file, folder, or paste a GitHub repository URL
+   - Click "Analyze Code"
+
+2. **View Results**
+   - Processing page shows real-time analysis progress
+   - Dashboard displays security metrics and findings
+   - Interactive file explorer for code navigation
+
+3. **Interactive Chat**
+   - Click "Chat" to open the AI assistant
+   - Ask questions about security issues
+   - Request code explanations or refactoring suggestions
+   - Chat maintains context of your analysis
+
+### API Usage
+
+#### Analyze Code
 
 ```bash
-# Phase 4: CVE Detection
-python main.py demo 4 --path ./tests/fixtures/dependencies
-
-# Phase 5: Security Reporting
-python main.py demo 5
+curl -X POST http://localhost:5000/api/analyze \
+  -F "codebase=@your-code.zip"
 ```
 
-### Web Interface (Phase 6)
+#### Analyze GitHub Repository
 
 ```bash
-python app.py
+curl -X POST http://localhost:5000/api/analyze/repo \
+  -H "Content-Type: application/json" \
+  -d '{"repo_url": "https://github.com/user/repo"}'
 ```
 
-Navigate to `http://localhost:5000` and upload a ZIP file containing your codebase.
-
-### Command-Line Interface
-
-```python
-from code_analysis import analyze_codebase
-
-results = analyze_codebase(
-    input_path="path/to/code",
-    output_path="path/to/output"
-)
-
-print(results['summary'])
-print(results['security'])
-```
-
-### CVE Detection
+#### Chat with AI
 
 ```bash
-# Scan project dependencies for CVEs
-python cli.py cve-check ./my-java-project
-
-# Save results to JSON
-python cli.py cve-check ./my-nodejs-app --output cve-results.json
+curl -X POST http://localhost:5000/api/v2/chat/message \
+  -H "Content-Type: application/json" \
+  -d '{
+    "session_id": "your-session-id",
+    "message": "What are the critical security issues?",
+    "stream": false
+  }'
 ```
 
-Supported dependency files:
+### CLI Usage
 
-- Maven: `pom.xml`
-- Gradle: `build.gradle`, `build.gradle.kts`
-- npm: `package.json`, `package-lock.json`
-- Python: `requirements.txt`, `Pipfile`, `pyproject.toml`
+```bash
+# Analyze a directory
+python backend/cli.py analyze /path/to/code --output /path/to/output
 
-````
+# Query the codebase
+python backend/cli.py query "Find SQL injection vulnerabilities"
 
-### Python API
+# Export report
+python backend/cli.py export --format markdown --output report.md
+```
 
-```python
-from static_analysis import analyze_file
-from llm_agents import SecurityReviewer, RefactorAgent
+---
 
-# Analyze a single file
-metrics = analyze_file("example.py")
-print(f"Complexity: {metrics['complexity']}")
+## 📚 API Documentation
 
-# Use LLM agents
-security_agent = SecurityReviewer()
-with open("example.py") as f:
-    code = f.read()
+### Authentication Endpoints
 
-result = security_agent.analyze(code)
-print(result['analysis'])
-````
+| Endpoint                | Method   | Description             |
+| ----------------------- | -------- | ----------------------- |
+| `/auth/login`           | GET/POST | User login page         |
+| `/auth/register`        | GET/POST | User registration       |
+| `/auth/logout`          | GET      | User logout             |
+| `/auth/github`          | GET      | GitHub OAuth initiation |
+| `/auth/github/callback` | GET      | GitHub OAuth callback   |
 
-## Architecture
+### Analysis Endpoints
 
-### Layers
+| Endpoint                     | Method | Description                    |
+| ---------------------------- | ------ | ------------------------------ |
+| `/`                          | POST   | Upload and analyze code        |
+| `/api/analyze`               | POST   | API endpoint for code analysis |
+| `/api/analyze/repo`          | POST   | Analyze GitHub repository      |
+| `/api/analysis/status/<uid>` | GET    | Check analysis status          |
+| `/processing?uid=<uid>`      | GET    | Processing page with progress  |
 
-1. **Static Intelligence Layer**
-   - AST parsing and metrics extraction
-   - Multi-linter integration (Bandit, Semgrep, Pylint, Ruff)
+### File & Code Endpoints
 
-2. **Embedding Layer**
-   - Code embeddings (OpenAI or local)
-   - FAISS vector store for semantic search
+| Endpoint                         | Method | Description                |
+| -------------------------------- | ------ | -------------------------- |
+| `/api/files/<uid>`               | GET    | Get file tree structure    |
+| `/api/file/content/<uid>/<path>` | GET    | Get file content           |
+| `/chat?uid=<uid>`                | GET    | Interactive chat interface |
 
-3. **LLM Agent Layer**
-   - SecurityReviewer for vulnerability analysis
-   - RefactorAgent for code quality improvements
-   - RAG-enhanced context
+### Chat API v2
 
-4. **Meta-Reasoning Layer** (coming soon)
-   - Issue deduplication and prioritization
-   - Confidence scoring
-   - Structured reporting
+| Endpoint                            | Method | Description              |
+| ----------------------------------- | ------ | ------------------------ |
+| `/api/v2/chat/session`              | POST   | Create new chat session  |
+| `/api/v2/chat/message`              | POST   | Send message to AI       |
+| `/api/v2/chat/history/<session_id>` | GET    | Get conversation history |
+| `/api/v2/chat/session/<session_id>` | DELETE | End chat session         |
 
-## Static Analysis Tools
+### Report Endpoints
 
-### Bandit (Security)
+| Endpoint                           | Method | Description                |
+| ---------------------------------- | ------ | -------------------------- |
+| `/download/<uid>/<filename>`       | GET    | Download generated reports |
+| `/api/v2/file-issues/<uid>/<path>` | GET    | Get file-specific issues   |
 
-- Identifies common security issues in Python code
-- Checks for SQL injection, XSS, insecure crypto, etc.
+---
 
-### Semgrep (Patterns)
-
-- Multi-language pattern-based scanner
-- Supports Python, JavaScript, Java, Go, and more
-- Custom rule definitions
-
-### Pylint (Code Quality)
-
-- Comprehensive Python linter
-- Checks coding standards, refactoring opportunities
-- Can be slow on large codebases (disabled by default)
-
-### Ruff (Style)
-
-- Extremely fast Python linter written in Rust
-- Replaces Flake8, isort, and more
-- Recommended for quick feedback
-
-## Performance
-
-**CPU-Optimized:**
-
-- Uses pre-trained models (no GPU training required)
-- Smaller model variants (CodeBERT-base, MiniLM)
-- Batch processing for efficiency
-- Optional ONNX runtime for faster inference
-
-**Expected Analysis Time:**
-
-- Small repo (10 files, ~1000 LOC): < 30 seconds
-- Medium repo (100 files, ~10,000 LOC): < 3 minutes
-- Large repo (1000 files, ~100,000 LOC): < 15 minutes
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 ai_code_review/
-├── config.py                 # Configuration management
-├── app.py                    # Flask web application
-├── code_analysis.py          # Main analysis pipeline
-├── requirements.txt          # Dependencies
-├── .env.example              # Environment template
-├── static_analysis/          # AST parser, multi-linter
-├── embeddings/               # Code embedder, vector store
-├── llm_agents/               # LLM agent implementations
-├── ml_models/                # ML models (future)
-├── dl_models/                # Deep learning models (future)
-├── meta_reasoner/            # Issue aggregation (future)
-├── templates/                # HTML templates
-├── static/                   # CSS, JS
-└── tests/                    # Unit and integration tests
+├── backend/
+│   ├── api/                      # API routes
+│   │   ├── v2_routes.py         # Chat and analysis API v2
+│   │   └── file_issues.py       # File-specific issue endpoints
+│   ├── auth/                     # Authentication module
+│   │   ├── routes.py            # Login, register, OAuth
+│   │   └── forms.py             # WTForms for auth
+│   ├── embeddings/               # Vector embeddings
+│   │   ├── code_embedder.py     # Code embedding generation
+│   │   ├── qdrant_store.py      # Qdrant vector store
+│   │   └── vector_store.py      # Abstract vector store
+│   ├── llm_agents/               # AI agents
+│   │   ├── chat_engine.py       # Conversational AI engine
+│   │   ├── security_reviewer.py # Security analysis agent
+│   │   ├── refactor_agent.py    # Refactoring agent
+│   │   └── base_agent.py        # Base agent class
+│   ├── meta_reasoner/            # Analysis aggregation
+│   │   ├── issue_aggregator.py  # Combine findings
+│   │   ├── severity_ranker.py   # Risk scoring
+│   │   └── report_generator.py  # Report synthesis
+│   ├── models/                   # Data models
+│   │   └── user.py              # User authentication model
+│   ├── parsers/                  # Code parsing
+│   │   ├── code_chunker.py      # Code segmentation
+│   │   └── java_parser.py       # Multi-language parsing
+│   ├── query/                    # RAG system
+│   │   ├── retrieval_engine.py  # Vector search
+│   │   ├── query_handler.py     # Query processing
+│   │   └── rag_prompts.py       # Prompt templates
+│   ├── reporting/                # Report generation
+│   │   ├── security_report_generator.py
+│   │   ├── fix_generator.py     # Fix suggestions
+│   │   └── dashboard_exporter.py
+│   ├── security/                 # Security analysis
+│   │   ├── cve_tracker.py       # CVE detection
+│   │   ├── dependency_analyzer.py
+│   │   ├── secret_detector.py   # Credential scanning
+│   │   ├── owasp_mapper.py      # OWASP categorization
+│   │   └── security_aggregator.py
+│   ├── services/                 # Business logic
+│   │   ├── conversation_manager.py
+│   │   ├── report_service.py
+│   │   ├── feedback_service.py
+│   │   └── ai_code_detector.py
+│   ├── static_analysis/          # Static analysis tools
+│   │   ├── ast_parser.py        # AST metrics
+│   │   └── multi_linter.py      # Linter orchestration
+│   ├── utils/                    # Utilities
+│   │   └── file_filter.py       # File filtering logic
+│   ├── app.py                    # Flask application
+│   ├── code_analysis.py          # Main analysis pipeline
+│   ├── config.py                 # Configuration
+│   ├── requirements.txt          # Python dependencies
+│   └── Dockerfile                # Container definition
+├── frontend/
+│   ├── static/                   # Static assets
+│   │   ├── css/                 # Stylesheets
+│   │   ├── js/                  # JavaScript
+│   │   └── images/              # Images
+│   └── templates/                # HTML templates
+│       ├── index.html           # Upload page
+│       ├── chat.html            # Chat interface
+│       ├── processing.html      # Analysis progress
+│       ├── dashboard.html       # Results dashboard
+│       └── auth/                # Auth templates
+├── docker-compose.yml            # Docker orchestration
+├── .env.example                  # Environment template
+└── README.md                     # This file
 ```
 
-## API Costs
+### Key Components
 
-**OpenAI (if using API-based features):**
+#### Backend Core
 
-- Embeddings: `text-embedding-3-small` (~$0.02 per 1M tokens)
-- LLM: `gpt-4-turbo-preview` (~$10 per 1M input tokens)
+- **`app.py`**: Main Flask application with routes and middleware
+- **`code_analysis.py`**: Orchestrates the entire analysis pipeline
+- **`config.py`**: Centralized configuration management
 
-**Free Alternatives:**
+#### Analysis Pipeline
 
-- Use `EMBEDDING_PROVIDER=local` for free embeddings
-- Caching reduces redundant API calls
-- Feature flags allow disabling expensive components
+- **Static Analysis**: AST parsing, linting (Bandit, Semgrep, Ruff)
+- **CVE Detection**: Dependency scanning via OSV database
+- **Secret Detection**: Regex and entropy-based credential detection
+- **LLM Analysis**: AI-powered security review and refactoring
 
-## Future Enhancements
+#### AI/ML Components
 
-- [x] Dependency vulnerability scanning (Phase 4 - COMPLETE)
-- [x] CVE detection with OSV API (Phase 4 - COMPLETE)
-- [x] OWASP Top 10 mapping (Phase 4 - COMPLETE)
-- [x] Security reporting with fix suggestions (Phase 5 - COMPLETE)
-- [x] Dashboard data exports (Phase 5 - COMPLETE)
-- [x] Web dashboard UI (Phase 6 - COMPLETE)
-- [ ] ML risk prediction models
-- [ ] Deep learning with CodeBERT/GraphCodeBERT
-- [ ] GitHub integration and PR review bot
-- [ ] Feedback loop and model retraining
-- [ ] Multi-language support expansion
-- [ ] IDE plugin integration
-- [ ] CI/CD pipeline integration
-- [ ] Advanced remediation automation
+- **Chat Engine**: Context-aware conversational AI
+- **LLM Agents**: Specialized agents for different tasks
+- **Vector Store**: Qdrant-based semantic code search
+- **RAG System**: Retrieval-Augmented Generation for accurate responses
 
-## Contributing
+#### Reporting
 
-Contributions are welcome!
+- **Meta Reasoner**: Aggregates findings from multiple sources
+- **Report Generator**: Creates JSON and Markdown reports
+- **Dashboard Exporter**: Formats data for UI visualization
+- **Fix Generator**: Provides actionable remediation steps
 
-1. Fork the repo
-2. Create your branch (`git checkout -b feature/xyz`)
-3. Commit your changes (`git commit -m "Add feature"`)
-4. Push to the branch (`git push origin feature/xyz`)
+---
+
+## 🔒 Security Features
+
+### Multi-Layer Security Analysis
+
+1. **Static Analysis**
+   - Bandit: Python-specific security issues
+   - Semgrep: Pattern-based vulnerability detection
+   - Ruff: Fast Python linter with security rules
+
+2. **Dependency Scanning**
+   - OSV database integration
+   - Real-time CVE lookups
+   - Version-specific vulnerability matching
+
+3. **Secret Detection**
+   - Regex-based pattern matching
+   - Entropy analysis for random strings
+   - Context-aware false positive reduction
+
+4. **LLM-Powered Review**
+   - Deep semantic analysis
+   - Context-aware vulnerability detection
+   - Business logic flaw identification
+
+### OWASP Top 10 Mapping
+
+All findings are mapped to OWASP categories:
+
+- A01:2021 - Broken Access Control
+- A02:2021 - Cryptographic Failures
+- A03:2021 - Injection
+- A04:2021 - Insecure Design
+- A05:2021 - Security Misconfiguration
+- A06:2021 - Vulnerable and Outdated Components
+- A07:2021 - Identification and Authentication Failures
+- A08:2021 - Software and Data Integrity Failures
+- A09:2021 - Security Logging and Monitoring Failures
+- A10:2021 - Server-Side Request Forgery
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## License
+### Development Guidelines
 
-MIT License
+- Follow PEP 8 style guide for Python code
+- Add unit tests for new features
+- Update documentation for API changes
+- Ensure all tests pass before submitting PR
 
-## Acknowledgments
+---
 
-- Built with OpenAI GPT-4 and Anthropic Claude
-- Uses HuggingFace Transformers
-- FAISS for vector search
-- Bandit, Semgrep, Pylint, Ruff for static analysis
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- **OpenAI** for GPT models
+- **Anthropic** for Claude
+- **Mistral AI** for Mistral models
+- **Google** for Gemini
+- **Qdrant** for vector database
+- **Semgrep** for static analysis
+- **OSV** for vulnerability database
+
+---
+
+## 📞 Support
+
+For issues, questions, or contributions:
+
+- 🐛 [Report a Bug](https://github.com/yourusername/ai_code_review/issues)
+- 💡 [Request a Feature](https://github.com/yourusername/ai_code_review/issues)
+- 📧 Email: krushanakumbhar314@gmail.com
+
+---

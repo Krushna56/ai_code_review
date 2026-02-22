@@ -33,22 +33,37 @@ class ReportService:
         self.reports_dir = Path(__file__).parent.parent / "reports"
         self.reports_dir.mkdir(exist_ok=True)
 
-    def get_latest_report(self) -> Optional[Dict[str, Any]]:
+    def get_latest_report(self, uid: Optional[str] = None) -> Optional[Dict[str, Any]]:
         """
         Get the most recent security report
+
+        Args:
+            uid: Optional analysis UID. If provided, loads from processed/{uid}/
 
         Returns:
             Latest security report dict or None if not found
         """
-        # Check cache first
-        if self._is_cached('latest_report'):
-            return self._cache['latest_report']
+        # Check cache first (with uid-specific cache key)
+        cache_key = f'latest_report_{uid}' if uid else 'latest_report'
+        if self._is_cached(cache_key):
+            return self._cache[cache_key]
 
-        # Look for reports in output directory first, then root
-        search_paths = [
-            Path('output'),
-            Path('.')
-        ]
+        # Determine search paths based on uid
+        if uid:
+            # Search in processed/{uid}/ first, then output/, then root
+            search_paths = [
+                Path('processed') / uid,
+                Path('..') / 'output',
+                Path('output'),
+                Path('.')
+            ]
+        else:
+            # Original behavior: search output/ then root
+            search_paths = [
+                Path('..') / 'output',
+                Path('output'),
+                Path('.')
+            ]
 
         report_files = [
             'security_report.json',
@@ -67,33 +82,48 @@ class ReportService:
                         # Redact the entire report for safety
                         report = self._redact_recursive(report)
 
-                        # Cache the report
-                        self._set_cache('latest_report', report)
-                        logger.info(f"Loaded and redacted report from {report_path}")
+                        # Cache the report with uid-specific key
+                        self._set_cache(cache_key, report)
+                        logger.info(f"Loaded and redacted report from {report_path} for uid={uid}")
                         return report
                     except Exception as e:
                         logger.error(f"Error loading report {report_path}: {e}")
 
         # No report found, return sample data
-        logger.warning("No security report found, returning sample data")
+        logger.warning(f"No security report found for uid={uid}, returning sample data")
         return self._get_sample_report()
 
-    def get_dashboard_data(self) -> Dict[str, Any]:
+    def get_dashboard_data(self, uid: Optional[str] = None) -> Dict[str, Any]:
         """
         Get dashboard data for visualization
+
+        Args:
+            uid: Optional analysis UID. If provided, loads from processed/{uid}/
 
         Returns:
             Dashboard data with charts and metrics
         """
-        # Check cache
-        if self._is_cached('dashboard_data'):
-            return self._cache['dashboard_data']
+        # Check cache (with uid-specific cache key)
+        cache_key = f'dashboard_data_{uid}' if uid else 'dashboard_data'
+        if self._is_cached(cache_key):
+            return self._cache[cache_key]
 
-        # Look for dashboard data in output directory first, then root
-        search_paths = [
-            Path('output'),
-            Path('.')
-        ]
+        # Determine search paths based on uid
+        if uid:
+            # Search in processed/{uid}/ first, then output/, then root
+            search_paths = [
+                Path('processed') / uid,
+                Path('..') / 'output',
+                Path('output'),
+                Path('.')
+            ]
+        else:
+            # Original behavior: search output/ then root
+            search_paths = [
+                Path('..') / 'output',
+                Path('output'),
+                Path('.')
+            ]
 
         dashboard_files = [
             'dashboard_data.json',
@@ -108,34 +138,73 @@ class ReportService:
                         with open(dashboard_path, 'r') as f:
                             data = json.load(f)
 
-                        self._set_cache('dashboard_data', data)
-                        logger.info(f"Loaded dashboard data from {dashboard_path}")
+                        self._set_cache(cache_key, data)
+                        logger.info(f"Loaded dashboard data from {dashboard_path} for uid={uid}")
                         return data
                     except Exception as e:
                         logger.error(f"Error loading dashboard data {dashboard_path}: {e}")
 
         # Generate from report if dashboard data doesn't exist
-        report = self.get_latest_report()
+        report = self.get_latest_report(uid)
         if report:
             dashboard_data = self._generate_dashboard_from_report(report)
-            self._set_cache('dashboard_data', dashboard_data)
+            self._set_cache(cache_key, dashboard_data)
             return dashboard_data
 
         return {}
 
-    def get_summary(self) -> Dict[str, Any]:
+    def _calculate_security_rating(self, summary: Dict[str, Any]) -> float:
+        """
+        Calculate security rating on 0-10 scale using ideal formula
+        
+        Formula: Start at 10, deduct points based on severity
+        - CRITICAL: -3 points each
+        - HIGH: -1.5 points each  
+        - MEDIUM: -0.5 points each
+        - LOW: -0.1 points each
+        """
+        severity_dist = summary.get('severity_distribution', {})
+        
+        rating = 10.0
+        rating -= severity_dist.get('CRITICAL', 0) * 3.0
+        rating -= severity_dist.get('HIGH', 0) * 1.5
+        rating -= severity_dist.get('MEDIUM', 0) * 0.5
+        rating -= severity_dist.get('LOW', 0) * 0.1
+        
+        # Clamp between 0 and 10
+        return max(0.0, min(10.0, round(rating, 1)))
+    
+    def get_summary(self, uid: Optional[str] = None) -> Dict[str, Any]:
         """
         Get executive summary data
+
+        Args:
+            uid: Optional analysis UID. If provided, loads from processed/{uid}/
 
         Returns:
             Summary metrics for dashboard header
         """
-        report = self.get_latest_report()
+        report = self.get_latest_report(uid)
         if not report:
             return {}
 
         summary = report.get('executive_summary', {})
         metadata = report.get('metadata', {})
+        
+        # Calculate AI code percentage
+        ai_code_percent = 0
+        if uid:
+            try:
+                from services.ai_code_detector import get_ai_detector
+                detector = get_ai_detector()
+                upload_path = Path('uploads') / uid
+                if upload_path.exists():
+                    result = detector.analyze_project(str(upload_path))
+                    ai_code_percent = result.get('ai_percentage', 0)
+                    logger.info(f"AI code detection for {uid}: {ai_code_percent}%")
+            except Exception as e:
+                logger.error(f"Error detecting AI code: {e}")
+                ai_code_percent = 0
 
         return {
             'risk_level': summary.get('overall_risk_level', 'UNKNOWN'),
@@ -145,7 +214,12 @@ class ReportService:
             'high_count': summary.get('severity_distribution', {}).get('HIGH', 0),
             'cve_count': summary.get('cve_count', 0),
             'dependency_health': report.get('dependency_health', {}).get('health_score', 0),
-            'last_scan': metadata.get('generated_at', datetime.now().isoformat())
+            'last_scan': metadata.get('generated_at', datetime.now().isoformat()),
+            # Dashboard redesign fields
+            'total_files': metadata.get('total_files', 0),
+            'ai_code_percent': ai_code_percent,
+            'security_rating': self._calculate_security_rating(summary),
+            'security_count': summary.get('security_issue_count', summary.get('total_findings', 0))
         }
 
     def get_findings(
@@ -153,7 +227,8 @@ class ReportService:
         severity: Optional[str] = None,
         owasp_category: Optional[str] = None,
         limit: int = 100,
-        offset: int = 0
+        offset: int = 0,
+        uid: Optional[str] = None
     ) -> Dict[str, Any]:
         """
         Get security findings with optional filtering
@@ -163,11 +238,12 @@ class ReportService:
             owasp_category: Filter by OWASP category
             limit: Max findings to return
             offset: Offset for pagination
+            uid: Optional analysis UID. If provided, loads from processed/{uid}/
 
         Returns:
             Findings list with total count
         """
-        report = self.get_latest_report()
+        report = self.get_latest_report(uid)
         if not report:
             return {'findings': [], 'total': 0}
 
@@ -191,14 +267,21 @@ class ReportService:
         total = len(filtered)
         paginated = filtered[offset:offset + limit]
 
-        # Enrich with feedback status
+        # Enrich with feedback status and AI descriptions
         feedback_service = get_feedback_service()
         all_feedback = feedback_service.get_all_feedback()
+        
+        # Import description generator
+        from services.description_generator import get_description_generator
+        desc_gen = get_description_generator()
         
         for finding in paginated:
             fid = finding.get('id') or finding.get('cve_id')
             if fid and fid in all_feedback:
                 finding['user_feedback'] = all_feedback[fid].get('feedback_type')
+            
+            # Generate AI description
+            finding['ai_description'] = desc_gen.generate_description(finding)
 
         return {
             'findings': paginated,
@@ -207,17 +290,18 @@ class ReportService:
             'limit': limit
         }
 
-    def get_finding_by_id(self, finding_id: str) -> Optional[Dict[str, Any]]:
+    def get_finding_by_id(self, finding_id: str, uid: Optional[str] = None) -> Optional[Dict[str, Any]]:
         """
         Get detailed information for a specific finding
 
         Args:
             finding_id: Finding identifier
+            uid: Optional analysis UID. If provided, loads from processed/{uid}/
 
         Returns:
             Finding details or None if not found
         """
-        report = self.get_latest_report()
+        report = self.get_latest_report(uid)
         if not report:
             return None
 
@@ -242,14 +326,17 @@ class ReportService:
 
         return None
 
-    def get_remediation_plan(self) -> List[Dict[str, Any]]:
+    def get_remediation_plan(self, uid: Optional[str] = None) -> List[Dict[str, Any]]:
         """
         Get prioritized remediation plan
+
+        Args:
+            uid: Optional analysis UID. If provided, loads from processed/{uid}/
 
         Returns:
             List of remediation items sorted by priority
         """
-        report = self.get_latest_report()
+        report = self.get_latest_report(uid)
         if not report:
             return []
 
@@ -295,7 +382,9 @@ class ReportService:
     def _get_fix_suggestion(self, finding_id: str) -> Optional[Dict[str, Any]]:
         """Load fix suggestion for a finding"""
         # Look for fix suggestions in output directory first, then root
+        # sync_results_to_dashboard saves to ../output/ (project root)
         search_paths = [
+            Path('..') / 'output',
             Path('output'),
             Path('.')
         ]

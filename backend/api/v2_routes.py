@@ -112,6 +112,11 @@ def send_chat_message():
         }
     """
     try:
+        # Check if services are available
+        if chat_engine is None or conversation_manager is None:
+            logger.error("Chat services not initialized")
+            return jsonify({'error': 'Chat service is currently unavailable. Please check server logs.'}), 503
+        
         data = request.get_json()
 
         if not data or 'session_id' not in data or 'message' not in data:

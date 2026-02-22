@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Security Dashboard - AI Code Review Platform</title>
+    <title>Dashboard - AI Code Review Platform</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -13,150 +13,111 @@
     <div class="dashboard-container">
         <!-- Header -->
         <header class="dashboard-header">
-            <div class="header-content">
-                <h1>🔒 Security Dashboard</h1>
+            <div class="header-left">
+                <h1>Dashboard</h1>
+                <p class="header-subtitle">Overview of code review activity and quality metrics.</p>
+            </div>
+            <div class="header-right">
                 <div class="header-actions">
-                    <a href="/" class="btn-home">🏠 Home</a>
+                    <a href="/" class="btn-action">🏠 Home</a>
                     {% if uid %}
-                    <a href="/chat?uid={{ uid }}" class="btn-home">💬 Chat</a>
+                    <a href="/chat?uid={{ uid }}" class="btn-action">💬 Chat</a>
                     {% else %}
-                    <a href="/chat" class="btn-home">💬 Chat</a>
+                    <a href="/chat" class="btn-action">💬 Chat</a>
                     {% endif %}
-                    <button onclick="toggleTheme()" class="btn-home" id="themeToggle">🌗 Contrast</button>
-                    <button onclick="refreshDashboard()" class="btn-refresh">🔄 Refresh</button>
-                    <a href="{{ url_for('auth.logout') }}" class="btn-home"
-                        style="background: rgba(239, 68, 68, 0.2); border-color: #ef4444;">🚪 Logout</a>
+                    <button onclick="toggleTheme()" class="btn-action" id="themeToggle">🌗 Theme</button>
+                    <button onclick="refreshDashboard()" class="btn-action">🔄 Refresh</button>
+                    <a href="{{ url_for('auth.logout') }}" class="btn-action btn-logout">🚪 Logout</a>
                 </div>
+                <span class="last-updated">🕐 Last updated <span id="lastUpdated">2 min ago</span></span>
             </div>
         </header>
-
-        <!-- Risk Score Banner -->
-        <div class="risk-banner" id="riskBanner">
-            <div class="risk-score-container">
-                <div class="risk-label">Overall Risk Level</div>
-                <div class="risk-score" id="riskScore">LOADING...</div>
-                <div class="risk-details" id="riskDetails">
-                    Score: <span id="riskScoreValue">--</span>/100
-                </div>
-            </div>
-            <div class="last-scan">
-                Last Scan: <span id="lastScan">--</span>
-            </div>
-        </div>
 
         <!-- Metrics Cards -->
         <div class="metrics-grid">
             <div class="metric-card">
-                <div class="metric-icon">📊</div>
                 <div class="metric-content">
-                    <div class="metric-label">Total Findings</div>
-                    <div class="metric-value" id="totalFindings">0</div>
+                    <div class="metric-label">Files Reviewed</div>
+                    <div class="metric-value" id="filesReviewed">24</div>
                 </div>
-            </div>
-
-            <div class="metric-card critical-card">
-                <div class="metric-icon">🔴</div>
-                <div class="metric-content">
-                    <div class="metric-label">Critical/High</div>
-                    <div class="metric-value" id="criticalHigh">0</div>
-                </div>
+                <div class="metric-icon">📄</div>
             </div>
 
             <div class="metric-card">
-                <div class="metric-icon">🛡️</div>
                 <div class="metric-content">
-                    <div class="metric-label">CVE Vulnerabilities</div>
-                    <div class="metric-value" id="cveCount">0</div>
+                    <div class="metric-label">Issues Found</div>
+                    <div class="metric-value" id="issuesFound">18</div>
                 </div>
+                <div class="metric-icon">⚙️</div>
             </div>
 
-            <div class="metric-card health-card">
-                <div class="metric-icon">💚</div>
+            <div class="metric-card">
                 <div class="metric-content">
-                    <div class="metric-label">Dependency Health</div>
-                    <div class="metric-value" id="dependencyHealth">0%</div>
+                    <div class="metric-label">AI-Code %</div>
+                    <div class="metric-value" id="aiCodePercent">0%</div>
                 </div>
+                <div class="metric-icon">🤖</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-content">
+                    <div class="metric-label">Security Rating</div>
+                    <div class="metric-value" id="securityRating">0/10</div>
+                </div>
+                <div class="metric-icon">🛡️</div>
             </div>
         </div>
 
         <!-- Charts Section -->
         <div class="charts-grid">
-            <!-- Severity Distribution -->
-            <div class="chart-card">
-                <h3>Severity Distribution</h3>
+            <!-- Issue Histogram -->
+            <div class="chart-card chart-full-width">
+                <h3>📊 Issue Distribution</h3>
                 <div class="chart-container">
-                    <canvas id="severityChart"></canvas>
-                </div>
-            </div>
-
-            <!-- OWASP Top 10 Coverage -->
-            <div class="chart-card wide">
-                <h3>OWASP Top 10 Coverage</h3>
-                <div class="chart-container">
-                    <canvas id="owaspChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Vulnerability Trends -->
-            <div class="chart-card wide">
-                <h3>Vulnerability Trends</h3>
-                <div class="chart-container">
-                    <canvas id="trendChart"></canvas>
-                </div>
-            </div>
-
-            <!-- File Risk Scores -->
-            <div class="chart-card">
-                <h3>Top Vulnerable Files</h3>
-                <div class="chart-container">
-                    <canvas id="fileRiskChart"></canvas>
+                    <canvas id="issueHistogram"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- Findings Table -->
-        <div class="findings-section">
+        <!-- Possible Cyber Security Theft Section -->
+        <div class="recent-reviews-section cyber-theft-section">
             <div class="section-header">
-                <h2>Security Findings</h2>
-                <div class="filters">
-                    <select id="severityFilter" onchange="filterFindings()">
-                        <option value="">All Severities</option>
-                        <option value="CRITICAL">Critical</option>
-                        <option value="HIGH">High</option>
-                        <option value="MEDIUM">Medium</option>
-                        <option value="LOW">Low</option>
-                    </select>
-                </div>
+                <h2>🚨 Possible Cyber Security Theft</h2>
+                <p class="section-subtitle">Detected vulnerabilities that may expose sensitive data or allow
+                    unauthorized access</p>
             </div>
-
             <div class="table-container">
-                <table class="findings-table">
+                <table class="reviews-table cyber-theft-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Severity</th>
-                            <th>Title</th>
-                            <th>OWASP</th>
-                            <th>File</th>
-                            <th>Feedback</th>
+                            <th>🎯 Threat Type</th>
+                            <th>📁 Source File : Line</th>
+                            <th>⚠️ Severity</th>
+                            <th>🔍 Description</th>
+                            <th>🛡️ OWASP / CWE</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="findingsTableBody">
+                    <tbody id="reviewsTableBody">
                         <tr>
-                            <td colspan="6" class="loading">Loading findings...</td>
+                            <td colspan="6" class="loading">🔍 Scanning for security threats...</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Remediation Plan -->
-        <div class="remediation-section">
-            <h2>🔧 Remediation Plan</h2>
-            <div id="remediationList" class="remediation-list">
-                <div class="loading">Loading remediation plan...</div>
-            </div>
+        <!-- Action Buttons (Hidden by default, can be shown via menu) -->
+        <div class="action-menu" style="display: none;">
+            <a href="/" class="btn-action">🏠 Home</a>
+            {% if uid %}
+            <a href="/chat?uid={{ uid }}" class="btn-action">💬 Chat</a>
+            {% else %}
+            <a href="/chat" class="btn-action">💬 Chat</a>
+            {% endif %}
+            <button onclick="toggleTheme()" class="btn-action" id="themeToggle">🌗 Theme</button>
+            <button onclick="refreshDashboard()" class="btn-action">🔄 Refresh</button>
+            <a href="{{ url_for('auth.logout') }}" class="btn-action">🚪 Logout</a>
         </div>
 
         <!-- Finding Detail Modal -->
@@ -171,16 +132,13 @@
     </div>
 
     <!-- Feedback Toast -->
-    <div id="feedbackToast" class="feedback-toast">Feedback saved!</div>
+    <div id="feedbackToast" class="feedback-toast">Action completed!</div>
 
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
     <script>
         // Initialize dashboard on page load
         document.addEventListener('DOMContentLoaded', function () {
             loadDashboard();
-
-            // Auto-refresh every 60 seconds (optional)
-            // setInterval(refreshDashboard, 60000);
         });
     </script>
 </body>

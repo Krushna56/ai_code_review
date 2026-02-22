@@ -6,16 +6,22 @@ __pycache__/
 .ruff_cache/
 *.pyc
 
-# Runtime directories
-uploads/*
-processed/*
+# Runtime directories — NEVER track these
+backend/uploads/
+backend/processed/
+backend/instance/
+backend/output/
+backend/vector_db/
+backend/.cache/
+backend/last_analysis_path.txt
+backend/server_log.txt
+last_analysis_path.txt
+uploads/
+processed/
+instance/
+output/
 .cache/
 vector_db/
-
-# Reports and outputs (keep directories, ignore contents)
-output/*.json
-output/*.md
-reports/
 
 # Environment
 .env
