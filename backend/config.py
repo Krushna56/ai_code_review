@@ -32,7 +32,17 @@ if SECRET_KEY == _DEFAULT_SECRET_KEY:
         "SECURITY WARNING: SECRET_KEY is set to the insecure default value. "
         "Set the SECRET_KEY environment variable to a strong random value before deploying."
     )
-DATABASE_URI = BASE_DIR / 'instance' / 'users.db'
+# Database — set DATABASE_URL in your environment to use PostgreSQL
+# Neon/Railway provide this automatically when you add a Postgres plugin.
+# Local fallback: SQLite (works for local dev without any setup)
+_sqlite_fallback = f"sqlite:///{BASE_DIR / 'instance' / 'users.db'}"
+DATABASE_URL = os.getenv('DATABASE_URL', _sqlite_fallback)
+
+# Railway sometimes provides postgres:// (old format) — upgrade to postgresql://
+if DATABASE_URL.startswith('postgres://'):
+    DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+
+IS_POSTGRES = DATABASE_URL.startswith('postgresql')
 
 # JWT Configuration
 JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', SECRET_KEY)

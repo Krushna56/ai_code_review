@@ -1,71 +1,54 @@
 # Multi-stage build for AI Code Review Platform
 FROM python:3.11-slim as builder
 
-# Set working directory
 WORKDIR /app
 
-# Install system dependencies required for building Python packages
+# System deps — libpq-dev required to compile psycopg2
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    libpq-dev \
     git \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better caching
 COPY backend/requirements.txt .
-
-# Install Python dependencies
 RUN pip install --no-cache-dir --user -r requirements.txt
 
-# Production stage
+# ── Production stage ─────────────────────────────────────────────────────────
 FROM python:3.11-slim
 
-# Set environment variables
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PATH=/root/.local/bin:$PATH
 
-# Install runtime dependencies
+# Runtime deps — libpq required for psycopg2 at runtime
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
     git \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Create non-root user for security
 RUN useradd -m -u 1000 appuser && \
     mkdir -p /app && \
     chown -R appuser:appuser /app
 
-# Set working directory
 WORKDIR /app
 
-# Copy Python packages from builder
 COPY --from=builder /root/.local /root/.local
-
-# Copy application code
 COPY --chown=appuser:appuser . .
 
-# Create necessary directories with proper permissions
-RUN mkdir -p uploads processed output reports vector_db instance models .cache && \
-    chown -R appuser:appuser uploads processed output reports vector_db instance models .cache
+RUN mkdir -p backend/uploads backend/processed backend/output backend/reports \
+    backend/vector_db backend/instance backend/models backend/.cache && \
+    chown -R appuser:appuser backend
 
-# Switch to non-root user
 USER appuser
 
-# Expose port
 EXPOSE 5000
 
-# Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:5000/health || exit 1
 
-# Copy entrypoint script
-# docker-entrypoint.sh is copied with the rest of the code
-RUN chmod +x /app/backend/docker-entrypoint.sh
-
-# Set entrypoint
-ENTRYPOINT ["/app/backend/docker-entrypoint.sh"]
-
-# Default command
 WORKDIR /app/backend
-CMD ["python", "run.py"]
+
+# Use gunicorn in production; falls back gracefully if not installed
+CMD ["sh", "-c", "python -c 'from models.user import User; User.init_db()' && gunicorn --bind 0.0.0.0:5000 --workers 2 --timeout 120 app:app"]

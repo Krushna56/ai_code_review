@@ -13,6 +13,7 @@ from collections import defaultdict
 from pathlib import Path
 
 import config
+import google.generativeai as genai
 from code_analysis import analyze_codebase
 from services.report_service import get_report_service
 from services.feedback_service import get_feedback_service
