@@ -92,33 +92,68 @@ def jwt_required(f):
     Reads (in order):
       1. Authorization: Bearer <token>  header
       2. session['jwt_access_token']    (fallback for web-page JS calls)
-    Sets:  flask.g.current_user = { 'id': ..., 'email': ... }
 
+    Silent refresh: if the access token is expired AND session holds a valid
+    refresh token, the decorator mints a new access token automatically and
+    updates the session — the user never sees a 401.
+
+    Sets:  flask.g.current_user = { 'id': ..., 'email': ... }
     Returns 401 JSON on failure.
     """
     @wraps(f)
     def decorated(*args, **kwargs):
+        import jwt as _jwt
         from flask import session as flask_session
 
         # 1. Try Authorization header first (API / mobile clients)
         auth_header = request.headers.get("Authorization", "")
-        if auth_header.startswith("Bearer "):
+        from_header = auth_header.startswith("Bearer ")
+        if from_header:
             token = auth_header.split(" ", 1)[1].strip()
         else:
-            # 2. Fall back to session cookie (web-app JS calls)
+            # 2. Fall back to session cookie (web-app page requests)
             token = flask_session.get("jwt_access_token", "")
 
         if not token:
-            return jsonify({"error": "Authorization header missing or invalid"}), 401
+            return jsonify({"error": "Authorization required — please log in"}), 401
 
         if JWTManager.is_blacklisted(token):
             return jsonify({"error": "Token has been revoked"}), 401
 
         try:
             payload = JWTManager.verify_token(token)
-        except jwt.ExpiredSignatureError:
-            return jsonify({"error": "Token has expired"}), 401
-        except jwt.InvalidTokenError as exc:
+
+        except _jwt.ExpiredSignatureError:
+            # ── Silent refresh (session-based requests only) ──────────────────
+            if not from_header:
+                refresh_token = flask_session.get("jwt_refresh_token", "")
+                if refresh_token and not JWTManager.is_blacklisted(refresh_token):
+                    try:
+                        rp = JWTManager.verify_token(refresh_token)
+                        if rp.get("type") == "refresh":
+                            user_id = int(rp["sub"])
+                            # Look up user to get fresh email
+                            from models.user import User as _User
+                            user = _User.get_by_id(user_id)
+                            if user:
+                                new_tokens = JWTManager.generate_tokens(user.id, user.email or "")
+                                flask_session["jwt_access_token"] = new_tokens["access_token"]
+                                flask_session.modified = True
+                                # Re-verify and continue
+                                payload = JWTManager.verify_token(new_tokens["access_token"])
+                                logger.info(f"Silent token refresh for user_id={user_id}")
+                                # Fall through to the success path below
+                                g.current_user = {
+                                    "id": int(payload["sub"]),
+                                    "email": payload.get("email"),
+                                }
+                                return f(*args, **kwargs)
+                    except Exception as refresh_err:
+                        logger.info(f"Silent refresh failed: {refresh_err}")
+            # No valid refresh token available — send 401
+            return jsonify({"error": "Session expired — please log in again"}), 401
+
+        except _jwt.InvalidTokenError as exc:
             logger.warning(f"Invalid JWT: {exc}")
             return jsonify({"error": "Invalid token"}), 401
 
@@ -132,4 +167,5 @@ def jwt_required(f):
         return f(*args, **kwargs)
 
     return decorated
+
 

@@ -120,7 +120,7 @@ async function loadRecentReviews(uid) {
             <tr class="theft-row severity-row-${(finding.severity || 'unknown').toLowerCase()}">
                 <td class="threat-type-cell">
                   <div class="threat-icon">${getThreatIcon(finding.type)}</div>
-                  <span class="threat-label">${escapeHtml(finding.title || finding.type || 'Unknown')}</span>
+                  <span class="threat-label">${escapeHtml(cleanThreatTitle(finding.title, finding.type))}</span>
                 </td>
                 <td class="source-cell">${sourceRef}</td>
                 <td><span class="severity-badge severity-${(finding.severity || 'unknown').toLowerCase()}">${finding.severity || 'UNKNOWN'}</span></td>
@@ -145,21 +145,78 @@ async function loadRecentReviews(uid) {
 }
 
 /**
+ * Convert raw backend title to a simple, user-friendly label.
+ * e.g. "Hardcoded keyword_PASSWORD Detected" → "Hardcoded Password"
+ */
+function cleanThreatTitle(title, type) {
+  const t = (title || '').toLowerCase();
+  const ty = (type || '').toLowerCase();
+
+  // Specific pattern matches (order matters — most specific first)
+  if (t.includes('high_entropy') || t.includes('high entropy'))  return 'High Entropy Secret';
+  if (t.includes('keyword_password') || t.includes('password'))  return 'Hardcoded Password';
+  if (t.includes('keyword_secret') || t.includes('secret'))      return 'Hardcoded Secret';
+  if (t.includes('api_key') || t.includes('apikey'))             return 'Exposed API Key';
+  if (t.includes('token'))                                        return 'Exposed Token';
+  if (t.includes('private_key') || t.includes('privatekey'))     return 'Exposed Private Key';
+  if (t.includes('aws'))                                         return 'AWS Credential Leak';
+  if (t.includes('github') && t.includes('token'))              return 'GitHub Token Leak';
+  if (t.includes('sql') && t.includes('inject'))                return 'SQL Injection';
+  if (t.includes('xss') || t.includes('cross-site scripting'))  return 'Cross-Site Scripting';
+  if (t.includes('csrf'))                                        return 'CSRF Vulnerability';
+  if (t.includes('path traversal') || t.includes('directory'))  return 'Path Traversal';
+  if (t.includes('command inject') || t.includes('rce'))        return 'Remote Code Execution';
+  if (t.includes('insecure') && t.includes('deserializ'))       return 'Insecure Deserialization';
+  if (t.includes('open redirect'))                               return 'Open Redirect';
+  if (t.includes('hardcoded'))                                   return 'Hardcoded Secret';
+  if (t.includes('weak') && t.includes('crypt'))                return 'Weak Cryptography';
+  if (t.includes('outdated') || t.includes('vulnerable dep'))   return 'Vulnerable Dependency';
+  if (t.includes('cve-'))                                        return title.match(/CVE-\d{4}-\d+/i)?.[0] || 'Known CVE';
+
+  // Fall back to type-based label
+  const typeLabels = {
+    'secret':         'Hardcoded Secret',
+    'injection':      'Code Injection',
+    'xss':            'Cross-Site Scripting',
+    'csrf':           'CSRF Vulnerability',
+    'auth':           'Auth Weakness',
+    'dependency':     'Vulnerable Dependency',
+    'crypto':         'Weak Cryptography',
+    'path_traversal': 'Path Traversal',
+    'sql':            'SQL Injection',
+    'rce':            'Remote Code Execution',
+    'cve':            'Known CVE',
+  };
+  for (const [key, label] of Object.entries(typeLabels)) {
+    if (ty.includes(key)) return label;
+  }
+
+  // Last resort: clean up the raw title
+  return (title || 'Unknown Threat')
+    .replace(/^Hardcoded\s+/i, 'Hardcoded ')
+    .replace(/keyword_/gi, '')
+    .replace(/_/g, ' ')
+    .replace(/\s+Detected$/i, '')
+    .replace(/\b\w/g, c => c.toUpperCase())
+    .trim();
+}
+
+/**
  * Returns an emoji icon based on finding type
  */
 function getThreatIcon(type) {
   const icons = {
-    'secret': '🔑',
-    'injection': '💉',
-    'xss': '⚡',
-    'csrf': '🔄',
-    'auth': '🔐',
-    'dependency': '📦',
-    'crypto': '🔒',
+    'secret':         '🔑',
+    'injection':      '💉',
+    'xss':            '⚡',
+    'csrf':           '🔄',
+    'auth':           '🔐',
+    'dependency':     '📦',
+    'crypto':         '🔒',
     'path_traversal': '📂',
-    'sql': '🗄️',
-    'rce': '💣',
-    'cve': '⚠️',
+    'sql':            '🗄️',
+    'rce':            '💣',
+    'cve':            '⚠️',
   };
   const t = (type || '').toLowerCase();
   for (const [key, icon] of Object.entries(icons)) {

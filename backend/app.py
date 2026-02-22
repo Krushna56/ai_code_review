@@ -135,9 +135,7 @@ class _AnonymousUser:
 def inject_current_user():
     """
     Make `current_user` available in all templates.
-    The JWT access token is stored in the session under 'jwt_access_token'
-    after a successful login (set by JS via the /auth/set-session endpoint,
-    or directly in the auth routes for server-side flows).
+    If the access token is expired but a refresh token exists, silently renews it.
     """
     from auth.jwt_utils import JWTManager
     import jwt as _jwt
@@ -150,7 +148,24 @@ def inject_current_user():
                 user = User.get_by_id(int(payload['sub']))
                 if user:
                     return dict(current_user=user)
-        except (_jwt.ExpiredSignatureError, _jwt.InvalidTokenError, Exception):
+        except _jwt.ExpiredSignatureError:
+            # Try to silently renew using the refresh token
+            refresh_token = session.get('jwt_refresh_token', '')
+            if refresh_token and not JWTManager.is_blacklisted(refresh_token):
+                try:
+                    rp = JWTManager.verify_token(refresh_token)
+                    if rp.get('type') == 'refresh':
+                        user = User.get_by_id(int(rp['sub']))
+                        if user:
+                            new_tokens = JWTManager.generate_tokens(user.id, user.email or '')
+                            session['jwt_access_token'] = new_tokens['access_token']
+                            session.modified = True
+                            logger.info(f"context_processor: silent JWT refresh for user_id={user.id}")
+                            return dict(current_user=user)
+                except Exception:
+                    pass
+            session.pop('jwt_access_token', None)
+        except Exception:
             session.pop('jwt_access_token', None)
 
     return dict(current_user=_AnonymousUser())
