@@ -1,0 +1,63 @@
+# ── Production requirements (Railway / Render / Docker) ──────────────────────
+# Heavy ML/DL packages (torch, transformers, faiss, xgboost) are intentionally
+# excluded — they push the image to 6+ GB which exceeds Railway's 4 GB limit.
+# Those features are disabled by default (ENABLE_DL_ANALYSIS=false).
+# Enable them locally by running: pip install -r requirements.txt
+
+Flask==3.0.0
+Werkzeug==3.0.1
+autopep8==2.0.4
+bandit==1.7.5
+
+# Authentication
+PyJWT>=2.8.0
+email-validator==2.1.0
+bcrypt==4.1.2
+requests-oauthlib==1.3.1
+
+# Database
+psycopg2-binary>=2.9.9
+
+# Production WSGI server
+gunicorn>=21.2.0
+
+# LLM providers (lightweight — HTTP clients only)
+openai==1.6.1
+anthropic==0.8.1
+mistralai==1.0.0
+google-generativeai>=0.3.0
+
+# Static analysis (small CLI tools)
+semgrep==1.52.0
+ruff==0.1.9
+radon==6.0.1
+
+# Utilities
+python-dotenv==1.0.0
+requests==2.31.0
+numpy==1.26.2
+pandas==1.5.3
+
+# Reporting
+markdown==3.5.1
+reportlab==4.0.7
+
+# Web
+Jinja2==3.1.2
+
+# Vector DB (lightweight HTTP client — no local heavy index)
+qdrant-client==1.7.0
+
+# Security Analysis
+detect-secrets==1.4.0
+osv>=0.0.1
+
+# Scheduling
+APScheduler==3.10.4
+
+# Code parsing
+tree-sitter==0.20.4
+
+# Testing (include so health checks work)
+pytest==7.4.3
+pytest-mock==3.12.0
