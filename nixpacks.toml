@@ -5,4 +5,4 @@ nixPkgs = ["python311", "gcc", "libpq"]
 cmds = ["pip install -r backend/requirements-prod.txt"]
 
 [start]
-cmd = "cd backend && python -c 'from models.user import User; User.init_db()' && gunicorn --bind 0.0.0.0:5000 --workers 2 --timeout 120 app:app"
+cmd = "sh -c 'cd backend && python -c \"from models.user import User; User.init_db()\" && gunicorn --bind 0.0.0.0:5000 --workers 2 --timeout 120 app:app'"
