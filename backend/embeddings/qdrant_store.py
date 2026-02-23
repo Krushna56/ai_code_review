@@ -31,7 +31,7 @@ class QdrantStore:
 
     def __init__(self, collection_name: str = None, dimension: int = 384):
         """
-        Initialize Qdrant vector store
+        Initialize Qdrant vector store wrapper
 
         Args:
             collection_name: Name of the collection
@@ -43,43 +43,52 @@ class QdrantStore:
 
         self.collection_name = collection_name or config.QDRANT_COLLECTION
         self.dimension = dimension
+        self._client = None
+        self._collection_verified = False
 
-        # Initialize client
-        if config.QDRANT_USE_MEMORY:
-            # In-memory mode for development
-            self.client = QdrantClient(":memory:")
-            logger.info("Initialized Qdrant in-memory mode")
-        else:
-            # Connect to Qdrant server
-            self.client = QdrantClient(
-                host=config.QDRANT_HOST,
-                port=config.QDRANT_PORT
-            )
-            logger.info(f"Connected to Qdrant at {
-                        config.QDRANT_HOST}:{config.QDRANT_PORT}")
-
-        # Create collection if it doesn't exist
-        self._ensure_collection()
+    @property
+    def client(self):
+        """Lazy initialization of the Qdrant client"""
+        if self._client is None:
+            if config.QDRANT_USE_MEMORY:
+                # In-memory mode for development
+                self._client = QdrantClient(":memory:")
+                logger.info("Initialized Qdrant in-memory mode")
+            else:
+                # Connect to Qdrant server
+                self._client = QdrantClient(
+                    host=config.QDRANT_HOST,
+                    port=config.QDRANT_PORT
+                )
+                logger.info(f"Connected to Qdrant at {config.QDRANT_HOST}:{config.QDRANT_PORT}")
+            
+            # Ensure collection exists once client is initialized
+            self._ensure_collection()
+            
+        return self._client
 
     def _ensure_collection(self):
         """Create collection if it doesn't exist"""
+        if self._collection_verified:
+            return
+
         try:
-            collections = self.client.get_collections().collections
+            collections = self._client.get_collections().collections
             collection_names = [c.name for c in collections]
 
             if self.collection_name not in collection_names:
-                self.client.create_collection(
+                self._client.create_collection(
                     collection_name=self.collection_name,
                     vectors_config=VectorParams(
                         size=self.dimension,
                         distance=Distance.COSINE
                     )
                 )
-                logger.info(f"Created Qdrant collection: {
-                            self.collection_name}")
+                logger.info(f"Created Qdrant collection: {self.collection_name}")
             else:
-                logger.info(f"Using existing Qdrant collection: {
-                            self.collection_name}")
+                logger.info(f"Using existing Qdrant collection: {self.collection_name}")
+            
+            self._collection_verified = True
 
         except Exception as e:
             logger.error(f"Error ensuring collection: {e}")

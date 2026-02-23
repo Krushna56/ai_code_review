@@ -769,10 +769,9 @@ def code_viewer_redirect(uid):
     return redirect(url_for('chat', uid=uid))
 
 
-@app.route('/health')
+@app.route("/health")
 def health():
-    """Health check endpoint"""
-    return jsonify({'status': 'healthy', 'version': '1.0'}), 200
+    return {"status": "ok"}, 200
 
 
 # ====================
