@@ -101,6 +101,12 @@ app.config['MAX_CONTENT_LENGTH'] = config.MAX_CONTENT_LENGTH
 app.config['MAX_FORM_MEMORY_SIZE'] = config.MAX_CONTENT_LENGTH  # Werkzeug multipart limit
 app.config['MAX_FORM_PARTS'] = 100000  # Werkzeug 3.x: max parts in multipart upload
 app.config['SECRET_KEY'] = config.SECRET_KEY
+
+@app.route("/health")
+def health():
+    """Early health check for quick deployment validation"""
+    return {"status": "ok"}, 200
+
 logger.info(f"Configured MAX_CONTENT_LENGTH: {app.config['MAX_CONTENT_LENGTH']} bytes")
 logger.info(f"Configured MAX_FORM_MEMORY_SIZE: {app.config['MAX_FORM_MEMORY_SIZE']} bytes")
 logger.info(f"Configured MAX_FORM_PARTS: {app.config['MAX_FORM_PARTS']}")
@@ -183,9 +189,9 @@ logger.info(f"Temp file retention: {config.TEMP_FILE_RETENTION_HOURS} hours")
 # Clean up old temporary files on startup
 cleanup_old_temp_files()
 
-# Initialize authentication database
-User.init_db()
-logger.info("Authentication database initialized")
+# Initialize authentication database (Optional - handled by start command in production)
+# User.init_db()
+logger.info("Authentication database initialization skipped (handled by startup script)")
 
 # Analysis status tracking (in-memory)
 analysis_status = defaultdict(lambda: {'status': 'pending', 'progress': 0, 'error': None})
@@ -769,9 +775,7 @@ def code_viewer_redirect(uid):
     return redirect(url_for('chat', uid=uid))
 
 
-@app.route("/health")
-def health():
-    return {"status": "ok"}, 200
+# Health route moved to top of file
 
 
 # ====================
