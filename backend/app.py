@@ -1074,4 +1074,5 @@ def internal_error(error):
 if __name__ == '__main__':
     logger.info("Starting AI Code Review Platform...")
     # Disable auto-reload to prevent connection resets during uploads
-    app.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)
+    port = int(os.getenv('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True, use_reloader=False)

@@ -46,9 +46,9 @@ USER appuser
 EXPOSE 5000
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:5000/health || exit 1
+    CMD curl -f http://localhost:${PORT:-5000}/health || exit 1
 
 WORKDIR /app/backend
 
 # Use gunicorn in production; falls back gracefully if not installed
-CMD ["sh", "-c", "python -c 'from models.user import User; User.init_db()' && gunicorn --bind 0.0.0.0:5000 --workers 2 --timeout 120 app:app"]
+CMD ["sh", "-c", "python -c 'from models.user import User; User.init_db()' && gunicorn --bind 0.0.0.0:${PORT:-5000} --workers 2 --timeout 120 app:app"]
