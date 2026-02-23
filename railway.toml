@@ -3,7 +3,7 @@ builder = "dockerfile"
 dockerfilePath = "backend/Dockerfile"
 
 [deploy]
-startCommand = "cd /app/backend && python app.py"
+startCommand = "sh -c 'cd /app/backend && python -c \"from models.user import User; User.init_db()\" && gunicorn --bind 0.0.0.0:5000 --workers 2 --timeout 120 app:app'"
 healthcheckPath = "/health"
 healthcheckTimeout = 30
 restartPolicyType = "on_failure"
