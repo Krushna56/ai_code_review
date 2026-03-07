@@ -513,6 +513,7 @@ def get_analysis_status(uid):
 
 
 @app.route('/api/analyze/repo', methods=['POST'])
+@app.route('/analyze-repo', methods=['POST'])   # alias kept for backwards-compat
 @jwt_required
 def api_analyze_repo():
     """Clone a GitHub repository and run analysis"""
@@ -930,6 +931,43 @@ def api_security_charts():
         return jsonify(charts), 200
     except Exception as e:
         logger.error(f"Charts API error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/git/timeline')
+@jwt_required
+def api_git_timeline():
+    """Get git commit history timeline data for issue trend charts"""
+    try:
+        uid = request.args.get('uid') or session.get('current_uid')
+        logger.info(f"Git timeline API using UID: {uid}")
+
+        service = get_report_service()
+        timeline = service._load_json_from_paths(['git_timeline.json'], uid)
+
+        if timeline:
+            return jsonify(timeline), 200
+
+        # Fallback: generate estimated timeline from summary metrics
+        summary = service.get_summary(uid=uid)
+        total_issues = summary.get('total_findings', 0)
+
+        try:
+            from git_analyzer import build_fallback_timeline
+            fb = build_fallback_timeline(total_issues=total_issues, days=30)
+            return jsonify(fb), 200
+        except ImportError:
+            return jsonify({
+                'has_git': False,
+                'source': 'none',
+                'labels': [],
+                'new_issues': [],
+                'resolved_issues': [],
+                'commit_count': 0
+            }), 200
+
+    except Exception as e:
+        logger.error(f"Git timeline API error: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
 

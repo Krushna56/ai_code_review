@@ -33,11 +33,14 @@ class DashboardExporter:
         Returns:
             Complete dashboard data package
         """
+        sev_dist = self.export_severity_distribution(security_findings, cve_results)
         return {
-            'severity_distribution': self.export_severity_distribution(security_findings, cve_results),
+            'severity_distribution': sev_dist,
+            'severity_counts': self._flat_severity_counts(security_findings, cve_results),
             'owasp_coverage': self.export_owasp_heatmap(security_findings, cve_results),
             'vulnerability_trends': self.export_vulnerability_timeline(security_findings, cve_results),
             'file_risk_scores': self.export_file_risk_scores(security_findings),
+            'issue_type_distribution': self.export_issue_type_distribution(security_findings, cve_results),
             'dependency_stats': self.export_dependency_stats(dependencies, cve_results),
             'top_issues': self.export_top_issues(security_findings, cve_results),
             'remediation_progress': self.export_remediation_progress(security_findings, cve_results)
@@ -83,7 +86,7 @@ class DashboardExporter:
                     severity, {}).get('color', '#6b7280'))
 
         return {
-            'type': 'pie',
+            'type': 'doughnut',
             'labels': labels,
             'datasets': [{
                 'data': data,
@@ -395,6 +398,78 @@ class DashboardExporter:
                 'critical_completion': 0,
                 'dependencies_completion': 0
             }
+        }
+
+    def _flat_severity_counts(
+        self,
+        findings: List[Dict[str, Any]],
+        cves: List[Dict[str, Any]]
+    ) -> Dict[str, int]:
+        """Return simple {SEVERITY: count} dict"""
+        counts = defaultdict(int)
+        for item in findings + cves:
+            sev = item.get('severity', 'UNKNOWN')
+            counts[sev] += 1
+        return dict(counts)
+
+    def export_issue_type_distribution(
+        self,
+        findings: List[Dict[str, Any]],
+        cves: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """
+        Categorise findings into high-level issue types:
+        Bugs, Vulnerabilities, Code Smells, Performance, CVE
+        """
+        type_counts = {
+            'Bugs':           0,
+            'Vulnerabilities': 0,
+            'Code Smells':    0,
+            'Performance':    0,
+            'CVE':            0,
+        }
+
+        vuln_types = {'secret', 'injection', 'xss', 'csrf', 'auth', 'sql', 'rce', 'path_traversal'}
+        bug_types  = {'logic', 'null', 'exception', 'error'}
+        smell_types = {'complexity', 'duplicate', 'unused', 'naming', 'pattern', 'style'}
+        perf_types  = {'performance', 'memory', 'cpu', 'network', 'database'}
+
+        for f in findings:
+            ftype = (f.get('type') or '').lower()
+            if any(k in ftype for k in vuln_types):
+                type_counts['Vulnerabilities'] += 1
+            elif any(k in ftype for k in perf_types):
+                type_counts['Performance'] += 1
+            elif any(k in ftype for k in smell_types):
+                type_counts['Code Smells'] += 1
+            elif any(k in ftype for k in bug_types):
+                type_counts['Bugs'] += 1
+            else:
+                # Default split: secret-like → Vuln, else Bug
+                if f.get('severity') in ('CRITICAL', 'HIGH'):
+                    type_counts['Vulnerabilities'] += 1
+                else:
+                    type_counts['Bugs'] += 1
+
+        type_counts['CVE'] = len(cves)
+
+        total = sum(type_counts.values()) or 1
+        colors = ['#f03e3e', '#ff6b35', '#fcc419', '#51cf66', '#339af0']
+        labels = list(type_counts.keys())
+        data   = list(type_counts.values())
+
+        return {
+            'type': 'bar',
+            'labels': labels,
+            'datasets': [{
+                'label': 'Issues by Type',
+                'data': data,
+                'backgroundColor': colors,
+                'borderRadius': 4,
+                'borderWidth': 0,
+            }],
+            'counts': type_counts,
+            'percentages': {k: round(v/total*100, 1) for k, v in type_counts.items()}
         }
 
 

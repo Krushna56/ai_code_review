@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Code Editor - AI Code Review Platform</title>
+    <link rel="stylesheet" href="/static/css/sidebar.css">
     <style>
         * {
             margin: 0;
@@ -439,86 +440,137 @@
 </head>
 
 <body>
-    <!-- Top Bar -->
-    <div class="top-bar">
-        <div class="breadcrumb">
-            <div class="breadcrumb-item">
-                <span>📁</span>
-                <span id="project-name">AI Code Review</span>
-            </div>
-            <span>›</span>
-            <div class="breadcrumb-item">
-                <span>src</span>
-            </div>
-            <span>›</span>
-            <div class="breadcrumb-item">
-                <span id="current-file-name">app.ts</span>
-            </div>
-        </div>
-        <div class="top-actions">
-            <button class="top-btn" id="edit-btn" onclick="toggleEditMode()">✏️ Edit</button>
-            <button class="top-btn" onclick="window.location.href='/'">🏠 Home</button>
-            <button class="top-btn" id="dashboard-btn">📊 Dashboard</button>
-            <button class="top-btn" onclick="window.location.href='{{ url_for('auth.logout') }}'">🚪 Logout</button>
-        </div>
-    </div>
+    <div class="sb-shell" style="background:#1e1e1e;">
 
-    <!-- Main Container -->
-    <div class="container">
-        <!-- File Explorer -->
-        <div class="file-explorer" id="file-explorer">
-            <div class="explorer-header">EXPLORER</div>
-            <div class="file-tree" id="file-tree">
-                <!-- File tree will be populated by JavaScript -->
-            </div>
-        </div>
-
-        <!-- Resize Handle -->
-        <div class="resize-handle" id="explorer-resize"></div>
-
-        <!-- Editor Panel -->
-        <div class="editor-panel">
-            <div class="editor-tabs">
-                <div class="editor-tab active" id="editor-tab">
-                    <span id="tab-file-name">Select a file</span>
+        <!-- ══ COLLAPSIBLE SIDEBAR ══ -->
+        <aside class="sb-sidebar" id="editorSidebar" style="--sb-bg:#252526;--sb-border:rgba(255,255,255,0.08);">
+            <div class="sb-sidebar-inner">
+                <div class="sb-brand">
+                    <div class="sb-brand-icon" style="font-size:12px">🛡️</div>
+                    <span class="sb-brand-name">AI Code Review</span>
+                </div>
+                <nav class="sb-nav">
+                    <div class="sb-nav-label">Navigation</div>
+                    <a href="/" class="sb-item">
+                        <span class="sb-item-icon">🏠</span><span>Home</span>
+                    </a>
+                    <a href="/dashboard" class="sb-item">
+                        <span class="sb-item-icon">📊</span><span>Dashboard</span>
+                    </a>
+                    <a href="/chat" class="sb-item">
+                        <span class="sb-item-icon">💬</span><span>AI Chat</span>
+                    </a>
+                    <a href="javascript:void(0)" class="sb-item sb-active">
+                        <span class="sb-item-icon">🖊️</span><span>Code Editor</span>
+                    </a>
+                    <a href="/dashboard" class="sb-item">
+                        <span class="sb-item-icon">📄</span><span>Report</span>
+                    </a>
+                </nav>
+                <div class="sb-footer">
+                    <div class="sb-divider"></div>
+                    <a href="{{ url_for('auth.logout') }}" class="sb-item" style="color:#fca5a5">
+                        <span class="sb-item-icon">🚪</span><span>Logout</span>
+                    </a>
                 </div>
             </div>
-            <div class="editor-container">
-                <div id="monaco-editor"></div>
-                <div class="empty-editor" id="empty-editor">
-                    <div class="empty-icon">📝</div>
-                    <h3>No file selected</h3>
-                    <p>Select a file from the explorer to start editing</p>
-                </div>
-                <div class="loading" id="loading">
-                    <div class="spinner"></div>
-                </div>
-            </div>
-        </div>
+        </aside>
 
-        <!-- Resize Handle -->
-        <div class="resize-handle" id="chat-resize"></div>
+        <!-- ══ EDITOR MAIN ══ -->
+        <div class="sb-main" style="min-width:0;">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div style="display:flex;align-items:center;gap:8px">
+                    <!-- Hamburger toggle -->
+                    <button class="sb-toggle-btn" id="editorSidebarToggle" onclick="toggleEditorSidebar()"
+                        title="Toggle menu"
+                        style="background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.1);">
+                        <span class="sb-bar" style="background:#ccc"></span>
+                        <span class="sb-bar" style="background:#ccc"></span>
+                        <span class="sb-bar" style="background:#ccc"></span>
+                    </button>
+                    <div class="breadcrumb">
+                        <div class="breadcrumb-item">
+                            <span>📁</span>
+                            <span id="project-name">AI Code Review</span>
+                        </div>
+                        <span>›</span>
+                        <div class="breadcrumb-item">
+                            <span>src</span>
+                        </div>
+                        <span>›</span>
+                        <div class="breadcrumb-item">
+                            <span id="current-file-name">app.ts</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="top-actions">
+                    <button class="top-btn" id="edit-btn" onclick="toggleEditMode()">✏️ Edit</button>
+                    <button class="top-btn" onclick="window.location.href='/'">🏠 Home</button>
+                    <button class="top-btn" id="dashboard-btn">📊 Dashboard</button>
+                    <button class="top-btn" onclick="window.location.href='{{ url_for('auth.logout') }}'">🚪
+                        Logout</button>
+                </div>
+            </div>
 
-        <!-- Chatbot Panel -->
-        <div class="chat-panel" id="chat-panel">
-            <div class="chat-header">
-                <span>REVIEW ASSISTANT</span>
-                <span id="chat-status">●</span>
-            </div>
-            <div class="chat-messages" id="chat-messages">
-                <div class="chat-message system">
-                    AI Assistant ready to help with code review
+            <!-- Main Container -->
+            <div class="container">
+                <!-- File Explorer -->
+                <div class="file-explorer" id="file-explorer">
+                    <div class="explorer-header">EXPLORER</div>
+                    <div class="file-tree" id="file-tree">
+                        <!-- File tree will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Resize Handle -->
+                <div class="resize-handle" id="explorer-resize"></div>
+
+                <!-- Editor Panel -->
+                <div class="editor-panel">
+                    <div class="editor-tabs">
+                        <div class="editor-tab active" id="editor-tab">
+                            <span id="tab-file-name">Select a file</span>
+                        </div>
+                    </div>
+                    <div class="editor-container">
+                        <div id="monaco-editor"></div>
+                        <div class="empty-editor" id="empty-editor">
+                            <div class="empty-icon">📝</div>
+                            <h3>No file selected</h3>
+                            <p>Select a file from the explorer to start editing</p>
+                        </div>
+                        <div class="loading" id="loading">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resize Handle -->
+                <div class="resize-handle" id="chat-resize"></div>
+
+                <!-- Chatbot Panel -->
+                <div class="chat-panel" id="chat-panel">
+                    <div class="chat-header">
+                        <span>REVIEW ASSISTANT</span>
+                        <span id="chat-status">●</span>
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="chat-message system">
+                            AI Assistant ready to help with code review
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <div class="chat-input-wrapper">
+                            <textarea class="chat-input" id="chat-input" placeholder="Ask about this code..."
+                                rows="1"></textarea>
+                            <button class="chat-send-btn" id="chat-send-btn" onclick="sendMessage()">Send</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="chat-input-container">
-                <div class="chat-input-wrapper">
-                    <textarea class="chat-input" id="chat-input" placeholder="Ask about this code..."
-                        rows="1"></textarea>
-                    <button class="chat-send-btn" id="chat-send-btn" onclick="sendMessage()">Send</button>
-                </div>
-            </div>
-        </div>
-    </div>
+        </div><!-- /sb-main -->
+    </div><!-- /sb-shell -->
 
     <!-- Status Bar -->
     <div class="status-bar" id="status-bar">
@@ -914,6 +966,14 @@
             startStatusPolling();
             adjustChatbotText();
         });
+
+        // ── Sidebar toggle ──
+        function toggleEditorSidebar() {
+            const sidebar = document.getElementById('editorSidebar');
+            const btn = document.getElementById('editorSidebarToggle');
+            sidebar.classList.toggle('sb-open');
+            btn.classList.toggle('sb-open');
+        }
     </script>
 </body>
 

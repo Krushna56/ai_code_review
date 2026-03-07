@@ -21,7 +21,7 @@ class User:
     is_authenticated = True
 
     def __init__(self, id=None, email=None, password_hash=None,
-                 github_id=None, github_username=None,
+                 github_id=None, github_username=None, github_access_token=None,
                  linkedin_id=None, linkedin_username=None,
                  created_at=None, last_login=None):
         self.id = id
@@ -29,6 +29,7 @@ class User:
         self.password_hash = password_hash
         self.github_id = github_id
         self.github_username = github_username
+        self.github_access_token = github_access_token
         self.linkedin_id = linkedin_id
         self.linkedin_username = linkedin_username
         self.created_at = created_at or datetime.utcnow()
@@ -119,8 +120,8 @@ class User:
                     last_login TIMESTAMP
                 )
             ''')
-            # Add columns if they don't exist (safe migration)
-            for col, coltype in [('linkedin_id', 'TEXT'), ('linkedin_username', 'TEXT')]:
+            # Migration: add new columns if missing
+            for col in ['linkedin_id', 'linkedin_username', 'github_access_token']:
                 cur.execute('''
                     SELECT column_name FROM information_schema.columns
                     WHERE table_name='users' AND column_name=%s
@@ -140,6 +141,7 @@ class User:
                     password_hash TEXT,
                     github_id TEXT UNIQUE,
                     github_username TEXT,
+                    github_access_token TEXT,
                     linkedin_id TEXT UNIQUE,
                     linkedin_username TEXT,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -147,7 +149,7 @@ class User:
                 )
             ''')
             existing = {row[1] for row in conn.execute("PRAGMA table_info(users)")}
-            for col in ['linkedin_id', 'linkedin_username']:
+            for col in ['linkedin_id', 'linkedin_username', 'github_access_token']:
                 if col not in existing:
                     conn.execute(f'ALTER TABLE users ADD COLUMN {col} TEXT')
             cur.execute('CREATE INDEX IF NOT EXISTS idx_email ON users(email)')
@@ -178,6 +180,7 @@ class User:
             password_hash=_get('password_hash'),
             github_id=_get('github_id'),
             github_username=_get('github_username'),
+            github_access_token=_get('github_access_token'),
             linkedin_id=_get('linkedin_id'),
             linkedin_username=_get('linkedin_username'),
             created_at=datetime.fromisoformat(str(created)) if isinstance(created, str) and created else created,
@@ -240,36 +243,36 @@ class User:
             if _is_postgres():
                 cur.execute('''
                     UPDATE users
-                    SET email=%s, password_hash=%s, github_id=%s, github_username=%s,
+                    SET email=%s, password_hash=%s, github_id=%s, github_username=%s, github_access_token=%s,
                         linkedin_id=%s, linkedin_username=%s, last_login=%s
                     WHERE id=%s
-                ''', (self.email, self.password_hash, self.github_id, self.github_username,
+                ''', (self.email, self.password_hash, self.github_id, self.github_username, self.github_access_token,
                       self.linkedin_id, self.linkedin_username, self.last_login, self.id))
             else:
                 cur.execute('''
                     UPDATE users
-                    SET email=?, password_hash=?, github_id=?, github_username=?,
+                    SET email=?, password_hash=?, github_id=?, github_username=?, github_access_token=?,
                         linkedin_id=?, linkedin_username=?, last_login=?
                     WHERE id=?
-                ''', (self.email, self.password_hash, self.github_id, self.github_username,
+                ''', (self.email, self.password_hash, self.github_id, self.github_username, self.github_access_token,
                       self.linkedin_id, self.linkedin_username, self.last_login, self.id))
         else:
             if _is_postgres():
                 cur.execute('''
-                    INSERT INTO users (email, password_hash, github_id, github_username,
+                    INSERT INTO users (email, password_hash, github_id, github_username, github_access_token,
                                        linkedin_id, linkedin_username, created_at)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                     RETURNING id
-                ''', (self.email, self.password_hash, self.github_id, self.github_username,
+                ''', (self.email, self.password_hash, self.github_id, self.github_username, self.github_access_token,
                       self.linkedin_id, self.linkedin_username, self.created_at))
                 row = cur.fetchone()
                 self.id = row['id'] if isinstance(row, dict) else row[0]
             else:
                 cur.execute('''
-                    INSERT INTO users (email, password_hash, github_id, github_username,
+                    INSERT INTO users (email, password_hash, github_id, github_username, github_access_token,
                                        linkedin_id, linkedin_username, created_at)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                ''', (self.email, self.password_hash, self.github_id, self.github_username,
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (self.email, self.password_hash, self.github_id, self.github_username, self.github_access_token,
                       self.linkedin_id, self.linkedin_username, self.created_at))
                 self.id = cur.lastrowid
 

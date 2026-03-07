@@ -1,0 +1,247 @@
+/* =====================================================
+   COLLAPSIBLE SIDEBAR — shared across all pages
+   Sidebar is HIDDEN by default, opens on toggle click,
+   content area shrinks to accommodate it.
+   ===================================================== */
+
+/* ── CSS Variables (reuse or fallback) ── */
+:root {
+  --sb-width: 200px;
+  --sb-bg: #111827;
+  --sb-border: rgba(255, 255, 255, 0.07);
+  --sb-text: #8891aa;
+  --sb-text-active: #e8eaf0;
+  --sb-accent: #ff9b51;
+  --sb-accent-dim: rgba(255, 155, 81, 0.15);
+  --sb-chip: #1e2a3a;
+  --sb-radius: 8px;
+  --sb-transition: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── App shell wrapper ── */
+.sb-shell {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Sidebar ── */
+.sb-sidebar {
+  width: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: var(--sb-bg);
+  border-right: 1px solid var(--sb-border);
+  display: flex;
+  flex-direction: column;
+  transition: width var(--sb-transition);
+  position: relative;
+  z-index: 100;
+  /* Prevent content flash during animation */
+  white-space: nowrap;
+}
+
+.sb-sidebar.sb-open {
+  width: var(--sb-width);
+}
+
+/* ── Sidebar inner content (always full width, clipped by parent) ── */
+.sb-sidebar-inner {
+  width: var(--sb-width);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Brand */
+.sb-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 14px 14px;
+  border-bottom: 1px solid var(--sb-border);
+  flex-shrink: 0;
+}
+.sb-brand-icon {
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, var(--sb-accent), #ff6b1a);
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.sb-brand-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--sb-text-active);
+  letter-spacing: -0.2px;
+}
+
+/* Nav */
+.sb-nav {
+  flex: 1;
+  padding: 10px 8px;
+  overflow-y: auto;
+}
+.sb-nav::-webkit-scrollbar {
+  width: 4px;
+}
+.sb-nav::-webkit-scrollbar-thumb {
+  background: #2a3045;
+  border-radius: 2px;
+}
+
+.sb-nav-label {
+  font-size: 0.58rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: #4a5270;
+  padding: 8px 8px 4px;
+}
+
+.sb-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--sb-radius);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--sb-text);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 2px;
+  white-space: nowrap;
+}
+.sb-item:hover {
+  background: var(--sb-chip);
+  color: var(--sb-text-active);
+}
+.sb-item.sb-active {
+  background: var(--sb-accent-dim);
+  color: var(--sb-accent);
+  border: 1px solid rgba(255, 155, 81, 0.2);
+}
+.sb-item-icon {
+  font-size: 0.95rem;
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* Divider */
+.sb-divider {
+  height: 1px;
+  background: var(--sb-border);
+  margin: 6px 8px;
+}
+
+/* Footer */
+.sb-footer {
+  padding: 10px 8px;
+  border-top: 1px solid var(--sb-border);
+  flex-shrink: 0;
+}
+
+/* ── Main area ── */
+.sb-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+  /* content naturally shrinks via flex when sidebar opens */
+}
+
+/* Ensure dash-wrap fills sb-main height */
+.sb-main > .dash-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* ── Toggle button (hamburger) ── */
+.sb-toggle-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--sb-border);
+  border-radius: 7px;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition:
+    background 0.18s,
+    border-color 0.18s;
+}
+.sb-toggle-btn:hover {
+  background: var(--sb-chip);
+  border-color: rgba(255, 155, 81, 0.3);
+}
+
+.sb-bar {
+  display: block;
+  width: 16px;
+  height: 2px;
+  background: var(--sb-text);
+  border-radius: 2px;
+  transition:
+    transform 0.25s ease,
+    opacity 0.25s ease,
+    width 0.25s ease;
+  transform-origin: center;
+}
+
+/* Animate to X when open */
+.sb-toggle-btn.sb-open .sb-bar:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+.sb-toggle-btn.sb-open .sb-bar:nth-child(2) {
+  opacity: 0;
+  width: 0;
+}
+.sb-toggle-btn.sb-open .sb-bar:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+.sb-toggle-btn.sb-open {
+  background: var(--sb-accent-dim);
+  border-color: var(--sb-accent);
+}
+.sb-toggle-btn.sb-open .sb-bar {
+  background: var(--sb-accent);
+}
+
+/* ── Overlay (mobile only, optional) ── */
+.sb-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 99;
+  backdrop-filter: blur(2px);
+}
+@media (max-width: 640px) {
+  .sb-overlay.sb-open {
+    display: block;
+  }
+  .sb-sidebar.sb-open {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+  }
+}

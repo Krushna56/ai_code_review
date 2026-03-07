@@ -354,6 +354,10 @@ def github_callback():
         user.update_last_login()
         logger.info(f"GitHub user authenticated: {github_username}")
 
+        # Persist the GitHub access token so email-login users can still call the GitHub API
+        user.github_access_token = gh_access_token
+        user.save()
+
         tokens = JWTManager.generate_tokens(user.id, user.email or github_username)
         session['jwt_access_token'] = tokens['access_token']
         session['jwt_refresh_token'] = tokens['refresh_token']
@@ -490,7 +494,29 @@ def linkedin_callback():
 @auth_bp.route('/github/repos')
 def github_repos():
     """Return the logged-in GitHub user's repositories as JSON (for the repo picker)."""
+    from flask import g
+    from auth.jwt_utils import JWTManager
+    import jwt as _jwt
+
+    # 1. Try session token first (fastest path — set right after OAuth callback)
     gh_token = session.get('github_access_token')
+
+    # 2. Fall back to the token stored in DB (for users who log in via email/password)
+    if not gh_token:
+        jwt_token = session.get('jwt_access_token')
+        if jwt_token:
+            try:
+                payload = JWTManager.verify_token(jwt_token)
+                user = User.get_by_id(int(payload['sub']))
+                if user:
+                    gh_token = user.github_access_token
+                    if gh_token:
+                        # Restore to session for subsequent requests
+                        session['github_access_token'] = gh_token
+                        session.modified = True
+            except _jwt.InvalidTokenError:
+                pass
+
     if not gh_token:
         return jsonify({'error': 'GitHub not connected — please login with GitHub first'}), 401
 

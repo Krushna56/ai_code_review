@@ -93,65 +93,102 @@ class ReportService:
         logger.warning(f"No security report found for uid={uid}, returning sample data")
         return self._get_sample_report()
 
-    def get_dashboard_data(self, uid: Optional[str] = None) -> Dict[str, Any]:
-        """
-        Get dashboard data for visualization
-
-        Args:
-            uid: Optional analysis UID. If provided, loads from processed/{uid}/
-
-        Returns:
-            Dashboard data with charts and metrics
-        """
-        # Check cache (with uid-specific cache key)
-        cache_key = f'dashboard_data_{uid}' if uid else 'dashboard_data'
-        if self._is_cached(cache_key):
-            return self._cache[cache_key]
-
-        # Determine search paths based on uid
+    def _get_search_paths(self, uid: Optional[str]) -> list:
+        """Return ordered list of Paths to search for data files."""
         if uid:
-            # Search in processed/{uid}/ first, then output/, then root
-            search_paths = [
+            return [
                 Path('processed') / uid,
                 Path('..') / 'output',
                 Path('output'),
                 Path('.')
             ]
-        else:
-            # Original behavior: search output/ then root
-            search_paths = [
-                Path('..') / 'output',
-                Path('output'),
-                Path('.')
-            ]
-
-        dashboard_files = [
-            'dashboard_data.json',
-            'dashboard-data.json'
+        return [
+            Path('..') / 'output',
+            Path('output'),
+            Path('.')
         ]
 
-        for search_dir in search_paths:
-            for filename in dashboard_files:
-                dashboard_path = search_dir / filename
-                if dashboard_path.exists():
+    def _load_json_from_paths(self, filenames: list, uid: Optional[str] = None) -> Optional[Dict]:
+        """Try to load JSON from a list of filenames across all search paths."""
+        for search_dir in self._get_search_paths(uid):
+            for filename in filenames:
+                path = search_dir / filename
+                if path.exists():
                     try:
-                        with open(dashboard_path, 'r') as f:
-                            data = json.load(f)
-
-                        self._set_cache(cache_key, data)
-                        logger.info(f"Loaded dashboard data from {dashboard_path} for uid={uid}")
-                        return data
+                        with open(path, 'r', encoding='utf-8') as f:
+                            return json.load(f)
                     except Exception as e:
-                        logger.error(f"Error loading dashboard data {dashboard_path}: {e}")
+                        logger.warning(f"Could not load {path}: {e}")
+        return None
 
-        # Generate from report if dashboard data doesn't exist
-        report = self.get_latest_report(uid)
-        if report:
-            dashboard_data = self._generate_dashboard_from_report(report)
-            self._set_cache(cache_key, dashboard_data)
-            return dashboard_data
+    def get_dashboard_data(self, uid: Optional[str] = None) -> Dict[str, Any]:
+        """
+        Get dashboard data for visualization — merges dashboard_data.json,
+        metrics.json (LLM extracted), and git_timeline.json (commit history).
+        """
+        cache_key = f'dashboard_data_{uid}' if uid else 'dashboard_data'
+        if self._is_cached(cache_key):
+            return self._cache[cache_key]
 
-        return {}
+        # ── Load base dashboard data ──
+        data = self._load_json_from_paths(
+            ['dashboard_data.json', 'dashboard-data.json'], uid
+        )
+        if not data:
+            report = self.get_latest_report(uid)
+            if report and not report.get('is_sample'):
+                data = self._generate_dashboard_from_report(report)
+            else:
+                data = {}  # No real data available
+
+        # ── Merge LLM metrics for richer chart data ──
+        llm_metrics = self._load_json_from_paths(['metrics.json'], uid)
+        if llm_metrics:
+            logger.info(f"Merging LLM metrics into dashboard data for uid={uid}")
+            # Override/enrich specific chart datasets with LLM-extracted data
+            if llm_metrics.get('severity_distribution'):
+                data['severity_distribution'] = llm_metrics['severity_distribution']
+                data['severity_counts']        = llm_metrics['severity_distribution']
+            if llm_metrics.get('issue_type_distribution'):
+                data['issue_type_distribution'] = llm_metrics['issue_type_distribution']
+            if llm_metrics.get('file_risk_scores'):
+                data['file_risk_scores'] = llm_metrics['file_risk_scores']
+            if llm_metrics.get('owasp_coverage'):
+                data['owasp_coverage'] = llm_metrics['owasp_coverage']
+            if llm_metrics.get('top_hotspots'):
+                data['code_hotspots'] = llm_metrics['top_hotspots']
+
+        # ── Merge git timeline data ──
+        git_timeline = self._load_json_from_paths(['git_timeline.json'], uid)
+        if git_timeline:
+            logger.info(
+                f"Using git timeline for uid={uid}, "
+                f"source={git_timeline.get('source','unknown')}, "
+                f"commits={git_timeline.get('commit_count', 0)}"
+            )
+            data['vulnerability_trends'] = {
+                'labels':   git_timeline.get('labels', []),
+                'new':      git_timeline.get('new_issues', []),
+                'resolved': git_timeline.get('resolved_issues', []),
+                'source':   git_timeline.get('source', 'estimated'),
+                'has_git':  git_timeline.get('has_git', False),
+            }
+        elif not data.get('vulnerability_trends'):
+            # Generate fallback trends
+            from git_analyzer import build_fallback_timeline
+            total = llm_metrics.get('total_issues', 0) if llm_metrics else 0
+            fb = build_fallback_timeline(total_issues=total, days=30)
+            data['vulnerability_trends'] = {
+                'labels':   fb['labels'],
+                'new':      fb['new_issues'],
+                'resolved': fb['resolved_issues'],
+                'source':   'estimated',
+                'has_git':  False,
+            }
+
+        self._set_cache(cache_key, data)
+        return data
+
 
     def _calculate_security_rating(self, summary: Dict[str, Any]) -> float:
         """
@@ -206,21 +243,47 @@ class ReportService:
                 logger.error(f"Error detecting AI code: {e}")
                 ai_code_percent = 0
 
-        return {
-            'risk_level': summary.get('overall_risk_level', 'UNKNOWN'),
-            'risk_score': summary.get('risk_score', 0),
-            'total_findings': summary.get('total_findings', 0),
-            'critical_count': summary.get('severity_distribution', {}).get('CRITICAL', 0),
-            'high_count': summary.get('severity_distribution', {}).get('HIGH', 0),
-            'cve_count': summary.get('cve_count', 0),
+        # ── Load LLM-extracted metrics if available ──
+        llm_metrics = self._load_json_from_paths(['metrics.json'], uid)
+
+        # Build base summary from security report
+        base = {
+            'risk_level':       summary.get('overall_risk_level', 'UNKNOWN'),
+            'risk_score':       summary.get('risk_score', 0),
+            'total_findings':   summary.get('total_findings', 0),
+            'critical_count':   summary.get('severity_distribution', {}).get('CRITICAL', 0),
+            'high_count':       summary.get('severity_distribution', {}).get('HIGH', 0),
+            'cve_count':        summary.get('cve_count', 0),
             'dependency_health': report.get('dependency_health', {}).get('health_score', 0),
-            'last_scan': metadata.get('generated_at', datetime.now().isoformat()),
+            'last_scan':        metadata.get('generated_at', datetime.now().isoformat()),
             # Dashboard redesign fields
-            'total_files': metadata.get('total_files', 0),
-            'ai_code_percent': ai_code_percent,
-            'security_rating': self._calculate_security_rating(summary),
-            'security_count': summary.get('security_issue_count', summary.get('total_findings', 0))
+            'total_files':      metadata.get('total_files', 0),
+            'ai_code_percent':  ai_code_percent,
+            'security_rating':  self._calculate_security_rating(summary),
+            'security_count':   summary.get('security_issue_count', summary.get('total_findings', 0)),
+            'severity_distribution': summary.get('severity_distribution', {}),
         }
+
+        # Overlay LLM metrics where available
+        if llm_metrics:
+            logger.info(f"Merging LLM metrics into summary for uid={uid}")
+            base.update({
+                'total_findings':       llm_metrics.get('total_issues', base['total_findings']),
+                'critical_count':       llm_metrics.get('critical_count', base['critical_count']),
+                'security_rating':      llm_metrics.get('security_rating', base['security_rating']),
+                'technical_debt_hours': llm_metrics.get('technical_debt_hours', 0),
+                'defect_density':       llm_metrics.get('defect_density', 0),
+                'duplication_percent':  llm_metrics.get('duplication_percent', 0),
+                'code_coverage':        llm_metrics.get('code_coverage_estimate', 0),
+                'mttr_days':            llm_metrics.get('mttr_days', 0),
+                'total_loc':            llm_metrics.get('total_loc', 0),
+                'total_files':          llm_metrics.get('total_files', base['total_files']),
+                'severity_distribution': llm_metrics.get('severity_distribution', base['severity_distribution']),
+                'ai_code_percent':      llm_metrics.get('ai_code_percent', ai_code_percent),
+            })
+
+        return base
+
 
     def get_findings(
         self,
@@ -448,6 +511,7 @@ class ReportService:
     def _get_sample_report(self) -> Dict[str, Any]:
         """Get sample report for demo purposes"""
         return {
+            'is_sample': True,
             'metadata': {
                 'generated_at': datetime.now().isoformat(),
                 'generator': 'AI Code Review Platform',

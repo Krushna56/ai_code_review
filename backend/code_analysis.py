@@ -18,6 +18,22 @@ import difflib
 from datetime import datetime
 
 import config
+
+# Phase 6: LLM Metrics Extraction
+try:
+    from llm_agents.metrics_extractor import MetricsExtractor
+    METRICS_EXTRACTOR_AVAILABLE = True
+except ImportError:
+    logging.warning("MetricsExtractor not available")
+    METRICS_EXTRACTOR_AVAILABLE = False
+
+# Phase 6: Git History Analysis
+try:
+    from git_analyzer import analyze_repo_git
+    GIT_ANALYZER_AVAILABLE = True
+except ImportError:
+    logging.warning("git_analyzer not available")
+    GIT_ANALYZER_AVAILABLE = False
 from static_analysis.ast_parser import ASTParser
 from static_analysis.multi_linter import MultiLinter
 from utils.file_filter import should_ignore_file, should_ignore_directory, is_code_file
@@ -374,6 +390,7 @@ def analyze_codebase(input_path, output_path):
         "files_updated": 0
     }
     details = {}
+    total_loc = 0  # Track total lines of code
 
     analyzer = CodeAnalyzer()
 
@@ -420,6 +437,9 @@ def analyze_codebase(input_path, output_path):
                     summary["files_analyzed"] += 1
                     summary["files_formatted"] += 1
                     summary["files_updated"] += 1
+
+                    # Track LOC
+                    total_loc += len(original_code.splitlines())
 
                 except Exception as e:
                     logger.error(f"Error processing {rel_path}: {e}")
@@ -628,7 +648,7 @@ def analyze_codebase(input_path, output_path):
         except Exception as e:
             logger.error(f"Error in security reporting: {e}")
 
-    # Generate security report
+    # ── Generate security report ──────────────────────────────────────────────
     security_report = _generate_security_report(aggregated)
 
     # Enhanced summary with Phase 4 & 5 data
@@ -636,6 +656,69 @@ def analyze_codebase(input_path, output_path):
     summary['hardcoded_secrets'] = len(security_findings)
     summary['total_dependencies'] = len(dependencies)
     summary['vulnerable_packages'] = len(cve_results)
+    summary['total_loc'] = total_loc
+
+    # ── Phase 6a: LLM Metrics Extraction ────────────────────────────────────
+    llm_metrics = {}
+    if METRICS_EXTRACTOR_AVAILABLE and getattr(config, 'ENABLE_LLM_AGENTS', True):
+        try:
+            logger.info("Phase 6a: Extracting comprehensive metrics via LLM...")
+            extractor = MetricsExtractor()
+            llm_metrics = extractor.extract(
+                linter_results=aggregated,
+                security_findings=security_findings,
+                cve_count=len(all_vulnerabilities),
+                file_count=summary['files_analyzed'],
+                total_loc=total_loc,
+                file_details=details,
+            )
+            # Save to output
+            metrics_path = os.path.join(output_path, "metrics.json")
+            with open(metrics_path, 'w', encoding='utf-8') as f:
+                json.dump(llm_metrics, f, indent=2)
+            logger.info(f"Metrics JSON saved to {metrics_path}")
+        except Exception as e:
+            logger.error(f"Error in LLM metrics extraction: {e}")
+    else:
+        # Rule-based fallback even without LLM flag
+        try:
+            from llm_agents.metrics_extractor import MetricsExtractor as _ME
+            extractor = _ME()
+            llm_metrics = extractor._rule_based_extract(
+                linter_results=aggregated,
+                security_findings=security_findings,
+                cve_count=len(all_vulnerabilities),
+                file_count=summary['files_analyzed'],
+                total_loc=total_loc,
+                file_details=details,
+            )
+            metrics_path = os.path.join(output_path, "metrics.json")
+            with open(metrics_path, 'w', encoding='utf-8') as f:
+                json.dump(llm_metrics, f, indent=2)
+        except Exception as e:
+            logger.warning(f"Rule-based metrics fallback also failed: {e}")
+
+    # ── Phase 6b: Git Commit History Extraction ──────────────────────────────
+    git_data = {}
+    if GIT_ANALYZER_AVAILABLE:
+        try:
+            logger.info("Phase 6b: Extracting git commit history...")
+            total_issues_count = llm_metrics.get('total_issues', aggregated.get('total_issues', 0))
+            git_data = analyze_repo_git(
+                repo_path=input_path,
+                total_issues=total_issues_count,
+                timeline_days=30,
+            )
+            # Save git timeline
+            timeline_path = os.path.join(output_path, "git_timeline.json")
+            with open(timeline_path, 'w', encoding='utf-8') as f:
+                json.dump(git_data['timeline'], f, indent=2)
+            logger.info(
+                f"Git timeline saved: {git_data['total_commits']} commits, "
+                f"has_git={git_data['has_git']}"
+            )
+        except Exception as e:
+            logger.error(f"Error in git analysis: {e}")
 
     return {
         "summary": summary,
@@ -648,7 +731,9 @@ def analyze_codebase(input_path, output_path):
         "security_findings": security_findings,
         "security_report": security_report_data,
         "fix_suggestions": fix_suggestions,
-        "dashboard_data": dashboard_data
+        "dashboard_data": dashboard_data,
+        "llm_metrics": llm_metrics,
+        "git_data": git_data,
     }
 
 

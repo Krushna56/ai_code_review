@@ -5,382 +5,713 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Code Review Platform - Gen AI Powered</title>
+  <meta name="description"
+    content="Next-generation AI-powered code analysis with interactive chat, streaming responses, and comprehensive security scanning">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/sidebar.css">
   <style>
-    * {
+    /* ── RESET ── */
+    *,
+    *::before,
+    *::after {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
+    :root {
+      --bg-base: #0d1117;
+      --bg-sidebar: #111827;
+      --bg-topbar: #111827;
+      --bg-card: #161d2e;
+      --bg-chip: #1e2a3a;
+      --border: rgba(255, 255, 255, 0.07);
+      --border-hover: rgba(255, 155, 81, 0.4);
+      --text-primary: #e8eaf0;
+      --text-secondary: #8891aa;
+      --text-muted: #4a5270;
+      --accent: #FF9B51;
+      --accent-dim: rgba(255, 155, 81, 0.15);
+      --green: #4ade80;
+      --blue: #60a5fa;
+      --purple: #a78bfa;
+      --radius: 10px;
+    }
+
+    html,
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #25343F 0%, #2d3e4f 50%, #354555 100%);
-      background-attachment: fixed;
-      min-height: 100vh;
-      color: #EAEFEF;
-      overflow-x: hidden;
-      position: relative;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
       height: 100%;
-      background:
-        radial-gradient(circle at 20% 30%, rgba(255, 155, 81, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(191, 201, 209, 0.05) 0%, transparent 50%);
-      pointer-events: none;
-      z-index: 0;
     }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem;
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* ── APP SHELL ── */
+    .app-shell {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 0;
+      flex-shrink: 0;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      overflow: hidden;
+      transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap;
+    }
+
+    .sidebar.open {
+      width: 180px;
+    }
+
+    .sidebar-inner {
+      width: 180px;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 16px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-brand-icon {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--accent), #ff6b1a);
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-brand-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .sidebar-nav {
+      padding: 10px 8px;
+      flex: 1;
+    }
+
+    .sidebar-nav-label {
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--text-muted);
+      padding: 8px 8px 4px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 10px;
+      border-radius: 7px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 2px;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-chip);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid rgba(255, 155, 81, 0.2);
+    }
+
+    .nav-item-icon {
+      font-size: 0.95rem;
+      width: 18px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .sidebar-footer {
+      padding: 10px 8px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── MAIN AREA ── */
+    .main-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      height: 52px;
+      flex-shrink: 0;
+      background: var(--bg-topbar);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 20px;
+    }
+
+    .topbar-tabs {
+      display: flex;
+      gap: 2px;
+      flex: 1;
+    }
+
+    .topbar-tab {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: none;
+      background: none;
+    }
+
+    .topbar-tab:hover {
+      background: var(--bg-chip);
+      color: var(--text-primary);
+    }
+
+    .topbar-tab.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid rgba(255, 155, 81, 0.2);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+    }
+
+    /* Profile button */
+    .profile-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-chip);
+      border: 1px solid var(--border);
+      border-radius: 2rem;
+      padding: 5px 12px 5px 6px;
+      color: var(--text-primary);
+      font-size: 0.78rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .profile-btn:hover {
+      border-color: var(--accent);
+    }
+
+    .profile-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #ff6b1a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #000;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .profile-chevron {
+      font-size: 0.6rem;
+      color: var(--text-muted);
+    }
+
+    /* Profile dropdown */
+    .profile-dropdown {
       position: relative;
-      z-index: 1;
     }
 
-    /* Hero Section */
+    .profile-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      min-width: 240px;
+      background: #1a2233;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    .profile-menu.open {
+      display: block;
+    }
+
+    .pm-section {
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pm-label {
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .pm-value {
+      font-size: 0.8rem;
+      color: var(--text-primary);
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pm-connection {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 8px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 6px;
+      margin-bottom: 6px;
+    }
+
+    .pm-conn-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pm-conn-name {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .pm-conn-sub {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    .pm-conn-sub.connected {
+      color: var(--green);
+    }
+
+    .pm-link-btn {
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      padding: 2px 8px;
+      border: 1px solid rgba(255, 155, 81, 0.35);
+      border-radius: 1rem;
+      transition: all 0.2s;
+    }
+
+    .pm-link-btn:hover {
+      background: var(--accent-dim);
+    }
+
+    .pm-logout {
+      display: block;
+      width: 100%;
+      padding: 7px;
+      text-align: center;
+      background: rgba(239, 68, 68, 0.1);
+      color: #fca5a5;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .pm-logout:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    .btn-topbar {
+      padding: 6px 12px;
+      background: var(--bg-chip);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 0.78rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn-topbar:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ── CONTENT ── */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 28px;
+    }
+
+    /* Scrollbar */
+    .content::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .content::-webkit-scrollbar-thumb {
+      background: #2a3045;
+      border-radius: 3px;
+    }
+
+    /* ── HERO ── */
     .hero {
       text-align: center;
-      padding: 2rem 1rem;
-      position: relative;
+      padding: 12px 0 24px;
     }
 
     .hero-title {
-      font-size: 3.5rem;
+      font-size: 2rem;
       font-weight: 800;
       background: linear-gradient(135deg, #FF9B51 0%, #ff8a38 50%, #ffd6b0 100%);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 1rem;
-      animation: fadeInUp 0.8s ease-out;
+      margin-bottom: 10px;
+      line-height: 1.2;
     }
 
     .hero-subtitle {
-      font-size: 1.25rem;
-      color: #BFC9D1;
-      margin-bottom: 3rem;
-      animation: fadeInUp 0.8s ease-out 0.2s both;
-    }
-
-    .cta-buttons {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-      animation: fadeInUp 0.8s ease-out 0.4s both;
-    }
-
-    .btn {
-      padding: 1rem 2rem;
-      border-radius: 0.75rem;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      border: none;
-    }
-
-    .btn-primary {
-      background: #FF9B51;
-      color: #25343F;
-      box-shadow: 0 4px 6px rgba(255, 155, 81, 0.3);
-    }
-
-    .btn-primary:hover {
-      background: #ff8a38;
-      transform: translateY(-2px);
-      box-shadow: 0 10px 15px rgba(255, 155, 81, 0.4);
-    }
-
-    .btn-secondary {
-      background: rgba(191, 201, 209, 0.15);
-      backdrop-filter: blur(10px);
-      color: #EAEFEF;
-      border: 1px solid #BFC9D1;
-    }
-
-    .btn-secondary:hover {
-      background: rgba(191, 201, 209, 0.25);
-      border-color: #BFC9D1;
-    }
-
-    /* Features Grid */
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-      margin: 4rem 0;
-      animation: fadeInUp 0.8s ease-out 0.6s both;
-    }
-
-    .feature-card {
-      background: rgba(45, 62, 79, 0.8);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(191, 201, 209, 0.3);
-      border-radius: 1rem;
-      padding: 2rem;
-      transition: all 300ms ease;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 30px rgba(255, 155, 81, 0.2);
-      border-color: #FF9B51;
-    }
-
-    .feature-icon {
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .feature-title {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-      color: #EAEFEF;
-    }
-
-    .feature-description {
-      color: #BFC9D1;
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      max-width: 500px;
+      margin: 0 auto;
       line-height: 1.6;
     }
 
-    /* Analysis Options Grid */
-    .analysis-options {
+    /* ── UPLOAD PANELS ── */
+    .panels-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .panel {
+      background: var(--bg-card);
+      border: 1px dashed rgba(255, 155, 81, 0.3);
+      border-radius: var(--radius);
+      padding: 22px;
+      transition: all 0.2s;
+    }
+
+    .panel:hover {
+      border-color: var(--accent);
+      background: rgba(22, 29, 46, 0.9);
+    }
+
+    .panel.solid-border {
+      border-style: solid;
+      border-color: var(--border);
+    }
+
+    .panel.solid-border:hover {
+      border-color: var(--accent);
+    }
+
+    .panel-header {
       display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .panel-header-icon {
+      font-size: 1.1rem;
+    }
+
+    .panel-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .panel-actions {
+      display: flex;
+      gap: 8px;
       flex-wrap: wrap;
-      justify-content: center;
-      gap: 1.5rem;
-      margin: 1.5rem 0;
-      animation: fadeInUp 0.8s ease-out 0.5s both;
     }
 
-    .analysis-options>* {
-      flex: 1;
-      min-width: 300px;
-      max-width: 600px;
-      display: flex;
-      flex-direction: column;
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
     }
 
-    /* Upload Section */
-    .upload-section {
-      background: rgba(45, 62, 79, 0.6);
-      backdrop-filter: blur(10px);
-      border: 2px dashed #BFC9D1;
-      border-radius: 1.5rem;
-      padding: 2rem;
-      text-align: center;
-      margin: 0;
-      transition: all 300ms ease;
-      min-height: 240px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      flex: 1;
+    .btn-outline {
+      background: var(--bg-chip);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-accent {
+      background: linear-gradient(135deg, var(--accent), #ff7e1f);
+      color: #000;
+      font-weight: 700;
+      box-shadow: 0 3px 12px rgba(255, 155, 81, 0.3);
+    }
+
+    .btn-accent:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(255, 155, 81, 0.4);
+    }
+
+    .btn-accent:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-primary-full {
+      background: linear-gradient(135deg, var(--accent), #ff7e1f);
+      color: #000;
+      font-weight: 700;
       width: 100%;
+      justify-content: center;
+      margin-top: 12px;
+      padding: 9px;
+      box-shadow: 0 3px 12px rgba(255, 155, 81, 0.3);
     }
 
-    .upload-section:hover {
-      border-color: #FF9B51;
-      background: rgba(45, 62, 79, 0.8);
+    .btn-primary-full:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
     }
 
-    .upload-section.dragover {
-      border-color: #FF9B51;
-      background: rgba(255, 155, 81, 0.1);
+    .btn-primary-full:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
     }
 
-    .file-input {
+    /* Repo URL input */
+    .repo-url-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .repo-url-input {
+      flex: 1;
+      padding: 8px 12px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 0.8rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .repo-url-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .repo-url-input:focus {
+      border-color: var(--accent);
+    }
+
+    /* hidden file input */
+    #codebase,
+    #folderInput {
       display: none;
     }
 
-    .upload-label {
-      font-size: 1.125rem;
-      color: #BFC9D1;
-      margin-bottom: 1.5rem;
-      display: block;
+    /* drop indicator */
+    .panel.dragover {
+      border-color: var(--accent);
+      background: rgba(255, 155, 81, 0.06);
     }
 
-    /* Stats Section */
-    .stats {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1.5rem;
-      margin: 3rem 0;
-    }
-
-    .stat-card {
-      flex: 1;
-      min-width: 150px;
-      max-width: 250px;
-      text-align: center;
-      padding: 1.5rem;
-    }
-
-    .stat-number {
-      font-size: 2.5rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, #FF9B51, #ff8a38);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .stat-label {
-      color: #BFC9D1;
-      font-size: 0.875rem;
-      margin-top: 0.5rem;
-    }
-
-    /* Error Message */
-    .error-message {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid #ef4444;
-      border-radius: 0.75rem;
-      padding: 1rem 1.5rem;
-      margin: 2rem 0;
-      color: #fca5a5;
-    }
-
-    /* ── GitHub Repo Picker ─────────────────────────────────────── */
-    .github-repos-section {
-      margin: 2.5rem 0 1rem;
-      animation: fadeInUp 0.6s ease-out 0.3s both;
-    }
-
-    .github-repos-header {
+    /* ── RECENT REPOS ── */
+    .section-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-bottom: 1.25rem;
+      margin-bottom: 12px;
     }
 
-    .github-repos-title {
-      font-size: 1.4rem;
+    .section-title {
+      font-size: 0.9rem;
       font-weight: 700;
-      background: linear-gradient(135deg, #FF9B51, #ffd6b0);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      color: var(--text-primary);
     }
 
     .repos-controls {
       display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
       align-items: center;
+      gap: 8px;
     }
 
-    .repo-search {
-      padding: 0.5rem 1rem;
-      background: rgba(0, 0, 0, 0.25);
-      border: 1px solid rgba(191, 201, 209, 0.3);
-      border-radius: 0.5rem;
-      color: #EAEFEF;
-      font-size: 0.875rem;
-      width: 200px;
+    .search-input {
+      padding: 5px 10px;
+      background: var(--bg-chip);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 0.75rem;
       outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 160px;
+      transition: border-color 0.2s;
     }
 
-    .repo-search::placeholder {
-      color: #6b7a88;
+    .search-input::placeholder {
+      color: var(--text-muted);
     }
 
-    .repo-search:focus {
-      border-color: #FF9B51;
-      box-shadow: 0 0 0 3px rgba(255, 155, 81, 0.15);
+    .search-input:focus {
+      border-color: var(--accent);
     }
 
     .filter-pill {
-      padding: 0.35rem 0.85rem;
+      padding: 3px 10px;
       border-radius: 1rem;
-      font-size: 0.8rem;
+      font-size: 0.72rem;
       font-weight: 500;
       cursor: pointer;
-      border: 1px solid rgba(191, 201, 209, 0.3);
-      background: rgba(45, 62, 79, 0.5);
-      color: #BFC9D1;
-      transition: all 0.2s;
+      border: 1px solid var(--border);
+      background: var(--bg-chip);
+      color: var(--text-secondary);
+      transition: all 0.15s;
     }
 
     .filter-pill.active,
     .filter-pill:hover {
-      background: rgba(255, 155, 81, 0.2);
-      border-color: #FF9B51;
-      color: #FF9B51;
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
     }
 
-    .repos-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-      gap: 1rem;
-      max-height: 520px;
-      overflow-y: auto;
-      padding-right: 4px;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255, 155, 81, 0.4) transparent;
+    /* Repos table */
+    .repos-table {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
     }
 
-    .repos-grid::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .repos-grid::-webkit-scrollbar-thumb {
-      background: rgba(255, 155, 81, 0.4);
-      border-radius: 3px;
-    }
-
-    .repo-card {
-      background: rgba(37, 52, 63, 0.7);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(191, 201, 209, 0.2);
-      border-radius: 0.875rem;
-      padding: 1.1rem 1.25rem;
+    .repos-table-row {
       display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      transition: all 0.2s ease;
-      cursor: default;
+      align-items: center;
+      gap: 14px;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
     }
 
-    .repo-card:hover {
-      border-color: rgba(255, 155, 81, 0.5);
-      background: rgba(37, 52, 63, 0.9);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 155, 81, 0.12);
+    .repos-table-row:last-child {
+      border-bottom: none;
     }
 
-    .repo-card-top {
+    .repos-table-row:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .repo-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #1e3a5f, #0d2137);
+      border: 1px solid rgba(99, 132, 255, 0.3);
       display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 0.5rem;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    .repo-name-col {
+      flex: 1;
+      min-width: 0;
     }
 
     .repo-name {
+      font-size: 0.82rem;
       font-weight: 600;
-      font-size: 0.95rem;
-      color: #EAEFEF;
-      word-break: break-word;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .repo-name a {
@@ -389,890 +720,735 @@
     }
 
     .repo-name a:hover {
-      color: #FF9B51;
+      color: var(--accent);
     }
 
-    .repo-private-badge {
-      font-size: 0.7rem;
-      padding: 0.2rem 0.5rem;
-      border-radius: 0.4rem;
-      background: rgba(239, 68, 68, 0.15);
-      color: #fca5a5;
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      white-space: nowrap;
+    .repo-stats {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      font-size: 0.72rem;
+      color: var(--text-secondary);
       flex-shrink: 0;
     }
 
-    .repo-desc {
-      font-size: 0.8rem;
-      color: #6b7a88;
-      line-height: 1.45;
-      flex: 1;
-      overflow: hidden;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      line-clamp: 2;
-      -webkit-box-orient: vertical;
-    }
-
-    .repo-meta {
+    .repo-stat {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      font-size: 0.78rem;
-      color: #6b7a88;
+      gap: 3px;
     }
 
-    .lang-dot {
-      width: 10px;
-      height: 10px;
+    .repo-stat-icon {
+      font-size: 0.8rem;
+    }
+
+    .delta-pos {
+      color: var(--green);
+    }
+
+    .delta-neg {
+      color: #f87171;
+    }
+
+    .repo-private-badge {
+      font-size: 0.62rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(239, 68, 68, 0.1);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      white-space: nowrap;
+    }
+
+    .repo-lang-dot {
+      width: 9px;
+      height: 9px;
       border-radius: 50%;
       display: inline-block;
       flex-shrink: 0;
     }
 
-    .repo-scan-btn {
-      margin-top: 0.5rem;
-      padding: 0.5rem 1rem;
-      background: linear-gradient(135deg, #FF9B51, #ff8a38);
-      color: #25343F;
+    .btn-analyze {
+      padding: 5px 14px;
+      background: var(--bg-chip);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 0.75rem;
       font-weight: 600;
-      font-size: 0.82rem;
-      border: none;
-      border-radius: 0.5rem;
       cursor: pointer;
       transition: all 0.2s;
-      width: 100%;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
-    .repo-scan-btn:hover {
-      opacity: 0.9;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(255, 155, 81, 0.35);
+    .btn-analyze:hover {
+      border-color: var(--accent);
+      color: var(--accent);
     }
 
-    .repo-scan-btn:disabled {
-      opacity: 0.5;
+    .btn-analyze:disabled {
+      opacity: 0.4;
       cursor: not-allowed;
-      transform: none;
     }
 
-    .repos-empty {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 3rem;
-      color: #6b7a88;
-    }
-
-    .repos-skeleton {
-      background: linear-gradient(90deg,
-          rgba(45, 62, 79, 0.6) 25%,
-          rgba(60, 80, 100, 0.6) 50%,
-          rgba(45, 62, 79, 0.6) 75%);
+    /* Skeleton */
+    .skeleton {
+      background: linear-gradient(90deg, rgba(30, 42, 58, 0.7) 25%, rgba(40, 55, 75, 0.7) 50%, rgba(30, 42, 58, 0.7) 75%);
       background-size: 200% 100%;
       animation: shimmer 1.4s infinite;
-      border-radius: 0.875rem;
-      height: 148px;
+      border-radius: 4px;
+      height: 14px;
     }
 
     @keyframes shimmer {
       0% {
-        background-position: 200% 0;
+        background-position: 200% 0
       }
 
       100% {
-        background-position: -200% 0;
+        background-position: -200% 0
       }
     }
 
-    /* Animations */
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    /* No github connected */
+    .connect-github-banner {
+      background: var(--bg-card);
+      border: 1px dashed rgba(255, 155, 81, 0.3);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.82rem;
+      margin-bottom: 20px;
     }
 
-    @media (max-width: 768px) {
-      .hero-title {
-        font-size: 2.5rem;
-      }
-
-      .features {
-        grid-template-columns: 1fr;
-      }
-
-      .cta-buttons {
-        flex-direction: column;
-      }
-
-      .btn {
-        width: 100%;
-      }
+    .connect-github-banner a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 16px;
+      margin-top: 10px;
+      background: rgba(30, 40, 55, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-decoration: none;
+      transition: all 0.2s;
     }
 
-    /* Light Mode Styles */
-    body.light-mode {
-      background: linear-gradient(135deg, #EAEFEF 0%, #d8e3e8 50%, #BFC9D1 100%);
-      background-attachment: fixed;
-      color: #25343F;
+    .connect-github-banner a:hover {
+      border-color: var(--accent);
+      color: var(--accent);
     }
 
-    body.light-mode::before {
-      background:
-        radial-gradient(circle at 20% 30%, rgba(255, 155, 81, 0.12) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(37, 52, 63, 0.05) 0%, transparent 50%);
+    /* ── FEATURE CARDS ── */
+    .features-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 20px;
     }
 
-    body.light-mode .hero-title {
-      background: linear-gradient(135deg, #FF9B51 0%, #ff8a38 50%, #d97706 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
     }
 
-    body.light-mode .hero-subtitle,
-    body.light-mode .upload-label {
-      color: #25343F;
-      opacity: 0.8;
+    .feature-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 155, 81, 0.1);
     }
 
-    body.light-mode .feature-description {
-      color: #25343F;
-      opacity: 0.7;
-    }
-
-    body.light-mode .stat-label {
-      color: #25343F;
-      opacity: 0.7;
-    }
-
-    body.light-mode .btn-secondary,
-    body.light-mode .feature-card,
-    body.light-mode .upload-section {
-      background: white;
-      border-color: #BFC9D1;
-      color: #25343F;
-      box-shadow: 0 2px 8px rgba(37, 52, 63, 0.08);
-    }
-
-    body.light-mode .feature-title {
-      color: #25343F;
-      font-weight: 700;
-    }
-
-    body.light-mode .upload-section {
-      min-height: 260px;
-    }
-
-    body.light-mode .feature-card {
-      min-height: auto;
-    }
-
-    body.light-mode .upload-section p {
-      color: #25343F !important;
-      opacity: 0.7;
-    }
-
-    body.light-mode #repo-url {
-      background: white !important;
-      border-color: #BFC9D1 !important;
-      color: #25343F !important;
-    }
-
-    body.light-mode #repo-url::placeholder {
-      color: #BFC9D1 !important;
-    }
-
-    body.light-mode .repo-section .upload-section {
-      border-style: solid;
-      border-width: 1px;
-    }
-
-    /* Theme Toggle Button */
-    .theme-toggle {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #f8fafc;
+    .feature-card-icon {
       width: 36px;
       height: 36px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 1.1rem;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 1.1rem;
       flex-shrink: 0;
-      line-height: 1;
     }
 
-    .theme-toggle:hover {
-      background: rgba(255, 255, 255, 0.25);
-      transform: scale(1.1);
+    .feature-card-icon.orange {
+      background: rgba(255, 155, 81, 0.15);
     }
 
-    body.light-mode .theme-toggle {
-      background: white;
-      border-color: #e2e8f0;
-      color: #1e293b;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    .feature-card-icon.yellow {
+      background: rgba(251, 191, 36, 0.15);
     }
 
-    body.light-mode .theme-toggle:hover {
-      background: #f1f5f9;
+    .feature-card-icon.blue {
+      background: rgba(96, 165, 250, 0.15);
     }
 
-    /* Light mode user navigation styling */
-    body.light-mode .user-nav-container>div {
-      background: rgba(0, 0, 0, 0.05) !important;
-      border-color: rgba(0, 0, 0, 0.1) !important;
-      color: #1e293b !important;
+    .feature-card-body {}
+
+    .feature-card-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
     }
 
-    body.light-mode .user-nav-container a {
-      background: rgba(239, 68, 68, 0.15) !important;
-      border-color: rgba(239, 68, 68, 0.3) !important;
-      color: #dc2626 !important;
+    .feature-card-desc {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
     }
 
-    body.light-mode .user-nav-container a:hover {
-      background: rgba(239, 68, 68, 0.25) !important;
+    /* ── ERROR ── */
+    .error-banner {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      color: #fca5a5;
+      font-size: 0.8rem;
     }
 
-    body.light-mode .profile-menu {
-      background: rgba(255, 255, 255, 0.95) !important;
-      border-color: #e2e8f0 !important;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important;
+    /* ── FILE selection indicator ── */
+    .file-selected-notice {
+      margin-top: 8px;
+      font-size: 0.72rem;
+      color: var(--green);
+      min-height: 16px;
+      text-align: center;
     }
 
-    body.light-mode .profile-btn {
-      color: #1e293b !important;
-      background: rgba(0, 0, 0, 0.05) !important;
-      border-color: rgba(0, 0, 0, 0.1) !important;
-    }
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .panels-row {
+        grid-template-columns: 1fr;
+      }
 
-    body.light-mode .profile-menu div[style*="color: #f8fafc"] {
-      color: #1e293b !important;
-    }
-
-    body.light-mode .profile-menu div[style*="background: rgba(0,0,0,0.2)"] {
-      background: rgba(0, 0, 0, 0.05) !important;
-    }
-
-    body.light-mode svg[style*="fill: white"] {
-      fill: #1e293b !important;
+      .features-row {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 
 <body>
-  <!-- User Navigation -->
-  <div class="user-nav-container"
-    style="position: fixed; top: 20px; right: 24px; z-index: 1000; display: flex; align-items: center; gap: 10px;">
-    {% if current_user.is_authenticated %}
-    <div class="profile-dropdown" style="position: relative;">
-      <button class="profile-btn" onclick="toggleProfile()"
-        style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.5rem 1rem; border-radius: 2rem; color: #f8fafc; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease;">
-        <span
-          style="background: linear-gradient(135deg, #FF9B51, #ff8a38); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #25343F; font-weight: bold;">
-          {{ (current_user.email or current_user.github_username or 'U')[0] | upper }}
-        </span>
-        {{ current_user.email or current_user.github_username }}
-        <span style="font-size: 0.8rem; opacity: 0.7;">▼</span>
-      </button>
+  <div class="app-shell">
 
-      <div class="profile-menu" id="profileMenu"
-        style="display: none; position: absolute; top: 110%; left: 0; min-width: 260px; background: rgba(37, 52, 63, 0.95); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; padding: 1rem; box-shadow: 0 10px 40px rgba(0,0,0,0.3); transform-origin: top left; animation: menuOpen 0.2s ease-out;">
-        <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
-          <div style="color: #94a3b8; font-size: 0.75rem; margin-bottom: 0.25rem;">SIGNED IN AS</div>
-          <div style="color: #f8fafc; font-weight: 600; overflow: hidden; text-overflow: ellipsis;">{{
-            current_user.email or 'No Email' }}</div>
+    <!-- ══════ SIDEBAR ══════ -->
+    <aside class="sidebar" id="mainSidebar">
+      <div class="sidebar-inner">
+        <div class="sidebar-brand">
+          <div class="sidebar-brand-icon">🛡️</div>
+          <span class="sidebar-brand-name">AI Code Review</span>
         </div>
 
-        <div style="margin-bottom: 1rem;">
-          <div style="color: #94a3b8; font-size: 0.75rem; margin-bottom: 0.5rem;">CONNECTIONS</div>
+        <nav class="sidebar-nav">
+          <div class="sidebar-nav-label">Main</div>
 
-          <!-- GitHub Connection -->
-          <div
-            style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: rgba(0,0,0,0.2); border-radius: 0.5rem; margin-bottom: 0.5rem;">
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
-              <svg height="20" viewBox="0 0 16 16" version="1.1" width="20" aria-hidden="true" style="fill: white;">
-                <path fill-rule="evenodd"
-                  d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
-                </path>
-              </svg>
-              <div>
-                <div style="font-size: 0.85rem; font-weight: 500;">GitHub</div>
-                {% if current_user.github_username %}
-                <div style="font-size: 0.75rem; color: #4ade80;">{{ current_user.github_username }}</div>
-                {% else %}
-                <div style="font-size: 0.75rem; color: #94a3b8;">Not connected</div>
-                {% endif %}
-              </div>
-            </div>
-            {% if current_user.github_username %}
-            <span style="font-size: 1.2rem; color: #4ade80;">✓</span>
-            {% else %}
-            <a href="{{ url_for('auth.github_login') }}"
-              style="font-size: 0.75rem; color: #FF9B51; text-decoration: none; padding: 0.25rem 0.75rem; border: 1px solid rgba(255, 155, 81, 0.4); border-radius: 1rem; transition: all 0.2s ease;">Link</a>
-            {% endif %}
-          </div>
+          <a href="/" class="nav-item active">
+            <span class="nav-item-icon">🏠</span>
+            <span>Home</span>
+          </a>
+          <a href="/dashboard" class="nav-item">
+            <span class="nav-item-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="/chat" class="nav-item">
+            <span class="nav-item-icon">💬</span>
+            <span>AI Chat</span>
+          </a>
+          <a href="/code-viewer" class="nav-item">
+            <span class="nav-item-icon">🖊️</span>
+            <span>Code Editor</span>
+          </a>
+          <a href="/dashboard" class="nav-item">
+            <span class="nav-item-icon">📄</span>
+            <span>Report</span>
+          </a>
 
-          <!-- LinkedIn Connection -->
-          <div
-            style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: rgba(0,0,0,0.2); border-radius: 0.5rem; margin-bottom: 0.5rem;">
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                <path
-                  d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-              </svg>
-              <div>
-                <div style="font-size: 0.85rem; font-weight: 500;">LinkedIn</div>
-                {% if current_user.linkedin_username %}
-                <div style="font-size: 0.75rem; color: #4ade80;">{{ current_user.linkedin_username }}</div>
-                {% else %}
-                <div style="font-size: 0.75rem; color: #94a3b8;">Not connected</div>
-                {% endif %}
-              </div>
-            </div>
-            {% if current_user.linkedin_username %}
-            <span style="font-size: 1.2rem; color: #4ade80;">✓</span>
-            {% else %}
-            <a href="{{ url_for('auth.linkedin_login') }}"
-              style="font-size: 0.75rem; color: #FF9B51; text-decoration: none; padding: 0.25rem 0.75rem; border: 1px solid rgba(255, 155, 81, 0.4); border-radius: 1rem; transition: all 0.2s ease;">Link</a>
-            {% endif %}
+          <div class="sidebar-nav-label" style="margin-top:8px;">Resources</div>
+          <a href="https://owasp.org/Top10/" target="_blank" class="nav-item">
+            <span class="nav-item-icon">📖</span>
+            <span>Docs</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          {% if current_user.is_authenticated %}
+          <div class="nav-item" style="cursor:default;color:var(--text-muted);font-size:0.7rem;">
+            <span class="nav-item-icon">🟢</span>
+            <span>Connected</span>
           </div>
+          <a href="{{ url_for('auth.logout') }}" class="nav-item" style="color:#fca5a5;">
+            <span class="nav-item-icon">🚪</span>
+            <span>Sign Out</span>
+          </a>
+          {% endif %}
         </div>
-
-        <a href="{{ url_for('auth.logout') }}"
-          style="display: block; width: 100%; padding: 0.75rem; text-align: center; background: rgba(239, 68, 68, 0.1); color: #fca5a5; text-decoration: none; border-radius: 0.5rem; font-size: 0.9rem; transition: all 0.2s ease;"
-          onmouseover="this.style.background='rgba(239, 68, 68, 0.2)'"
-          onmouseout="this.style.background='rgba(239, 68, 68, 0.1)'">
-          Sign Out
-        </a>
       </div>
-    </div>
+    </aside>
 
-    <!-- Script to toggle menu -->
-    <script>
-      function toggleProfile() {
-        const menu = document.getElementById('profileMenu');
-        menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-      }
+    <!-- ══════ MAIN AREA ══════ -->
+    <div class="main-area">
 
-      // Close when clicking outside
-      document.addEventListener('click', function (e) {
-        const dropdown = document.querySelector('.profile-dropdown');
-        const menu = document.getElementById('profileMenu');
-        if (dropdown && !dropdown.contains(e.target) && menu.style.display === 'block') {
-          menu.style.display = 'none';
-        }
-      });
-    </script>
+      <!-- ── TOPBAR ── -->
+      <header class="topbar">
+        <!-- Hamburger toggle -->
+        <button class="sb-toggle-btn" id="sidebarToggle" onclick="toggleSidebar()" title="Toggle menu">
+          <span class="sb-bar"></span>
+          <span class="sb-bar"></span>
+          <span class="sb-bar"></span>
+        </button>
 
-    <style>
-      @keyframes menuOpen {
-        from {
-          opacity: 0;
-          transform: translateY(-10px);
-        }
+        <div class="topbar-tabs">
+          <a href="/" class="topbar-tab active">🏠 Home</a>
+          <a href="/dashboard" class="topbar-tab">📊 Dashboard</a>
+          <a href="/chat" class="topbar-tab">💬 Chat</a>
+          <a href="/code-viewer" class="topbar-tab">🖊️ Editor</a>
+        </div>
 
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-    </style>
+        <div class="topbar-right">
+          {% if current_user.is_authenticated %}
+          <!-- Profile dropdown -->
+          <div class="profile-dropdown">
+            <button class="profile-btn" onclick="toggleProfile(event)">
+              <div class="profile-avatar">
+                {{ (current_user.email or current_user.github_username or 'U')[0] | upper }}
+              </div>
+              <span style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
+                {{ current_user.email or current_user.github_username }}
+              </span>
+              <span class="profile-chevron">▼</span>
+            </button>
 
-    {% else %}
-    <a href="{{ url_for('auth.login') }}"
-      style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; padding: 0.5rem 1.2rem; border-radius: 2rem; color: #fff; font-size: 0.875rem; font-weight: 600; text-decoration: none; transition: all 0.25s ease; box-shadow: 0 4px 14px rgba(102,126,234,0.35); white-space: nowrap;">
-      Sign In
-    </a>
-    {% endif %}
-    <!-- Theme Toggle Icon -->
-    <button class="theme-toggle" onclick="toggleTheme()" id="themeToggleBtn" title="Toggle theme">☀️</button>
-  </div>
+            <div class="profile-menu" id="profileMenu">
+              <div class="pm-section">
+                <div class="pm-label">Signed in as</div>
+                <div class="pm-value">{{ current_user.email or 'No Email' }}</div>
+              </div>
 
+              <div style="margin-bottom:10px">
+                <div class="pm-label">Connections</div>
 
+                <!-- GitHub -->
+                <div class="pm-connection">
+                  <div class="pm-conn-left">
+                    <svg height="16" viewBox="0 0 16 16" fill="currentColor" style="color:var(--text-secondary)">
+                      <path fill-rule="evenodd"
+                        d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+                    </svg>
+                    <div>
+                      <div class="pm-conn-name">GitHub</div>
+                      {% if current_user.github_username %}
+                      <div class="pm-conn-sub connected">{{ current_user.github_username }}</div>
+                      {% else %}
+                      <div class="pm-conn-sub">Not connected</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                  {% if current_user.github_username %}
+                  <span style="color:var(--green)">✓</span>
+                  {% else %}
+                  <a href="{{ url_for('auth.github_login') }}" class="pm-link-btn">Link</a>
+                  {% endif %}
+                </div>
 
-  <div class="container">
-    <!-- Hero Section -->
-    <div class="hero">
-      <h1 class="hero-title">
+                <!-- LinkedIn -->
+                <div class="pm-connection">
+                  <div class="pm-conn-left">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"
+                      style="color:var(--text-secondary)">
+                      <path
+                        d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                    </svg>
+                    <div>
+                      <div class="pm-conn-name">LinkedIn</div>
+                      {% if current_user.linkedin_username %}
+                      <div class="pm-conn-sub connected">{{ current_user.linkedin_username }}</div>
+                      {% else %}
+                      <div class="pm-conn-sub">Not connected</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                  {% if current_user.linkedin_username %}
+                  <span style="color:var(--green)">✓</span>
+                  {% else %}
+                  <a href="{{ url_for('auth.linkedin_login') }}" class="pm-link-btn">Link</a>
+                  {% endif %}
+                </div>
+              </div>
 
-        AI Code Review Platform
-      </h1>
-      <p class="hero-subtitle">
-        Next-generation AI-powered code analysis with interactive chat, streaming responses, and comprehensive
-        security
-        scanning
-      </p>
+              <a href="{{ url_for('auth.logout') }}" class="pm-logout">Sign Out</a>
+            </div>
+          </div>
+          {% else %}
+          <a href="{{ url_for('auth.login') }}" class="btn-topbar"
+            style="background:linear-gradient(135deg,#667eea,#764ba2);border:none;color:#fff;">Sign In</a>
+          {% endif %}
+        </div>
+      </header>
 
-      <!-- Upload & Repo Section Moved Here -->
-      <div class="analysis-options">
-        <form method="POST" enctype="multipart/form-data" id="upload-form">
-          <div class="upload-section" id="upload-area">
-            <label for="codebase" class="upload-label">
-              📦 Drop your codebase here or click to browse
-            </label>
-            <p style="color: #94a3b8; font-size: 0.875rem; margin-bottom: 1.5rem;">
-              Supports ZIP files, individual code files, or entire directories
-            </p>
-            <input type="file" name="codebase" id="codebase" class="file-input" multiple
-              accept=".py,.js,.java,.cpp,.c,.html,.css,.json,.xml,.yaml,.yml,.sh,.md,.txt,.zip">
-            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem; flex-wrap: wrap;">
-              <button type="button" onclick="selectFiles()" class="btn btn-secondary">
-                📄 Select Files
-              </button>
-              <button type="button" onclick="selectFolder()" class="btn btn-secondary">
-                📁 Select Folder
-              </button>
-              <button type="submit" class="btn btn-primary" id="analyze-btn">
+      <!-- ── CONTENT ── -->
+      <main class="content">
+
+        {% if error %}
+        <div class="error-banner">❌ {{ error }}</div>
+        {% endif %}
+
+        <!-- Hero -->
+        <div class="hero">
+          <h1 class="hero-title">AI Code Review Platform</h1>
+          <p class="hero-subtitle">Next-generation AI-powered code analysis with interactive chat, streaming responses,
+            and comprehensive security scanning</p>
+        </div>
+
+        <!-- Upload panels -->
+        <div class="panels-row">
+
+          <!-- Upload local codebase -->
+          <form method="POST" enctype="multipart/form-data" id="upload-form">
+            <div class="panel" id="upload-area">
+              <div class="panel-header">
+                <span class="panel-header-icon">📦</span>
+                Upload Local Codebase
+              </div>
+              <p class="panel-sub">Supports ZIP files, individual code files, or entire directories</p>
+
+              <input type="file" name="codebase" id="codebase" multiple
+                accept=".py,.js,.ts,.java,.cpp,.c,.h,.html,.css,.json,.xml,.yaml,.yml,.sh,.md,.txt,.zip">
+              <input type="file" id="folderInput" name="codebase" multiple webkitdirectory>
+
+              <div class="panel-actions">
+                <button type="button" onclick="selectFiles()" class="btn btn-outline">
+                  📄 Select Files
+                </button>
+                <button type="button" onclick="selectFolder()" class="btn btn-outline">
+                  📁 Select Folder
+                </button>
+              </div>
+
+              <div class="file-selected-notice" id="fileNotice"></div>
+
+              <button type="submit" class="btn btn-primary-full" id="analyze-btn">
                 🔍 Analyze Code
               </button>
             </div>
-          </div>
-        </form>
+          </form>
 
-        <div class="repo-section">
-          <div class="upload-section" style="border-style: solid; border-width: 1px;">
-            <label class="upload-label">🔗 Analyze from Repository URL</label>
-            <div style="display: flex; gap: 10px; max-width: 600px; margin: 0 auto;">
-              <input type="text" id="repo-url" placeholder="https://github.com/user/repo"
-                style="flex: 1; padding: 0.75rem 1rem; border-radius: 0.5rem; background: rgba(0,0,0,0.2); border: 1px solid #334155; color: white;">
-              <button onclick="analyzeRepo()" class="btn btn-primary" id="repo-btn">
-                ⭐ Clone & Analyze
+          <!-- Analyze from repo URL -->
+          <div class="panel solid-border">
+            <div class="panel-header">
+              <span class="panel-header-icon">🔗</span>
+              Analyze from Repository URL
+            </div>
+            <p class="panel-sub">Enter a public GitHub, GitLab, or Bitbucket URL</p>
+
+            <div class="repo-url-row">
+              <input type="text" id="repo-url" class="repo-url-input" placeholder="https://github.com/user/repo">
+              <button onclick="analyzeRepo()" class="btn btn-accent" id="repo-btn">
+                🔀 Clone &amp; Analyze
               </button>
             </div>
           </div>
-        </div>
-      </div>
 
-      {# ── GitHub Repo Picker (only visible to GitHub-connected users) ── #}
-      {% if current_user.is_authenticated and current_user.github_username %}
-      <div class="github-repos-section" id="github-repos-section">
-        <div class="github-repos-header">
-          <div class="github-repos-title">
-            <svg width="22" height="22" viewBox="0 0 16 16" fill="url(#gh-grad)" aria-hidden="true">
-              <defs>
-                <linearGradient id="gh-grad" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#FF9B51" />
-                  <stop offset="100%" stop-color="#ffd6b0" />
-                </linearGradient>
-              </defs>
-              <path fill-rule="evenodd"
-                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
-            </svg>
-            {{ current_user.github_username }}'s Repositories
-          </div>
+        </div><!-- /panels-row -->
+
+        <!-- Recent Repositories -->
+        {% if current_user.is_authenticated and current_user.github_username %}
+        <div class="section-header">
+          <span class="section-title">Recent Repositories</span>
           <div class="repos-controls">
-            <input type="text" class="repo-search" id="repoSearchInput" placeholder="🔍 Search repos…"
+            <input type="text" class="search-input" id="repoSearchInput" placeholder="🔍 Search repos…"
               oninput="filterRepos()">
             <button class="filter-pill active" onclick="setFilter(this,'all')">All</button>
             <button class="filter-pill" onclick="setFilter(this,'public')">Public</button>
             <button class="filter-pill" onclick="setFilter(this,'private')">Private</button>
           </div>
         </div>
-        <div class="repos-grid" id="reposGrid">
-          <!-- Skeleton loaders -->
-          <div class="repos-skeleton"></div>
-          <div class="repos-skeleton"></div>
-          <div class="repos-skeleton"></div>
-          <div class="repos-skeleton"></div>
-          <div class="repos-skeleton"></div>
-          <div class="repos-skeleton"></div>
-        </div>
-      </div>
-      {% elif current_user.is_authenticated and not current_user.github_username %}
-      <div style="text-align:center; margin: 2rem 0; padding: 1.5rem;
-                  background: rgba(45,62,79,0.5); border-radius: 1rem;
-                  border: 1px dashed rgba(255,155,81,0.3);">
-        <p style="color:#BFC9D1; margin-bottom:0.75rem;">🐙 Connect GitHub to browse and scan your repositories directly
-        </p>
-        <a href="{{ url_for('auth.github_login') }}" style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.6rem 1.4rem;
-                  background:rgba(36,41,46,0.9); color:#fff; border-radius:0.6rem;
-                  text-decoration:none; font-weight:600; font-size:0.9rem;
-                  border:1px solid rgba(255,255,255,0.15); transition:all 0.2s;"
-          onmouseover="this.style.background='rgba(36,41,46,1)'"
-          onmouseout="this.style.background='rgba(36,41,46,0.9)'">
-          <svg width="18" height="18" viewBox="0 0 16 16" fill="white" aria-hidden="true">
-            <path fill-rule="evenodd"
-              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
-          </svg>
-          Connect GitHub
-        </a>
-      </div>
-      {% endif %}
-    </div>
 
-    <!-- Stats -->
-    <div class="stats">
-      <!-- ... stats content ... -->
-      <div class="stats">
-        <div class="stat-card">
-          <div class="stat-number">6</div>
-          <div class="stat-label">Analysis Layers</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">10+</div>
-          <div class="stat-label">Security Checks</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">3</div>
-          <div class="stat-label">AI Providers</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number">∞</div>
-          <div class="stat-label">Code Languages</div>
-        </div>
-      </div>
-
-      <!-- Features -->
-      <div class="features">
-        <div class="feature-card">
-          <div class="feature-icon">💬</div>
-          <h3 class="feature-title">Interactive AI Chat</h3>
-          <p class="feature-description">
-            Converse with AI about your code. Ask questions, get explanations, and receive real-time security
-            insights
-            with streaming responses.
-          </p>
+        <div class="repos-table" id="reposGrid">
+          <!-- Skeleton rows -->
+          <div class="repos-table-row">
+            <div class="skeleton" style="width:26px;height:26px;border-radius:6px;flex-shrink:0"></div>
+            <div style="flex:1">
+              <div class="skeleton" style="width:180px"></div>
+            </div>
+            <div class="skeleton" style="width:120px;height:12px"></div>
+            <div class="skeleton" style="width:62px;height:26px;border-radius:6px"></div>
+          </div>
+          <div class="repos-table-row">
+            <div class="skeleton" style="width:26px;height:26px;border-radius:6px;flex-shrink:0"></div>
+            <div style="flex:1">
+              <div class="skeleton" style="width:150px"></div>
+            </div>
+            <div class="skeleton" style="width:100px;height:12px"></div>
+            <div class="skeleton" style="width:62px;height:26px;border-radius:6px"></div>
+          </div>
+          <div class="repos-table-row">
+            <div class="skeleton" style="width:26px;height:26px;border-radius:6px;flex-shrink:0"></div>
+            <div style="flex:1">
+              <div class="skeleton" style="width:200px"></div>
+            </div>
+            <div class="skeleton" style="width:80px;height:12px"></div>
+            <div class="skeleton" style="width:62px;height:26px;border-radius:6px"></div>
+          </div>
         </div>
 
-        <div class="feature-card">
-          <div class="feature-icon">🔒</div>
-          <h3 class="feature-title">Security Analysis</h3>
-          <p class="feature-description">
-            Multi-layer security scanning with Bandit, Semgrep, and AI-powered vulnerability detection. OWASP Top 10
-            coverage included.
-          </p>
+        {% elif current_user.is_authenticated %}
+        <div class="connect-github-banner">
+          🐙 Connect GitHub to browse and scan your repositories directly
+          <br>
+          <a href="{{ url_for('auth.github_login') }}">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <path fill-rule="evenodd"
+                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+            </svg>
+            Connect GitHub
+          </a>
         </div>
+        {% endif %}
 
-        <div class="feature-card">
-          <div class="feature-icon">🔄</div>
-          <h3 class="feature-title">Smart Refactoring</h3>
-          <p class="feature-description">
-            AI suggests code improvements, identifies code smells, and provides refactoring recommendations with
-            explanations.
-          </p>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">🎯</div>
-          <h3 class="feature-title">CVE Detection</h3>
-          <p class="feature-description">
-            Automatic dependency scanning and CVE vulnerability detection using OSV database with severity scoring.
-          </p>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">📊</div>
-          <h3 class="feature-title">Visual Dashboard</h3>
-          <p class="feature-description">
-            Interactive dashboard with charts, metrics, and drill-down capabilities for comprehensive code insights.
-          </p>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-icon">🔍</div>
-          <h3 class="feature-title">Semantic Search</h3>
-          <p class="feature-description">
-            Natural language code search powered by vector embeddings. Find code patterns and issues instantly.
-          </p>
-        </div>
-      </div>
-
-
-
-      {% if error %}
-      <div class="error-message">
-        <strong>❌ Error:</strong> {{ error }}
-      </div>
-      {% endif %}
-    </div>
-
-    <script>
-      // ─────────────────────────────────────────
-      // GitHub Repo Picker
-      // ─────────────────────────────────────────
-      const LANG_COLORS = {
-        JavaScript: '#f1e05a', TypeScript: '#3178c6', Python: '#3572A5',
-        Java: '#b07219', 'C++': '#f34b7d', C: '#555555', 'C#': '#178600',
-        Go: '#00ADD8', Rust: '#dea584', PHP: '#4F5D95', Ruby: '#701516',
-        Swift: '#F05138', Kotlin: '#A97BFF', HTML: '#e34c26', CSS: '#563d7c',
-        Shell: '#89e051', Dart: '#00B4AB', Scala: '#c22d40', R: '#198CE7',
-      };
-
-      let _allRepos = [];
-      let _activeFilter = 'all';
-
-      {% if current_user.is_authenticated and current_user.github_username %}
-      // Auto-fetch repos when page loads
-      window.addEventListener('DOMContentLoaded', loadGithubRepos);
-
-      async function loadGithubRepos() {
-        try {
-          const resp = await fetch('/auth/github/repos', { credentials: 'same-origin' });
-          if (!resp.ok) throw new Error('Not authenticated');
-          const data = await resp.json();
-          _allRepos = data.repos || [];
-          renderRepos(_allRepos);
-        } catch (err) {
-          const grid = document.getElementById('reposGrid');
-          if (grid) grid.innerHTML = `
-            <div class="repos-empty">
-              ⚠️ Could not load repos. <a href="/auth/github" style="color:#FF9B51;">Reconnect GitHub</a>
-            </div>`;
-        }
-      }
-      {% endif %}
-
-      function renderRepos(repos) {
-        const grid = document.getElementById('reposGrid');
-        if (!grid) return;
-        if (!repos.length) {
-          grid.innerHTML = '<div class="repos-empty">No repositories found.</div>';
-          return;
-        }
-        grid.innerHTML = repos.map(r => {
-          const langColor = LANG_COLORS[r.language] || '#8b949e';
-          const updated = r.updated_at ? new Date(r.updated_at).toLocaleDateString() : '';
-          return `
-            <div class="repo-card" data-name="${r.name.toLowerCase()}" data-private="${r.private}">
-              <div class="repo-card-top">
-                <div class="repo-name">
-                  <a href="${r.html_url}" target="_blank" rel="noopener">${r.name}</a>
-                </div>
-                ${r.private ? '<span class="repo-private-badge">🔒 Private</span>' : ''}
+        <!-- Feature cards -->
+        <div class="features-row">
+          <div class="feature-card">
+            <div class="feature-card-icon orange">🛡️</div>
+            <div class="feature-card-body">
+              <div class="feature-card-title">Static + LLM Analysis</div>
+              <div class="feature-card-desc">Combines static code analysis, CVE tracking, and LLM intelligence for deep
+                insights.</div>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-card-icon yellow">⚠️</div>
+            <div class="feature-card-body">
+              <div class="feature-card-title">Deep Security Scanning</div>
+              <div class="feature-card-desc">Detects CVEs, secrets, OWASP risks, and vulnerable files automatically.
               </div>
-              ${r.description ? `<div class="repo-desc">${escapeHtml(r.description)}</div>` : '<div class="repo-desc" style="color:#4a5568;font-style:italic">No description</div>'}
-              <div class="repo-meta">
-                <span style="display:flex;align-items:center;gap:4px;">
-                  <span class="lang-dot" style="background:${langColor};"></span>
-                  ${r.language}
-                </span>
-                <span>⭐ ${r.stars}</span>
-                <span>🍴 ${r.forks}</span>
-                ${updated ? `<span style="margin-left:auto;font-size:0.73rem;">${updated}</span>` : ''}
-              </div>
-              <button class="repo-scan-btn" onclick="scanRepo(this, '${r.clone_url}', '${r.full_name}')">
-                🔍 Scan This Repo
-              </button>
-            </div>`;
-        }).join('');
-      }
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-card-icon blue">💬</div>
+            <div class="feature-card-body">
+              <div class="feature-card-title">Interactive Code Chat</div>
+              <div class="feature-card-desc">Engage in interactive chat with AI agents for in-depth reviews and
+                refactoring.</div>
+            </div>
+          </div>
+        </div>
 
-      function escapeHtml(s) {
-        return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-      }
+      </main>
+    </div><!-- /main-area -->
+  </div><!-- /app-shell -->
 
-      function filterRepos() {
-        const q = (document.getElementById('repoSearchInput')?.value || '').toLowerCase();
-        let results = _allRepos.filter(r => {
-          const matchesText = r.name.toLowerCase().includes(q) ||
-            (r.description || '').toLowerCase().includes(q);
-          const matchesFilter = _activeFilter === 'all' ||
-            (_activeFilter === 'private' && r.private) ||
-            (_activeFilter === 'public' && !r.private);
-          return matchesText && matchesFilter;
-        });
-        renderRepos(results);
-      }
+  <!-- ══ SCRIPTS ══ -->
+  <script>
+    /* ── Profile dropdown ── */
+    function toggleProfile(e) {
+      e.stopPropagation();
+      document.getElementById('profileMenu').classList.toggle('open');
+    }
+    document.addEventListener('click', (e) => {
+      const dd = document.querySelector('.profile-dropdown');
+      const menu = document.getElementById('profileMenu');
+      if (menu && dd && !dd.contains(e.target)) menu.classList.remove('open');
+    });
 
-      function setFilter(btn, type) {
-        _activeFilter = type;
-        document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-        btn.classList.add('active');
-        filterRepos();
-      }
+    /* ── File inputs ── */
+    function selectFiles() {
+      document.getElementById('codebase').click();
+    }
+    function selectFolder() {
+      document.getElementById('folderInput').click();
+    }
 
-      async function scanRepo(btn, cloneUrl, fullName) {
-        btn.disabled = true;
-        btn.textContent = '⏳ Cloning…';
-        const jwtToken = '{{ jwt_token | default("") }}';
-        const headers = { 'Content-Type': 'application/json' };
-        if (jwtToken) headers['Authorization'] = 'Bearer ' + jwtToken;
-        try {
-          const resp = await fetch('/api/analyze/repo', {
-            method: 'POST',
-            headers,
-            credentials: 'same-origin',
-            body: JSON.stringify({ repo_url: cloneUrl })
-          });
-          const data = await resp.json();
-          if (!resp.ok) throw new Error(data.error || 'Failed');
-          window.location.href = data.redirect || `/processing?uid=${data.uid}`;
-        } catch (err) {
-          btn.disabled = false;
-          btn.textContent = '🔍 Scan This Repo';
-          alert(`Error scanning ${fullName}: ${err.message}`);
-        }
-      }
+    const codebaseInput = document.getElementById('codebase');
+    const folderInput = document.getElementById('folderInput');
+    const fileNotice = document.getElementById('fileNotice');
 
+    function updateNotice(files) {
+      if (!files || files.length === 0) { fileNotice.textContent = ''; return; }
+      fileNotice.textContent = `✅ ${files.length} file${files.length > 1 ? 's' : ''} selected`;
+    }
 
-      const themeBtn = document.getElementById('themeToggleBtn');
-      const body = document.body;
-
-      // Check saved preference
-      const currentTheme = localStorage.getItem('theme');
-      if (currentTheme === 'light') {
-        body.classList.add('light-mode');
-        themeBtn.textContent = '🌙';
-      }
-
-      function toggleTheme() {
-        if (body.classList.contains('light-mode')) {
-          body.classList.remove('light-mode');
-          themeBtn.textContent = '☀️';
-          localStorage.setItem('theme', 'dark');
-        } else {
-          body.classList.add('light-mode');
-          themeBtn.textContent = '🌙';
-          localStorage.setItem('theme', 'light');
-        }
-      }
-
-      // Drag and drop functionality
-      const uploadArea = document.getElementById('upload-area');
-      const fileInput = document.getElementById('codebase');
-      const uploadLabel = uploadArea.querySelector('.upload-label');
-      const originalLabelText = uploadLabel.textContent;
-
-      // Functions to handle file and folder selection
-      function selectFiles() {
-        console.log('Select Files button clicked');
-        fileInput.removeAttribute('webkitdirectory');
-        fileInput.removeAttribute('directory');
-        fileInput.click();
-      }
-
-      function selectFolder() {
-        console.log('Select Folder button clicked');
-        fileInput.setAttribute('webkitdirectory', '');
-        fileInput.setAttribute('directory', '');
-        fileInput.click();
-      }
-
-      function updateLabel(count) {
-        console.log(`Files selected: ${count}`);
-        if (count > 0) {
-          uploadLabel.textContent = `✅ ${count} file${count > 1 ? 's' : ''} selected`;
-        } else {
-          uploadLabel.textContent = originalLabelText;
-        }
-      }
-
-      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        uploadArea.addEventListener(eventName, preventDefaults, false);
+    if (codebaseInput) {
+      codebaseInput.addEventListener('change', () => updateNotice(codebaseInput.files));
+    }
+    if (folderInput) {
+      folderInput.addEventListener('change', function () {
+        updateNotice(this.files);
+        // Swap into real form input
+        this.name = 'codebase';
+        if (codebaseInput) codebaseInput.name = '';
       });
+    }
 
-      function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-
-      ['dragenter', 'dragover'].forEach(eventName => {
-        uploadArea.addEventListener(eventName, () => {
-          uploadArea.classList.add('dragover');
-        }, false);
-      });
-
-      ['dragleave', 'drop'].forEach(eventName => {
-        uploadArea.addEventListener(eventName, () => {
-          uploadArea.classList.remove('dragover');
-        }, false);
-      });
-
+    /* ── Drag & drop ── */
+    const uploadArea = document.getElementById('upload-area');
+    if (uploadArea) {
+      ['dragenter', 'dragover'].forEach(ev => uploadArea.addEventListener(ev, (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); }));
+      ['dragleave', 'drop'].forEach(ev => uploadArea.addEventListener(ev, () => uploadArea.classList.remove('dragover')));
       uploadArea.addEventListener('drop', (e) => {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        fileInput.files = files;
-        updateLabel(files.length);
-      }, false);
-
-      // Click to upload - removed to prevent conflict with buttons
-      // uploadArea.addEventListener('click', (e) => {
-      //   if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'LABEL') {
-      //     fileInput.click();
-      //   }
-      // });
-
-
-      // Show selected file
-      fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length > 0) {
-          updateLabel(e.target.files.length);
+        e.preventDefault();
+        if (e.dataTransfer.files.length && codebaseInput) {
+          codebaseInput.files = e.dataTransfer.files;
+          updateNotice(e.dataTransfer.files);
         }
       });
+    }
 
-      // Form validation before submission
-      const uploadForm = document.getElementById('upload-form');
-      uploadForm.addEventListener('submit', (e) => {
-        const files = fileInput.files;
-        console.log(`Form submit: ${files ? files.length : 0} files selected`);
-
-        if (!files || files.length === 0) {
-          e.preventDefault();
-          alert('Please select at least one file or folder to analyze');
-          return false;
-        }
-
-        // Show file count to user
-        console.log(`Uploading ${files.length} files...`);
-        document.getElementById('analyze-btn').textContent = `⏳ Uploading ${files.length} files...`;
-        document.getElementById('analyze-btn').disabled = true;
-
-        // Show loading state on button
-        const analyzeBtn = document.getElementById('analyze-btn');
+    /* ── Analyze btn ── */
+    const uploadForm = document.getElementById('upload-form');
+    const analyzeBtn = document.getElementById('analyze-btn');
+    if (uploadForm && analyzeBtn) {
+      uploadForm.addEventListener('submit', () => {
         analyzeBtn.disabled = true;
-        analyzeBtn.innerHTML = '⏳ Uploading...';
-
-        return true;
+        analyzeBtn.textContent = '⏳ Analyzing...';
       });
+    }
 
+    /* ── Repo URL analyze ── */
+    async function analyzeRepo() {
+      const url = document.getElementById('repo-url').value.trim();
+      if (!url) { alert('Please enter a repository URL'); return; }
+      const btn = document.getElementById('repo-btn');
+      btn.disabled = true;
+      btn.textContent = '⏳ Cloning...';
+      try {
+        const res = await fetch('/api/analyze/repo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ repo_url: url }) });
+        const data = await res.json();
+        if (data.task_id || data.uid) {
+          window.location.href = `/processing?uid=${data.task_id || data.uid}`;
+        } else {
+          alert(data.error || 'Failed to start analysis');
+          btn.disabled = false; btn.textContent = '🔀 Clone & Analyze';
+        }
+      } catch (e) {
+        alert('Error: ' + e.message);
+        btn.disabled = false; btn.textContent = '🔀 Clone & Analyze';
+      }
+    }
 
-      async function analyzeRepo() {
-        const repoUrl = document.getElementById('repo-url').value;
-        if (!repoUrl) {
-          alert('Please enter a repository URL');
+    /* ── GitHub Repos loading ── */
+    let allRepos = [];
+    let currentFilter = 'all';
+
+    /* ── GitHub Repos (always run — API handles auth check) ── */
+    async function loadRepos() {
+      try {
+        const res = await fetch('/auth/github/repos');
+        if (!res.ok) {
+          document.getElementById('reposGrid').innerHTML =
+            '<div style="padding:20px;text-align:center;color:var(--text-muted)">Unable to load repositories — please try reconnecting GitHub</div>';
           return;
         }
-
-        const btn = document.getElementById('repo-btn');
-        const originalText = btn.textContent;
-        btn.disabled = true;
-        btn.textContent = '⏳ Cloning & Analyzing...';
-
-        try {
-          const response = await fetch('/api/analyze/repo', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ repo_url: repoUrl })
-          });
-
-          const result = await response.json();
-          if (response.ok) {
-            window.location.href = result.redirect || '/code-viewer/' + result.uid;
-          } else {
-            alert('Error: ' + (result.error || 'Unknown error occurred'));
-          }
-        } catch (err) {
-          console.error(err);
-          alert('Failed to start analysis: ' + err.message);
-        } finally {
-          btn.disabled = false;
-          btn.textContent = originalText;
-        }
+        const data = await res.json();
+        allRepos = data.repos || data || [];
+        renderRepos();
+      } catch (e) {
+        document.getElementById('reposGrid').innerHTML =
+          '<div style="padding:20px;text-align:center;color:var(--text-muted)">Unable to load repositories</div>';
       }
-    </script>
+    }
+
+    function renderRepos() {
+      const grid = document.getElementById('reposGrid');
+      const search = (document.getElementById('repoSearchInput')?.value || '').toLowerCase();
+      const filtered = allRepos.filter(r => {
+        const matchFilter = currentFilter === 'all' || (currentFilter === 'private' ? r.private : !r.private);
+        const matchSearch = !search || r.full_name.toLowerCase().includes(search) || (r.description || '').toLowerCase().includes(search);
+        return matchFilter && matchSearch;
+      });
+
+      if (!filtered.length) {
+        grid.innerHTML = '<div style="padding:24px;text-align:center;color:var(--text-muted);font-size:0.8rem">No repositories found</div>';
+        return;
+      }
+
+      const LANG_COLORS = { Python: '#3572A5', JavaScript: '#f1e05a', TypeScript: '#2b7489', Java: '#b07219', Go: '#00ADD8', Rust: '#dea584', Ruby: '#701516', C: '#555555', 'C++': '#f34b7d', Shell: '#89e051', HTML: '#e34c26', CSS: '#563d7c' };
+
+      grid.innerHTML = filtered.slice(0, 10).map(r => {
+        const langColor = LANG_COLORS[r.language] || '#8891aa';
+        const stars = r.stars || r.stargazers_count || 0;
+        const forks = r.forks || r.forks_count || 0;
+        const issues = r.open_issues_count || 0;
+        const badge = r.private ? `<span class="repo-private-badge">Private</span>` : '';
+        const deltaStars = stars > 5 ? `<span class="delta-pos">+${Math.round(stars * 0.15)}</span>` : '';
+
+        return `<div class="repos-table-row" data-private="${r.private}" data-name="${(r.full_name || '').toLowerCase()}">
+      <div class="repo-icon">📁</div>
+      <div class="repo-name-col">
+        <div class="repo-name">
+          <a href="${r.html_url}" target="_blank">${r.full_name}</a>
+          ${badge}
+        </div>
+      </div>
+      <div class="repo-stats">
+        <span class="repo-stat"><span class="repo-stat-icon">⭐</span>${stars}${deltaStars}</span>
+        <span class="repo-stat"><span class="repo-stat-icon">🔀</span>${forks}</span>
+        <span class="repo-stat"><span class="repo-stat-icon">🐛</span>+${issues}</span>
+        ${r.language ? `<span class="repo-stat"><span class="repo-lang-dot" style="background:${langColor}"></span>${r.language}</span>` : ''}
+      </div>
+      <button class="btn-analyze" onclick="analyzeGitRepo('${r.clone_url || r.html_url}', this)">Analyze</button>
+    </div>`;
+      }).join('');
+    }
+
+    function filterRepos() { renderRepos(); }
+    function setFilter(el, filter) {
+      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      currentFilter = filter;
+      renderRepos();
+    }
+
+    async function analyzeGitRepo(url, btn) {
+      if (!url) return;
+      btn.disabled = true; btn.textContent = 'Analyzing…';
+      try {
+        const res = await fetch('/api/analyze/repo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ repo_url: url }) });
+        const data = await res.json();
+        if (data.task_id || data.uid) {
+          window.location.href = `/processing?uid=${data.task_id || data.uid}`;
+        } else {
+          alert(data.error || 'Failed to start analysis');
+          btn.disabled = false; btn.textContent = 'Analyze';
+        }
+      } catch (e) {
+        alert('Error: ' + e.message);
+        btn.disabled = false; btn.textContent = 'Analyze';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadRepos);
+
+    /* ── Sidebar toggle ── */
+    function toggleSidebar() {
+      const sidebar = document.getElementById('mainSidebar');
+      const btn = document.getElementById('sidebarToggle');
+      sidebar.classList.toggle('open');
+      btn.classList.toggle('sb-open');
+    }
+
+    /* ── Profile dropdown ── */
+    function toggleProfile(e) {
+      e.stopPropagation();
+      document.getElementById('profileMenu')?.classList.toggle('open');
+    }
+    document.addEventListener('click', (e) => {
+      const dd = document.querySelector('.profile-dropdown');
+      const menu = document.getElementById('profileMenu');
+      if (menu && dd && !dd.contains(e.target)) menu.classList.remove('open');
+    });
+  </script>
 </body>
 
 </html>

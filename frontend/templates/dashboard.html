@@ -2,145 +2,1366 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - AI Code Review Platform</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Review Dashboard</title>
+  <meta name="description" content="AI-powered security & code quality dashboard">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset ── */
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0f1623;
+      --bg-card: #161d2e;
+      --bg-sidebar: #111827;
+      --topbar-h: 52px;
+      --sidebar-w: 190px;
+      --border: rgba(255, 255, 255, 0.07);
+      --text: #e2e8f4;
+      --text-muted: #8891aa;
+      --text-dim: #4a5270;
+      --accent: #FF9B51;
+      --accent-dim: rgba(255, 155, 81, 0.14);
+      --green: #4ade80;
+      --blue: #60a5fa;
+      --red: #f87171;
+      --orange: #fb923c;
+      --yellow: #fbbf24;
+      --c-critical: #ef4444;
+      --c-high: #f97316;
+      --c-medium: #eab308;
+      --c-low: #22c55e;
+      --c-info: #3b82f6;
+      --accent-green: #22c55e;
+      --radius: 10px;
+      --transition: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    /* ══════════════════════════════════
+       APP SHELL
+    ══════════════════════════════════ */
+    .shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* ══════════════════════════════════
+       TOP NAV BAR
+    ══════════════════════════════════ */
+    .topnav {
+      height: var(--topbar-h);
+      flex-shrink: 0;
+      background: var(--bg-sidebar);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 18px;
+      gap: 14px;
+      z-index: 200;
+    }
+
+    /* Hamburger */
+    .ham-btn {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 4.5px;
+      width: 34px;
+      height: 34px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.2s, border-color 0.2s;
+      padding: 0;
+    }
+
+    .ham-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--accent);
+    }
+
+    .ham-bar {
+      display: block;
+      width: 15px;
+      height: 1.8px;
+      background: var(--text-muted);
+      border-radius: 2px;
+      transform-origin: center;
+      transition: transform 0.24s ease, opacity 0.24s ease, width 0.24s ease;
+    }
+
+    .ham-btn.open {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+    }
+
+    .ham-btn.open .ham-bar {
+      background: var(--accent);
+    }
+
+    .ham-btn.open .ham-bar:nth-child(1) {
+      transform: translateY(6.3px) rotate(45deg);
+    }
+
+    .ham-btn.open .ham-bar:nth-child(2) {
+      opacity: 0;
+      width: 0;
+    }
+
+    .ham-btn.open .ham-bar:nth-child(3) {
+      transform: translateY(-6.3px) rotate(-45deg);
+    }
+
+    /* Brand */
+    .topnav-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-right: 14px;
+      border-right: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .topnav-brand-icon {
+      width: 26px;
+      height: 26px;
+      background: linear-gradient(135deg, var(--accent), #ff6b1a);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    .topnav-brand-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+    }
+
+    /* Nav Tabs */
+    .topnav-tabs {
+      display: flex;
+      gap: 2px;
+      flex: 1;
+    }
+
+    .topnav-tab {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: none;
+      background: none;
+      white-space: nowrap;
+    }
+
+    .topnav-tab:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+    }
+
+    .topnav-tab.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+      border-bottom: 2px solid var(--accent);
+    }
+
+    /* Right side */
+    .topnav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .btn-start {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 16px;
+      background: #22c55e;
+      border: none;
+      border-radius: 7px;
+      color: #000;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-start:hover {
+      background: #16a34a;
+      transform: translateY(-1px);
+    }
+
+    .topnav-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #ff6b1a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #000;
+      font-weight: 700;
+      cursor: pointer;
+      border: 2px solid rgba(255, 155, 81, 0.3);
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════
+       BODY ROW (sidebar + content)
+    ══════════════════════════════════ */
+    .body-row {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    /* ══════════════════════════════════
+       LEFT SIDEBAR
+    ══════════════════════════════════ */
+    .sidebar {
+      width: 0;
+      flex-shrink: 0;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: width var(--transition);
+      white-space: nowrap;
+      z-index: 100;
+    }
+
+    .sidebar.open {
+      width: var(--sidebar-w);
+    }
+
+    .sidebar-inner {
+      width: var(--sidebar-w);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    .sidebar-inner::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .sidebar-inner::-webkit-scrollbar-thumb {
+      background: #2a3045;
+      border-radius: 2px;
+    }
+
+    .sb-section-label {
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--text-dim);
+      padding: 12px 14px 4px;
+    }
+
+    .sb-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 14px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      transition: all 0.15s;
+      border-left: 2px solid transparent;
+    }
+
+    .sb-link:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+    }
+
+    .sb-link.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+      border-left-color: var(--accent);
+    }
+
+    .sb-link-icon {
+      font-size: 0.95rem;
+      width: 18px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .sb-spacer {
+      flex: 1;
+    }
+
+    .sb-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 6px 14px;
+    }
+
+    /* ══════════════════════════════════
+       MAIN CONTENT
+    ══════════════════════════════════ */
+    .main {
+      flex: 1;
+      min-width: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .main::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .main::-webkit-scrollbar-thumb {
+      background: #2a3045;
+      border-radius: 3px;
+    }
+
+    .dash-content {
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 100%;
+    }
+
+    /* ── Stat cards row ── */
+    .stat-cards {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+    }
+
+    .stat-card-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .stat-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .stat-dot.blue {
+      background: var(--blue);
+    }
+
+    .stat-dot.red {
+      background: var(--c-critical);
+    }
+
+    .stat-dot.orange {
+      background: var(--orange);
+    }
+
+    .stat-dot.green {
+      background: var(--green);
+    }
+
+    .stat-value-row {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .stat-value {
+      font-size: 2.1rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .stat-value.blue {
+      color: var(--text);
+    }
+
+    .stat-value.red {
+      color: var(--c-critical);
+    }
+
+    .stat-value.orange {
+      color: var(--orange);
+    }
+
+    .stat-value.green {
+      color: var(--green);
+    }
+
+    .stat-unit {
+      font-size: 1rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .stat-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      background: var(--c-critical);
+      border-radius: 50%;
+      font-size: 0.65rem;
+      color: #fff;
+      font-weight: 700;
+      vertical-align: middle;
+    }
+
+    .stat-badge.orange {
+      background: var(--orange);
+    }
+
+    /* Gauge card */
+    .gauge-stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .gauge-stat-label {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      font-weight: 600;
+    }
+
+    .gauge-stat-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .gauge-mini-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .gauge-mini-label {
+      font-size: 0.58rem;
+      color: var(--text-dim);
+    }
+
+    .gauge-mini-canvas {
+      display: block;
+    }
+
+    .gauge-mini-footer {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .gauge-grade {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      background: var(--orange);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: #000;
+    }
+
+    .gauge-score {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    /* ── Chart rows ── */
+    .row-3col {
+      display: grid;
+      grid-template-columns: 240px 1fr 220px;
+      gap: 14px;
+    }
+
+    .row-3col-mid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+    }
+
+    .row-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    .card-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .card-subtitle {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .card-legend {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    /* ── Chart container ── */
+    .chart-wrap {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+    }
+
+    .chart-wrap canvas {
+      width: 100% !important;
+    }
+
+    .h-180 {
+      height: 180px;
+    }
+
+    .h-160 {
+      height: 160px;
+    }
+
+    .h-140 {
+      height: 140px;
+    }
+
+    /* ── Donut ── */
+    .donut-wrap {
+      position: relative;
+      width: 140px;
+      height: 140px;
+      margin: 0 auto;
+    }
+
+    .donut-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .donut-pct {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .donut-sub {
+      font-size: 0.62rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Legend list ── */
+    .legend-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .legend-list li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .legend-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .legend-name {
+      flex: 1;
+    }
+
+    .legend-pct {
+      width: 34px;
+      text-align: right;
+      color: var(--text-muted);
+    }
+
+    .legend-count {
+      min-width: 20px;
+      text-align: right;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ── Bar list ── */
+    .barlist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .barlist-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.72rem;
+    }
+
+    .barlist-label {
+      min-width: 90px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .barlist-track {
+      flex: 1;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .barlist-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.6s ease;
+    }
+
+    .barlist-val {
+      min-width: 36px;
+      text-align: right;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* ── Table ── */
+    .dash-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.72rem;
+    }
+
+    .dash-table th {
+      color: var(--text-dim);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.62rem;
+      letter-spacing: 0.4px;
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .dash-table td {
+      padding: 6px 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      color: var(--text-muted);
+    }
+
+    .dash-table tbody tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .td-right {
+      text-align: right;
+    }
+
+    .td-file {
+      font-family: monospace;
+      color: var(--text);
+      font-size: 0.7rem;
+    }
+
+    .td-bar {
+      min-width: 80px;
+    }
+
+    .td-bar-track {
+      height: 5px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .td-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--c-critical), var(--orange));
+      border-radius: 3px;
+    }
+
+    .td-score {
+      text-align: right;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ── Bottom stat bar ── */
+    .stat-bar {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      padding: 10px 16px;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      padding: 0 18px;
+    }
+
+    .stat-item:first-child {
+      padding-left: 0;
+    }
+
+    .stat-label {
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.4px;
+    }
+
+    .stat-value-big {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .stat-value-big.bold-num {
+      color: var(--text);
+    }
+
+    .stat-sub {
+      font-size: 0.6rem;
+      color: var(--text-dim);
+    }
+
+    .stat-divider {
+      width: 1px;
+      height: 32px;
+      background: var(--border);
+      margin: 0 4px;
+      flex-shrink: 0;
+    }
+
+    .sev-pills {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-left: auto;
+    }
+
+    .sev-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.72rem;
+    }
+
+    .sev-pill .count {
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .sev-pill .note {
+      color: var(--text-muted);
+      font-size: 0.65rem;
+    }
+
+    /* ── Modal ── */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.open {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      max-width: 560px;
+      width: 90vw;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .close {
+      float: right;
+      cursor: pointer;
+      font-size: 1.3rem;
+      color: var(--text-muted);
+    }
+
+    /* feedback toast */
+    .feedback-toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
+      background: var(--green);
+      color: #000;
+      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: all 0.3s;
+    }
+
+    .feedback-toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* loading text */
+    td.loading {
+      color: var(--text-dim);
+      font-style: italic;
+      text-align: center;
+      padding: 12px;
+    }
+  </style>
 </head>
 
-<body>
-    <div class="dashboard-container">
-        <!-- Header -->
-        <header class="dashboard-header">
-            <div class="header-left">
-                <h1>Dashboard</h1>
-                <p class="header-subtitle">Overview of code review activity and quality metrics.</p>
-            </div>
-            <div class="header-right">
-                <div class="header-actions">
-                    <a href="/" class="btn-action">🏠 Home</a>
-                    {% if uid %}
-                    <a href="/chat?uid={{ uid }}" class="btn-action">💬 Chat</a>
-                    {% else %}
-                    <a href="/chat" class="btn-action">💬 Chat</a>
-                    {% endif %}
-                    <button onclick="toggleTheme()" class="btn-action" id="themeToggle">🌗 Theme</button>
-                    <button onclick="refreshDashboard()" class="btn-action">🔄 Refresh</button>
-                    <a href="{{ url_for('auth.logout') }}" class="btn-action btn-logout">🚪 Logout</a>
-                </div>
-                <span class="last-updated">🕐 Last updated <span id="lastUpdated">2 min ago</span></span>
-            </div>
-        </header>
+<body{% if uid %} data-uid="{{ uid }}"{% endif %}>
+  <div class="shell">
 
-        <!-- Metrics Cards -->
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <div class="metric-content">
-                    <div class="metric-label">Files Reviewed</div>
-                    <div class="metric-value" id="filesReviewed">24</div>
-                </div>
-                <div class="metric-icon">📄</div>
-            </div>
+    <!-- ══════ TOP NAV ══════ -->
+    <header class="topnav">
+      <!-- Hamburger -->
+      <button class="ham-btn" id="hamBtn" onclick="toggleSidebar()" title="Toggle menu">
+        <span class="ham-bar"></span>
+        <span class="ham-bar"></span>
+        <span class="ham-bar"></span>
+      </button>
 
-            <div class="metric-card">
-                <div class="metric-content">
-                    <div class="metric-label">Issues Found</div>
-                    <div class="metric-value" id="issuesFound">18</div>
-                </div>
-                <div class="metric-icon">⚙️</div>
-            </div>
+      <!-- Brand -->
+      <div class="topnav-brand">
+        <div class="topnav-brand-icon">🛡️</div>
+        <span class="topnav-brand-name">AI Code Review</span>
+      </div>
 
-            <div class="metric-card">
-                <div class="metric-content">
-                    <div class="metric-label">AI-Code %</div>
-                    <div class="metric-value" id="aiCodePercent">0%</div>
-                </div>
-                <div class="metric-icon">🤖</div>
-            </div>
+      <!-- Nav tabs -->
+      <nav class="topnav-tabs">
+        <a href="/dashboard" class="topnav-tab active">📊 Dashboard</a>
+        <a href="/dashboard" class="topnav-tab">🔒 Security</a>
+        <a href="/dashboard" class="topnav-tab">✨ Code Quality</a>
+        <a href="/dashboard" class="topnav-tab">📋 Analysis History</a>
+      </nav>
 
-            <div class="metric-card">
-                <div class="metric-content">
-                    <div class="metric-label">Security Rating</div>
-                    <div class="metric-value" id="securityRating">0/10</div>
-                </div>
-                <div class="metric-icon">🛡️</div>
-            </div>
+      <!-- Right -->
+      <div class="topnav-right">
+        <a href="/" class="btn-start">▶ Start Analysis</a>
+        {% if current_user.is_authenticated %}
+        <div class="topnav-avatar" title="{{ current_user.email }}">
+          {{ (current_user.email or 'U')[0]|upper }}
         </div>
+        {% endif %}
+      </div>
+    </header>
 
-        <!-- Charts Section -->
-        <div class="charts-grid">
-            <!-- Issue Histogram -->
-            <div class="chart-card chart-full-width">
-                <h3>📊 Issue Distribution</h3>
-                <div class="chart-container">
-                    <canvas id="issueHistogram"></canvas>
+    <!-- ══════ BODY ROW ══════ -->
+    <div class="body-row">
+
+      <!-- ══ LEFT SIDEBAR ══ -->
+      <aside class="sidebar" id="dashSidebar">
+        <div class="sidebar-inner">
+          <div class="sb-section-label">Navigation</div>
+
+          <a href="/" class="sb-link">
+            <span class="sb-link-icon">🏠</span>Home
+          </a>
+          <a href="/dashboard" class="sb-link active">
+            <span class="sb-link-icon">📊</span>Dashboard
+          </a>
+          <a href="/dashboard" class="sb-link">
+            <span class="sb-link-icon">🔒</span>Security
+          </a>
+          <a href="/dashboard" class="sb-link">
+            <span class="sb-link-icon">✨</span>Code Quality
+          </a>
+          <a href="/dashboard" class="sb-link">
+            <span class="sb-link-icon">📋</span>Analysis History
+          </a>
+          <a href="/chat" class="sb-link">
+            <span class="sb-link-icon">💬</span>AI Chat
+          </a>
+          <a href="/code-viewer" class="sb-link">
+            <span class="sb-link-icon">🖊️</span>Code Editor
+          </a>
+
+          <div class="sb-section-label" style="margin-top:8px">Settings</div>
+          <button onclick="toggleTheme()" class="sb-link">
+            <span class="sb-link-icon">⚙️</span>Settings
+          </button>
+          <a href="https://owasp.org/Top10/" target="_blank" class="sb-link">
+            <span class="sb-link-icon">📖</span>Docs
+          </a>
+
+          <div class="sb-spacer"></div>
+          <div class="sb-divider"></div>
+          <a href="{{ url_for('auth.logout') }}" class="sb-link" style="color:#fca5a5;margin-bottom:8px">
+            <span class="sb-link-icon">🚪</span>Log Out
+          </a>
+        </div>
+      </aside>
+
+      <!-- ══ MAIN CONTENT ══ -->
+      <main class="main">
+        <div class="dash-content">
+
+          <!-- ─── ROW 0: STAT CARDS ─── -->
+          <div class="stat-cards">
+
+            <!-- Total Issues -->
+            <div class="stat-card">
+              <div class="stat-card-label"><span class="stat-dot blue"></span> Total Issues</div>
+              <div class="stat-value-row">
+                <span class="stat-value blue" id="statTotalIssues">—</span>
+              </div>
+            </div>
+
+            <!-- Critical Issues -->
+            <div class="stat-card">
+              <div class="stat-card-label"><span class="stat-dot red"></span> Critical Issues</div>
+              <div class="stat-value-row">
+                <span class="stat-value red" id="statCritical">—</span>
+                <span class="stat-badge" id="statCriticalBadge" style="display:none">!</span>
+              </div>
+            </div>
+
+            <!-- Technical Debt -->
+            <div class="stat-card">
+              <div class="stat-card-label"><span class="stat-dot orange"></span> Technical Debt</div>
+              <div class="stat-value-row">
+                <span class="stat-value orange" id="statDebt">—</span>
+                <span class="stat-unit">h</span>
+              </div>
+            </div>
+
+            <!-- Security Rating -->
+            <div class="stat-card">
+              <div class="stat-card-label"><span class="stat-dot green"></span> Security Rating</div>
+              <div class="stat-value-row">
+                <span class="stat-value green" id="statRating">—</span>
+                <span class="stat-unit">/10</span>
+              </div>
+            </div>
+
+            <!-- Code Quality Score -->
+            <div class="gauge-stat-card">
+              <div class="gauge-stat-label">Code Quality</div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+                <canvas id="gaugeQuality" class="gauge-mini-canvas" width="90" height="52"></canvas>
+                <div class="gauge-mini-footer">
+                  <span class="gauge-grade" id="qualityGrade">—</span>
+                  <span class="gauge-score" id="qualityScore">—</span>
                 </div>
+              </div>
             </div>
-        </div>
 
-        <!-- Possible Cyber Security Theft Section -->
-        <div class="recent-reviews-section cyber-theft-section">
-            <div class="section-header">
-                <h2>🚨 Possible Cyber Security Theft</h2>
-                <p class="section-subtitle">Detected vulnerabilities that may expose sensitive data or allow
-                    unauthorized access</p>
-            </div>
-            <div class="table-container">
-                <table class="reviews-table cyber-theft-table">
-                    <thead>
-                        <tr>
-                            <th>🎯 Threat Type</th>
-                            <th>📁 Source File : Line</th>
-                            <th>⚠️ Severity</th>
-                            <th>🔍 Description</th>
-                            <th>🛡️ OWASP / CWE</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="reviewsTableBody">
-                        <tr>
-                            <td colspan="6" class="loading">🔍 Scanning for security threats...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Action Buttons (Hidden by default, can be shown via menu) -->
-        <div class="action-menu" style="display: none;">
-            <a href="/" class="btn-action">🏠 Home</a>
-            {% if uid %}
-            <a href="/chat?uid={{ uid }}" class="btn-action">💬 Chat</a>
-            {% else %}
-            <a href="/chat" class="btn-action">💬 Chat</a>
-            {% endif %}
-            <button onclick="toggleTheme()" class="btn-action" id="themeToggle">🌗 Theme</button>
-            <button onclick="refreshDashboard()" class="btn-action">🔄 Refresh</button>
-            <a href="{{ url_for('auth.logout') }}" class="btn-action">🚪 Logout</a>
-        </div>
-
-        <!-- Finding Detail Modal -->
-        <div id="findingModal" class="modal">
-            <div class="modal-content">
-                <span class="close" onclick="closeModal()">&times;</span>
-                <div id="modalBody">
-                    <!-- Dynamic content loaded here -->
+            <!-- Security Score -->
+            <div class="gauge-stat-card">
+              <div class="gauge-stat-label">Security Score</div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+                <canvas id="gaugeSecurity" class="gauge-mini-canvas" width="90" height="52"></canvas>
+                <div class="gauge-mini-footer">
+                  <span class="gauge-grade" id="securityGrade" style="background:var(--accent-green)">—</span>
+                  <span class="gauge-score" id="securityScore">—</span>
                 </div>
+              </div>
             </div>
-        </div>
+
+          </div><!-- /stat-cards -->
+
+          <!-- ─── ROW 1: Donut | Timeline | Right stack ─── -->
+          <div class="row-3col">
+
+            <!-- Issues by Severity Donut -->
+            <div class="card">
+              <div class="card-title">Issues by Severity</div>
+              <div class="donut-wrap">
+                <canvas id="chartDonut"></canvas>
+                <div class="donut-center">
+                  <div class="donut-pct" id="donutPct">—</div>
+                  <div class="donut-sub">health</div>
+                </div>
+              </div>
+              <ul class="legend-list" id="donutLegend">
+                <li><span class="legend-swatch" style="background:var(--c-critical)"></span><span
+                    class="legend-name">Critical</span><span class="legend-pct" id="pctCritical">0%</span><span
+                    class="legend-count" id="cntCritical">0</span></li>
+                <li><span class="legend-swatch" style="background:var(--c-high)"></span><span
+                    class="legend-name">High</span><span class="legend-pct" id="pctHigh">0%</span><span
+                    class="legend-count" id="cntHigh">0</span></li>
+                <li><span class="legend-swatch" style="background:var(--c-medium)"></span><span
+                    class="legend-name">Medium</span><span class="legend-pct" id="pctMedium">0%</span><span
+                    class="legend-count" id="cntMedium">0</span></li>
+                <li><span class="legend-swatch" style="background:var(--c-low)"></span><span
+                    class="legend-name">Low</span><span class="legend-pct" id="pctLow">0%</span><span
+                    class="legend-count" id="cntLow">0</span></li>
+                <li><span class="legend-swatch" style="background:var(--c-info)"></span><span
+                    class="legend-name">Info</span><span class="legend-pct" id="pctInfo">0%</span><span
+                    class="legend-count" id="cntInfo">0</span></li>
+              </ul>
+            </div>
+
+            <!-- Issues Over Time -->
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Issues Over Time</div>
+                  <div class="card-subtitle">Last 30 days</div>
+                </div>
+                <div class="card-legend">
+                  <span><span
+                      style="display:inline-block;width:16px;height:2px;background:var(--c-high);border-radius:1px;vertical-align:middle;margin-right:3px"></span>New</span>
+                  <span><span
+                      style="display:inline-block;width:16px;height:2px;background:var(--accent-green);border-radius:1px;vertical-align:middle;margin-right:3px"></span>Resolved</span>
+                </div>
+              </div>
+              <div class="chart-wrap h-180">
+                <canvas id="chartTimeline"></canvas>
+              </div>
+            </div>
+
+            <!-- Right stack: Issues by Type + Top Risky Files mini -->
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <div class="card">
+                <div class="card-title">Issues by Type</div>
+                <ul class="barlist" id="issuesByTypeList">
+                  <li class="barlist-item">
+                    <span class="barlist-label"><span class="dot"
+                        style="background:var(--c-critical)"></span>Bugs</span>
+                    <div class="barlist-track">
+                      <div class="barlist-fill" style="background:var(--c-critical);width:0%" id="typeBarBugs"></div>
+                    </div>
+                    <span class="barlist-val" id="typeValBugs">—</span>
+                  </li>
+                  <li class="barlist-item">
+                    <span class="barlist-label"><span class="dot"
+                        style="background:var(--c-high)"></span>Vulnerabilities</span>
+                    <div class="barlist-track">
+                      <div class="barlist-fill" style="background:var(--c-high);width:0%" id="typeBarVuln"></div>
+                    </div>
+                    <span class="barlist-val" id="typeValVuln">—</span>
+                  </li>
+                  <li class="barlist-item">
+                    <span class="barlist-label"><span class="dot" style="background:var(--c-medium)"></span>Code
+                      Smells</span>
+                    <div class="barlist-track">
+                      <div class="barlist-fill" style="background:var(--c-medium);width:0%" id="typeBarSmell"></div>
+                    </div>
+                    <span class="barlist-val" id="typeValSmell">—</span>
+                  </li>
+                  <li class="barlist-item">
+                    <span class="barlist-label"><span class="dot"
+                        style="background:var(--c-low)"></span>Performance</span>
+                    <div class="barlist-track">
+                      <div class="barlist-fill" style="background:var(--c-low);width:0%" id="typeBarPerf"></div>
+                    </div>
+                    <span class="barlist-val" id="typeValPerf">—</span>
+                  </li>
+                </ul>
+              </div>
+              <div class="card">
+                <div class="card-title">Top Risky Files</div>
+                <ul class="barlist" id="miniRiskyFiles" style="font-size:0.68rem">
+                  <li style="color:var(--text-dim);font-size:0.7rem;padding:4px 0">Loading...</li>
+                </ul>
+              </div>
+            </div>
+
+          </div><!-- /row-3col -->
+
+          <!-- ─── ROW 2: Created vs Resolved | Top Risky Files table | Vulns by Type ─── -->
+          <div class="row-3col-mid">
+
+            <!-- Created vs Resolved -->
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Created vs Resolved Issues</div>
+                  <div class="card-subtitle">Last 72 days</div>
+                </div>
+                <div class="card-legend">
+                  <span><span
+                      style="display:inline-block;width:10px;height:10px;background:var(--c-high);border-radius:2px;vertical-align:middle;margin-right:3px"></span>Created</span>
+                  <span><span
+                      style="display:inline-block;width:10px;height:10px;background:var(--accent-green);border-radius:2px;vertical-align:middle;margin-right:3px"></span>Resolved</span>
+                  <span>— Moving Avg</span>
+                </div>
+              </div>
+              <div class="chart-wrap h-160">
+                <canvas id="chartCreatedResolved"></canvas>
+              </div>
+            </div>
+
+            <!-- Top Risky Files table -->
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Top Risky Files</div>
+                  <div class="card-subtitle">Last 730 issues</div>
+                </div>
+                <div class="card-legend">
+                  <span>🟥 Highest</span>
+                  <span>🟩 Realizes</span>
+                </div>
+              </div>
+              <table class="dash-table" id="riskyFilesTable">
+                <thead>
+                  <tr>
+                    <th>File</th>
+                    <th>Risk</th>
+                    <th class="td-right">Score</th>
+                  </tr>
+                </thead>
+                <tbody id="riskyFilesTbody">
+                  <tr>
+                    <td colspan="3" class="loading">Loading...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Vulnerabilities by Type -->
+            <div class="card">
+              <div class="card-header">
+                <div>
+                  <div class="card-title">Vulnerabilities by Type</div>
+                </div>
+              </div>
+              <table class="dash-table" id="vulnTypeTable">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Dist</th>
+                    <th class="td-right">Count</th>
+                  </tr>
+                </thead>
+                <tbody id="vulnTypeTbody">
+                  <tr>
+                    <td colspan="3" class="loading">Loading...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div><!-- /row-3col-mid -->
+
+          <!-- ─── ROW 3: Code Hotspots ─── -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Code Hotspots</div>
+                <div class="card-subtitle">File-level complexity &amp; churn analysis</div>
+              </div>
+              <div style="font-size:0.65rem;color:var(--text-dim)">📋 <span id="hotspotsSubtitle">Lines Analyzed</span>
+              </div>
+            </div>
+            <div class="chart-wrap h-160">
+              <canvas id="chartHotspots"></canvas>
+            </div>
+          </div>
+
+          <!-- ─── BOTTOM STAT BAR ─── -->
+          <div class="stat-bar">
+            <div class="stat-item">
+              <div class="stat-label">Defect Density</div>
+              <div class="stat-value-big" id="statDefectDensity">—</div>
+              <div class="stat-sub">Issues per 1000 LOC</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <div class="stat-label">Files Reviewed</div>
+              <div class="stat-value-big" id="statFiles">—</div>
+              <div class="stat-sub">Total files</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <div class="stat-label">AI-Code %</div>
+              <div class="stat-value-big" id="statAI">—%</div>
+              <div class="stat-sub">AI Generated</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+              <div class="stat-label">Dependency Vulns</div>
+              <div class="stat-value-big" id="statDepVuln">—</div>
+              <div class="stat-sub">CVE findings</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="sev-pills">
+              <div class="sev-pill"><span class="ico">🔴</span><span class="count" id="pillCritical">—</span><span
+                  class="note">Critical</span></div>
+              <div class="sev-pill"><span class="ico">🟠</span><span class="count" id="pillHigh">—</span><span
+                  class="note">High</span></div>
+              <div class="sev-pill"><span class="ico">🟡</span><span class="count" id="pillMedium">—</span><span
+                  class="note">Medium</span></div>
+              <div class="sev-pill"><span class="ico">🟢</span><span class="count" id="pillLow">—</span><span
+                  class="note">Low</span></div>
+              <div class="sev-pill"><span class="ico">⚡</span><span class="count" id="pillInfo">—</span><span
+                  class="note">Info</span></div>
+            </div>
+          </div>
+
+        </div><!-- /dash-content -->
+      </main>
+
+    </div><!-- /body-row -->
+  </div><!-- /shell -->
+
+  <!-- Modal -->
+  <div id="findingModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <div id="modalBody"></div>
     </div>
+  </div>
 
-    <!-- Feedback Toast -->
-    <div id="feedbackToast" class="feedback-toast">Action completed!</div>
+  <div id="feedbackToast" class="feedback-toast">Done!</div>
 
-    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
-    <script>
-        // Initialize dashboard on page load
-        document.addEventListener('DOMContentLoaded', function () {
-            loadDashboard();
-        });
-    </script>
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      loadDashboard();
+    });
+
+    function toggleSidebar() {
+      const sb = document.getElementById('dashSidebar');
+      const btn = document.getElementById('hamBtn');
+      sb.classList.toggle('open');
+      btn.classList.toggle('open');
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+    }
+  </script>
 </body>
 
 </html>
