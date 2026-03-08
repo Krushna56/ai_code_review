@@ -189,9 +189,12 @@ logger.info(f"Temp file retention: {config.TEMP_FILE_RETENTION_HOURS} hours")
 # Clean up old temporary files on startup
 cleanup_old_temp_files()
 
-# Initialize authentication database (Optional - handled by start command in production)
-# User.init_db()
-logger.info("Authentication database initialization skipped (handled by startup script)")
+# Initialize authentication database on every startup
+try:
+    User.init_db()
+    logger.info("Authentication database initialized successfully")
+except Exception as e:
+    logger.error(f"Failed to initialize database: {e}")
 
 # Analysis status tracking (in-memory)
 analysis_status = defaultdict(lambda: {'status': 'pending', 'progress': 0, 'error': None})
