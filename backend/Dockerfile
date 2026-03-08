@@ -34,7 +34,7 @@ RUN useradd -m -u 1000 appuser && \
 
 WORKDIR /app
 
-COPY --from=builder /root/.local /root/.local
+COPY --from=builder /root/.local /home/appuser/.local
 COPY --chown=appuser:appuser . .
 
 RUN mkdir -p backend/uploads backend/processed backend/output backend/reports \
@@ -42,6 +42,8 @@ RUN mkdir -p backend/uploads backend/processed backend/output backend/reports \
     chown -R appuser:appuser backend
 
 USER appuser
+ENV PATH=/home/appuser/.local/bin:$PATH
+ENV PYTHONPATH=/home/appuser/.local/lib/python3.11/site-packages:$PYTHONPATH
 
 EXPOSE 5000
 
