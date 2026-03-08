@@ -160,8 +160,7 @@ class DependencyAnalyzer:
                     )
                     dependencies.append(dependency)
 
-            logger.info(f"Parsed {len(dependencies)
-                                  } dependencies from {file_path}")
+            logger.info(f"Parsed {len(dependencies)} dependencies from {file_path}")
         except Exception as e:
             logger.error(f"Error parsing pom.xml: {e}")
 
@@ -222,8 +221,7 @@ class DependencyAnalyzer:
                         )
                         dependencies.append(dependency)
 
-            logger.info(f"Parsed {len(dependencies)
-                                  } dependencies from {file_path}")
+            logger.info(f"Parsed {len(dependencies)} dependencies from {file_path}")
         except Exception as e:
             logger.error(f"Error parsing Gradle file: {e}")
 
@@ -264,8 +262,7 @@ class DependencyAnalyzer:
                     )
                     dependencies.append(dependency)
 
-            logger.info(f"Parsed {len(dependencies)
-                                  } dependencies from {file_path}")
+            logger.info(f"Parsed {len(dependencies)} dependencies from {file_path}")
         except Exception as e:
             logger.error(f"Error parsing package.json: {e}")
 
@@ -326,8 +323,7 @@ class DependencyAnalyzer:
                     )
                     dependencies.append(dependency)
 
-            logger.info(f"Parsed {len(dependencies)
-                                  } dependencies from {file_path}")
+            logger.info(f"Parsed {len(dependencies)} dependencies from {file_path}")
         except Exception as e:
             logger.error(f"Error parsing package-lock.json: {e}")
 
@@ -395,8 +391,7 @@ class DependencyAnalyzer:
                         )
                         dependencies.append(dependency)
 
-            logger.info(f"Parsed {len(dependencies)
-                                  } dependencies from {file_path}")
+            logger.info(f"Parsed {len(dependencies)} dependencies from {file_path}")
         except Exception as e:
             logger.error(f"Error parsing requirements.txt: {e}")
 
@@ -454,8 +449,7 @@ class DependencyAnalyzer:
                     )
                     dependencies.append(dependency)
 
-            logger.info(f"Parsed {len(dependencies)
-                                  } dependencies from {file_path}")
+            logger.info(f"Parsed {len(dependencies)} dependencies from {file_path}")
         except Exception as e:
             logger.error(f"Error parsing Pipfile: {e}")
 
@@ -543,8 +537,7 @@ class DependencyAnalyzer:
                     )
                     dependencies.append(dependency)
 
-            logger.info(f"Parsed {len(dependencies)
-                                  } dependencies from {file_path}")
+            logger.info(f"Parsed {len(dependencies)} dependencies from {file_path}")
         except Exception as e:
             logger.error(f"Error parsing pyproject.toml: {e}")
 

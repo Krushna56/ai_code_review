@@ -234,21 +234,16 @@ class HybridRetriever:
         """Generate human-readable explanation of ranking"""
         factors = result.get('ranking_factors', {})
 
-        explanation = f"**Ranking Score: {
-            result.get('rerank_score', 0):.3f}**\n"
+        explanation = f"**Ranking Score: {result.get('rerank_score', 0):.3f}**\n"
         explanation += "Factors:\n"
-        explanation += f"- Semantic similarity: {
-            factors.get('semantic', 0):.3f}\n"
+        explanation += f"- Semantic similarity: {factors.get('semantic', 0):.3f}\n"
 
         if factors.get('pattern', 0) > 0:
-            explanation += f"- Pattern match boost: +{
-                factors['pattern']:.3f}\n"
+            explanation += f"- Pattern match boost: +{factors['pattern']:.3f}\n"
         if factors.get('complexity', 0) > 0:
-            explanation += f"- Complexity boost: +{
-                factors['complexity']:.3f}\n"
+            explanation += f"- Complexity boost: +{factors['complexity']:.3f}\n"
         if factors.get('language', 0) > 0:
-            explanation += f"- Language relevance: +{
-                factors['language']:.3f}\n"
+            explanation += f"- Language relevance: +{factors['language']:.3f}\n"
         if factors.get('intent', 0) > 0:
             explanation += f"- Intent boost: +{factors['intent']:.3f}\n"
 

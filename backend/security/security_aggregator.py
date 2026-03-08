@@ -71,8 +71,7 @@ class SecurityAggregator:
                 type="secret",
                 severity=secret.get('severity', 'HIGH'),
                 title=f"Hardcoded {secret.get('type', 'Secret')} Detected",
-                description=f"Found hardcoded {secret.get('type', 'secret')}: {
-                    secret.get('keyword', '')}",
+                description=f"Found hardcoded {secret.get('type', 'secret')}: {secret.get('keyword', '')}",
                 file_path=secret.get('file_path', ''),
                 line_number=secret.get('line_number', 0),
                 owasp_category="A02:2021",
@@ -194,8 +193,7 @@ class SecurityAggregator:
             else:
                 logger.debug(f"Duplicate finding removed: {finding.title}")
 
-        logger.info(f"Deduplicated {len(self.findings)} → {
-                    len(unique_findings)} findings")
+        logger.info(f"Deduplicated {len(self.findings)} → {len(unique_findings)} findings")
         self.findings = unique_findings
         return unique_findings
 

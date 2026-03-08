@@ -94,8 +94,7 @@ class CVETracker:
         if self.request_count >= self.RATE_LIMIT:
             wait_time = 60 - elapsed
             if wait_time > 0:
-                logger.warning(f"Rate limit reached, waiting {
-                               wait_time:.2f} seconds")
+                logger.warning(f"Rate limit reached, waiting {wait_time:.2f} seconds")
                 time.sleep(wait_time)
                 self.request_count = 0
                 self.request_window_start = time.time()
@@ -339,8 +338,7 @@ class CVETracker:
         osv_ecosystem = osv_ecosystem_map.get(ecosystem.lower(), ecosystem)
 
         try:
-            logger.info(f"Querying OSV for {package}:{
-                        version} ({osv_ecosystem})")
+            logger.info(f"Querying OSV for {package}:{version} ({osv_ecosystem})")
 
             # Query OSV API
             query = osv.query(f"{package}@{version}", ecosystem=osv_ecosystem)
@@ -353,13 +351,11 @@ class CVETracker:
                 # Cache the result
                 self._cache_result(cache_key, vulnerabilities)
 
-                logger.info(f"Found {len(vulnerabilities)} vulnerabilities for {
-                            package}:{version}")
+                logger.info(f"Found {len(vulnerabilities)} vulnerabilities for {package}:{version}")
                 return vulnerabilities
             else:
                 # No vulnerabilities found
-                logger.info(f"No vulnerabilities found for {
-                            package}:{version}")
+                logger.info(f"No vulnerabilities found for {package}:{version}")
                 self._cache_result(cache_key, [])
                 return []
         except Exception as e:
@@ -396,8 +392,7 @@ class CVETracker:
             if vulnerabilities:
                 results[pkg_id] = vulnerabilities
 
-        logger.info(f"Batch query completed: {
-                    len(results)} vulnerable packages found")
+        logger.info(f"Batch query completed: {len(results)} vulnerable packages found")
         return results
 
     def get_cve_details(self, cve_id: str) -> Optional[CVEVulnerability]:

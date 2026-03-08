@@ -390,8 +390,7 @@ class SecurityReportGenerator:
 
         # Header
         md.append("# 🔒 Security Analysis Report")
-        md.append(f"\n**Generated:** {datetime.fromisoformat(
-            report['metadata']['generated_at']).strftime('%Y-%m-%d %H:%M:%S')}")
+        md.append(f"\n**Generated:** {datetime.fromisoformat( report['metadata']['generated_at']).strftime('%Y-%m-%d %H:%M:%S')}")
         md.append(f"**Platform:** {report['metadata']['generator']}\n")
         md.append("---\n")
 
@@ -401,8 +400,7 @@ class SecurityReportGenerator:
         risk_emoji = self.RISK_LEVELS[risk_level]['color']
 
         md.append("## 📊 Executive Summary\n")
-        md.append(f"### Overall Risk: {
-                  risk_emoji} **{risk_level}** (Score: {summary['risk_score']}/100)\n")
+        md.append(f"### Overall Risk: {risk_emoji} **{risk_level}** (Score: {summary['risk_score']}/100)\n")
         md.append(f"- **Total Findings:** {summary['total_findings']}")
         md.append(f"- **CVE Vulnerabilities:** {summary['cve_count']}")
         md.append(f"- **Security Issues:** {summary['security_issue_count']}")

@@ -92,8 +92,7 @@ def cmd_query(args):
     print(f"\nSources ({len(response['sources'])} code chunks):")
     for i, source in enumerate(response['sources'], 1):
         print(f"\n[{i}] {source['file']}:{source['lines']}")
-        print(f"    Type: {source['type']}, Name: {
-              source['name']}, Score: {source['score']}")
+        print(f"    Type: {source['type']}, Name: {source['name']}, Score: {source['score']}")
         if args.show_code:
             print(f"    Code preview:")
             print(f"    {source['code_preview']}")
@@ -245,14 +244,12 @@ def cmd_cve_check(args):
 
             for i, vuln in enumerate(sorted_vulns[:10], 1):
                 print(f"\n[{i}] {vuln['cve_id']} - {vuln['severity']}")
-                print(f"    Package: {vuln['package_name']}:{
-                      vuln['package_version']}")
+                print(f"    Package: {vuln['package_name']}:{vuln['package_version']}")
                 print(f"    OWASP: {vuln.get('owasp_name', 'Not Mapped')}")
                 print(f"    Summary: {vuln['summary'][:100]}...") if len(
                     vuln['summary']) > 100 else print(f"    Summary: {vuln['summary']}")
                 if vuln['fixed_versions']:
-                    print(f"    Fix: Upgrade to {
-                          ', '.join(vuln['fixed_versions'][:2])}")
+                    print(f"    Fix: Upgrade to {', '.join(vuln['fixed_versions'][:2])}")
 
         print("="*60 + "\n")
 

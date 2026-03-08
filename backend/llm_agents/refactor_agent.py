@@ -76,24 +76,20 @@ Be constructive and provide clear, actionable advice."""
                 metrics = context['metrics']
                 prompt += f"\n\nCode Metrics:\n"
                 prompt += f"- Lines of Code: {metrics.get('loc', 'N/A')}\n"
-                prompt += f"- Cyclomatic Complexity: {
-                    metrics.get('complexity', 'N/A')}\n"
+                prompt += f"- Cyclomatic Complexity: {metrics.get('complexity', 'N/A')}\n"
                 prompt += f"- Functions: {metrics.get('functions', 'N/A')}\n"
                 prompt += f"- Classes: {metrics.get('classes', 'N/A')}\n"
 
                 if metrics.get('wmc', 0) > 0:
-                    prompt += f"- Weighted Methods per Class: {
-                        metrics['wmc']}\n"
+                    prompt += f"- Weighted Methods per Class: {metrics['wmc']}\n"
                 if metrics.get('lcom', 0) > 5:
-                    prompt += f"- Lack of Cohesion (LCOM): {
-                        metrics['lcom']} (high - consider splitting class)\n"
+                    prompt += f"- Lack of Cohesion (LCOM): {metrics['lcom']} (high - consider splitting class)\n"
 
             # Add linter issues
             if 'linter_issues' in context:
                 issues = context['linter_issues']
                 if issues:
-                    prompt += f"\n\nLinter found {len(
-                        issues)} code quality issues. Consider addressing these in your refactoring.\n"
+                    prompt += f"\n\nLinter found {len( issues)} code quality issues. Consider addressing these in your refactoring.\n"
 
         prompt += "\n\nProvide specific refactoring suggestions with code examples."
 

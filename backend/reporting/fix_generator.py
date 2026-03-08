@@ -470,8 +470,7 @@ String hash = encoder.encode(password);
                 fix = self.generate_fix_suggestion(finding, context)
                 fixes.append(fix)
             except Exception as e:
-                logger.error(f"Error generating fix for {
-                             finding.get('id')}: {e}")
+                logger.error(f"Error generating fix for {finding.get('id')}: {e}")
                 fixes.append({
                     'finding_id': finding.get('id'),
                     'error': str(e)

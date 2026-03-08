@@ -77,11 +77,9 @@ Your goal: Help users quickly understand their specific security analysis result
             if 'static_analysis' in context:
                 static_issues = context['static_analysis']
                 if static_issues:
-                    prompt += f"\n\nStatic analysis found {
-                        len(static_issues)} potential issues:\n"
+                    prompt += f"\n\nStatic analysis found {len(static_issues)} potential issues:\n"
                     for issue in static_issues[:3]:  # Top 3
-                        prompt += f"- {issue.get('issue_text',
-                                                 issue.get('message', 'Unknown'))}\n"
+                        prompt += f"- {issue.get('issue_text', issue.get('message', 'Unknown'))}\n"
 
             # Add similar vulnerable code examples
             if 'similar_code' in context:

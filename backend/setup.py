@@ -35,8 +35,7 @@ def check_python_version():
         print(
             f"[ERROR] Python 3.8+ required. You have Python {version.major}.{version.minor}")
         return False
-    print(f"[OK] Python {version.major}.{
-          version.minor}.{version.micro} detected")
+    print(f"[OK] Python {version.major}.{version.minor}.{version.micro} detected")
     return True
 
 

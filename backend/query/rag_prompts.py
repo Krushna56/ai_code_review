@@ -231,8 +231,7 @@ Focus on actionable, developer-friendly guidance."""
         formatted = []
 
         for i, chunk in enumerate(code_chunks, 1):
-            file_loc = f"{chunk.get('file', 'Unknown')}:{chunk.get(
-                'start_line', '?')}-{chunk.get('end_line', '?')}"
+            file_loc = f"{chunk.get('file', 'Unknown')}:{chunk.get( 'start_line', '?')}-{chunk.get('end_line', '?')}"
             chunk_type = chunk.get('type', 'code')
             name = chunk.get('name', 'N/A')
             score = chunk.get('score', 0)

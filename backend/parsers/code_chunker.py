@@ -46,8 +46,7 @@ class CodeChunker:
         self.java_parser = JavaParser() if JAVA_AVAILABLE else None
         self.python_parser = ASTParser() if PYTHON_AVAILABLE else None
 
-        logger.info(f"Initialized CodeChunker with strategy: {
-                    self.chunk_strategy}")
+        logger.info(f"Initialized CodeChunker with strategy: {self.chunk_strategy}")
 
     def chunk_file(self, file_path: str) -> List[Dict[str, Any]]:
         """

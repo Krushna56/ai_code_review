@@ -53,8 +53,7 @@ class CodeEmbedder:
             from sentence_transformers import SentenceTransformer
             self.model_name = config.LOCAL_EMBEDDING_MODEL
             self.model = SentenceTransformer(self.model_name)
-            logger.info(f"Initialized local embeddings with model: {
-                        self.model_name}")
+            logger.info(f"Initialized local embeddings with model: {self.model_name}")
         except Exception as e:
             logger.error(f"Failed to initialize sentence-transformers: {e}")
             raise

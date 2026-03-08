@@ -44,8 +44,7 @@ class VectorStore:
         else:
             # Create new index (L2 distance)
             self.index = faiss.IndexFlatL2(self.dimension)
-            logger.info(f"Created new FAISS index with dimension {
-                        self.dimension}")
+            logger.info(f"Created new FAISS index with dimension {self.dimension}")
 
     def add(self, embeddings: np.ndarray, metadata: List[Dict[str, Any]]):
         """
@@ -56,8 +55,7 @@ class VectorStore:
             metadata: List of metadata dicts for each embedding
         """
         if embeddings.shape[1] != self.dimension:
-            raise ValueError(f"Embedding dimension {
-                             embeddings.shape[1]} doesn't match index dimension {self.dimension}")
+            raise ValueError(f"Embedding dimension {embeddings.shape[1]} doesn't match index dimension {self.dimension}")
 
         # Ensure float32
         embeddings = embeddings.astype(np.float32)
@@ -66,8 +64,7 @@ class VectorStore:
         self.index.add(embeddings)
         self.metadata.extend(metadata)
 
-        logger.info(f"Added {len(embeddings)} embeddings to index. Total: {
-                    self.index.ntotal}")
+        logger.info(f"Added {len(embeddings)} embeddings to index. Total: {self.index.ntotal}")
 
     def search(self, query_embedding: np.ndarray, k: int = 5) -> List[Dict[str, Any]]:
         """
@@ -113,8 +110,7 @@ class VectorStore:
             with open(self.metadata_path, 'w', encoding='utf-8') as f:
                 json.dump(self.metadata, f, indent=2)
 
-            logger.info(f"Saved index with {
-                        self.index.ntotal} vectors to {self.index_path}")
+            logger.info(f"Saved index with {self.index.ntotal} vectors to {self.index_path}")
 
         except Exception as e:
             logger.error(f"Error saving index: {e}")
@@ -131,8 +127,7 @@ class VectorStore:
                 with open(self.metadata_path, 'r', encoding='utf-8') as f:
                     self.metadata = json.load(f)
 
-            logger.info(f"Loaded index with {
-                        self.index.ntotal} vectors from {self.index_path}")
+            logger.info(f"Loaded index with {self.index.ntotal} vectors from {self.index_path}")
 
         except Exception as e:
             logger.error(f"Error loading index: {e}")

@@ -171,8 +171,7 @@ class QueryHandler:
         code_samples = []
 
         for i, result in enumerate(results[:config.QUERY_CONTEXT_CHUNKS]):
-            file_info = f"{result['file']}:{
-                result['start_line']}-{result['end_line']}"
+            file_info = f"{result['file']}:{result['start_line']}-{result['end_line']}"
             name_info = result.get('name', 'Unknown')
 
             sample = f"""

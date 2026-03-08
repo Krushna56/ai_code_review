@@ -31,8 +31,7 @@ class ConversationManager:
 
         self.db_path = str(db_path)
         self._initialize_database()
-        logger.info(f"Initialized ConversationManager with database: {
-                    self.db_path}")
+        logger.info(f"Initialized ConversationManager with database: {self.db_path}")
 
     def _initialize_database(self):
         """Create database schema if it doesn't exist"""
