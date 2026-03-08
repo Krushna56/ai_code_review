@@ -487,8 +487,7 @@ def analyze_codebase(input_path, output_path):
                         vuln_dict = mapper.add_owasp_context(vuln_dict)
                         all_vulnerabilities.append(vuln_dict)
 
-                logger.info(f"Found {len(all_vulnerabilities)
-                                     } vulnerabilities in dependencies")
+                logger.info(f"Found {len(all_vulnerabilities)} vulnerabilities in dependencies")
 
                 # Save CVE results
                 cve_output_path = os.path.join(output_path, "cve_results.json")
@@ -545,8 +544,7 @@ def analyze_codebase(input_path, output_path):
                                     'confidence': 0.9
                                 })
                         except Exception as e:
-                            logger.debug(f"Error scanning {
-                                         file_path} for secrets: {e}")
+                            logger.debug(f"Error scanning {file_path} for secrets: {e}")
 
             if security_findings:
                 logger.info(
@@ -610,8 +608,7 @@ def analyze_codebase(input_path, output_path):
             md_report_path = os.path.join(output_path, "security_report.md")
             report_generator.save_report(
                 security_report_data, md_report_path, format='markdown')
-            logger.info(f"Security report (Markdown) saved to {
-                        md_report_path}")
+            logger.info(f"Security report (Markdown) saved to {md_report_path}")
 
             # Generate fix suggestions for top findings
             fix_generator = FixGenerator()
@@ -621,8 +618,7 @@ def analyze_codebase(input_path, output_path):
                         finding, context={'language': 'python'})
                     fix_suggestions.append(fix)
                 except Exception as e:
-                    logger.debug(f"Could not generate fix for {
-                                 finding.get('id')}: {e}")
+                    logger.debug(f"Could not generate fix for {finding.get('id')}: {e}")
 
             # Save fix suggestions
             if fix_suggestions:
