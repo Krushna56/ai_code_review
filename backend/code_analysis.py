@@ -18,6 +18,7 @@ import difflib
 from datetime import datetime
 
 import config
+import google.genai as genai # Added this import
 
 # Phase 6: LLM Metrics Extraction
 try:
@@ -203,15 +204,15 @@ class CodeAnalyzer:
             logger.info("Running LLM security analysis...")
             security_result = self.security_agent.analyze(code, context)
             insights['security'] = security_result
-            logger.info(f"LLM security analysis complete: {
-                        len(security_result.get('issues', []))} issues found")
+            logger.info(f"LLM security analysis complete: "
+                        f"{len(security_result.get('issues', []))} issues found")
 
             # Refactoring suggestions
             logger.info("Running LLM refactoring analysis...")
             refactor_result = self.refactor_agent.analyze(code, context)
             insights['refactoring'] = refactor_result
-            logger.info(f"LLM refactoring complete: {
-                        len(refactor_result.get('suggestions', []))} suggestions")
+            logger.info(f"LLM refactoring complete: "
+                        f"{len(refactor_result.get('suggestions', []))} suggestions")
 
         except Exception as e:
             logger.error(f"Error in LLM analysis: {e}")
@@ -764,7 +765,7 @@ def _generate_security_report(aggregated_results: Dict[str, Any]) -> str:
             report += f"   📁 {file}:{line}\n\n"
 
         if len(high_severity) > 5:
-            report += f"...and {len(high_severity) -
-                                5} more high-severity issues.\n"
+            remaining = len(high_severity) - 5
+            report += f"...and {remaining} more high-severity issues.\n"
 
     return report

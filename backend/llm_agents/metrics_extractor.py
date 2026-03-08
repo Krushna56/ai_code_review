@@ -127,7 +127,7 @@ class MetricsExtractor:
     def _init_model(self):
         """Initialize the Gemini generative model."""
         try:
-            import google.generativeai as genai
+            import google.genai as genai
             genai.configure(api_key=config.GOOGLE_API_KEY)
             self._model = genai.GenerativeModel(
                 model_name=getattr(config, 'GEMINI_MODEL', 'gemini-1.5-flash'),

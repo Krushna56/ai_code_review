@@ -4,7 +4,7 @@ Description Generator Service
 Generates concise AI descriptions for security findings using Gemini API.
 """
 
-import google.generativeai as genai
+import google.genai as genai
 import os
 import logging
 from typing import Dict, Any, Optional
