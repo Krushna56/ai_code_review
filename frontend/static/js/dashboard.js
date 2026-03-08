@@ -538,7 +538,7 @@ function renderMiniRiskyFiles(fileRiskData) {
 
   if (!files.length) {
     container.innerHTML =
-      '<li style="color:var(--text-dim);font-size:0.7rem;padding:4px 0">No data — run analysis first</li>';
+      '<li style="color:var(--text-dim);font-size:0.7rem;padding:4px 0">No risky files yet</li>';
     return;
   }
 
@@ -570,7 +570,7 @@ function renderRiskyFilesTable(fileRiskData) {
 
   if (!files.length) {
     tbody.innerHTML =
-      '<tr><td colspan="3" class="loading">No file data available</td></tr>';
+      '<tr><td colspan="3" class="loading">No risky files yet</td></tr>';
     return;
   }
 
