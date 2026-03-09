@@ -93,9 +93,10 @@ class MultiLinter:
 
         try:
             # Run semgrep with auto config (uses registry rules)
-            cmd = ['semgrep', '--config=auto', '--json', path]
+            # --timeout limits per-rule time, subprocess timeout is a hard cap
+            cmd = ['semgrep', '--config=auto', '--json', '--timeout', '15', path]
             proc = subprocess.run(cmd, capture_output=True,
-                                  text=True, timeout=300)
+                                  text=True, timeout=60)
 
             if proc.returncode == 0 or proc.returncode == 1:  # 1 means findings
                 output = json.loads(proc.stdout)
@@ -213,14 +214,28 @@ class MultiLinter:
         return result
 
     def run_all(self, path: str) -> Dict[str, LinterResult]:
-        """Run all enabled linters"""
-        self.results = {}
+        """Run all enabled linters in parallel for maximum speed"""
+        from concurrent.futures import ThreadPoolExecutor, as_completed
 
-        # Run each linter
-        self.results['bandit'] = self.run_bandit(path)
-        self.results['semgrep'] = self.run_semgrep(path)
-        self.results['pylint'] = self.run_pylint(path)
-        self.results['ruff'] = self.run_ruff(path)
+        tasks = {
+            'bandit': self.run_bandit,
+            'semgrep': self.run_semgrep,
+            'pylint': self.run_pylint,
+            'ruff': self.run_ruff,
+        }
+
+        self.results = {}
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            futures = {executor.submit(fn, path): name for name, fn in tasks.items()}
+            for future in as_completed(futures):
+                name = futures[future]
+                try:
+                    self.results[name] = future.result()
+                except Exception as e:
+                    logger.error(f"Linter {name} failed: {e}")
+                    r = LinterResult(name)
+                    r.error_message = str(e)
+                    self.results[name] = r
 
         return self.results
 

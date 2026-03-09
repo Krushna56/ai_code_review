@@ -11,6 +11,7 @@ Integrates:
 import os
 import json
 import logging
+import time
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 from autopep8 import fix_code
@@ -392,6 +393,11 @@ def analyze_codebase(input_path, output_path):
     }
     details = {}
     total_loc = 0  # Track total lines of code
+    _start_time = time.time()
+
+    # ── File cap: limit how many files are analyzed to prevent timeouts ──
+    max_files = int(os.getenv('MAX_FILES_TO_ANALYZE', '100'))
+    logger.info(f"Analysis will process up to {max_files} files")
 
     analyzer = CodeAnalyzer()
 
@@ -401,49 +407,60 @@ def analyze_codebase(input_path, output_path):
         dirs[:] = [d for d in dirs if not should_ignore_directory(os.path.join(root, d))]
         
         for file in files:
-            if file.endswith(".py"):
-                file_path = os.path.join(root, file)
-                
-                # Skip ignored files
-                if should_ignore_file(file_path):
-                    continue
-                
-                rel_path = os.path.relpath(file_path, input_path)
+            if not file.endswith(".py"):
+                continue
 
-                logger.info(f"Analyzing {rel_path}")
+            # Respect the file cap
+            if summary["files_analyzed"] >= max_files:
+                logger.info(f"Reached file cap of {max_files}. Skipping remaining files.")
+                break
 
-                try:
-                    with open(file_path, "r", encoding="utf-8") as f:
-                        original_code = f.read()
+            file_path = os.path.join(root, file)
 
-                    # Get AST metrics
-                    metrics = analyzer.ast_parser.parse_code(
-                        original_code, file_path)
-                    metrics_dict = analyzer.ast_parser.get_metrics_dict() if metrics else {}
+            # Skip ignored files
+            if should_ignore_file(file_path):
+                continue
 
-                    # Format code
+            rel_path = os.path.relpath(file_path, input_path)
+            logger.info(f"Analyzing {rel_path}")
+
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    original_code = f.read()
+
+                # Get AST metrics
+                metrics = analyzer.ast_parser.parse_code(
+                    original_code, file_path)
+                metrics_dict = analyzer.ast_parser.get_metrics_dict() if metrics else {}
+
+                # Format code — skip large files to save time
+                file_lines = len(original_code.splitlines())
+                if file_lines <= 500:
                     formatted_code = fix_code(original_code)
+                else:
+                    logger.debug(f"Skipping autopep8 on large file ({file_lines} lines): {rel_path}")
+                    formatted_code = original_code
 
-                    # Save formatted version
-                    with open(file_path, "w", encoding="utf-8") as f:
-                        f.write(formatted_code)
+                # Save formatted version
+                with open(file_path, "w", encoding="utf-8") as f:
+                    f.write(formatted_code)
 
-                    # Store results
-                    details[rel_path] = {
-                        "before": original_code,
-                        "after": highlight_code_diff(original_code, formatted_code),
-                        "metrics": metrics_dict
-                    }
+                # Store results
+                details[rel_path] = {
+                    "before": original_code,
+                    "after": highlight_code_diff(original_code, formatted_code),
+                    "metrics": metrics_dict
+                }
 
-                    summary["files_analyzed"] += 1
-                    summary["files_formatted"] += 1
-                    summary["files_updated"] += 1
+                summary["files_analyzed"] += 1
+                summary["files_formatted"] += 1
+                summary["files_updated"] += 1
 
-                    # Track LOC
-                    total_loc += len(original_code.splitlines())
+                # Track LOC
+                total_loc += len(original_code.splitlines())
 
-                except Exception as e:
-                    logger.error(f"Error processing {rel_path}: {e}")
+            except Exception as e:
+                logger.error(f"Error processing {rel_path}: {e}")
 
     # Run multi-linter analysis
     logger.info("Running static analysis tools...")

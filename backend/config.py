@@ -119,15 +119,20 @@ USE_ONNX = os.getenv('USE_ONNX', 'false').lower() == 'true'
 
 # Static Analysis Configuration
 ENABLE_BANDIT = os.getenv('ENABLE_BANDIT', 'true').lower() == 'true'
-ENABLE_SEMGREP = os.getenv('ENABLE_SEMGREP', 'true').lower() == 'true'
+# Semgrep is slow and rate-limited in production — default OFF, use Ruff instead
+_semgrep_default = 'false' if os.getenv('FLASK_ENV', 'development') == 'production' else 'true'
+ENABLE_SEMGREP = os.getenv('ENABLE_SEMGREP', _semgrep_default).lower() == 'true'
 ENABLE_PYLINT = os.getenv('ENABLE_PYLINT', 'false').lower() == 'true'
-ENABLE_RUFF = os.getenv('ENABLE_RUFF', 'true').lower() == 'true'
+ENABLE_RUFF = os.getenv('ENABLE_RUFF', 'true').lower() == 'true'  # Always fast
 
 # Feature Flags
+# In production, default heavy features to OFF for speed unless explicitly enabled.
 ENABLE_ML_ANALYSIS = os.getenv('ENABLE_ML_ANALYSIS', 'true').lower() == 'true'
 ENABLE_DL_ANALYSIS = os.getenv('ENABLE_DL_ANALYSIS', 'false').lower() == 'true'
-ENABLE_LLM_AGENTS = os.getenv('ENABLE_LLM_AGENTS', 'true').lower() == 'true'
-ENABLE_SEMANTIC_SEARCH = os.getenv('ENABLE_SEMANTIC_SEARCH', 'true').lower() == 'true'
+# LLM agents & semantic search are slow — default OFF in production, ON in dev
+_llm_default = 'false' if os.getenv('FLASK_ENV', 'development') == 'production' else 'true'
+ENABLE_LLM_AGENTS = os.getenv('ENABLE_LLM_AGENTS', _llm_default).lower() == 'true'
+ENABLE_SEMANTIC_SEARCH = os.getenv('ENABLE_SEMANTIC_SEARCH', _llm_default).lower() == 'true'
 
 # Phase 4 & 5 Feature Flags
 ENABLE_CVE_DETECTION = os.getenv('ENABLE_CVE_DETECTION', 'true').lower() == 'true'
@@ -299,3 +304,4 @@ SSE_HEARTBEAT_INTERVAL = int(os.getenv('SSE_HEARTBEAT_INTERVAL', '30'))
 # Production Settings
 FLASK_ENV = os.getenv('FLASK_ENV', 'development')
 DEBUG = FLASK_ENV != 'production'
+_is_prod = (FLASK_ENV == 'production')
