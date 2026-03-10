@@ -1,0 +1,64 @@
+INFO     services.conversation_manager:conversation_manager.py:80 Database schema initialized
+INFO     services.conversation_manager:conversation_manager.py:34 Initialized ConversationManager with database: C:\Users\krush\AppData\Local\Temp\tmpzmmabbov.db
+INFO     services.conversation_manager:conversation_manager.py:106 Created session e5b10621-ad8d-4790-b673-09fa0de29fdb for user test_user
+INFO     services.conversation_manager:conversation_manager.py:80 Database schema initialized
+INFO     services.conversation_manager:conversation_manager.py:34 Initialized ConversationManager with database: C:\Users\krush\AppData\Local\Temp\tmpwynp_v1k.db
+INFO     services.conversation_manager:conversation_manager.py:106 Created session 568d41e8-2b33-47dc-97d1-fb1d5f008116 for user test_user
+DEBUG    services.conversation_manager:conversation_manager.py:161 Added user message to session 568d41e8-2b33-47dc-97d1-fb1d5f008116
+INFO     services.conversation_manager:conversation_manager.py:80 Database schema initialized
+INFO     services.conversation_manager:conversation_manager.py:34 Initialized ConversationManager with database: C:\Users\krush\AppData\Local\Temp\tmpiw6hqcis.db
+INFO     services.conversation_manager:conversation_manager.py:106 Created session 0e6d7e4d-78e5-40c1-b4a6-adc54e848185 for user test_user
+DEBUG    services.conversation_manager:conversation_manager.py:161 Added user message to session 0e6d7e4d-78e5-40c1-b4a6-adc54e848185
+DEBUG    services.conversation_manager:conversation_manager.py:161 Added assistant message to session 0e6d7e4d-78e5-40c1-b4a6-adc54e848185
+DEBUG    services.conversation_manager:conversation_manager.py:161 Added user message to session 0e6d7e4d-78e5-40c1-b4a6-adc54e848185
+DEBUG    services.conversation_manager:conversation_manager.py:161 Added assistant message to session 0e6d7e4d-78e5-40c1-b4a6-adc54e848185
+INFO     services.conversation_manager:conversation_manager.py:80 Database schema initialized
+INFO     services.conversation_manager:conversation_manager.py:34 Initialized ConversationManager with database: C:\Users\krush\AppData\Local\Temp\tmp74papran.db
+INFO     services.conversation_manager:conversation_manager.py:106 Created session 4693bff0-eab3-4aa9-bc8f-508bb800c658 for user test_user
+DEBUG    services.conversation_manager:conversation_manager.py:161 Added user message to session 4693bff0-eab3-4aa9-bc8f-508bb800c658
+INFO     services.conversation_manager:conversation_manager.py:331 Deleted session 4693bff0-eab3-4aa9-bc8f-508bb800c658
+INFO     services.conversation_manager:conversation_manager.py:80 Database schema initialized
+INFO     services.conversation_manager:conversation_manager.py:34 Initialized ConversationManager with database: C:\Users\krush\AppData\Local\Temp\tmpomp367qr.db
+INFO     services.conversation_manager:conversation_manager.py:106 Created session 6653ebb2-82b8-4447-93a7-f58bcca2d9d6 for user test_user
+DEBUG    services.conversation_manager:conversation_manager.py:161 Added user message to session 6653ebb2-82b8-4447-93a7-f58bcca2d9d6
+DEBUG    services.conversation_manager:conversation_manager.py:161 Added assistant message to session 6653ebb2-82b8-4447-93a7-f58bcca2d9d6
+INFO     services.conversation_manager:conversation_manager.py:80 Database schema initialized
+INFO     services.conversation_manager:conversation_manager.py:34 Initialized ConversationManager with database: C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\tests\..\vector_db\conversations.db
+INFO     llm_agents.base_agent:base_agent.py:39 Initialized Anthropic client with model: claude-3-5-sonnet-20241022
+INFO     llm_agents.base_agent:base_agent.py:39 Initialized Anthropic client with model: claude-3-5-sonnet-20241022
+INFO     llm_agents.chat_engine:chat_engine.py:34 Initialized ChatEngine with dashboard integration
+INFO     services.conversation_manager:conversation_manager.py:80 Database schema initialized
+INFO     services.conversation_manager:conversation_manager.py:34 Initialized ConversationManager with database: C:\Users\krush\AppData\Local\Temp\tmp3t3jl75k.db
+INFO     services.conversation_manager:conversation_manager.py:106 Created session af4d580e-e420-4f45-861e-afaaad94fa37 for user test_user
+INFO     llm_agents.chat_engine:chat_engine.py:49 Started chat session af4d580e-e420-4f45-861e-afaaad94fa37 for user test_user
+INFO     services.conversation_manager:conversation_manager.py:80 Database schema initialized
+INFO     services.conversation_manager:conversation_manager.py:34 Initialized ConversationManager with database: C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\tests\..\vector_db\conversations.db
+INFO     llm_agents.base_agent:base_agent.py:39 Initialized Anthropic client with model: claude-3-5-sonnet-20241022
+INFO     llm_agents.base_agent:base_agent.py:39 Initialized Anthropic client with model: claude-3-5-sonnet-20241022
+INFO     llm_agents.chat_engine:chat_engine.py:34 Initialized ChatEngine with dashboard integration
+INFO     services.conversation_manager:conversation_manager.py:80 Database schema initialized
+INFO     services.conversation_manager:conversation_manager.py:34 Initialized ConversationManager with database: C:\Users\krush\AppData\Local\Temp\tmpi41xjvrf.db
+INFO     services.conversation_manager:conversation_manager.py:80 Database schema initialized
+INFO     services.conversation_manager:conversation_manager.py:34 Initialized ConversationManager with database: C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\tests\..\vector_db\conversations.db
+INFO     llm_agents.base_agent:base_agent.py:39 Initialized Anthropic client with model: claude-3-5-sonnet-20241022
+INFO     llm_agents.base_agent:base_agent.py:39 Initialized Anthropic client with model: claude-3-5-sonnet-20241022
+INFO     llm_agents.chat_engine:chat_engine.py:34 Initialized ChatEngine with dashboard integration
+INFO     services.conversation_manager:conversation_manager.py:80 Database schema initialized
+INFO     services.conversation_manager:conversation_manager.py:34 Initialized ConversationManager with database: C:\Users\krush\AppData\Local\Temp\tmp7sdmt_st.db
+INFO     services.conversation_manager:conversation_manager.py:106 Created session 099be25e-f862-4b39-a64c-430ab8cd8057 for user test_user
+INFO     llm_agents.chat_engine:chat_engine.py:49 Started chat session 099be25e-f862-4b39-a64c-430ab8cd8057 for user test_user
+DEBUG    services.conversation_manager:conversation_manager.py:161 Added user message to session 099be25e-f862-4b39-a64c-430ab8cd8057
+DEBUG    services.conversation_manager:conversation_manager.py:161 Added assistant message to session 099be25e-f862-4b39-a64c-430ab8cd8057
+INFO     services.report_service:report_service.py:87 Loaded and redacted report from ..\output\security_report.json for uid=None
+DEBUG    llm_agents.chat_engine:chat_engine.py:356 Loaded dashboard data: 54 findings, 0 CVEs
+INFO     services.conversation_manager:conversation_manager.py:80 Database schema initialized
+INFO     services.conversation_manager:conversation_manager.py:34 Initialized ConversationManager with database: C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\tests\..\vector_db\conversations.db
+INFO     llm_agents.base_agent:base_agent.py:39 Initialized Anthropic client with model: claude-3-5-sonnet-20241022
+INFO     llm_agents.base_agent:base_agent.py:39 Initialized Anthropic client with model: claude-3-5-sonnet-20241022
+INFO     llm_agents.chat_engine:chat_engine.py:34 Initialized ChatEngine with dashboard integration
+INFO     services.conversation_manager:conversation_manager.py:80 Database schema initialized
+INFO     services.conversation_manager:conversation_manager.py:34 Initialized ConversationManager with database: C:\Users\krush\AppData\Local\Temp\tmpjcbu1cbt.db
+INFO     services.conversation_manager:conversation_manager.py:106 Created session 572f186b-5f27-4c59-927e-778db2f040bd for user test_user
+INFO     llm_agents.chat_engine:chat_engine.py:49 Started chat session 572f186b-5f27-4c59-927e-778db2f040bd for user test_user
+DEBUG    services.conversation_manager:conversation_manager.py:161 Added user message to session 572f186b-5f27-4c59-927e-778db2f040bd
+DEBUG    services.conversation_manager:conversation_manager.py:161 Added assistant message to session 572f186b-5f27-4c59-927e-778db2f040bd

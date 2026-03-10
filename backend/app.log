@@ -1,0 +1,229 @@
+2026-03-10 13:20:21,852 - 3a4a650c-0514-4654-a7ac-1ce8da13758f - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:20:21,859 - 62e065e4-56fb-493b-beba-eb0c68629aab - app - INFO - Configured MAX_CONTENT_LENGTH: 21474836480 bytes
+2026-03-10 13:20:21,860 - 17557169-7348-48bb-b212-4a6bbee25d7c - app - INFO - Configured MAX_FORM_MEMORY_SIZE: 21474836480 bytes
+2026-03-10 13:20:21,861 - 6289d3c5-1645-46fe-8aaf-745d2323e6e5 - app - INFO - Configured MAX_FORM_PARTS: 100000
+2026-03-10 13:20:21,862 - 526eaefd-81ee-4ead-9a2b-5d4c4d3837e1 - utils.csrf_protection - INFO - CSRF middleware initialized
+2026-03-10 13:20:21,863 - 87813ed5-3c67-482e-bbe6-3602226a7a87 - utils.csrf_protection - INFO - CSRF protection enabled for application
+2026-03-10 13:20:21,865 - 2d624c92-7df9-4217-b282-a777e53867dd - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:20:21,865 - 114d9b13-f2b1-4be3-9dd6-ddb8a8a35fec - root - INFO - Flask logging configured
+2026-03-10 13:20:21,896 - 6d1266d7-57e9-41da-8710-ce6ccf8c8ba5 - app - INFO - Using temporary storage at: C:\Users\krush\AppData\Local\Temp\ai_code_review
+2026-03-10 13:20:21,896 - 11d328c6-9164-480e-9dcd-36a777b48efc - app - INFO - Upload folder: uploads
+2026-03-10 13:20:21,896 - 3b4e769c-e8c1-4bb5-b2d6-6a97e34ebd1d - app - INFO - Processed folder: processed
+2026-03-10 13:20:21,897 - ae96b992-628a-4e72-99d1-c97aef47bbae - app - INFO - Temp file retention: 24 hours
+2026-03-10 13:20:21,897 - fd6923d4-d0f9-4ce3-b513-c3bb1d84a3d1 - app - INFO - Starting cleanup of temp files older than 24 hours...
+2026-03-10 13:20:21,898 - 9abbbda6-98f6-47ac-8331-03f1cea98cb8 - app - INFO - Cleanup complete: No old files to remove
+2026-03-10 13:20:21,903 - 4fe4db73-1747-4d8d-9acf-70144d850ef6 - app - INFO - Authentication database initialized successfully
+2026-03-10 13:20:54,403 - 7b461081-e239-42e4-a5fa-cef0367adee0 - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:20:54,406 - 68aa3b6f-7f1f-4d4a-8e5e-f7189945c380 - app - INFO - Configured MAX_CONTENT_LENGTH: 21474836480 bytes
+2026-03-10 13:20:54,406 - fe4122fc-3530-4e47-9168-4c317a5bbe1a - app - INFO - Configured MAX_FORM_MEMORY_SIZE: 21474836480 bytes
+2026-03-10 13:20:54,406 - 7261e22e-89c6-4709-8e9c-d8e78b454947 - app - INFO - Configured MAX_FORM_PARTS: 100000
+2026-03-10 13:20:54,407 - 6ded47a9-daf8-4267-9661-08a8e2ac1431 - utils.csrf_protection - INFO - CSRF middleware initialized
+2026-03-10 13:20:54,407 - bbe9fd08-2acd-4942-a616-1b642354585f - utils.csrf_protection - INFO - CSRF protection enabled for application
+2026-03-10 13:20:54,409 - 687fe0b6-d425-4d10-98a8-133e14d087fa - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:20:54,410 - 49e1b435-81d1-478f-b445-b1f40acdd695 - root - INFO - Flask logging configured
+2026-03-10 13:20:54,436 - f8d45a9d-c075-4431-9bbe-f66aca076678 - app - INFO - Using temporary storage at: C:\Users\krush\AppData\Local\Temp\ai_code_review
+2026-03-10 13:20:54,437 - 6d00210d-5dcd-41e0-8aa6-7d9b5ad673bd - app - INFO - Upload folder: uploads
+2026-03-10 13:20:54,437 - a9489288-5127-46b7-8bc5-e2b1572a8cd0 - app - INFO - Processed folder: processed
+2026-03-10 13:20:54,437 - c6853ad6-db41-47e2-b717-a77d5ee89265 - app - INFO - Temp file retention: 24 hours
+2026-03-10 13:20:54,437 - 0683366a-850b-4a58-addb-7d65dbad5f50 - app - INFO - Starting cleanup of temp files older than 24 hours...
+2026-03-10 13:20:54,438 - ae916885-3750-4b68-897f-27c3aa7a0bdb - app - INFO - Cleanup complete: No old files to remove
+2026-03-10 13:20:54,443 - 2d5000d0-d8fa-4917-b673-118af5d0f68a - app - INFO - Authentication database initialized successfully
+2026-03-10 13:25:29,771 - c3dc1055-b65d-45a4-8733-8bd0e661f7c7 - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:25:31,616 - 3e27044c-1b80-4108-ba77-818a4c0893bb - app - INFO - Configured MAX_CONTENT_LENGTH: 21474836480 bytes
+2026-03-10 13:25:31,616 - d1b91173-3652-40d7-aab3-a692b6cc1834 - app - INFO - Configured MAX_FORM_MEMORY_SIZE: 21474836480 bytes
+2026-03-10 13:25:31,616 - 9a738987-8da2-49f8-9e28-eb391d16cf13 - app - INFO - Configured MAX_FORM_PARTS: 100000
+2026-03-10 13:25:31,616 - 1931b623-f0fa-4810-afd5-5b31b38ffa81 - utils.csrf_protection - INFO - CSRF middleware initialized
+2026-03-10 13:25:31,616 - c622730e-4d78-4be9-b1da-7a442d8ed3a6 - utils.csrf_protection - INFO - CSRF protection enabled for application
+2026-03-10 13:25:31,617 - fbe15725-2443-471b-ad09-f3839012fea3 - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:25:31,618 - 9745e3ce-6fae-4572-883f-ceb0f107be9c - root - INFO - Flask logging configured
+2026-03-10 13:25:31,640 - 5d904646-5bf5-4465-a1d6-787ad883e556 - app - INFO - Using temporary storage at: C:\Users\krush\AppData\Local\Temp\ai_code_review
+2026-03-10 13:25:31,640 - 457f3b1e-c6b3-4ef2-8d83-192db470e595 - app - INFO - Upload folder: uploads
+2026-03-10 13:25:31,641 - d1abc1a6-505e-4e68-8c16-d58a729b2247 - app - INFO - Processed folder: processed
+2026-03-10 13:25:31,641 - 3b6225ae-adf1-4529-982e-666600a9f45c - app - INFO - Temp file retention: 24 hours
+2026-03-10 13:25:31,641 - e4e0921e-0e6e-4a0f-a5ec-9f20e366fe30 - app - INFO - Starting cleanup of temp files older than 24 hours...
+2026-03-10 13:25:31,642 - 7e126065-dfcb-4f4b-9b9f-58d1e833fec0 - app - INFO - Cleanup complete: No old files to remove
+2026-03-10 13:25:31,984 - 49105bc3-c890-47f4-8b89-1cb85d8159a6 - app - INFO - Authentication database initialized successfully
+2026-03-10 13:26:20,994 - 9ef05975-77c9-4d6c-99ce-0e28b06dca04 - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:26:21,017 - 9c5c3e06-36d8-4396-87c7-4bd2b01d672e - app - INFO - Configured MAX_CONTENT_LENGTH: 21474836480 bytes
+2026-03-10 13:26:21,018 - 4b236f35-2f19-4ab0-8d6f-55cd485a6119 - app - INFO - Configured MAX_FORM_MEMORY_SIZE: 21474836480 bytes
+2026-03-10 13:26:21,018 - 79d92b4a-ae71-4cb4-8f15-4a8d55f863ce - app - INFO - Configured MAX_FORM_PARTS: 100000
+2026-03-10 13:26:21,018 - f69f83d9-12ca-4184-bcdb-9c32afc2d3a1 - utils.csrf_protection - INFO - CSRF middleware initialized
+2026-03-10 13:26:21,019 - 7c5a7886-18f8-4a62-a366-3ea098c3c4ff - utils.csrf_protection - INFO - CSRF protection enabled for application
+2026-03-10 13:26:21,022 - 3ab559be-2744-4c0d-86d5-ba7a165a357e - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:26:21,024 - 1bffca1b-d04c-41aa-b799-82f71148f4df - root - INFO - Flask logging configured
+2026-03-10 13:26:21,056 - d593c1cd-79d8-4c49-8ddb-1b5eb8975c90 - app - INFO - Using temporary storage at: C:\Users\krush\AppData\Local\Temp\ai_code_review
+2026-03-10 13:26:21,056 - 045711e5-ee55-41d2-a543-ab9931c66873 - app - INFO - Upload folder: uploads
+2026-03-10 13:26:21,056 - c597cee7-eb0a-4e0d-8fab-ac9c3d591f71 - app - INFO - Processed folder: processed
+2026-03-10 13:26:21,056 - 1c9fcb8a-03a6-446f-a199-7da51fcf7040 - app - INFO - Temp file retention: 24 hours
+2026-03-10 13:26:21,057 - 84458946-e997-4567-bea9-76ac02de8fa1 - app - INFO - Starting cleanup of temp files older than 24 hours...
+2026-03-10 13:26:21,058 - 685da6f6-27d8-4fe2-b4d3-919352d3be17 - app - INFO - Cleanup complete: No old files to remove
+2026-03-10 13:26:21,062 - 221ef89c-e926-45af-b880-6c177049ebb4 - app - INFO - Authentication database initialized successfully
+2026-03-10 13:26:21,145 - e9b11586-3eb0-45eb-a34f-dfccfcf64a7c - flask.request - INFO - Request received
+2026-03-10 13:26:21,146 - e9b11586-3eb0-45eb-a34f-dfccfcf64a7c - flask.response - INFO - Response sent
+2026-03-10 13:29:51,323 - 2908c78f-9a98-4207-8b12-22708d989559 - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:29:51,328 - ffd31f36-34e5-4bcd-82f5-7f0c8056751d - app - INFO - Configured MAX_CONTENT_LENGTH: 21474836480 bytes
+2026-03-10 13:29:51,329 - a5614937-0df4-4dbd-bdfc-485aacd07a5f - app - INFO - Configured MAX_FORM_MEMORY_SIZE: 21474836480 bytes
+2026-03-10 13:29:51,329 - a083bfc5-4ff1-48b3-896a-4c1abf656b33 - app - INFO - Configured MAX_FORM_PARTS: 100000
+2026-03-10 13:29:51,329 - 731e6a12-1651-4bc5-9c2e-784aa792aaab - utils.csrf_protection - INFO - CSRF middleware initialized
+2026-03-10 13:29:51,330 - b1e80a5f-fc07-4079-a881-743286412c0f - utils.csrf_protection - INFO - CSRF protection enabled for application
+2026-03-10 13:29:51,331 - bf4c53bf-402b-4982-9cba-c4c728ffd301 - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:29:51,332 - 3ccae3ad-991c-4cac-9a54-08e796b334cf - root - INFO - Flask logging configured
+2026-03-10 13:29:51,363 - 87838a4d-ced7-4f75-89bc-bf67382a24dd - app - INFO - Using temporary storage at: C:\Users\krush\AppData\Local\Temp\ai_code_review
+2026-03-10 13:29:51,363 - 31a79bd9-15f1-4147-bd14-bd2c896bb578 - app - INFO - Upload folder: uploads
+2026-03-10 13:29:51,363 - 1eaac08c-9259-4632-ac7c-edb5644133fc - app - INFO - Processed folder: processed
+2026-03-10 13:29:51,363 - b5d8b683-0f2e-45ff-bca5-62786266379e - app - INFO - Temp file retention: 24 hours
+2026-03-10 13:29:51,364 - faffa935-5937-4a1e-a312-59846a0e4947 - app - INFO - Starting cleanup of temp files older than 24 hours...
+2026-03-10 13:29:51,364 - c2dede3b-398c-4ff2-9533-2316495a467f - app - INFO - Cleanup complete: No old files to remove
+2026-03-10 13:29:51,367 - f69407eb-633e-467b-a1ba-d5a3b994e5f5 - app - INFO - Authentication database initialized successfully
+2026-03-10 13:29:51,412 - e0d52f39-d06f-4aef-9f33-373808e63345 - flask.request - INFO - Request received
+2026-03-10 13:29:51,415 - e0d52f39-d06f-4aef-9f33-373808e63345 - flask.response - INFO - Response sent
+2026-03-10 13:34:12,623 - eb596217-e00c-42e7-8e2f-51416c2b6854 - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\tests\..\app.log, json=False
+2026-03-10 13:34:12,626 - 9c3bb0ad-e373-4628-a41f-ddd858ed08a2 - app - INFO - Configured MAX_CONTENT_LENGTH: 21474836480 bytes
+2026-03-10 13:34:12,626 - 4492f54d-f751-441a-a85c-286751ce11a4 - app - INFO - Configured MAX_FORM_MEMORY_SIZE: 21474836480 bytes
+2026-03-10 13:34:12,626 - 311cb00d-88ef-4c5a-8f36-d28233e1f350 - app - INFO - Configured MAX_FORM_PARTS: 100000
+2026-03-10 13:34:12,627 - 9f1989f8-49fb-4375-b989-2a342563f01c - utils.csrf_protection - INFO - CSRF middleware initialized
+2026-03-10 13:34:12,627 - a9754101-12a9-4fad-8920-c9229b936c91 - utils.csrf_protection - INFO - CSRF protection enabled for application
+2026-03-10 13:34:12,628 - 4fe1ca82-a58d-4fe2-8b5d-cd3fbc1723e7 - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\tests\..\app.log, json=False
+2026-03-10 13:34:12,630 - 5101ed1a-2f02-4104-b6ea-18d7f70ec451 - root - INFO - Flask logging configured
+2026-03-10 13:34:12,651 - c2944229-611a-4700-8997-81f4f8ab1a9f - app - INFO - Using temporary storage at: C:\Users\krush\AppData\Local\Temp\ai_code_review
+2026-03-10 13:34:12,651 - 30ec9eeb-f07c-42fe-ac99-8df37ba72006 - app - INFO - Upload folder: uploads
+2026-03-10 13:34:12,651 - ea71341f-0396-4fcc-9954-7ba3ddae2dd7 - app - INFO - Processed folder: processed
+2026-03-10 13:34:12,652 - dd4374fd-e4f3-4f92-b567-7c6174555101 - app - INFO - Temp file retention: 24 hours
+2026-03-10 13:34:12,652 - 72fc1c49-d2c0-497d-b58f-1a04916eec09 - app - INFO - Starting cleanup of temp files older than 24 hours...
+2026-03-10 13:34:12,652 - f882961e-26d9-4fb7-9fe3-51a9326ed4d9 - app - INFO - Cleanup complete: No old files to remove
+2026-03-10 13:34:12,656 - 1476518b-5b15-41ad-8a85-b86e111907a8 - app - INFO - Authentication database initialized successfully
+2026-03-10 13:34:12,691 - a0dd3c25-5754-4273-aa6e-320fbc11e5fe - flask.request - INFO - Request received
+2026-03-10 13:34:12,871 - a0dd3c25-5754-4273-aa6e-320fbc11e5fe - auth.routes - INFO - New user registered: newuser@example.com
+2026-03-10 13:34:12,872 - a0dd3c25-5754-4273-aa6e-320fbc11e5fe - flask.response - INFO - Response sent
+2026-03-10 13:34:12,879 - 7afab9da-096d-4b88-ac51-bb1b9f753343 - flask.request - INFO - Request received
+2026-03-10 13:34:13,083 - 7afab9da-096d-4b88-ac51-bb1b9f753343 - auth.routes - INFO - New user registered: dup@example.com
+2026-03-10 13:34:13,084 - 7afab9da-096d-4b88-ac51-bb1b9f753343 - flask.response - INFO - Response sent
+2026-03-10 13:34:13,085 - 7c96fcd5-13d4-4e60-abf8-6f07119e7a72 - flask.request - INFO - Request received
+2026-03-10 13:34:13,088 - 7c96fcd5-13d4-4e60-abf8-6f07119e7a72 - flask.response - WARNING - Response sent
+2026-03-10 13:34:13,091 - 5af3f14d-3eb5-4d14-b9ca-e138d9128d2a - flask.request - INFO - Request received
+2026-03-10 13:34:13,092 - 5af3f14d-3eb5-4d14-b9ca-e138d9128d2a - flask.response - WARNING - Response sent
+2026-03-10 13:34:13,095 - d089b8ac-ab67-4111-bad2-41cd8fb48561 - flask.request - INFO - Request received
+2026-03-10 13:34:13,095 - d089b8ac-ab67-4111-bad2-41cd8fb48561 - flask.response - WARNING - Response sent
+2026-03-10 13:34:13,098 - 56d0113b-6e12-4d64-a365-123c596d1afb - flask.request - INFO - Request received
+2026-03-10 13:34:13,348 - 56d0113b-6e12-4d64-a365-123c596d1afb - auth.routes - INFO - New user registered: jwttest_f22fd309@example.com
+2026-03-10 13:34:13,349 - 56d0113b-6e12-4d64-a365-123c596d1afb - flask.response - INFO - Response sent
+2026-03-10 13:34:13,352 - 3d4d1759-d1d3-4a75-8d92-3c84ad8fd0a1 - flask.request - INFO - Request received
+2026-03-10 13:34:13,599 - 3d4d1759-d1d3-4a75-8d92-3c84ad8fd0a1 - auth.routes - INFO - User logged in: jwttest_f22fd309@example.com
+2026-03-10 13:34:13,601 - 3d4d1759-d1d3-4a75-8d92-3c84ad8fd0a1 - flask.response - INFO - Response sent
+2026-03-10 13:34:13,608 - 1e247abd-f6ed-4447-8114-323106445b48 - flask.request - INFO - Request received
+2026-03-10 13:34:13,848 - 1e247abd-f6ed-4447-8114-323106445b48 - flask.response - WARNING - Response sent
+2026-03-10 13:34:13,853 - 5558a4a5-38b0-474d-878a-6861ac99a16c - flask.request - INFO - Request received
+2026-03-10 13:34:13,855 - 5558a4a5-38b0-474d-878a-6861ac99a16c - flask.response - WARNING - Response sent
+2026-03-10 13:34:13,858 - 426d07be-43ff-4dde-b04b-6070c98c79b1 - flask.request - INFO - Request received
+2026-03-10 13:34:13,859 - 426d07be-43ff-4dde-b04b-6070c98c79b1 - flask.response - INFO - Response sent
+2026-03-10 13:34:13,863 - 19e3f578-7312-4c13-841e-f0d213c87bf9 - flask.request - INFO - Request received
+2026-03-10 13:34:13,863 - 19e3f578-7312-4c13-841e-f0d213c87bf9 - flask.response - WARNING - Response sent
+2026-03-10 13:34:13,866 - 2b95d35c-95be-43f0-91fd-cf946659882d - flask.request - INFO - Request received
+2026-03-10 13:34:13,870 - 2b95d35c-95be-43f0-91fd-cf946659882d - flask.response - WARNING - Response sent
+2026-03-10 13:34:13,875 - 0d7458e0-7642-43f3-8cdf-fb27b64aea2f - flask.request - INFO - Request received
+2026-03-10 13:34:13,876 - 0d7458e0-7642-43f3-8cdf-fb27b64aea2f - flask.response - INFO - Response sent
+2026-03-10 13:34:13,884 - 92f1d015-9fe5-48be-8556-eb921d22f916 - flask.request - INFO - Request received
+2026-03-10 13:34:14,166 - 92f1d015-9fe5-48be-8556-eb921d22f916 - auth.routes - INFO - User logged in: jwttest_f22fd309@example.com
+2026-03-10 13:34:14,169 - 92f1d015-9fe5-48be-8556-eb921d22f916 - flask.response - INFO - Response sent
+2026-03-10 13:34:14,171 - 9d78a9a2-af10-4320-a2b4-8c8551c7b325 - flask.request - INFO - Request received
+2026-03-10 13:34:14,174 - 9d78a9a2-af10-4320-a2b4-8c8551c7b325 - flask.response - INFO - Response sent
+2026-03-10 13:34:14,178 - 986c7b35-c371-4acf-9de6-663852fa6ba9 - flask.request - INFO - Request received
+2026-03-10 13:34:14,178 - 986c7b35-c371-4acf-9de6-663852fa6ba9 - flask.response - WARNING - Response sent
+2026-03-10 13:34:14,183 - cab65d99-608e-4de4-a851-b6c6bf3141d4 - flask.request - INFO - Request received
+2026-03-10 13:34:14,184 - cab65d99-608e-4de4-a851-b6c6bf3141d4 - auth.jwt_utils - WARNING - Invalid JWT: Not enough segments
+2026-03-10 13:34:14,186 - cab65d99-608e-4de4-a851-b6c6bf3141d4 - flask.response - WARNING - Response sent
+2026-03-10 13:34:14,191 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - flask.request - INFO - Request received
+2026-03-10 13:34:14,192 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - flask.response - WARNING - Response sent
+2026-03-10 13:34:14,426 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.parallel_executor - INFO - Task 'task1' completed successfully in 0.00s
+2026-03-10 13:34:14,569 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.parallel_executor - INFO - Task 'task1' completed successfully in 0.00s
+2026-03-10 13:34:14,570 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.parallel_executor - INFO - Task 'task2' completed successfully in 0.00s
+2026-03-10 13:34:14,570 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.parallel_executor - INFO - Task 'task3' completed successfully in 0.00s
+2026-03-10 13:34:14,578 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.parallel_executor - ERROR - Task 'fail' failed after 0.00s: Test error
+Traceback (most recent call last):
+  File "C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\utils\parallel_executor.py", line 91, in execute_tasks
+    result = future.result(timeout=self.timeout_seconds)
+  File "C:\Program Files\Python314\Lib\concurrent\futures\_base.py", line 443, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "C:\Program Files\Python314\Lib\concurrent\futures\_base.py", line 395, in __get_result
+    raise self._exception
+  File "C:\Program Files\Python314\Lib\concurrent\futures\thread.py", line 86, in run
+    result = ctx.run(self.task)
+  File "C:\Program Files\Python314\Lib\concurrent\futures\thread.py", line 73, in run
+    return fn(*args, **kwargs)
+  File "C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\tests\test_optimizations.py", line 188, in failing_task
+    raise ValueError("Test error")
+ValueError: Test error
+2026-03-10 13:34:14,648 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.parallel_executor - INFO - Task 'pass' completed successfully in 0.00s
+2026-03-10 13:34:14,653 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.code_chunker - INFO - Initialized CodeChunker: strategy=sliding, chunk_size=500, overlap=100
+2026-03-10 13:34:14,657 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.code_chunker - INFO - Initialized CodeChunker: strategy=fixed, chunk_size=100, overlap=100
+2026-03-10 13:34:14,658 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.code_chunker - INFO - Fixed-size chunking: 21 chunks from 201 lines
+2026-03-10 13:34:14,663 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.code_chunker - INFO - Initialized CodeChunker: strategy=sliding, chunk_size=100, overlap=20
+2026-03-10 13:34:14,664 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.code_chunker - INFO - Sliding window chunking: 8 chunks (size=100, overlap=20)
+2026-03-10 13:34:14,687 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.code_chunker - INFO - Initialized CodeChunker: strategy=semantic, chunk_size=1000, overlap=100
+2026-03-10 13:34:14,688 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.code_chunker - INFO - Semantic chunking: 2 semantic chunks from 12 lines
+2026-03-10 13:34:14,691 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.code_chunker - INFO - Initialized CodeChunker: strategy=fixed, chunk_size=50, overlap=100
+2026-03-10 13:34:14,692 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.code_chunker - INFO - Fixed-size chunking: 1 chunks from 4 lines
+2026-03-10 13:34:14,696 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.code_chunker - INFO - Optimal chunk size estimate: 600 chars (code_size=6000, target_chunks=10)
+2026-03-10 13:34:15,099 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.background_tasks - INFO - Background task manager started with 2 workers
+2026-03-10 13:34:15,104 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.background_tasks - INFO - Background task manager started with 1 workers
+2026-03-10 13:34:15,105 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.background_tasks - INFO - Task submitted: 760f3e39-e9d2-4254-afc6-3f5700812aa4 (test_task)
+2026-03-10 13:34:15,105 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.background_tasks - INFO - Task 760f3e39-e9d2-4254-afc6-3f5700812aa4 started: test_task
+2026-03-10 13:34:15,105 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.background_tasks - ERROR - Task 760f3e39-e9d2-4254-afc6-3f5700812aa4 failed: test_task
+Traceback (most recent call last):
+  File "C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\utils\background_tasks.py", line 131, in _worker_loop
+    f"{task.duration_seconds:.2f}s: {task.name}"
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: unsupported format string passed to NoneType.__format__
+2026-03-10 13:34:15,624 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.background_tasks - INFO - Background task manager started with 1 workers
+2026-03-10 13:34:15,624 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.background_tasks - INFO - Task submitted: 73467da0-74ca-4362-a21a-0313b93c860c (progress_task)
+2026-03-10 13:34:15,624 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.background_tasks - INFO - Task 73467da0-74ca-4362-a21a-0313b93c860c started: progress_task
+2026-03-10 13:34:15,878 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.background_tasks - ERROR - Task 73467da0-74ca-4362-a21a-0313b93c860c failed: progress_task
+Traceback (most recent call last):
+  File "C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\utils\background_tasks.py", line 131, in _worker_loop
+    f"{task.duration_seconds:.2f}s: {task.name}"
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: unsupported format string passed to NoneType.__format__
+2026-03-10 13:34:16,144 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.background_tasks - INFO - Background task manager started with 1 workers
+2026-03-10 13:34:16,145 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.background_tasks - INFO - Task submitted: aac89647-2d87-488e-a41b-0dd239048bdf (failing_task)
+2026-03-10 13:34:16,145 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.background_tasks - INFO - Task aac89647-2d87-488e-a41b-0dd239048bdf started: failing_task
+2026-03-10 13:34:16,145 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.background_tasks - ERROR - Task aac89647-2d87-488e-a41b-0dd239048bdf failed: failing_task
+Traceback (most recent call last):
+  File "C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\utils\background_tasks.py", line 112, in _worker_loop
+    result = task_func(*task_args, **task_kwargs)
+  File "C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\tests\test_optimizations.py", line 399, in failing_work
+    raise ValueError("Test error")
+ValueError: Test error
+2026-03-10 13:34:16,351 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.background_tasks - INFO - Background task manager started with 1 workers
+2026-03-10 13:34:16,351 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - utils.background_tasks - INFO - Cleaned up 1 old tasks
+2026-03-10 13:34:16,360 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - security.dependency_analyzer - INFO - Parsed 3 dependencies from C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\tests\fixtures\dependencies\pom.xml
+2026-03-10 13:34:16,364 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - security.dependency_analyzer - INFO - Parsed 5 dependencies from C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\tests\fixtures\dependencies\package.json
+2026-03-10 13:34:16,370 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - security.dependency_analyzer - INFO - Parsed 6 dependencies from C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\tests\fixtures\dependencies\requirements.txt
+2026-03-10 13:34:16,377 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - security.dependency_analyzer - INFO - Parsed 5 dependencies from C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\tests\fixtures\dependencies\build.gradle
+2026-03-10 13:34:16,381 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - security.dependency_analyzer - ERROR - File not found: test.txt
+2026-03-10 13:34:16,390 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - security.dependency_analyzer - ERROR - File not found: nonexistent.xml
+2026-03-10 13:34:16,398 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - security.dependency_analyzer - INFO - Found dependency file: C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\tests\fixtures\dependencies\pom.xml
+2026-03-10 13:34:16,399 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - security.dependency_analyzer - INFO - Parsed 3 dependencies from C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\tests\fixtures\dependencies\pom.xml
+2026-03-10 13:34:16,399 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - security.dependency_analyzer - INFO - Found dependency file: C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\tests\fixtures\dependencies\build.gradle
+2026-03-10 13:34:16,401 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - security.dependency_analyzer - INFO - Parsed 5 dependencies from C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\tests\fixtures\dependencies\build.gradle
+2026-03-10 13:34:16,402 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - security.dependency_analyzer - INFO - Found dependency file: C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\tests\fixtures\dependencies\package.json
+2026-03-10 13:34:16,403 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - security.dependency_analyzer - INFO - Parsed 5 dependencies from C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\tests\fixtures\dependencies\package.json
+2026-03-10 13:34:16,404 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - security.dependency_analyzer - INFO - Found dependency file: C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\tests\fixtures\dependencies\requirements.txt
+2026-03-10 13:34:16,404 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - security.dependency_analyzer - INFO - Parsed 6 dependencies from C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\tests\fixtures\dependencies\requirements.txt
+2026-03-10 13:34:16,405 - ab092ab5-2fe0-41e8-ab14-6ce2a9057d2c - security.dependency_analyzer - INFO - Total dependencies found: 19
+2026-03-10 13:38:08,614 - 58a16be4-7ad2-44ab-a7f0-acb96db63e99 - root - INFO - Logging configured: file=c:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:38:08,617 - e68a2583-5818-45e4-9335-235e5f609be6 - __main__ - INFO - Configured MAX_CONTENT_LENGTH: 21474836480 bytes
+2026-03-10 13:38:08,617 - 529f0e14-b5d1-482c-838f-19de274668ea - __main__ - INFO - Configured MAX_FORM_MEMORY_SIZE: 21474836480 bytes
+2026-03-10 13:38:08,618 - 923548b2-8953-4e9a-b8d6-a6355768eeb6 - __main__ - INFO - Configured MAX_FORM_PARTS: 100000
+2026-03-10 13:38:08,619 - 7327c642-a64f-40c9-a0c0-562061fc02b8 - utils.csrf_protection - INFO - CSRF middleware initialized
+2026-03-10 13:38:08,620 - e90787ab-e063-433e-955e-2c41e6d8b550 - utils.csrf_protection - INFO - CSRF protection enabled for application
+2026-03-10 13:38:08,621 - 59857a43-cacb-4e3d-82cb-190c654f1fef - root - INFO - Logging configured: file=c:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:38:08,622 - d969ff59-dc65-42ca-b52c-67ebea11513a - root - INFO - Flask logging configured
+2026-03-10 13:38:08,644 - 64a5d912-fd35-4bea-94c8-d95a99676d90 - __main__ - INFO - Using temporary storage at: C:\Users\krush\AppData\Local\Temp\ai_code_review
+2026-03-10 13:38:08,644 - 8f935134-b666-49eb-9bce-cedeb7d24fee - __main__ - INFO - Upload folder: uploads
+2026-03-10 13:38:08,645 - e55c0719-0a72-40e3-ad8b-d4c6001c401a - __main__ - INFO - Processed folder: processed
+2026-03-10 13:38:08,646 - 46410924-4f69-4bdc-951c-eca4fe82cc36 - __main__ - INFO - Temp file retention: 24 hours
+2026-03-10 13:38:08,646 - 1c3b6dfe-3053-4e77-a0be-249e70b4c2a0 - __main__ - INFO - Starting cleanup of temp files older than 24 hours...
+2026-03-10 13:38:08,647 - fdb76ee4-2be4-42fa-b369-8f7f6a741c7b - __main__ - INFO - Cleanup complete: No old files to remove
+2026-03-10 13:38:08,649 - 8b44d1f2-901f-4dc1-9ff1-c752dc165851 - __main__ - INFO - Authentication database initialized successfully
+2026-03-10 13:38:08,666 - 358aec07-eef2-4c8d-9862-efd5989c96cb - __main__ - INFO - Starting AI Code Review Platform...

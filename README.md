@@ -9,6 +9,30 @@ An intelligent, enterprise-grade AI code analysis platform that combines multi-l
 
 ---
 
+## ✨ Key Features
+
+### 🔐 Security Analysis
+
+- **Multi-layered Static Analysis**: Integrated with **Bandit**, **Semgrep**, and **Ruff**.
+- **CVE Detection**: Automatic vulnerability scanning for dependencies using the **OSV database**.
+- **Secret Detection**: Regex and entropy-based identification of hardcoded credentials/API keys.
+- **OWASP Top 10 Mapping**: Every finding is categorized by **OWASP 2021** standards.
+
+### 🤖 AI Intelligence
+
+- **LLM Specialized Agents**: Context-aware agents for **Security Review** and **Code Refactoring**.
+- **Multi-Provider Support**: Compatible with **OpenAI**, **Anthropic**, **Mistral**, and **Gemini**.
+- **Interactive Chat**: Conversational AI interface for discussing code security with context.
+- **RAG-Enhanced Retrieval**: Retrieval-Augmented Generation using **Qdrant** for high-accuracy answers.
+
+### 🔍 Code Quality & Insights
+
+- **AST Metrics**: extraction of cyclomatic complexity, maintainability index, and LOC.
+- **Automated Refactoring**: AI-generated suggestions for design pattern improvements and code cleanup.
+- **Semantic Code Search**: Find similar code patterns using vector-based similarity search.
+
+---
+
 ## 🏗️ Architecture Breakdown
 
 ### High-Level System Architecture
@@ -137,29 +161,34 @@ flowchart LR
     P6 -.Refresh.-> P1
 ```
 
----
+### Key Components
 
-## ✨ Key Features
+#### Backend Core
 
-### 🔐 Security Analysis
+- **`app.py`**: Main Flask application with routes and middleware
+- **`code_analysis.py`**: Orchestrates the entire analysis pipeline
+- **`config.py`**: Centralized configuration management
 
-- **Multi-layered Static Analysis**: Integrated with **Bandit**, **Semgrep**, and **Ruff**.
-- **CVE Detection**: Automatic vulnerability scanning for dependencies using the **OSV database**.
-- **Secret Detection**: Regex and entropy-based identification of hardcoded credentials/API keys.
-- **OWASP Top 10 Mapping**: Every finding is categorized by **OWASP 2021** standards.
+#### Analysis Pipeline
 
-### 🤖 AI Intelligence
+- **Static Analysis**: AST parsing, linting (Bandit, Semgrep, Ruff)
+- **CVE Detection**: Dependency scanning via OSV database
+- **Secret Detection**: Regex and entropy-based credential detection
+- **LLM Analysis**: AI-powered security review and refactoring
 
-- **LLM Specialized Agents**: Context-aware agents for **Security Review** and **Code Refactoring**.
-- **Multi-Provider Support**: Compatible with **OpenAI**, **Anthropic**, **Mistral**, and **Gemini**.
-- **Interactive Chat**: Conversational AI interface for discussing code security with context.
-- **RAG-Enhanced Retrieval**: Retrieval-Augmented Generation using **Qdrant** for high-accuracy answers.
+#### AI/ML Components
 
-### 🔍 Code Quality & Insights
+- **Chat Engine**: Context-aware conversational AI
+- **LLM Agents**: Specialized agents for different tasks
+- **Vector Store**: Qdrant-based semantic code search
+- **RAG System**: Retrieval-Augmented Generation for accurate responses
 
-- **AST Metrics**: extraction of cyclomatic complexity, maintainability index, and LOC.
-- **Automated Refactoring**: AI-generated suggestions for design pattern improvements and code cleanup.
-- **Semantic Code Search**: Find similar code patterns using vector-based similarity search.
+#### Reporting
+
+- **Meta Reasoner**: Aggregates findings from multiple sources
+- **Report Generator**: Creates JSON and Markdown reports
+- **Dashboard Exporter**: Formats data for UI visualization
+- **Fix Generator**: Provides actionable remediation steps
 
 ---
 
@@ -190,6 +219,49 @@ flowchart LR
 | **Embeddings**    | Sentence-Transformers (Local), OpenAI Embeddings      |
 | **Vector DB**     | Qdrant, FAISS                                         |
 | **RAG**           | Hybrid Retrieval (Vector + Keyword)                   |
+
+---
+
+## 🔒 Security Features
+
+### Multi-Layer Security Analysis
+
+1. **Static Analysis**
+   - Bandit: Python-specific security issues
+   - Semgrep: Pattern-based vulnerability detection
+   - Ruff: Fast Python linter with security rules
+
+2. **Dependency Scanning**
+   - OSV database integration
+   - Real-time CVE lookups
+   - Version-specific vulnerability matching
+
+3. **Secret Detection**
+   - Regex-based pattern matching
+   - Entropy analysis for random strings
+   - Context-aware false positive reduction
+
+4. **LLM-Powered Review**
+   - Deep semantic analysis
+   - Context-aware vulnerability detection
+   - Business logic flaw identification
+
+### OWASP Top 10 Coverage
+
+All findings are mapped to OWASP categories:
+
+| Category                                    | Detection Method           |
+| :------------------------------------------ | :------------------------- |
+| **A01: Broken Access Control**              | Semgrep, LLM Agent         |
+| **A02: Cryptographic Failures**             | Secret Detector, Bandit    |
+| **A03: Injection**                          | Bandit, Semgrep, LLM Agent |
+| **A04: Insecure Design**                    | LLM Agent                  |
+| **A05: Security Misconfiguration**          | Semgrep, LLM Agent         |
+| **A06: Vulnerable Components**              | CVE Tracker, OSV database  |
+| **A07: Identification & Auth Failures**     | Semgrep, LLM Agent         |
+| **A08: Software & Data Integrity Failures** | Dependency Analysis        |
+| **A09: Logging & Monitoring Failures**      | LLM Agent                  |
+| **A10: Server-Side Request Forgery**        | Semgrep, LLM Agent         |
 
 ---
 
@@ -237,7 +309,7 @@ Copy `.env.example` to `.env` and configure your API keys:
 
 ```bash
 cp backend/.env.example backend/.env
-# Edit .env and add your OPENAI_API_KEY or ANTHROPIC_API_KEY
+# Edit backend/.env and add your OPENAI_API_KEY or ANTHROPIC_API_KEY
 ```
 
 ### 4. Run the Application
@@ -247,21 +319,10 @@ cp backend/.env.example backend/.env
 docker-compose up -d qdrant
 
 # Launch the Flask server
-python backend/run.py
+python backend/app.py
 ```
 
 Open `http://localhost:5000` to start your first analysis.
-
----
-
-## 🔒 Security Features Coverage (OWASP Top 10)
-
-| Category                        | Detection Method           |
-| :------------------------------ | :------------------------- |
-| **A01: Broken Access Control**  | Semgrep, LLM Agent         |
-| **A02: Cryptographic Failures** | Secret Detector, Bandit    |
-| **A03: Injection**              | Bandit, Semgrep, LLM Agent |
-| **A06: Vulnerable Components**  | CVE Tracker, OSV database  |
 
 ---
 
@@ -270,86 +331,6 @@ Open `http://localhost:5000` to start your first analysis.
 - 🐳 **[Docker Deployment Guide](docs/README_DOCKER.md)**
 - 🔑 **[Authentication Setup](docs/AUTHENTICATION_SETUP.md)**
 - 🏗️ **[Deep Architecture Dive](docs/README_ARCHITECTURE.md)**
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to open a Pull Request or issue.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-### Key Components
-
-#### Backend Core
-
-- **`app.py`**: Main Flask application with routes and middleware
-- **`code_analysis.py`**: Orchestrates the entire analysis pipeline
-- **`config.py`**: Centralized configuration management
-
-#### Analysis Pipeline
-
-- **Static Analysis**: AST parsing, linting (Bandit, Semgrep, Ruff)
-- **CVE Detection**: Dependency scanning via OSV database
-- **Secret Detection**: Regex and entropy-based credential detection
-- **LLM Analysis**: AI-powered security review and refactoring
-
-#### AI/ML Components
-
-- **Chat Engine**: Context-aware conversational AI
-- **LLM Agents**: Specialized agents for different tasks
-- **Vector Store**: Qdrant-based semantic code search
-- **RAG System**: Retrieval-Augmented Generation for accurate responses
-
-#### Reporting
-
-- **Meta Reasoner**: Aggregates findings from multiple sources
-- **Report Generator**: Creates JSON and Markdown reports
-- **Dashboard Exporter**: Formats data for UI visualization
-- **Fix Generator**: Provides actionable remediation steps
-
----
-
-## 🔒 Security Features
-
-### Multi-Layer Security Analysis
-
-1. **Static Analysis**
-   - Bandit: Python-specific security issues
-   - Semgrep: Pattern-based vulnerability detection
-   - Ruff: Fast Python linter with security rules
-
-2. **Dependency Scanning**
-   - OSV database integration
-   - Real-time CVE lookups
-   - Version-specific vulnerability matching
-
-3. **Secret Detection**
-   - Regex-based pattern matching
-   - Entropy analysis for random strings
-   - Context-aware false positive reduction
-
-4. **LLM-Powered Review**
-   - Deep semantic analysis
-   - Context-aware vulnerability detection
-   - Business logic flaw identification
-
-### OWASP Top 10 Mapping
-
-All findings are mapped to OWASP categories:
-
-- A01:2021 - Broken Access Control
-- A02:2021 - Cryptographic Failures
-- A03:2021 - Injection
-- A04:2021 - Insecure Design
-- A05:2021 - Security Misconfiguration
-- A06:2021 - Vulnerable and Outdated Components
-- A07:2021 - Identification and Authentication Failures
-- A08:2021 - Software and Data Integrity Failures
-- A09:2021 - Security Logging and Monitoring Failures
-- A10:2021 - Server-Side Request Forgery
 
 ---
 
@@ -372,12 +353,6 @@ We welcome contributions! Please follow these steps:
 
 ---
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
 ## 🙏 Acknowledgments
 
 - **OpenAI** for GPT models
@@ -394,8 +369,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For issues, questions, or contributions:
 
-- 🐛 [Report a Bug](https://github.com/yourusername/ai_code_review/issues)
-- 💡 [Request a Feature](https://github.com/yourusername/ai_code_review/issues)
+- 🐛 [Report a Bug](https://github.com/Krushna56/ai_code_review/issues)
+- 💡 [Request a Feature](https://github.com/Krushna56/ai_code_review/issues)
 - 📧 Email: krushanakumbhar314@gmail.com
 
 ---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

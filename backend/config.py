@@ -44,6 +44,25 @@ if DATABASE_URL.startswith('postgres://'):
 
 IS_POSTGRES = DATABASE_URL.startswith('postgresql')
 
+# Database Connection Pooling Configuration
+# Prevents connection exhaustion and improves concurrency
+SQLALCHEMY_ENGINE_OPTIONS = {
+    'pool_size': int(os.getenv('DB_POOL_SIZE', '10')),        # Max 10 connections
+    'pool_recycle': int(os.getenv('DB_POOL_RECYCLE', '3600')), # Recycle every 1 hour
+    'pool_pre_ping': True,                                      # Verify connections alive
+    'max_overflow': int(os.getenv('DB_MAX_OVERFLOW', '20')),   # Queue up to 20 additional
+    'echo': False,                                              # Disable SQL logging for performance
+}
+
+# For SQLite, connection pooling doesn't make sense (single-threaded)
+if not IS_POSTGRES and DATABASE_URL.startswith('sqlite'):
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'connect_args': {'check_same_thread': False},
+        'pool_size': 1,
+        'pool_recycle': 3600,
+    }
+
+
 # JWT Configuration
 JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', SECRET_KEY)
 JWT_ACCESS_TOKEN_EXPIRES = int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES', '14400'))   # 4 hours (was 15 min)

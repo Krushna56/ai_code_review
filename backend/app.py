@@ -14,23 +14,27 @@ from pathlib import Path
 
 import config
 import google.genai as genai
-from code_analysis import analyze_codebase
+from analyzer import analyze_codebase
 from services.report_service import get_report_service
 from services.feedback_service import get_feedback_service
 from models.user import User
 from auth import auth_bp
 from auth.jwt_utils import jwt_required
 from utils.file_filter import should_ignore_file, should_ignore_directory
+from utils.rate_limiter import rate_limit, RATE_LIMITS
+from utils.csrf_protection import enable_csrf_protection
+from utils.structured_logging import setup_flask_logging, setup_logging, generate_correlation_id
 
 
 # Import API v2 routes
 from api.v2_routes import api_v2
 from api.file_issues import file_issues_bp
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+# Configure structured logging
+setup_logging(
+    log_file=config.LOG_FILE,
+    json_format=config.FLASK_ENV == 'production',
+    level=config.LOG_LEVEL
 )
 logger = logging.getLogger(__name__)
 
@@ -116,7 +120,13 @@ app.config['SESSION_PERMANENT'] = True           # Give cookie an expiry so it s
 app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 hour
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_HTTPONLY'] = True
-app.config['SESSION_COOKIE_SECURE'] = False      # Must be False for local http:// dev
+app.config['SESSION_COOKIE_SECURE'] = config.FLASK_ENV == 'production'  # HTTPS only in production
+
+# Enable CSRF protection after session config
+enable_csrf_protection(app)
+
+# Setup Flask structured logging (request tracing, correlation IDs)
+setup_flask_logging(app)
 
 # JWT is stateless — no server-side session manager needed
 
@@ -332,6 +342,7 @@ def run_analysis_background(input_path, output_path, uid):
         logger.error(f"Background analysis error for {uid}: {e}", exc_info=True)
         analysis_status[uid]['status'] = 'error'
         analysis_status[uid]['error'] = str(e)
+
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -681,6 +692,8 @@ def api_get_files(uid):
 
 
 @app.route('/api/analyze', methods=['POST'])
+@rate_limit(limit=RATE_LIMITS['analysis']['limit'], 
+            window_seconds=RATE_LIMITS['analysis']['window_seconds'])
 @jwt_required
 def api_analyze():
     """API endpoint for programmatic access — runs analysis asynchronously"""
@@ -857,6 +870,8 @@ def api_chat_message_compat():
 
 
 @app.route('/api/query', methods=['POST'])
+@rate_limit(limit=RATE_LIMITS['query']['limit'],
+            window_seconds=RATE_LIMITS['query']['window_seconds'])
 @jwt_required
 def api_query():
     """API endpoint for natural language security queries"""

@@ -12,7 +12,7 @@ A unified interface for all 6 phases of the AI code review system:
 """
 
 import config
-from code_analysis import analyze_codebase
+from analyzer import analyze_codebase
 import sys
 import argparse
 from pathlib import Path

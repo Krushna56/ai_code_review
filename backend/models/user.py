@@ -3,12 +3,14 @@ User Model for Authentication
 
 Supports both PostgreSQL (production) and SQLite (local dev fallback).
 Connection is determined by the DATABASE_URL env var in config.
+Uses connection pooling for PostgreSQL to prevent connection exhaustion.
 """
 import sqlite3
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from pathlib import Path
 import config
+from utils.db_pool import get_pooled_connection, return_connection
 
 
 def _is_postgres():
@@ -59,13 +61,10 @@ class User:
 
     @staticmethod
     def get_db_connection():
-        """Return a DB connection — psycopg2 for Postgres, sqlite3 for local."""
+        """Return a DB connection — pooled psycopg2 for Postgres, sqlite3 for local."""
         if _is_postgres():
-            import psycopg2
-            import psycopg2.extras
-            conn = psycopg2.connect(config.DATABASE_URL)
-            conn.autocommit = False
-            return conn
+            # Use connection pool for PostgreSQL
+            return get_pooled_connection()
         else:
             # SQLite local fallback
             db_path = Path(config.DATABASE_URL.replace('sqlite:///', ''))

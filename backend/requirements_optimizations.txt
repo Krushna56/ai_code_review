@@ -1,0 +1,50 @@
+# Requirements for AI Code Review Platform Optimizations
+# Install with: pip install -r requirements_optimizations.txt
+
+# Core Flask
+Flask>=2.0.0
+Werkzeug>=2.0.0
+
+# Database & Connection Pooling
+psycopg2-binary>=2.9.0  # PostgreSQL adapter with connection pooling support
+SQLAlchemy>=1.4.0       # ORM with connection pooling
+
+# Configuration Management
+pydantic>=1.10.0        # Type-safe configuration/validation
+python-dotenv>=0.19.0   # Environment variable loading
+
+# LLM Providers
+openai>=0.27.0          # OpenAI API client
+anthropic>=0.2.0        # Anthropic Claude API
+mistralai>=0.0.7        # Mistral API client
+google-generativeai>=0.2.0  # Google Gemini API
+
+# Code Analysis & Embedding
+sentence-transformers>=2.2.0  # Code embeddings
+scikit-learn>=1.0.0      # For code chunking algorithms
+numpy>=1.21.0            # Numerical operations
+
+# Testing
+pytest>=7.0.0            # Test framework
+pytest-cov>=3.0.0        # Code coverage
+pytest-timeout>=2.1.0    # Test timeouts
+pytest-mock>=3.6.0       # Mocking utilities
+
+# Code Analysis Tools (for StaticAnalysisPhase)
+pylint>=2.12.0
+flake8>=4.0.0
+black>=22.0.0
+
+# Logging & Monitoring
+python-json-logger>=2.0.0  # JSON logging
+colorlog>=6.6.0            # Colored logging
+
+# Security
+cryptography>=36.0.0    # For CSRF token generation
+bcrypt>=3.4.0          # Password hashing
+
+# Concurrency
+# (ThreadPoolExecutor is built-in, no extra packages needed)
+
+# Performance
+cachetools>=5.0.0      # Caching utilities
