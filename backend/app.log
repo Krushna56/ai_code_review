@@ -227,3 +227,354 @@ ValueError: Test error
 2026-03-10 13:38:08,647 - fdb76ee4-2be4-42fa-b369-8f7f6a741c7b - __main__ - INFO - Cleanup complete: No old files to remove
 2026-03-10 13:38:08,649 - 8b44d1f2-901f-4dc1-9ff1-c752dc165851 - __main__ - INFO - Authentication database initialized successfully
 2026-03-10 13:38:08,666 - 358aec07-eef2-4c8d-9862-efd5989c96cb - __main__ - INFO - Starting AI Code Review Platform...
+2026-03-10 13:38:09,663 - 789ce455-244e-4aa0-bb9a-b1d098b49ef1 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.183.37.64:5000
+2026-03-10 13:38:09,664 - 6e057296-39a5-4bf4-ad1f-4dc9190c6f6e - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-03-10 13:38:12,473 - 82cdc7dd-27d1-46fe-a8d9-0f1faa32b327 - flask.request - INFO - Request received
+2026-03-10 13:38:12,554 - 82cdc7dd-27d1-46fe-a8d9-0f1faa32b327 - flask.response - INFO - Response sent
+2026-03-10 13:38:12,560 - 82cdc7dd-27d1-46fe-a8d9-0f1faa32b327 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:12] "GET / HTTP/1.1" 200 -
+2026-03-10 13:38:12,640 - 54f22480-e7c4-4e10-ab8a-a4ffa5e1d302 - flask.request - INFO - Request received
+2026-03-10 13:38:12,909 - 54f22480-e7c4-4e10-ab8a-a4ffa5e1d302 - flask.response - INFO - Response sent
+2026-03-10 13:38:12,916 - 54f22480-e7c4-4e10-ab8a-a4ffa5e1d302 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:12] "GET /static/css/sidebar.css HTTP/1.1" 200 -
+2026-03-10 13:38:13,202 - 0e2621b7-3731-4475-b958-c1622c6b7f3d - flask.request - INFO - Request received
+2026-03-10 13:38:13,205 - 0e2621b7-3731-4475-b958-c1622c6b7f3d - flask.response - WARNING - Response sent
+2026-03-10 13:38:13,206 - 0e2621b7-3731-4475-b958-c1622c6b7f3d - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:13] "[31m[1mGET /auth/github/repos HTTP/1.1[0m" 401 -
+2026-03-10 13:38:14,272 - c790df6c-d8dc-4a7b-aa30-d9e9174df82e - flask.request - INFO - Request received
+2026-03-10 13:38:14,273 - c790df6c-d8dc-4a7b-aa30-d9e9174df82e - flask.error - ERROR - 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 841, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 450, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\werkzeug\routing\map.py", line 624, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-03-10 13:38:14,379 - c790df6c-d8dc-4a7b-aa30-d9e9174df82e - flask.response - WARNING - Response sent
+2026-03-10 13:38:14,383 - c790df6c-d8dc-4a7b-aa30-d9e9174df82e - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:14] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+2026-03-10 13:38:17,308 - 1b588140-ee12-408f-b40a-e118203314d4 - flask.request - INFO - Request received
+2026-03-10 13:38:17,309 - 1b588140-ee12-408f-b40a-e118203314d4 - flask.response - WARNING - Response sent
+2026-03-10 13:38:17,311 - 1b588140-ee12-408f-b40a-e118203314d4 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:17] "[31m[1mPOST /api/analyze/repo HTTP/1.1[0m" 401 -
+2026-03-10 13:38:19,411 - 744f9788-c69f-43ca-a541-45fecf7a3180 - flask.request - INFO - Request received
+2026-03-10 13:38:19,423 - 744f9788-c69f-43ca-a541-45fecf7a3180 - flask.response - INFO - Response sent
+2026-03-10 13:38:19,430 - 744f9788-c69f-43ca-a541-45fecf7a3180 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:19] "GET /auth/login HTTP/1.1" 200 -
+2026-03-10 13:38:19,851 - 7548f1f2-eb04-486b-a2da-08bf9f897b9f - flask.request - INFO - Request received
+2026-03-10 13:38:19,852 - 7548f1f2-eb04-486b-a2da-08bf9f897b9f - flask.error - ERROR - 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 841, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 450, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\werkzeug\routing\map.py", line 624, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-03-10 13:38:19,869 - 7548f1f2-eb04-486b-a2da-08bf9f897b9f - flask.response - WARNING - Response sent
+2026-03-10 13:38:19,871 - 7548f1f2-eb04-486b-a2da-08bf9f897b9f - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:19] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+2026-03-10 13:38:26,921 - 217378d4-b43a-4ef5-a92c-8c83ecf44089 - flask.request - INFO - Request received
+2026-03-10 13:38:27,310 - 217378d4-b43a-4ef5-a92c-8c83ecf44089 - auth.routes - INFO - User logged in: krushanakumbhar314@gmail.com
+2026-03-10 13:38:27,312 - 217378d4-b43a-4ef5-a92c-8c83ecf44089 - flask.response - INFO - Response sent
+2026-03-10 13:38:27,313 - 217378d4-b43a-4ef5-a92c-8c83ecf44089 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:27] "POST /auth/login HTTP/1.1" 200 -
+2026-03-10 13:38:27,319 - a9fd9b5f-499c-4c58-a2d5-546f4faa9d50 - flask.request - INFO - Request received
+2026-03-10 13:38:27,320 - a9fd9b5f-499c-4c58-a2d5-546f4faa9d50 - flask.response - INFO - Response sent
+2026-03-10 13:38:27,322 - a9fd9b5f-499c-4c58-a2d5-546f4faa9d50 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:27] "POST /auth/set-session HTTP/1.1" 200 -
+2026-03-10 13:38:28,068 - 1073187e-876f-4ef4-9954-29aaa2290de3 - flask.request - INFO - Request received
+2026-03-10 13:38:28,072 - 1073187e-876f-4ef4-9954-29aaa2290de3 - flask.response - INFO - Response sent
+2026-03-10 13:38:28,079 - 1073187e-876f-4ef4-9954-29aaa2290de3 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:28] "GET / HTTP/1.1" 200 -
+2026-03-10 13:38:28,134 - f22bcc46-ba79-4d68-8fa9-c3cc2b63f00a - flask.request - INFO - Request received
+2026-03-10 13:38:28,136 - f22bcc46-ba79-4d68-8fa9-c3cc2b63f00a - flask.response - INFO - Response sent
+2026-03-10 13:38:28,138 - f22bcc46-ba79-4d68-8fa9-c3cc2b63f00a - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:28] "[36mGET /static/css/sidebar.css HTTP/1.1[0m" 304 -
+2026-03-10 13:38:28,214 - e36dedbe-20da-49d2-aae0-73236a5bf44b - flask.request - INFO - Request received
+2026-03-10 13:38:28,501 - c5381037-add6-47bf-8f9f-6f3e7f8289a8 - flask.request - INFO - Request received
+2026-03-10 13:38:28,502 - c5381037-add6-47bf-8f9f-6f3e7f8289a8 - flask.error - ERROR - 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 841, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 450, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\werkzeug\routing\map.py", line 624, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-03-10 13:38:28,520 - c5381037-add6-47bf-8f9f-6f3e7f8289a8 - flask.response - WARNING - Response sent
+2026-03-10 13:38:28,535 - c5381037-add6-47bf-8f9f-6f3e7f8289a8 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:28] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+2026-03-10 13:38:29,711 - c5381037-add6-47bf-8f9f-6f3e7f8289a8 - auth.routes - INFO - Fetched 11 GitHub repos
+2026-03-10 13:38:29,715 - c5381037-add6-47bf-8f9f-6f3e7f8289a8 - flask.response - INFO - Response sent
+2026-03-10 13:38:29,716 - c5381037-add6-47bf-8f9f-6f3e7f8289a8 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:29] "GET /auth/github/repos HTTP/1.1" 200 -
+2026-03-10 13:38:30,403 - 10a9fce6-60e5-4cf0-a171-3b362fc36b89 - flask.request - INFO - Request received
+2026-03-10 13:38:30,403 - 10a9fce6-60e5-4cf0-a171-3b362fc36b89 - __main__ - INFO - Cloning repository: https://github.com/Krushna56/neurona.io
+2026-03-10 13:38:35,376 - 10a9fce6-60e5-4cf0-a171-3b362fc36b89 - __main__ - INFO - Cloned https://github.com/Krushna56/neurona.io to uploads\d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 13:38:35,378 - 10a9fce6-60e5-4cf0-a171-3b362fc36b89 - __main__ - INFO - Starting analysis for cloned repo d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 13:38:35,385 - 10a9fce6-60e5-4cf0-a171-3b362fc36b89 - __main__ - INFO - Background analysis started for d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 13:38:35,385 - 10a9fce6-60e5-4cf0-a171-3b362fc36b89 - __main__ - INFO - Started background analysis for cloned repo d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 13:38:35,386 - 10a9fce6-60e5-4cf0-a171-3b362fc36b89 - analyzer - INFO - Analysis will process up to 100 files
+2026-03-10 13:38:35,386 - 10a9fce6-60e5-4cf0-a171-3b362fc36b89 - __main__ - INFO - Stored repo UID d7994bdf-5b22-4908-94c7-0384ab525478 in session
+2026-03-10 13:38:35,387 - 10a9fce6-60e5-4cf0-a171-3b362fc36b89 - flask.response - INFO - Response sent
+2026-03-10 13:38:35,389 - 10a9fce6-60e5-4cf0-a171-3b362fc36b89 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:35] "POST /api/analyze/repo HTTP/1.1" 200 -
+2026-03-10 13:38:35,439 - 0f8d538e-1a42-40de-bf55-5258921db7c3 - flask.request - INFO - Request received
+2026-03-10 13:38:35,460 - 0f8d538e-1a42-40de-bf55-5258921db7c3 - flask.response - INFO - Response sent
+2026-03-10 13:38:35,462 - 0f8d538e-1a42-40de-bf55-5258921db7c3 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:35] "GET /processing?uid=d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:38:35,509 - 48aa22d9-e5a8-409f-af4b-f78e4c901d9d - flask.request - INFO - Request received
+2026-03-10 13:38:35,510 - 48aa22d9-e5a8-409f-af4b-f78e4c901d9d - flask.response - INFO - Response sent
+2026-03-10 13:38:35,512 - 48aa22d9-e5a8-409f-af4b-f78e4c901d9d - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:35] "GET /static/css/loader.css HTTP/1.1" 200 -
+2026-03-10 13:38:35,883 - 32a4dbd6-44ee-4b47-b72f-5b63e8dfe561 - flask.request - INFO - Request received
+2026-03-10 13:38:35,899 - 32a4dbd6-44ee-4b47-b72f-5b63e8dfe561 - flask.error - ERROR - 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 841, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 450, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\werkzeug\routing\map.py", line 624, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-03-10 13:38:35,966 - 32a4dbd6-44ee-4b47-b72f-5b63e8dfe561 - flask.response - WARNING - Response sent
+2026-03-10 13:38:36,017 - 32a4dbd6-44ee-4b47-b72f-5b63e8dfe561 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:36] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+2026-03-10 13:38:38,029 - d8dfc3b1-c0f8-4a40-ac4a-a04387db246a - flask.request - INFO - Request received
+2026-03-10 13:38:38,032 - d8dfc3b1-c0f8-4a40-ac4a-a04387db246a - flask.response - INFO - Response sent
+2026-03-10 13:38:38,036 - d8dfc3b1-c0f8-4a40-ac4a-a04387db246a - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:38] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:38:40,213 - d0377919-7b23-401f-b83a-44224ea127a3 - flask.request - INFO - Request received
+2026-03-10 13:38:40,214 - d0377919-7b23-401f-b83a-44224ea127a3 - flask.response - INFO - Response sent
+2026-03-10 13:38:40,216 - d0377919-7b23-401f-b83a-44224ea127a3 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:40] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:38:43,277 - 696be198-1157-4e65-b777-7863a992cc0f - flask.request - INFO - Request received
+2026-03-10 13:38:43,279 - 696be198-1157-4e65-b777-7863a992cc0f - flask.response - INFO - Response sent
+2026-03-10 13:38:43,307 - 696be198-1157-4e65-b777-7863a992cc0f - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:43] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:38:46,212 - 54fc7393-e163-4343-9b3c-d3a3b5d15af8 - flask.request - INFO - Request received
+2026-03-10 13:38:46,214 - 54fc7393-e163-4343-9b3c-d3a3b5d15af8 - flask.response - INFO - Response sent
+2026-03-10 13:38:46,216 - 54fc7393-e163-4343-9b3c-d3a3b5d15af8 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:46] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:38:49,885 - a51ded6f-3e41-41fc-99af-f5d91b913ea1 - flask.request - INFO - Request received
+2026-03-10 13:38:49,886 - a51ded6f-3e41-41fc-99af-f5d91b913ea1 - flask.response - INFO - Response sent
+2026-03-10 13:38:50,098 - a51ded6f-3e41-41fc-99af-f5d91b913ea1 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:50] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:38:52,213 - 34ae5f25-8c60-454f-b942-702e1525c441 - flask.request - INFO - Request received
+2026-03-10 13:38:52,214 - 34ae5f25-8c60-454f-b942-702e1525c441 - flask.response - INFO - Response sent
+2026-03-10 13:38:52,215 - 34ae5f25-8c60-454f-b942-702e1525c441 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:52] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:38:55,210 - ff819f4f-de0d-4116-a9d7-e402d8f6041c - flask.request - INFO - Request received
+2026-03-10 13:38:55,211 - ff819f4f-de0d-4116-a9d7-e402d8f6041c - flask.response - INFO - Response sent
+2026-03-10 13:38:55,212 - ff819f4f-de0d-4116-a9d7-e402d8f6041c - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:55] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:38:58,383 - 1bfc593b-f80c-4cbf-9817-1a22d748875a - flask.request - INFO - Request received
+2026-03-10 13:38:58,385 - 1bfc593b-f80c-4cbf-9817-1a22d748875a - flask.response - INFO - Response sent
+2026-03-10 13:38:58,388 - 1bfc593b-f80c-4cbf-9817-1a22d748875a - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:38:58] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:01,351 - 441d5042-daa8-44d1-835f-645d05fdc93a - flask.request - INFO - Request received
+2026-03-10 13:39:01,355 - 441d5042-daa8-44d1-835f-645d05fdc93a - flask.response - INFO - Response sent
+2026-03-10 13:39:01,356 - 441d5042-daa8-44d1-835f-645d05fdc93a - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:01] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:03,671 - df420cd0-de26-4f6b-855d-8e271e2b2aa9 - flask.request - INFO - Request received
+2026-03-10 13:39:03,684 - df420cd0-de26-4f6b-855d-8e271e2b2aa9 - flask.response - INFO - Response sent
+2026-03-10 13:39:03,701 - df420cd0-de26-4f6b-855d-8e271e2b2aa9 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:03] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:05,741 - dd2b14bf-9691-404e-94d3-e7b76e6e6584 - flask.request - INFO - Request received
+2026-03-10 13:39:05,748 - dd2b14bf-9691-404e-94d3-e7b76e6e6584 - flask.response - INFO - Response sent
+2026-03-10 13:39:05,750 - dd2b14bf-9691-404e-94d3-e7b76e6e6584 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:05] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:07,778 - dc45c8f9-6907-48ac-9ae4-0f7d03b4add0 - flask.request - INFO - Request received
+2026-03-10 13:39:07,780 - dc45c8f9-6907-48ac-9ae4-0f7d03b4add0 - flask.response - INFO - Response sent
+2026-03-10 13:39:07,781 - dc45c8f9-6907-48ac-9ae4-0f7d03b4add0 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:07] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:09,535 - dc45c8f9-6907-48ac-9ae4-0f7d03b4add0 - sentence_transformers.SentenceTransformer - INFO - Use pytorch device_name: cpu
+2026-03-10 13:39:09,536 - dc45c8f9-6907-48ac-9ae4-0f7d03b4add0 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2026-03-10 13:39:09,799 - 3e008f97-a920-4c2c-8f4b-c2b6a93b1815 - flask.request - INFO - Request received
+2026-03-10 13:39:09,800 - 3e008f97-a920-4c2c-8f4b-c2b6a93b1815 - flask.response - INFO - Response sent
+2026-03-10 13:39:09,801 - 3e008f97-a920-4c2c-8f4b-c2b6a93b1815 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:09] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:11,816 - 79ce7f6b-5d5a-43f2-8741-4829dd18725e - flask.request - INFO - Request received
+2026-03-10 13:39:11,816 - 79ce7f6b-5d5a-43f2-8741-4829dd18725e - flask.response - INFO - Response sent
+2026-03-10 13:39:11,817 - 79ce7f6b-5d5a-43f2-8741-4829dd18725e - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:11] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:13,834 - eab7b080-5a92-450b-8179-3ebcea386eac - flask.request - INFO - Request received
+2026-03-10 13:39:13,835 - eab7b080-5a92-450b-8179-3ebcea386eac - flask.response - INFO - Response sent
+2026-03-10 13:39:13,836 - eab7b080-5a92-450b-8179-3ebcea386eac - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:13] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:14,684 - eab7b080-5a92-450b-8179-3ebcea386eac - embeddings.code_embedder - INFO - Initialized local embeddings with model: all-MiniLM-L6-v2
+2026-03-10 13:39:15,373 - eab7b080-5a92-450b-8179-3ebcea386eac - llm_agents.base_agent - INFO - Initialized Anthropic client with model: claude-3-5-sonnet-20241022
+2026-03-10 13:39:15,848 - 85ab4c0e-78b1-43d5-835a-de6144d7ba16 - flask.request - INFO - Request received
+2026-03-10 13:39:15,849 - 85ab4c0e-78b1-43d5-835a-de6144d7ba16 - flask.response - INFO - Response sent
+2026-03-10 13:39:15,850 - 85ab4c0e-78b1-43d5-835a-de6144d7ba16 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:15] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:16,017 - 85ab4c0e-78b1-43d5-835a-de6144d7ba16 - llm_agents.base_agent - INFO - Initialized Anthropic client with model: claude-3-5-sonnet-20241022
+2026-03-10 13:39:16,019 - 85ab4c0e-78b1-43d5-835a-de6144d7ba16 - analyzer - INFO - Analyzing api_seeder.py
+2026-03-10 13:39:16,406 - 85ab4c0e-78b1-43d5-835a-de6144d7ba16 - analyzer - INFO - Analyzing config.py
+2026-03-10 13:39:16,441 - 85ab4c0e-78b1-43d5-835a-de6144d7ba16 - analyzer - INFO - Analyzing data_generator.py
+2026-03-10 13:39:16,704 - 85ab4c0e-78b1-43d5-835a-de6144d7ba16 - analyzer - INFO - Analyzing docker_manager.py
+2026-03-10 13:39:16,803 - 85ab4c0e-78b1-43d5-835a-de6144d7ba16 - analyzer - INFO - Analyzing main.py
+2026-03-10 13:39:16,888 - 85ab4c0e-78b1-43d5-835a-de6144d7ba16 - analyzer - INFO - Analyzing utils.py
+2026-03-10 13:39:17,067 - 85ab4c0e-78b1-43d5-835a-de6144d7ba16 - analyzer - INFO - Running static analysis tools...
+2026-03-10 13:39:17,070 - 85ab4c0e-78b1-43d5-835a-de6144d7ba16 - static_analysis.multi_linter - INFO - Pylint is disabled
+2026-03-10 13:39:17,382 - 85ab4c0e-78b1-43d5-835a-de6144d7ba16 - static_analysis.multi_linter - INFO - Ruff found 17 issues
+2026-03-10 13:39:17,407 - 85ab4c0e-78b1-43d5-835a-de6144d7ba16 - stevedore.extension - ERROR - Could not load 'sarif': No module named 'sarif_om'
+2026-03-10 13:39:17,914 - 9f289b96-f196-4af1-b5b6-d8b79495e78c - flask.request - INFO - Request received
+2026-03-10 13:39:17,936 - 9f289b96-f196-4af1-b5b6-d8b79495e78c - flask.response - INFO - Response sent
+2026-03-10 13:39:17,952 - 9f289b96-f196-4af1-b5b6-d8b79495e78c - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:17] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:17,999 - 9f289b96-f196-4af1-b5b6-d8b79495e78c - static_analysis.multi_linter - INFO - Bandit found 16 issues
+2026-03-10 13:39:20,015 - 64d1b1f0-6e80-487f-a4c8-760390dbd20f - flask.request - INFO - Request received
+2026-03-10 13:39:20,016 - 64d1b1f0-6e80-487f-a4c8-760390dbd20f - flask.response - INFO - Response sent
+2026-03-10 13:39:20,017 - 64d1b1f0-6e80-487f-a4c8-760390dbd20f - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:20] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:22,072 - d25984dd-c081-4d68-94b3-a105a42503de - flask.request - INFO - Request received
+2026-03-10 13:39:22,101 - d25984dd-c081-4d68-94b3-a105a42503de - flask.response - INFO - Response sent
+2026-03-10 13:39:22,103 - d25984dd-c081-4d68-94b3-a105a42503de - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:22] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:24,120 - 106835d0-4bdd-4172-8398-1c5296cf8f15 - flask.request - INFO - Request received
+2026-03-10 13:39:24,122 - 106835d0-4bdd-4172-8398-1c5296cf8f15 - flask.response - INFO - Response sent
+2026-03-10 13:39:24,125 - 106835d0-4bdd-4172-8398-1c5296cf8f15 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:24] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:26,152 - 20ab89b8-5fb8-4265-ae6e-5dbf8c17e6f8 - flask.request - INFO - Request received
+2026-03-10 13:39:26,156 - 20ab89b8-5fb8-4265-ae6e-5dbf8c17e6f8 - flask.response - INFO - Response sent
+2026-03-10 13:39:26,164 - 20ab89b8-5fb8-4265-ae6e-5dbf8c17e6f8 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:26] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:28,202 - 706dd7ce-5497-4abd-8346-6c33d4e689da - flask.request - INFO - Request received
+2026-03-10 13:39:28,214 - 706dd7ce-5497-4abd-8346-6c33d4e689da - flask.response - INFO - Response sent
+2026-03-10 13:39:28,219 - 706dd7ce-5497-4abd-8346-6c33d4e689da - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:28] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:30,603 - 5687b404-1736-4a55-b8f6-bcd09019bed0 - flask.request - INFO - Request received
+2026-03-10 13:39:30,698 - 5687b404-1736-4a55-b8f6-bcd09019bed0 - flask.response - INFO - Response sent
+2026-03-10 13:39:30,705 - 5687b404-1736-4a55-b8f6-bcd09019bed0 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:30] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:33,229 - 19cb1d14-9fbb-4f39-b74c-e99faec6e1ed - flask.request - INFO - Request received
+2026-03-10 13:39:33,231 - 19cb1d14-9fbb-4f39-b74c-e99faec6e1ed - flask.response - INFO - Response sent
+2026-03-10 13:39:33,232 - 19cb1d14-9fbb-4f39-b74c-e99faec6e1ed - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:33] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:36,219 - fdbea4b4-4cf1-438f-af24-a2d397c8068c - flask.request - INFO - Request received
+2026-03-10 13:39:36,220 - fdbea4b4-4cf1-438f-af24-a2d397c8068c - flask.response - INFO - Response sent
+2026-03-10 13:39:36,220 - fdbea4b4-4cf1-438f-af24-a2d397c8068c - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:36] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:39,214 - adce3abd-6d12-496b-9702-3a13c341dd16 - flask.request - INFO - Request received
+2026-03-10 13:39:39,215 - adce3abd-6d12-496b-9702-3a13c341dd16 - flask.response - INFO - Response sent
+2026-03-10 13:39:39,215 - adce3abd-6d12-496b-9702-3a13c341dd16 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:39] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:42,033 - adce3abd-6d12-496b-9702-3a13c341dd16 - analyzer - INFO - Phase 4: Scanning dependencies for CVEs...
+2026-03-10 13:39:42,042 - adce3abd-6d12-496b-9702-3a13c341dd16 - security.dependency_analyzer - INFO - Found dependency file: uploads\d7994bdf-5b22-4908-94c7-0384ab525478\requirements.txt
+2026-03-10 13:39:42,055 - adce3abd-6d12-496b-9702-3a13c341dd16 - security.dependency_analyzer - INFO - Parsed 5 dependencies from uploads\d7994bdf-5b22-4908-94c7-0384ab525478\requirements.txt
+2026-03-10 13:39:42,063 - adce3abd-6d12-496b-9702-3a13c341dd16 - security.dependency_analyzer - INFO - Total dependencies found: 5
+2026-03-10 13:39:42,063 - adce3abd-6d12-496b-9702-3a13c341dd16 - analyzer - INFO - Found 5 dependencies
+2026-03-10 13:39:42,065 - adce3abd-6d12-496b-9702-3a13c341dd16 - security.cve_tracker - INFO - Querying OSV for click:8.1.0 (PyPI)
+2026-03-10 13:39:42,066 - adce3abd-6d12-496b-9702-3a13c341dd16 - security.cve_tracker - ERROR - Error querying OSV API: module 'osv' has no attribute 'query'
+2026-03-10 13:39:42,066 - adce3abd-6d12-496b-9702-3a13c341dd16 - security.cve_tracker - INFO - Querying OSV for requests:2.31.0 (PyPI)
+2026-03-10 13:39:42,067 - adce3abd-6d12-496b-9702-3a13c341dd16 - security.cve_tracker - ERROR - Error querying OSV API: module 'osv' has no attribute 'query'
+2026-03-10 13:39:42,067 - adce3abd-6d12-496b-9702-3a13c341dd16 - security.cve_tracker - INFO - Querying OSV for openai:1.0.0 (PyPI)
+2026-03-10 13:39:42,068 - adce3abd-6d12-496b-9702-3a13c341dd16 - security.cve_tracker - ERROR - Error querying OSV API: module 'osv' has no attribute 'query'
+2026-03-10 13:39:42,069 - adce3abd-6d12-496b-9702-3a13c341dd16 - security.cve_tracker - INFO - Querying OSV for python-dotenv:1.0.0 (PyPI)
+2026-03-10 13:39:42,071 - adce3abd-6d12-496b-9702-3a13c341dd16 - security.cve_tracker - ERROR - Error querying OSV API: module 'osv' has no attribute 'query'
+2026-03-10 13:39:42,073 - adce3abd-6d12-496b-9702-3a13c341dd16 - security.cve_tracker - INFO - Querying OSV for pyyaml:6.0 (PyPI)
+2026-03-10 13:39:42,075 - adce3abd-6d12-496b-9702-3a13c341dd16 - security.cve_tracker - ERROR - Error querying OSV API: module 'osv' has no attribute 'query'
+2026-03-10 13:39:42,076 - adce3abd-6d12-496b-9702-3a13c341dd16 - security.cve_tracker - INFO - Batch query completed: 0 vulnerable packages found
+2026-03-10 13:39:42,079 - adce3abd-6d12-496b-9702-3a13c341dd16 - analyzer - INFO - Found 0 vulnerabilities in dependencies
+2026-03-10 13:39:42,082 - adce3abd-6d12-496b-9702-3a13c341dd16 - analyzer - INFO - Scanning for hardcoded secrets...
+2026-03-10 13:39:42,082 - adce3abd-6d12-496b-9702-3a13c341dd16 - security.secret_detector - INFO - Using detect-secrets for ML-based detection
+2026-03-10 13:39:42,127 - adce3abd-6d12-496b-9702-3a13c341dd16 - analyzer - INFO - Found 7 hardcoded secrets
+2026-03-10 13:39:42,128 - adce3abd-6d12-496b-9702-3a13c341dd16 - analyzer - INFO - Generating comprehensive report with meta-reasoner...
+2026-03-10 13:39:42,131 - adce3abd-6d12-496b-9702-3a13c341dd16 - analyzer - INFO - Comprehensive report saved to processed\d7994bdf-5b22-4908-94c7-0384ab525478\comprehensive_report.json
+2026-03-10 13:39:42,132 - adce3abd-6d12-496b-9702-3a13c341dd16 - analyzer - INFO - Phase 5: Generating security reports and recommendations...
+2026-03-10 13:39:42,135 - adce3abd-6d12-496b-9702-3a13c341dd16 - reporting.security_report_generator - INFO - Report saved to processed\d7994bdf-5b22-4908-94c7-0384ab525478\security_report.json
+2026-03-10 13:39:42,137 - adce3abd-6d12-496b-9702-3a13c341dd16 - analyzer - INFO - Security report (JSON) saved to processed\d7994bdf-5b22-4908-94c7-0384ab525478\security_report.json
+2026-03-10 13:39:42,139 - adce3abd-6d12-496b-9702-3a13c341dd16 - reporting.security_report_generator - INFO - Report saved to processed\d7994bdf-5b22-4908-94c7-0384ab525478\security_report.md
+2026-03-10 13:39:42,140 - adce3abd-6d12-496b-9702-3a13c341dd16 - analyzer - INFO - Security report (Markdown) saved to processed\d7994bdf-5b22-4908-94c7-0384ab525478\security_report.md
+2026-03-10 13:39:42,142 - adce3abd-6d12-496b-9702-3a13c341dd16 - analyzer - INFO - Fix suggestions saved to processed\d7994bdf-5b22-4908-94c7-0384ab525478\fix_suggestions.json
+2026-03-10 13:39:42,146 - adce3abd-6d12-496b-9702-3a13c341dd16 - analyzer - INFO - Dashboard data exported to processed\d7994bdf-5b22-4908-94c7-0384ab525478\dashboard_data.json
+2026-03-10 13:39:42,147 - adce3abd-6d12-496b-9702-3a13c341dd16 - analyzer - INFO - Phase 6a: Extracting comprehensive metrics via LLM...
+2026-03-10 13:39:42,149 - adce3abd-6d12-496b-9702-3a13c341dd16 - llm_agents.metrics_extractor - WARNING - MetricsExtractor: Could not initialize Gemini - module 'google.genai' has no attribute 'configure'
+2026-03-10 13:39:42,152 - adce3abd-6d12-496b-9702-3a13c341dd16 - llm_agents.metrics_extractor - INFO - MetricsExtractor: LLM unavailable, using rule-based fallback
+2026-03-10 13:39:42,154 - adce3abd-6d12-496b-9702-3a13c341dd16 - analyzer - INFO - Metrics JSON saved to processed\d7994bdf-5b22-4908-94c7-0384ab525478\metrics.json
+2026-03-10 13:39:42,155 - adce3abd-6d12-496b-9702-3a13c341dd16 - analyzer - INFO - Phase 6b: Extracting git commit history...
+2026-03-10 13:39:42,215 - d2baf05e-edc3-4ddc-8e90-158ca33fe4d4 - flask.request - INFO - Request received
+2026-03-10 13:39:42,216 - d2baf05e-edc3-4ddc-8e90-158ca33fe4d4 - flask.response - INFO - Response sent
+2026-03-10 13:39:42,217 - d2baf05e-edc3-4ddc-8e90-158ca33fe4d4 - git_analyzer - INFO - Extracted 1 commits from git log (last 90 days)
+2026-03-10 13:39:42,217 - d2baf05e-edc3-4ddc-8e90-158ca33fe4d4 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:42] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:42,278 - d2baf05e-edc3-4ddc-8e90-158ca33fe4d4 - analyzer - INFO - Git timeline saved: 1 commits, has_git=True
+2026-03-10 13:39:42,287 - d2baf05e-edc3-4ddc-8e90-158ca33fe4d4 - __main__ - INFO - Synced security_report.json to ..\output
+2026-03-10 13:39:42,289 - d2baf05e-edc3-4ddc-8e90-158ca33fe4d4 - __main__ - INFO - Synced dashboard_data.json to ..\output
+2026-03-10 13:39:42,291 - d2baf05e-edc3-4ddc-8e90-158ca33fe4d4 - __main__ - INFO - Synced security_report.md to ..\output
+2026-03-10 13:39:42,293 - d2baf05e-edc3-4ddc-8e90-158ca33fe4d4 - __main__ - INFO - Background analysis complete for d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 13:39:44,672 - 99cbcac3-eeb5-4829-9e44-6d337f262e22 - flask.request - INFO - Request received
+2026-03-10 13:39:44,673 - 99cbcac3-eeb5-4829-9e44-6d337f262e22 - flask.response - INFO - Response sent
+2026-03-10 13:39:44,674 - 99cbcac3-eeb5-4829-9e44-6d337f262e22 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:44] "GET /api/analysis/status/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:45,638 - 4114eaad-446c-4ad8-9697-b3339715820f - flask.request - INFO - Request received
+2026-03-10 13:39:45,640 - 4114eaad-446c-4ad8-9697-b3339715820f - __main__ - INFO - Chat route using UID: d7994bdf-5b22-4908-94c7-0384ab525478 (from URL)
+2026-03-10 13:39:45,651 - 4114eaad-446c-4ad8-9697-b3339715820f - __main__ - INFO - Loading file tree for UID: d7994bdf-5b22-4908-94c7-0384ab525478, path: uploads\d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 13:39:45,652 - 4114eaad-446c-4ad8-9697-b3339715820f - __main__ - INFO - Path exists: True
+2026-03-10 13:39:45,657 - 4114eaad-446c-4ad8-9697-b3339715820f - __main__ - INFO - Generated tree with 7 children
+2026-03-10 13:39:45,657 - 4114eaad-446c-4ad8-9697-b3339715820f - __main__ - INFO - Flattened to 7 files
+2026-03-10 13:39:45,658 - 4114eaad-446c-4ad8-9697-b3339715820f - __main__ - INFO - Sample files: ['.env.example', 'api_seeder.py', 'config.py']
+2026-03-10 13:39:45,726 - 4114eaad-446c-4ad8-9697-b3339715820f - flask.response - INFO - Response sent
+2026-03-10 13:39:45,733 - 4114eaad-446c-4ad8-9697-b3339715820f - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:45] "GET /chat?uid=d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:46,207 - bcc1d7a6-84f0-426f-b6a8-8c3630adc4c6 - flask.request - INFO - Request received
+2026-03-10 13:39:46,223 - bcc1d7a6-84f0-426f-b6a8-8c3630adc4c6 - __main__ - INFO - Returning 16 files for UID d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 13:39:46,231 - bcc1d7a6-84f0-426f-b6a8-8c3630adc4c6 - flask.response - INFO - Response sent
+2026-03-10 13:39:46,232 - bcc1d7a6-84f0-426f-b6a8-8c3630adc4c6 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:46] "GET /api/files/d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:48,084 - 9ac43959-939b-406a-9aa3-d3617d4e7be4 - flask.request - INFO - Request received
+2026-03-10 13:39:48,085 - 9ac43959-939b-406a-9aa3-d3617d4e7be4 - flask.error - ERROR - 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 841, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 450, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\werkzeug\routing\map.py", line 624, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-03-10 13:39:48,090 - 9ac43959-939b-406a-9aa3-d3617d4e7be4 - flask.response - WARNING - Response sent
+2026-03-10 13:39:48,091 - 9ac43959-939b-406a-9aa3-d3617d4e7be4 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:48] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+2026-03-10 13:39:53,316 - 0102f6c9-b978-4578-98d4-c7d6f50a7695 - flask.request - INFO - Request received
+2026-03-10 13:39:53,317 - 0102f6c9-b978-4578-98d4-c7d6f50a7695 - flask.response - INFO - Response sent
+2026-03-10 13:39:53,318 - 0102f6c9-b978-4578-98d4-c7d6f50a7695 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:53] "GET /api/file/content/d7994bdf-5b22-4908-94c7-0384ab525478/config.py HTTP/1.1" 200 -
+2026-03-10 13:39:53,341 - c075b378-0890-499d-ab43-e754ececcb9a - flask.request - INFO - Request received
+2026-03-10 13:39:53,358 - c075b378-0890-499d-ab43-e754ececcb9a - api.file_issues - INFO - Found 0 issues for file config.py in UID d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 13:39:53,359 - c075b378-0890-499d-ab43-e754ececcb9a - flask.response - INFO - Response sent
+2026-03-10 13:39:53,362 - c075b378-0890-499d-ab43-e754ececcb9a - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:53] "GET /api/file/issues/d7994bdf-5b22-4908-94c7-0384ab525478/config.py HTTP/1.1" 200 -
+2026-03-10 13:39:55,730 - 7939da04-b8f8-4bb1-b960-f0dcee5b72af - flask.request - INFO - Request received
+2026-03-10 13:39:55,760 - 7939da04-b8f8-4bb1-b960-f0dcee5b72af - services.report_service - INFO - Loaded and redacted report from ..\output\security_report.json for uid=None
+2026-03-10 13:39:55,764 - 7939da04-b8f8-4bb1-b960-f0dcee5b72af - __main__ - INFO - Dashboard route using UID: d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 13:39:55,781 - 7939da04-b8f8-4bb1-b960-f0dcee5b72af - flask.response - INFO - Response sent
+2026-03-10 13:39:55,783 - 7939da04-b8f8-4bb1-b960-f0dcee5b72af - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:55] "GET /dashboard HTTP/1.1" 200 -
+2026-03-10 13:39:55,829 - e3f439ea-04f0-424a-a328-e4e7c2634364 - flask.request - INFO - Request received
+2026-03-10 13:39:55,833 - e3f439ea-04f0-424a-a328-e4e7c2634364 - flask.response - INFO - Response sent
+2026-03-10 13:39:55,834 - e3f439ea-04f0-424a-a328-e4e7c2634364 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:55] "GET /static/js/dashboard.js HTTP/1.1" 200 -
+2026-03-10 13:39:56,126 - 1066779c-616f-42c4-a199-efab50187f8e - flask.request - INFO - Request received
+2026-03-10 13:39:56,132 - 07d4ae58-8c13-4168-9c29-06db2bdf9dbe - flask.request - INFO - Request received
+2026-03-10 13:39:56,133 - 07d4ae58-8c13-4168-9c29-06db2bdf9dbe - __main__ - INFO - Summary API using UID: d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 13:39:56,136 - 401ac8d5-0ceb-45b3-ad64-4c5f66a2894d - flask.request - INFO - Request received
+2026-03-10 13:39:56,138 - 401ac8d5-0ceb-45b3-ad64-4c5f66a2894d - __main__ - INFO - Charts API using UID: d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 13:39:56,153 - 401ac8d5-0ceb-45b3-ad64-4c5f66a2894d - services.report_service - INFO - Loaded and redacted report from processed\d7994bdf-5b22-4908-94c7-0384ab525478\security_report.json for uid=d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 13:39:56,155 - 401ac8d5-0ceb-45b3-ad64-4c5f66a2894d - flask.request - INFO - Request received
+2026-03-10 13:39:56,156 - 401ac8d5-0ceb-45b3-ad64-4c5f66a2894d - __main__ - INFO - Git timeline API using UID: d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 13:39:56,185 - 401ac8d5-0ceb-45b3-ad64-4c5f66a2894d - __main__ - INFO - Findings API using UID: d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 13:39:56,207 - 401ac8d5-0ceb-45b3-ad64-4c5f66a2894d - services.report_service - INFO - Merging LLM metrics into dashboard data for uid=d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 13:39:56,221 - 401ac8d5-0ceb-45b3-ad64-4c5f66a2894d - services.description_generator - WARNING - GEMINI_API_KEY not found in environment
+2026-03-10 13:39:56,231 - 401ac8d5-0ceb-45b3-ad64-4c5f66a2894d - services.report_service - INFO - Using git timeline for uid=d7994bdf-5b22-4908-94c7-0384ab525478, source=git, commits=1
+2026-03-10 13:39:56,231 - 401ac8d5-0ceb-45b3-ad64-4c5f66a2894d - flask.response - INFO - Response sent
+2026-03-10 13:39:56,234 - 401ac8d5-0ceb-45b3-ad64-4c5f66a2894d - flask.response - INFO - Response sent
+2026-03-10 13:39:56,239 - 401ac8d5-0ceb-45b3-ad64-4c5f66a2894d - flask.response - INFO - Response sent
+2026-03-10 13:39:56,248 - 401ac8d5-0ceb-45b3-ad64-4c5f66a2894d - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:56] "GET /api/git/timeline?uid=d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:56,263 - 401ac8d5-0ceb-45b3-ad64-4c5f66a2894d - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:56] "GET /api/security/findings?limit=50&uid=d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:56,271 - 401ac8d5-0ceb-45b3-ad64-4c5f66a2894d - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:56] "GET /api/security/charts?uid=d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:56,300 - 401ac8d5-0ceb-45b3-ad64-4c5f66a2894d - services.report_service - INFO - AI code detection for d7994bdf-5b22-4908-94c7-0384ab525478: 74.2%
+2026-03-10 13:39:56,301 - 401ac8d5-0ceb-45b3-ad64-4c5f66a2894d - services.report_service - INFO - Merging LLM metrics into summary for uid=d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 13:39:56,303 - 401ac8d5-0ceb-45b3-ad64-4c5f66a2894d - flask.response - INFO - Response sent
+2026-03-10 13:39:56,304 - 401ac8d5-0ceb-45b3-ad64-4c5f66a2894d - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:56] "GET /api/security/summary?uid=d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 13:39:56,517 - 8957fc34-f41b-4677-97f4-96f7c0ac72a0 - flask.request - INFO - Request received
+2026-03-10 13:39:56,532 - 8957fc34-f41b-4677-97f4-96f7c0ac72a0 - flask.error - ERROR - 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 841, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 450, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\werkzeug\routing\map.py", line 624, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-03-10 13:39:56,545 - 8957fc34-f41b-4677-97f4-96f7c0ac72a0 - flask.response - WARNING - Response sent
+2026-03-10 13:39:56,547 - 8957fc34-f41b-4677-97f4-96f7c0ac72a0 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:56] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
