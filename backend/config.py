@@ -100,6 +100,8 @@ LLM_PROVIDER = os.getenv('LLM_PROVIDER', 'openai')
 CHAT_PROVIDER = os.getenv('CHAT_PROVIDER', 'gemini')
 ANALYSIS_PROVIDER = os.getenv('ANALYSIS_PROVIDER', 'mistral')
 ANALYSIS_FALLBACK_PROVIDER = os.getenv('ANALYSIS_FALLBACK_PROVIDER', 'anthropic')
+REPORT_PROVIDER = os.getenv('REPORT_PROVIDER', 'openai')      # OpenAI for reports/images/data extraction
+BOUNTY_ANALYSIS_PROVIDER = os.getenv('BOUNTY_ANALYSIS_PROVIDER', 'mistral')  # Mistral for bug bounty scanning
 
 LLM_MODEL = os.getenv('LLM_MODEL', 'gpt-4-turbo-preview')
 GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'gemini-1.5-pro')

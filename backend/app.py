@@ -17,7 +17,9 @@ import google.genai as genai
 from analyzer import analyze_codebase
 from services.report_service import get_report_service
 from services.feedback_service import get_feedback_service
+from services.github_service import GitHubAPIClient, create_github_client
 from models.user import User
+from models.repository import Repository
 from auth import auth_bp
 from auth.jwt_utils import jwt_required
 from utils.file_filter import should_ignore_file, should_ignore_directory
@@ -134,6 +136,10 @@ setup_flask_logging(app)
 app.register_blueprint(auth_bp)
 app.register_blueprint(api_v2)
 app.register_blueprint(file_issues_bp)
+
+# Initialize database tables
+Repository.create_table()
+logger.info("Initialized repository tracking table")
 
 
 # -----------------------------------------------------------------------
@@ -1113,6 +1119,242 @@ def api_save_feedback():
             
     except Exception as e:
         logger.error(f"Feedback API error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+# ====================
+# GitHub Integration Routes (Real-Time Data)
+# ====================
+
+@app.route('/api/github/repo-info/<owner>/<repo>', methods=['GET'])
+@jwt_required
+def api_github_repo_info(owner, repo):
+    """Get real-time GitHub repository information"""
+    try:
+        # Get user and their GitHub access token
+        user_id = g.get('user_id')
+        user = User.get_by_id(user_id) if user_id else None
+        access_token = user.github_access_token if user and user.github_access_token else None
+        
+        # Create GitHub client with user's token if available
+        client = create_github_client(access_token)
+        
+        # Fetch repository info
+        repo_info = client.get_repo_info(owner, repo)
+        
+        if repo_info:
+            # Store/update in database
+            repo_url = f"https://github.com/{owner}/{repo}"
+            repository = Repository.get_by_url(repo_url)
+            if not repository:
+                repository = Repository(
+                    user_id=user_id,
+                    repo_url=repo_url,
+                    owner=owner,
+                    repo_name=repo,
+                    repo_full_name=f"{owner}/{repo}"
+                )
+            
+            repository.github_data = repo_info
+            repository.description = repo_info.get('description')
+            repository.language = repo_info.get('language')
+            repository.stars = repo_info.get('stars', 0)
+            repository.save()
+            
+            return jsonify(repo_info), 200
+        else:
+            return jsonify({'error': 'Failed to fetch repository info'}), 400
+    except Exception as e:
+        logger.error(f"GitHub repo info error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/github/commits/<owner>/<repo>', methods=['GET'])
+@jwt_required
+def api_github_commits(owner, repo):
+    """Get latest commits from GitHub repository"""
+    try:
+        limit = request.args.get('limit', 20, type=int)
+        branch = request.args.get('branch', 'main')
+        
+        # Get user and their GitHub access token
+        user_id = g.get('user_id')
+        user = User.get_by_id(user_id) if user_id else None
+        access_token = user.github_access_token if user and user.github_access_token else None
+        
+        # Create GitHub client with user's token if available
+        client = create_github_client(access_token)
+        
+        # Fetch commits
+        commits = client.get_latest_commits(owner, repo, branch, limit)
+        
+        if commits:
+            return jsonify({'commits': commits, 'count': len(commits)}), 200
+        else:
+            return jsonify({'commits': [], 'count': 0}), 200
+    except Exception as e:
+        logger.error(f"GitHub commits error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/github/commit-status/<owner>/<repo>/<sha>', methods=['GET'])
+@jwt_required
+def api_github_commit_status(owner, repo, sha):
+    """Get CI/CD status for a specific commit"""
+    try:
+        # Get user and their GitHub access token
+        user_id = g.get('user_id')
+        user = User.get_by_id(user_id) if user_id else None
+        access_token = user.github_access_token if user and user.github_access_token else None
+        
+        # Create GitHub client with user's token if available
+        client = create_github_client(access_token)
+        
+        # Fetch commit status
+        status = client.get_commit_status(owner, repo, sha)
+        check_runs = client.get_check_runs(owner, repo, sha)
+        
+        if status:
+            # Update repository tracking
+            repo_url = f"https://github.com/{owner}/{repo}"
+            repository = Repository.get_by_url(repo_url)
+            if repository:
+                repository.commit_status = status
+                repository.last_commit_sha = sha
+                repository.save()
+            
+            return jsonify({
+                'status': status,
+                'check_runs': check_runs
+            }), 200
+        else:
+            return jsonify({'error': 'Failed to fetch commit status'}), 400
+    except Exception as e:
+        logger.error(f"GitHub commit status error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/github/stats/<owner>/<repo>', methods=['GET'])
+@jwt_required
+def api_github_stats(owner, repo):
+    """Get comprehensive GitHub repository statistics"""
+    try:
+        # Get user and their GitHub access token
+        user_id = g.get('user_id')
+        user = User.get_by_id(user_id) if user_id else None
+        access_token = user.github_access_token if user and user.github_access_token else None
+        
+        # Create GitHub client with user's token if available
+        client = create_github_client(access_token)
+        
+        # Fetch comprehensive stats
+        stats = client.get_repo_stats(owner, repo)
+        
+        if stats:
+            # Store in database
+            repo_url = f"https://github.com/{owner}/{repo}"
+            repository = Repository.get_by_url(repo_url)
+            if not repository:
+                repository = Repository(
+                    user_id=user_id,
+                    repo_url=repo_url,
+                    owner=owner,
+                    repo_name=repo,
+                    repo_full_name=f"{owner}/{repo}"
+                )
+            
+            repository.github_data = stats
+            repository.save()
+            
+            return jsonify(stats), 200
+        else:
+            return jsonify({'error': 'Failed to fetch repository stats'}), 400
+    except Exception as e:
+        logger.error(f"GitHub stats error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/github/user-repos', methods=['GET'])
+@jwt_required
+def api_github_user_repos():
+    """Get all tracked repositories for the current user"""
+    try:
+        user_id = g.get('user_id')
+        limit = request.args.get('limit', 50, type=int)
+        
+        # Get repositories from database
+        repositories = Repository.get_by_user(user_id, limit)
+        
+        repos_list = [repo.to_dict() for repo in repositories]
+        return jsonify({
+            'repositories': repos_list,
+            'count': len(repos_list)
+        }), 200
+    except Exception as e:
+        logger.error(f"GitHub user repos error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/github/track-repo', methods=['POST'])
+@jwt_required
+def api_github_track_repo():
+    """Add a GitHub repository to user's tracking list"""
+    try:
+        data = request.json
+        if not data or 'repo_url' not in data:
+            return jsonify({'error': 'No repository URL provided'}), 400
+        
+        repo_url = data['repo_url']
+        user_id = g.get('user_id')
+        
+        # Parse GitHub URL
+        client = GitHubAPIClient()
+        owner, repo = client.parse_github_url(repo_url)
+        
+        if not owner or not repo:
+            return jsonify({'error': 'Invalid GitHub URL format'}), 400
+        
+        # Check if already tracked
+        existing = Repository.get_by_url(repo_url)
+        if existing:
+            return jsonify({
+                'message': 'Repository already being tracked',
+                'repository': existing.to_dict()
+            }), 200
+        
+        # Get user and their GitHub access token
+        user = User.get_by_id(user_id) if user_id else None
+        access_token = user.github_access_token if user and user.github_access_token else None
+        
+        # Fetch repo info from GitHub
+        client = create_github_client(access_token)
+        repo_info = client.get_repo_info(owner, repo)
+        
+        if not repo_info:
+            return jsonify({'error': 'Repository not found on GitHub'}), 404
+        
+        # Create new repository record
+        repository = Repository(
+            user_id=user_id,
+            repo_url=repo_url,
+            owner=owner,
+            repo_name=repo,
+            repo_full_name=f"{owner}/{repo}",
+            description=repo_info.get('description'),
+            language=repo_info.get('language'),
+            stars=repo_info.get('stars', 0),
+            github_data=repo_info
+        )
+        
+        if repository.save():
+            return jsonify({
+                'message': 'Repository added to tracking',
+                'repository': repository.to_dict()
+            }), 201
+        else:
+            return jsonify({'error': 'Failed to save repository'}), 500
+    except Exception as e:
+        logger.error(f"GitHub track repo error: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
 

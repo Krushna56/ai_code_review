@@ -578,3 +578,284 @@ Traceback (most recent call last):
 werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
 2026-03-10 13:39:56,545 - 8957fc34-f41b-4677-97f4-96f7c0ac72a0 - flask.response - WARNING - Response sent
 2026-03-10 13:39:56,547 - 8957fc34-f41b-4677-97f4-96f7c0ac72a0 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 13:39:56] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+2026-03-10 13:47:18,706 - aab78780-ac72-4e5c-bf00-f1c0145f3283 - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:47:18,711 - 7533daeb-2c8d-4458-8e2e-d0d12b68b046 - app - INFO - Configured MAX_CONTENT_LENGTH: 21474836480 bytes
+2026-03-10 13:47:18,712 - e5792eaa-be83-44d2-9272-077a46a1dfab - app - INFO - Configured MAX_FORM_MEMORY_SIZE: 21474836480 bytes
+2026-03-10 13:47:18,712 - e2b5dc71-7f12-484a-8905-0b8764307d18 - app - INFO - Configured MAX_FORM_PARTS: 100000
+2026-03-10 13:47:18,713 - af59a724-cfa6-46e3-935e-eae37e8d33eb - utils.csrf_protection - INFO - CSRF middleware initialized
+2026-03-10 13:47:18,714 - a8197ae3-6cfe-4733-9bcd-e194fc8c41eb - utils.csrf_protection - INFO - CSRF protection enabled for application
+2026-03-10 13:47:18,715 - e07b1900-e4e7-4283-b871-49ca9eb79928 - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:47:18,716 - ccb3d3c9-1693-4e2c-8cde-d8bb0c6254cf - root - INFO - Flask logging configured
+2026-03-10 13:47:18,740 - a79a0cd6-4341-41ad-baae-e39573209843 - models.repository - INFO - Repositories table ready
+2026-03-10 13:47:18,741 - 4154c6b6-474f-4c92-baf9-2b72c7ab4380 - app - INFO - Initialized repository tracking table
+2026-03-10 13:47:18,742 - 897db21f-d525-4a37-84da-036c8ab9c815 - app - INFO - Using temporary storage at: C:\Users\krush\AppData\Local\Temp\ai_code_review
+2026-03-10 13:47:18,742 - f6c06093-b5fc-48da-931c-218e9b0ab39a - app - INFO - Upload folder: uploads
+2026-03-10 13:47:18,743 - 61d8d50a-ecde-4e2e-b72d-fc2cb35e7fce - app - INFO - Processed folder: processed
+2026-03-10 13:47:18,744 - 67c4a1c2-fdb3-4430-8624-05b83c7e177f - app - INFO - Temp file retention: 24 hours
+2026-03-10 13:47:18,745 - 68135603-9cda-4191-a49b-f7048b85a8ec - app - INFO - Starting cleanup of temp files older than 24 hours...
+2026-03-10 13:47:18,746 - aa7b86c5-d151-4feb-943f-540dd477cbbc - app - INFO - Cleanup complete: No old files to remove
+2026-03-10 13:47:18,749 - 9b72d025-9bea-4dd7-a05b-2cf809805238 - app - INFO - Authentication database initialized successfully
+2026-03-10 13:49:38,213 - 87b0082e-5290-48c5-b1de-d48e4972de8f - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:49:38,221 - 8fb658ec-32d4-4eb1-958c-14ce61afbc7a - app - INFO - Configured MAX_CONTENT_LENGTH: 21474836480 bytes
+2026-03-10 13:49:38,222 - ce58bbfa-db54-47a8-9aea-d294c811996c - app - INFO - Configured MAX_FORM_MEMORY_SIZE: 21474836480 bytes
+2026-03-10 13:49:38,223 - b8f68587-a4a7-4d2e-8dcd-c20fc97c051b - app - INFO - Configured MAX_FORM_PARTS: 100000
+2026-03-10 13:49:38,223 - 1489ae8b-63e7-4de4-801a-edd15d1b8093 - utils.csrf_protection - INFO - CSRF middleware initialized
+2026-03-10 13:49:38,224 - e6f6cd05-918f-4d83-93ed-5165f8703a21 - utils.csrf_protection - INFO - CSRF protection enabled for application
+2026-03-10 13:49:38,225 - 13efda23-af56-4a54-ad09-0a4d0a0cc1a6 - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:49:38,228 - d552fe9d-6f50-4ee4-9791-16baba47d071 - root - INFO - Flask logging configured
+2026-03-10 13:49:39,179 - c0014d50-a334-46a1-bc24-c6097c135639 - models.repository - INFO - Repositories table ready
+2026-03-10 13:49:39,181 - 663b65a8-3732-47c5-af19-53fcebdfdf45 - app - INFO - Initialized repository tracking table
+2026-03-10 13:49:39,183 - 5866cdc5-c7fa-475b-a6a0-c6a1061685df - app - INFO - Using temporary storage at: C:\Users\krush\AppData\Local\Temp\ai_code_review
+2026-03-10 13:49:39,184 - 670e47aa-10c7-490b-a8e5-31a2286af587 - app - INFO - Upload folder: uploads
+2026-03-10 13:49:39,185 - 9be70b7e-085d-49f2-b3e8-bf4e0f8d53e8 - app - INFO - Processed folder: processed
+2026-03-10 13:49:39,185 - 448ce20d-7a99-41e5-9a61-9c212f7dbdc9 - app - INFO - Temp file retention: 24 hours
+2026-03-10 13:49:39,187 - 314339d8-a4ae-43b0-b3e3-f17e67364a75 - app - INFO - Starting cleanup of temp files older than 24 hours...
+2026-03-10 13:49:39,201 - 996ea27e-5abd-4680-81c6-bdf6ec6e2e2e - app - INFO - Cleanup complete: No old files to remove
+2026-03-10 13:49:39,217 - 7226d1cb-6815-48ba-872e-0b3761b5e11e - app - INFO - Authentication database initialized successfully
+2026-03-10 13:49:39,261 - fcab71b3-4d64-47d7-ad57-b8997816de34 - models.repository - INFO - Repositories table ready
+2026-03-10 13:49:39,283 - ba5ea4e4-0cf7-4292-98e9-ebb12b9f4425 - flask.request - INFO - Request received
+2026-03-10 13:49:39,285 - ba5ea4e4-0cf7-4292-98e9-ebb12b9f4425 - flask.response - INFO - Response sent
+2026-03-10 13:51:52,579 - d3c13cd2-1842-4efa-b200-02e08708814a - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:51:52,583 - c27d5131-d51a-4cb3-b7ed-77522aaff9f2 - app - INFO - Configured MAX_CONTENT_LENGTH: 21474836480 bytes
+2026-03-10 13:51:52,583 - bb0c70b4-97bd-4431-82d1-9474a88d93bc - app - INFO - Configured MAX_FORM_MEMORY_SIZE: 21474836480 bytes
+2026-03-10 13:51:52,584 - f376d0e3-41f5-46c7-8b91-98cf9e45641f - app - INFO - Configured MAX_FORM_PARTS: 100000
+2026-03-10 13:51:52,584 - 72775bed-4fa3-4718-ad8e-9c4688d27dfa - utils.csrf_protection - INFO - CSRF middleware initialized
+2026-03-10 13:51:52,584 - 72f5cb7e-6cee-421d-ba69-de60fc381b47 - utils.csrf_protection - INFO - CSRF protection enabled for application
+2026-03-10 13:51:52,585 - 70a671ee-6ffe-4eff-849e-fb2796404a54 - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:51:52,585 - e26f0097-2153-4f66-9ff1-f999f31a54a0 - root - INFO - Flask logging configured
+2026-03-10 13:51:52,600 - ca547073-3b45-4b5e-b3fa-de404a0cdada - models.repository - INFO - Repositories table ready
+2026-03-10 13:51:52,600 - 9802842b-ee6a-43d3-ade4-5afe1390fcb4 - app - INFO - Initialized repository tracking table
+2026-03-10 13:51:52,601 - c0c15b62-4d6e-4f8b-81fa-b3a1e7ff085f - app - INFO - Using temporary storage at: C:\Users\krush\AppData\Local\Temp\ai_code_review
+2026-03-10 13:51:52,601 - 95a84fb8-73a3-4863-aa2a-fcce4973c59a - app - INFO - Upload folder: uploads
+2026-03-10 13:51:52,602 - c0088a4e-29b7-4c47-b570-cdfe8b38d5af - app - INFO - Processed folder: processed
+2026-03-10 13:51:52,602 - 0a07d680-3dbb-4234-ae1c-7479ed840a6c - app - INFO - Temp file retention: 24 hours
+2026-03-10 13:51:52,602 - f6afb191-4d4e-44bf-b28a-3c79fa0840e6 - app - INFO - Starting cleanup of temp files older than 24 hours...
+2026-03-10 13:51:52,602 - 39cac8b9-47bb-465f-8ae8-dc53bccd2056 - app - INFO - Cleanup complete: No old files to remove
+2026-03-10 13:51:52,604 - f4150fe1-5f63-4344-a908-8db220bdbfdf - app - INFO - Authentication database initialized successfully
+2026-03-10 13:51:52,629 - cb72eb52-03b5-444e-8885-a0aa5c4879af - models.repository - INFO - Repositories table ready
+2026-03-10 13:52:46,697 - 61ee7033-6211-4a92-9867-01540abb0c2e - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:52:46,704 - 12421645-1eaf-4527-8b98-861cf2a8c8b3 - app - INFO - Configured MAX_CONTENT_LENGTH: 21474836480 bytes
+2026-03-10 13:52:46,704 - 88692939-7154-4b1e-a493-10918afad2f6 - app - INFO - Configured MAX_FORM_MEMORY_SIZE: 21474836480 bytes
+2026-03-10 13:52:46,704 - 2c31ed3d-a1e5-4dec-be7c-b17b30611f7d - app - INFO - Configured MAX_FORM_PARTS: 100000
+2026-03-10 13:52:46,705 - ca223bbb-bbd1-4056-8bb4-5baf5d993cbe - utils.csrf_protection - INFO - CSRF middleware initialized
+2026-03-10 13:52:46,705 - 0a60d7fd-92df-4b31-97fe-900b184cc47c - utils.csrf_protection - INFO - CSRF protection enabled for application
+2026-03-10 13:52:46,706 - 96bdcb84-561e-4927-a704-f481b24fa9d6 - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:52:46,707 - 0d9b8d41-c946-4b00-8f25-cf29919fe51f - root - INFO - Flask logging configured
+2026-03-10 13:52:46,727 - 69c900b8-1af8-41e5-ac3e-73a903800b63 - models.repository - INFO - Repositories table ready
+2026-03-10 13:52:46,727 - 9fadb0ef-1edc-4d49-9ed4-c53cbd5cfea7 - app - INFO - Initialized repository tracking table
+2026-03-10 13:52:46,728 - c7ca33e2-a5fe-4edd-a066-8eb4b2b71cb2 - app - INFO - Using temporary storage at: C:\Users\krush\AppData\Local\Temp\ai_code_review
+2026-03-10 13:52:46,729 - bec7460e-16e8-47de-bdcb-6b86b35e9a6c - app - INFO - Upload folder: uploads
+2026-03-10 13:52:46,729 - 305c3af4-0beb-4155-9704-1eb2edc028f5 - app - INFO - Processed folder: processed
+2026-03-10 13:52:46,729 - 12581bc7-b04e-48ec-8f26-216317f3d240 - app - INFO - Temp file retention: 24 hours
+2026-03-10 13:52:46,729 - 5f8c409a-d6a7-4c91-84f8-1e580b5ad6b4 - app - INFO - Starting cleanup of temp files older than 24 hours...
+2026-03-10 13:52:46,730 - f137cad2-6b31-4db2-b815-2848329c500f - app - INFO - Cleanup complete: No old files to remove
+2026-03-10 13:52:46,733 - 0fa8d0da-ea05-42f4-8ead-27d8fb7bd43e - app - INFO - Authentication database initialized successfully
+2026-03-10 13:52:46,758 - fb108fe0-b11c-43d2-bac3-309c5d6a940a - models.repository - INFO - Repositories table ready
+2026-03-10 13:57:53,754 - 64e14a31-c9a6-48b5-b95f-6b1c766ef618 - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:57:53,910 - 7bc5687c-22a2-47fb-815f-aac4a6c3a3b8 - app - INFO - Configured MAX_CONTENT_LENGTH: 21474836480 bytes
+2026-03-10 13:57:53,911 - 6cb34e38-9cd2-45b3-8dd6-a5b1b5009975 - app - INFO - Configured MAX_FORM_MEMORY_SIZE: 21474836480 bytes
+2026-03-10 13:57:53,911 - 7d668308-67c1-4c7a-8379-819903afd92f - app - INFO - Configured MAX_FORM_PARTS: 100000
+2026-03-10 13:57:53,912 - b284a776-fd37-443f-b129-1dd48c6ae392 - utils.csrf_protection - INFO - CSRF middleware initialized
+2026-03-10 13:57:53,912 - a8032cdd-7317-4dcb-be7c-0403e67a32bd - utils.csrf_protection - INFO - CSRF protection enabled for application
+2026-03-10 13:57:53,914 - 940dd299-d5d5-4900-9fe4-ed350c460785 - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:57:53,915 - 41be3828-e4a9-497e-93e2-c984c1da43b2 - root - INFO - Flask logging configured
+2026-03-10 13:57:53,975 - 14d95ba0-fe37-4887-9e61-eaae51fabfa8 - models.repository - INFO - Repositories table ready
+2026-03-10 13:57:53,975 - 8269e082-5375-4a5f-8fa2-a6c8c867324f - app - INFO - Initialized repository tracking table
+2026-03-10 13:57:53,976 - 3267a8a3-c749-4953-806c-bb813feeb126 - app - INFO - Using temporary storage at: C:\Users\krush\AppData\Local\Temp\ai_code_review
+2026-03-10 13:57:53,977 - eaff1e4c-0542-49a7-b387-ed821493f6f0 - app - INFO - Upload folder: uploads
+2026-03-10 13:57:53,977 - 676ddf2a-f81d-480c-b5cc-8c07b4120430 - app - INFO - Processed folder: processed
+2026-03-10 13:57:53,978 - 1d1c0a85-6d8f-4019-9d9c-422cf0a66dbd - app - INFO - Temp file retention: 24 hours
+2026-03-10 13:57:53,978 - de27bf65-b2c2-47f7-9b35-551971de3963 - app - INFO - Starting cleanup of temp files older than 24 hours...
+2026-03-10 13:57:53,979 - ea2609d0-2815-4fca-8cd7-6462ee548002 - app - INFO - Cleanup complete: No old files to remove
+2026-03-10 13:57:54,009 - 78940de6-5ea6-4dc0-a440-a1fe88073aa0 - app - INFO - Authentication database initialized successfully
+2026-03-10 13:57:54,050 - 66861b58-8617-490c-9df5-f28046c1ee36 - models.repository - INFO - Repositories table ready
+2026-03-10 13:57:54,104 - 010fadff-0573-4599-a58a-5433b6ead085 - flask.request - INFO - Request received
+2026-03-10 13:57:54,104 - 010fadff-0573-4599-a58a-5433b6ead085 - flask.response - INFO - Response sent
+2026-03-10 13:59:06,022 - 1aab45b1-bcf8-440d-8f40-7701642a989e - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:59:06,028 - f09fb14f-59b5-4aef-8aa8-c063e2414687 - app - INFO - Configured MAX_CONTENT_LENGTH: 21474836480 bytes
+2026-03-10 13:59:06,029 - 98a7f489-bee4-4b62-ba0c-071a856ab730 - app - INFO - Configured MAX_FORM_MEMORY_SIZE: 21474836480 bytes
+2026-03-10 13:59:06,029 - b604b3fe-5756-417d-9fe5-ae22a94c679e - app - INFO - Configured MAX_FORM_PARTS: 100000
+2026-03-10 13:59:06,029 - 32a013ea-c963-4953-897a-41b0b98228f6 - utils.csrf_protection - INFO - CSRF middleware initialized
+2026-03-10 13:59:06,030 - a8bad80b-7e3f-44c7-97bc-05a4da92b106 - utils.csrf_protection - INFO - CSRF protection enabled for application
+2026-03-10 13:59:06,031 - 1b93853e-ac6e-4546-8a73-cd05d085e600 - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 13:59:06,031 - 69241383-a692-453e-9d17-42fc09c5f7f6 - root - INFO - Flask logging configured
+2026-03-10 13:59:06,047 - 8e70c4da-ed2c-46ea-97ef-fb36a67723fd - models.repository - INFO - Repositories table ready
+2026-03-10 13:59:06,048 - b2c02627-e6d0-4272-b227-8b9d46e6ef0f - app - INFO - Initialized repository tracking table
+2026-03-10 13:59:06,048 - 88666d15-1ab4-4072-819f-5ec32576ef2a - app - INFO - Using temporary storage at: C:\Users\krush\AppData\Local\Temp\ai_code_review
+2026-03-10 13:59:06,049 - aea7f1e9-7a74-43b3-8173-0344a575f6d7 - app - INFO - Upload folder: uploads
+2026-03-10 13:59:06,049 - 30d03d26-b875-48de-950f-b55916877e52 - app - INFO - Processed folder: processed
+2026-03-10 13:59:06,049 - 7463146f-689a-4441-ac2e-0a11d9a6f68c - app - INFO - Temp file retention: 24 hours
+2026-03-10 13:59:06,050 - 5a2ef77b-7f77-4d0a-868f-c1d11492efec - app - INFO - Starting cleanup of temp files older than 24 hours...
+2026-03-10 13:59:06,050 - 565243b5-dca6-46e2-b07c-dfe3d5784db4 - app - INFO - Cleanup complete: No old files to remove
+2026-03-10 13:59:06,052 - 3b5b32b8-5215-470c-a5af-b5b45bd736fd - app - INFO - Authentication database initialized successfully
+2026-03-10 13:59:06,071 - 59b0b298-2caf-4762-ba0e-d8dd3ff63ff6 - models.repository - INFO - Repositories table ready
+2026-03-10 13:59:06,083 - 726e49b8-f2eb-4439-a27a-555efc555171 - flask.request - INFO - Request received
+2026-03-10 13:59:06,083 - 726e49b8-f2eb-4439-a27a-555efc555171 - flask.response - INFO - Response sent
+2026-03-10 14:02:27,037 - 3402bcc8-6c6c-4dfd-a1e2-86f0ffef0730 - flask.request - INFO - Request received
+2026-03-10 14:02:27,071 - 3402bcc8-6c6c-4dfd-a1e2-86f0ffef0730 - flask.error - ERROR - 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 841, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 450, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\werkzeug\routing\map.py", line 624, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-03-10 14:02:27,101 - 3402bcc8-6c6c-4dfd-a1e2-86f0ffef0730 - flask.response - WARNING - Response sent
+2026-03-10 14:02:27,104 - 3402bcc8-6c6c-4dfd-a1e2-86f0ffef0730 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:02:27] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+2026-03-10 14:03:25,726 - 39416d5f-d02b-42aa-bdec-948b12b25a68 - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 14:03:25,730 - 0e13cef3-c71b-41e8-a492-6ae9ffba4fc9 - app - INFO - Configured MAX_CONTENT_LENGTH: 21474836480 bytes
+2026-03-10 14:03:25,730 - a3f31992-d82b-4a0a-8354-289314fe49e1 - app - INFO - Configured MAX_FORM_MEMORY_SIZE: 21474836480 bytes
+2026-03-10 14:03:25,730 - fe61630e-2278-425f-b144-a16623d74b6e - app - INFO - Configured MAX_FORM_PARTS: 100000
+2026-03-10 14:03:25,731 - 0b85322c-9bd2-4f21-a271-3e902c7f5eb6 - utils.csrf_protection - INFO - CSRF middleware initialized
+2026-03-10 14:03:25,731 - dfd14329-0ff6-4bbf-a50a-004b605efb88 - utils.csrf_protection - INFO - CSRF protection enabled for application
+2026-03-10 14:03:25,732 - 538b1b03-9ed7-4ba9-b901-4832d8dd54bc - root - INFO - Logging configured: file=C:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-03-10 14:03:25,733 - 16cdd3c9-a879-4a50-9e3b-bc6b1828e23d - root - INFO - Flask logging configured
+2026-03-10 14:03:25,760 - 83f50071-a769-427e-87a4-4028927b4efb - models.repository - INFO - Repositories table ready
+2026-03-10 14:03:25,760 - c6379500-0fec-4331-aa33-b05247c33f95 - app - INFO - Initialized repository tracking table
+2026-03-10 14:03:25,761 - 7e3d6645-60d0-4737-a728-27042f8ec0c6 - app - INFO - Using temporary storage at: C:\Users\krush\AppData\Local\Temp\ai_code_review
+2026-03-10 14:03:25,761 - 0805d196-0711-45e9-b09e-32156479b793 - app - INFO - Upload folder: uploads
+2026-03-10 14:03:25,762 - 8796a983-e4ac-4e2c-be87-b56edf6bfeaf - app - INFO - Processed folder: processed
+2026-03-10 14:03:25,763 - 5933101c-674f-4aaa-9e2a-3a4eff4f9016 - app - INFO - Temp file retention: 24 hours
+2026-03-10 14:03:25,764 - bf9364e5-1519-42cd-be4a-e6542657d6a1 - app - INFO - Starting cleanup of temp files older than 24 hours...
+2026-03-10 14:03:25,770 - 6ecf51e0-f1f1-4cb8-9d2b-d6c8da2f3370 - app - INFO - Cleanup complete: No old files to remove
+2026-03-10 14:03:25,774 - d78df27b-85f3-45a8-a6c8-e5de35a229f7 - app - INFO - Authentication database initialized successfully
+2026-03-10 14:03:51,622 - 5001047c-79f3-4d8c-85b2-d403f266c048 - flask.request - INFO - Request received
+2026-03-10 14:03:51,689 - 5001047c-79f3-4d8c-85b2-d403f266c048 - services.report_service - INFO - Loaded and redacted report from ..\output\security_report.json for uid=None
+2026-03-10 14:03:51,695 - 5001047c-79f3-4d8c-85b2-d403f266c048 - __main__ - INFO - Dashboard route using UID: d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 14:03:51,730 - 5001047c-79f3-4d8c-85b2-d403f266c048 - flask.response - INFO - Response sent
+2026-03-10 14:03:51,731 - 5001047c-79f3-4d8c-85b2-d403f266c048 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:51] "GET /dashboard HTTP/1.1" 200 -
+2026-03-10 14:03:51,783 - b92e57d2-3c56-4a8b-b8af-8471f8cb051e - flask.request - INFO - Request received
+2026-03-10 14:03:51,791 - b92e57d2-3c56-4a8b-b8af-8471f8cb051e - flask.response - INFO - Response sent
+2026-03-10 14:03:51,792 - b92e57d2-3c56-4a8b-b8af-8471f8cb051e - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:51] "[36mGET /static/js/dashboard.js HTTP/1.1[0m" 304 -
+2026-03-10 14:03:51,864 - df6fb3b1-3d20-4183-8b76-a02eb63e88c9 - flask.request - INFO - Request received
+2026-03-10 14:03:51,867 - 773a0dc1-21fe-4bed-926f-5b82c6606d3e - __main__ - INFO - Summary API using UID: d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 14:03:51,874 - 773a0dc1-21fe-4bed-926f-5b82c6606d3e - flask.request - INFO - Request received
+2026-03-10 14:03:51,877 - 773a0dc1-21fe-4bed-926f-5b82c6606d3e - __main__ - INFO - Charts API using UID: d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 14:03:51,903 - 6f17d900-40e0-4bea-a628-15331b2c0d4d - services.report_service - INFO - Loaded and redacted report from processed\d7994bdf-5b22-4908-94c7-0384ab525478\security_report.json for uid=d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 14:03:51,908 - 6f17d900-40e0-4bea-a628-15331b2c0d4d - flask.request - INFO - Request received
+2026-03-10 14:03:51,923 - 7d5ce5bb-18b6-46b0-bd5f-c7e029a02f1d - flask.request - INFO - Request received
+2026-03-10 14:03:51,924 - 7d5ce5bb-18b6-46b0-bd5f-c7e029a02f1d - __main__ - INFO - Git timeline API using UID: d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 14:03:51,933 - 7d5ce5bb-18b6-46b0-bd5f-c7e029a02f1d - __main__ - INFO - Findings API using UID: d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 14:03:51,947 - 7d5ce5bb-18b6-46b0-bd5f-c7e029a02f1d - services.report_service - INFO - Merging LLM metrics into dashboard data for uid=d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 14:03:51,965 - 7d5ce5bb-18b6-46b0-bd5f-c7e029a02f1d - flask.response - INFO - Response sent
+2026-03-10 14:03:51,979 - 7d5ce5bb-18b6-46b0-bd5f-c7e029a02f1d - flask.response - INFO - Response sent
+2026-03-10 14:03:51,980 - 7d5ce5bb-18b6-46b0-bd5f-c7e029a02f1d - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:51] "GET /api/git/timeline?uid=d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 14:03:51,980 - 7d5ce5bb-18b6-46b0-bd5f-c7e029a02f1d - services.report_service - INFO - Using git timeline for uid=d7994bdf-5b22-4908-94c7-0384ab525478, source=git, commits=1
+2026-03-10 14:03:51,986 - 7d5ce5bb-18b6-46b0-bd5f-c7e029a02f1d - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:51] "GET /api/security/findings?limit=50&uid=d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 14:03:52,004 - 7d5ce5bb-18b6-46b0-bd5f-c7e029a02f1d - flask.response - INFO - Response sent
+2026-03-10 14:03:52,008 - 7d5ce5bb-18b6-46b0-bd5f-c7e029a02f1d - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:52] "GET /api/security/charts?uid=d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 14:03:52,105 - 7d5ce5bb-18b6-46b0-bd5f-c7e029a02f1d - services.report_service - INFO - AI code detection for d7994bdf-5b22-4908-94c7-0384ab525478: 74.2%
+2026-03-10 14:03:52,109 - 7d5ce5bb-18b6-46b0-bd5f-c7e029a02f1d - services.report_service - INFO - Merging LLM metrics into summary for uid=d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 14:03:52,111 - 7d5ce5bb-18b6-46b0-bd5f-c7e029a02f1d - flask.response - INFO - Response sent
+2026-03-10 14:03:52,112 - 7d5ce5bb-18b6-46b0-bd5f-c7e029a02f1d - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:52] "GET /api/security/summary?uid=d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 14:03:52,248 - 90d4790f-3d98-4b64-87c3-e743d33970d3 - flask.request - INFO - Request received
+2026-03-10 14:03:52,261 - 90d4790f-3d98-4b64-87c3-e743d33970d3 - flask.error - ERROR - 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 841, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 450, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\werkzeug\routing\map.py", line 624, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-03-10 14:03:52,280 - 90d4790f-3d98-4b64-87c3-e743d33970d3 - flask.response - WARNING - Response sent
+2026-03-10 14:03:52,289 - 90d4790f-3d98-4b64-87c3-e743d33970d3 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:52] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+2026-03-10 14:03:52,497 - ef72c43c-5a39-4e1d-82bd-16c8c8641b8c - flask.request - INFO - Request received
+2026-03-10 14:03:52,499 - ef72c43c-5a39-4e1d-82bd-16c8c8641b8c - __main__ - INFO - Dashboard route using UID: d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 14:03:52,507 - ef72c43c-5a39-4e1d-82bd-16c8c8641b8c - flask.response - INFO - Response sent
+2026-03-10 14:03:52,514 - ef72c43c-5a39-4e1d-82bd-16c8c8641b8c - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:52] "GET /dashboard HTTP/1.1" 200 -
+2026-03-10 14:03:52,574 - c7773ac5-9d0a-4209-9d55-4f298d4ef291 - flask.request - INFO - Request received
+2026-03-10 14:03:52,576 - c7773ac5-9d0a-4209-9d55-4f298d4ef291 - flask.response - INFO - Response sent
+2026-03-10 14:03:52,578 - c7773ac5-9d0a-4209-9d55-4f298d4ef291 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:52] "[36mGET /static/js/dashboard.js HTTP/1.1[0m" 304 -
+2026-03-10 14:03:52,681 - 6e3491a1-297b-4744-965b-643b7380b553 - flask.request - INFO - Request received
+2026-03-10 14:03:52,691 - ba6c25f2-4e9c-45a3-8f06-63a0c231b606 - flask.request - INFO - Request received
+2026-03-10 14:03:52,695 - ba6c25f2-4e9c-45a3-8f06-63a0c231b606 - __main__ - INFO - Summary API using UID: d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 14:03:52,697 - ba6c25f2-4e9c-45a3-8f06-63a0c231b606 - __main__ - INFO - Charts API using UID: d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 14:03:52,714 - ba6c25f2-4e9c-45a3-8f06-63a0c231b606 - flask.response - INFO - Response sent
+2026-03-10 14:03:52,723 - 91500b63-fb75-452b-a50a-4dcc1c3e1813 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:52] "GET /api/security/charts?uid=d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 14:03:52,726 - 91500b63-fb75-452b-a50a-4dcc1c3e1813 - flask.request - INFO - Request received
+2026-03-10 14:03:52,734 - 91500b63-fb75-452b-a50a-4dcc1c3e1813 - __main__ - INFO - Git timeline API using UID: d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 14:03:52,749 - aed64f0e-a097-4bfd-a910-9b2ab3a825d1 - flask.request - INFO - Request received
+2026-03-10 14:03:52,753 - aed64f0e-a097-4bfd-a910-9b2ab3a825d1 - flask.response - INFO - Response sent
+2026-03-10 14:03:52,759 - aed64f0e-a097-4bfd-a910-9b2ab3a825d1 - __main__ - INFO - Findings API using UID: d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 14:03:52,765 - aed64f0e-a097-4bfd-a910-9b2ab3a825d1 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:52] "GET /api/git/timeline?uid=d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 14:03:52,771 - aed64f0e-a097-4bfd-a910-9b2ab3a825d1 - flask.response - INFO - Response sent
+2026-03-10 14:03:52,776 - aed64f0e-a097-4bfd-a910-9b2ab3a825d1 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:52] "GET /api/security/findings?limit=50&uid=d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 14:03:52,815 - aed64f0e-a097-4bfd-a910-9b2ab3a825d1 - services.report_service - INFO - AI code detection for d7994bdf-5b22-4908-94c7-0384ab525478: 74.2%
+2026-03-10 14:03:52,816 - aed64f0e-a097-4bfd-a910-9b2ab3a825d1 - services.report_service - INFO - Merging LLM metrics into summary for uid=d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 14:03:52,821 - aed64f0e-a097-4bfd-a910-9b2ab3a825d1 - flask.response - INFO - Response sent
+2026-03-10 14:03:52,822 - aed64f0e-a097-4bfd-a910-9b2ab3a825d1 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:52] "GET /api/security/summary?uid=d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 14:03:53,024 - 3ad794bb-9bca-46b8-9205-c8b5837db1b3 - flask.request - INFO - Request received
+2026-03-10 14:03:53,026 - 3ad794bb-9bca-46b8-9205-c8b5837db1b3 - flask.error - ERROR - 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 841, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 450, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\werkzeug\routing\map.py", line 624, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-03-10 14:03:53,056 - 3ad794bb-9bca-46b8-9205-c8b5837db1b3 - flask.response - WARNING - Response sent
+2026-03-10 14:03:53,065 - 3ad794bb-9bca-46b8-9205-c8b5837db1b3 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:53] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
+2026-03-10 14:03:53,505 - d5257462-853a-49da-869a-f16bd52fec8c - flask.request - INFO - Request received
+2026-03-10 14:03:53,506 - d5257462-853a-49da-869a-f16bd52fec8c - __main__ - INFO - Dashboard route using UID: d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 14:03:53,509 - d5257462-853a-49da-869a-f16bd52fec8c - flask.response - INFO - Response sent
+2026-03-10 14:03:53,510 - d5257462-853a-49da-869a-f16bd52fec8c - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:53] "GET /dashboard HTTP/1.1" 200 -
+2026-03-10 14:03:53,570 - 7ddecdb0-0bcc-458d-a70b-e276f015c7cc - flask.request - INFO - Request received
+2026-03-10 14:03:53,573 - 7ddecdb0-0bcc-458d-a70b-e276f015c7cc - flask.response - INFO - Response sent
+2026-03-10 14:03:53,575 - 7ddecdb0-0bcc-458d-a70b-e276f015c7cc - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:53] "[36mGET /static/js/dashboard.js HTTP/1.1[0m" 304 -
+2026-03-10 14:03:53,638 - 713a72ae-26ca-4f43-a40d-0a8b9cd6e6b7 - flask.request - INFO - Request received
+2026-03-10 14:03:53,640 - 713a72ae-26ca-4f43-a40d-0a8b9cd6e6b7 - __main__ - INFO - Summary API using UID: d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 14:03:53,656 - bb5704ef-4731-4469-b224-3624c03cbde0 - flask.request - INFO - Request received
+2026-03-10 14:03:53,779 - 7d098b25-e907-4d12-9855-a433c4ad17b2 - __main__ - INFO - Charts API using UID: d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 14:03:53,781 - 3124937c-d870-4809-8513-1e4c084198e6 - flask.request - INFO - Request received
+2026-03-10 14:03:53,780 - 3124937c-d870-4809-8513-1e4c084198e6 - flask.request - INFO - Request received
+2026-03-10 14:03:53,783 - 3124937c-d870-4809-8513-1e4c084198e6 - flask.response - INFO - Response sent
+2026-03-10 14:03:53,783 - 3124937c-d870-4809-8513-1e4c084198e6 - __main__ - INFO - Findings API using UID: d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 14:03:53,786 - 3124937c-d870-4809-8513-1e4c084198e6 - __main__ - INFO - Git timeline API using UID: d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 14:03:53,789 - 3124937c-d870-4809-8513-1e4c084198e6 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:53] "GET /api/security/charts?uid=d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 14:03:53,790 - 3124937c-d870-4809-8513-1e4c084198e6 - flask.response - INFO - Response sent
+2026-03-10 14:03:53,792 - 3124937c-d870-4809-8513-1e4c084198e6 - flask.response - INFO - Response sent
+2026-03-10 14:03:53,794 - 3124937c-d870-4809-8513-1e4c084198e6 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:53] "GET /api/security/findings?limit=50&uid=d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 14:03:53,803 - 3124937c-d870-4809-8513-1e4c084198e6 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:53] "GET /api/git/timeline?uid=d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 14:03:53,870 - 3124937c-d870-4809-8513-1e4c084198e6 - services.report_service - INFO - AI code detection for d7994bdf-5b22-4908-94c7-0384ab525478: 74.2%
+2026-03-10 14:03:53,872 - 3124937c-d870-4809-8513-1e4c084198e6 - services.report_service - INFO - Merging LLM metrics into summary for uid=d7994bdf-5b22-4908-94c7-0384ab525478
+2026-03-10 14:03:53,873 - 3124937c-d870-4809-8513-1e4c084198e6 - flask.response - INFO - Response sent
+2026-03-10 14:03:53,874 - 3124937c-d870-4809-8513-1e4c084198e6 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:53] "GET /api/security/summary?uid=d7994bdf-5b22-4908-94c7-0384ab525478 HTTP/1.1" 200 -
+2026-03-10 14:03:53,907 - 52840930-2597-490e-8ac1-037211d2c471 - flask.request - INFO - Request received
+2026-03-10 14:03:53,909 - 52840930-2597-490e-8ac1-037211d2c471 - flask.error - ERROR - 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 841, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 450, in raise_routing_exception
+    raise request.routing_exception  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\ctx.py", line 353, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\werkzeug\routing\map.py", line 624, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-03-10 14:03:53,925 - 52840930-2597-490e-8ac1-037211d2c471 - flask.response - WARNING - Response sent
+2026-03-10 14:03:53,926 - 52840930-2597-490e-8ac1-037211d2c471 - werkzeug - INFO - 127.0.0.1 - - [10/Mar/2026 14:03:53] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 500 -
