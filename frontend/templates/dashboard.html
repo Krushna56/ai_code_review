@@ -968,9 +968,7 @@
       <!-- Nav tabs -->
       <nav class="topnav-tabs">
         <a href="/dashboard" class="topnav-tab active">📊 Dashboard</a>
-        <a href="/dashboard" class="topnav-tab">🔒 Security</a>
-        <a href="/dashboard" class="topnav-tab">✨ Code Quality</a>
-        <a href="/dashboard" class="topnav-tab">📋 Analysis History</a>
+        <a href="#bounty-tab" class="topnav-tab" onclick="document.getElementById('bounty-tab').scrollIntoView({behavior: 'smooth'})">🏴‍☠️ Bug Bounty</a>
       </nav>
 
       <!-- Right -->
@@ -998,14 +996,8 @@
           <a href="/dashboard" class="sb-link active">
             <span class="sb-link-icon">📊</span>Dashboard
           </a>
-          <a href="/dashboard" class="sb-link">
-            <span class="sb-link-icon">🔒</span>Security
-          </a>
-          <a href="/dashboard" class="sb-link">
-            <span class="sb-link-icon">✨</span>Code Quality
-          </a>
-          <a href="/dashboard" class="sb-link">
-            <span class="sb-link-icon">📋</span>Analysis History
+          <a href="#bounty-tab" class="sb-link" onclick="document.getElementById('bounty-tab').scrollIntoView({behavior: 'smooth'})">
+            <span class="sb-link-icon">🏴‍☠️</span>Bug Bounty
           </a>
           <a href="/chat" class="sb-link">
             <span class="sb-link-icon">💬</span>AI Chat
@@ -1289,44 +1281,38 @@
             </div>
           </div>
 
-          <!-- ─── BOTTOM STAT BAR ─── -->
-          <div class="stat-bar">
-            <div class="stat-item">
-              <div class="stat-label">Defect Density</div>
-              <div class="stat-value-big" id="statDefectDensity">—</div>
-              <div class="stat-sub">Issues per 1000 LOC</div>
+          <!-- ─── BUG BOUNTY PANEL ─── -->
+          <div class="card" id="bounty-tab" style="margin-top: 2rem; border: 1px solid var(--c-critical);">
+            <div class="card-header" style="border-bottom: 1px solid var(--border); padding-bottom: 1rem; margin-bottom: 1rem;">
+              <div>
+                <div class="card-title" style="color: var(--c-critical);">🏴‍☠️ Bug Bounty Scanner</div>
+                <div class="card-subtitle">Vulnerabilities detected by Mistral & Anthropic analysis</div>
+              </div>
+              <div class="card-legend">
+                <button onclick="runBountyScan()" class="btn-start" style="padding: 4px 12px; font-size: 0.8rem;">Run Fresh Scan</button>
+              </div>
             </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-              <div class="stat-label">Files Reviewed</div>
-              <div class="stat-value-big" id="statFiles">—</div>
-              <div class="stat-sub">Total files</div>
-            </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-              <div class="stat-label">AI-Code %</div>
-              <div class="stat-value-big" id="statAI">—%</div>
-              <div class="stat-sub">AI Generated</div>
-            </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-              <div class="stat-label">Dependency Vulns</div>
-              <div class="stat-value-big" id="statDepVuln">—</div>
-              <div class="stat-sub">CVE findings</div>
-            </div>
-            <div class="stat-divider"></div>
-            <div class="sev-pills">
-              <div class="sev-pill"><span class="ico">🔴</span><span class="count" id="pillCritical">—</span><span
-                  class="note">Critical</span></div>
-              <div class="sev-pill"><span class="ico">🟠</span><span class="count" id="pillHigh">—</span><span
-                  class="note">High</span></div>
-              <div class="sev-pill"><span class="ico">🟡</span><span class="count" id="pillMedium">—</span><span
-                  class="note">Medium</span></div>
-              <div class="sev-pill"><span class="ico">🟢</span><span class="count" id="pillLow">—</span><span
-                  class="note">Low</span></div>
-              <div class="sev-pill"><span class="ico">⚡</span><span class="count" id="pillInfo">—</span><span
-                  class="note">Info</span></div>
-            </div>
+
+            <!-- Vulnerabilities Table -->
+            <table class="dash-table" id="bountyTable">
+              <thead>
+                <tr>
+                  <th>Severity</th>
+                  <th>Vulnerability</th>
+                  <th>CVSS Score</th>
+                  <th>Location</th>
+                  <th>Remediation</th>
+                </tr>
+              </thead>
+              <tbody id="bountyTbody">
+                <tr>
+                  <td colspan="5" style="text-align:center; padding: 2rem; color: var(--text-dim);">
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">🤖</div>
+                    <div>Click 'Run Fresh Scan' to search for high-value vulnerabilities.</div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
         </div><!-- /dash-content -->

@@ -1,7 +1,9 @@
 """
 Base LLM Agent
 
-Common interface for all LLM agents
+Common interface for all LLM agents.
+Code analysis agents (SecurityReviewer, RefactorAgent) use Mistral (primary)
++ Anthropic (fallback) via LLMClientFactory.create_analysis_client().
 """
 
 import logging
@@ -14,16 +16,29 @@ logger = logging.getLogger(__name__)
 
 
 class BaseAgent(ABC):
-    """Base class for all LLM agents"""
+    """Base class for all LLM agents — analysis agents use Mistral + Anthropic fallback."""
 
     def __init__(self, provider: str = None, model: str = None):
-        self.provider = provider or config.LLM_PROVIDER
-        self.model = model or config.LLM_MODEL
+        # Use the new strict routing: analysis → Mistral first, then Anthropic
+        from llm_agents.llm_factory import LLMClientFactory
+        try:
+            self._llm_client = LLMClientFactory.create_analysis_client()
+            self.provider = self._llm_client.provider
+            self.model = self._llm_client.model
+            logger.info(f"[BaseAgent] Using analysis client: {self.provider}/{self.model}")
+        except Exception as e:
+            logger.warning(f"[BaseAgent] create_analysis_client failed ({e}), falling back to legacy init")
+            self._llm_client = None
+            self.provider = provider or config.LLM_PROVIDER
+            self.model = model or config.LLM_MODEL
+
         self.temperature = config.LLM_TEMPERATURE
         self.max_tokens = config.LLM_MAX_TOKENS
-        self.client = None
+        self.client = None  # Legacy raw client (used by _generate_* helpers)
 
-        self._initialize_client()
+        if not self._llm_client:
+            # legacy fallback path
+            self._initialize_client()
 
     def _initialize_client(self):
         """Initialize LLM client"""
@@ -51,19 +66,25 @@ class BaseAgent(ABC):
 
     def generate(self, prompt: str, system_prompt: Optional[str] = None) -> Optional[str]:
         """
-        Generate response from LLM with automatic fallback
-        
-        Tries the configured provider first, then falls back to other providers if it fails.
-        Fallback order: anthropic → mistral → openai
-
-        Args:
-            prompt: User prompt
-            system_prompt: System prompt (optional)
-
-        Returns:
-            Generated text
+        Generate response using the analysis LLM client (Mistral → Anthropic fallback).
+        Falls back to legacy per-provider methods if factory client is unavailable.
         """
-        # Define fallback order based on current provider
+        # Fast path: use the pre-built factory client
+        if self._llm_client is not None:
+            try:
+                result = self._llm_client.complete(
+                    prompt=prompt,
+                    system_prompt=system_prompt,
+                    temperature=self.temperature,
+                    max_tokens=self.max_tokens
+                )
+                if result:
+                    logger.info(f"[BaseAgent] Response generated via {self._llm_client.provider}")
+                    return result
+            except Exception as e:
+                logger.warning(f"[BaseAgent] Factory client failed ({e}), trying legacy path")
+
+        # Legacy fallback: try providers in order
         if self.provider == 'anthropic':
             providers_to_try = [
                 ('anthropic', 'claude-3-5-sonnet-20241022', config.ANTHROPIC_API_KEY),
@@ -76,55 +97,41 @@ class BaseAgent(ABC):
                 ('anthropic', 'claude-3-5-sonnet-20241022', config.ANTHROPIC_API_KEY),
                 ('openai', 'gpt-4o', config.OPENAI_API_KEY)
             ]
-        else:  # openai or default
+        else:
             providers_to_try = [
                 ('openai', 'gpt-4o', config.OPENAI_API_KEY),
                 ('anthropic', 'claude-3-5-sonnet-20241022', config.ANTHROPIC_API_KEY),
                 ('mistral', 'mistral-large-latest', config.MISTRAL_API_KEY)
             ]
-        
+
         last_error = None
-        
         for provider_name, model_name, api_key in providers_to_try:
-            if not api_key:  # Skip if API key not configured
+            if not api_key:
                 continue
-                
             try:
                 logger.info(f"Trying {provider_name} with model {model_name}")
-                
-                # Temporarily switch to this provider
-                original_provider = self.provider
-                original_model = self.model
                 self.provider = provider_name
                 self.model = model_name
-                
-                # Re-initialize client for the new provider
                 self._initialize_client()
-                
-                # Try to generate response
+
                 if provider_name == 'openai':
                     result = self._generate_openai(prompt, system_prompt)
                 elif provider_name == 'anthropic':
                     result = self._generate_anthropic(prompt, system_prompt)
                 elif provider_name == 'mistral':
                     result = self._generate_mistral(prompt, system_prompt)
-                
+
                 logger.info(f"✅ Successfully generated response using {provider_name}")
                 return result
-                
             except Exception as e:
                 last_error = e
                 error_msg = str(e)
-                
-                # Check if it's a quota/rate limit error
                 if '429' in error_msg or 'quota' in error_msg.lower() or 'rate' in error_msg.lower():
-                    logger.warning(f"❌ {provider_name} quota exceeded or rate limited, trying next provider...")
+                    logger.warning(f"❌ {provider_name} quota exceeded, trying next...")
                 else:
-                    logger.warning(f"❌ {provider_name} failed: {error_msg}, trying next provider...")
-                
+                    logger.warning(f"❌ {provider_name} failed: {error_msg}, trying next...")
                 continue
-        
-        # All providers failed
+
         logger.error(f"All API providers failed. Last error: {last_error}", exc_info=True)
         return None
 

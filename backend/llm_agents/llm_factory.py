@@ -3,6 +3,11 @@ LLM Client Factory - Centralized LLM provider management.
 
 Provides a single place to manage LLM client initialization, fallback logic,
 and configuration for all LLM providers (OpenAI, Anthropic, Mistral, Gemini).
+
+Routing policy (enforced via create_*_client helpers):
+  - Chat / Chatbot       → Gemini
+  - Code Analysis        → Mistral (primary) + Anthropic (fallback)
+  - Report / Extraction  → OpenAI GPT-4
 """
 
 import logging
@@ -391,3 +396,47 @@ class LLMClientFactory:
 
         logger.info(f"Available LLM providers: {available}")
         return available
+
+    # ──────────────────────────────────────────────────────────────────────────
+    # Strict routing helpers — one dedicated LLM per task type
+    # ──────────────────────────────────────────────────────────────────────────
+
+    @classmethod
+    def create_chat_client(cls) -> LLMClient:
+        """
+        Gemini-only client for chatbot conversations.
+        Falls back to other available providers only if Gemini is unavailable.
+        """
+        provider = getattr(config, 'CHAT_PROVIDER', 'gemini')
+        logger.info(f"[ROUTING] Creating CHAT client → {provider}")
+        try:
+            return cls.create_client(provider)
+        except Exception as e:
+            logger.warning(f"Chat provider '{provider}' failed ({e}), trying fallback")
+            fallbacks = [p for p in ['gemini', 'openai', 'anthropic', 'mistral'] if p != provider]
+            return cls.create_client_with_fallback(provider, fallbacks)
+
+    @classmethod
+    def create_analysis_client(cls) -> LLMClient:
+        """
+        Mistral (primary) + Anthropic (fallback) for code analysis and bug-bounty scanning.
+        """
+        primary = getattr(config, 'ANALYSIS_PROVIDER', 'mistral')
+        fallback = getattr(config, 'ANALYSIS_FALLBACK_PROVIDER', 'anthropic')
+        logger.info(f"[ROUTING] Creating ANALYSIS client → {primary} (fallback: {fallback})")
+        return cls.create_client_with_fallback(primary, [fallback])
+
+    @classmethod
+    def create_report_client(cls) -> LLMClient:
+        """
+        OpenAI GPT-4 for report writing, structured data extraction, and image analysis.
+        Falls back to other available providers only if OpenAI is unavailable.
+        """
+        provider = getattr(config, 'REPORT_PROVIDER', 'openai')
+        logger.info(f"[ROUTING] Creating REPORT client → {provider}")
+        try:
+            return cls.create_client(provider)
+        except Exception as e:
+            logger.warning(f"Report provider '{provider}' failed ({e}), trying fallback")
+            fallbacks = [p for p in ['openai', 'anthropic', 'mistral', 'gemini'] if p != provider]
+            return cls.create_client_with_fallback(provider, fallbacks)

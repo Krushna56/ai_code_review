@@ -723,6 +723,53 @@
         }
       }
 
+      /* LLM Badge */
+      .llm-badge {
+        background: rgba(102, 126, 234, 0.15);
+        color: #8c9eff;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      /* Quick Actions */
+      .chat-quick-actions {
+        display: flex;
+        gap: 8px;
+        padding: 8px 16px;
+        overflow-x: auto;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        background: #1a1a1a;
+      }
+
+      .chat-quick-actions::-webkit-scrollbar {
+        height: 2px;
+      }
+
+      .quick-chip {
+        background: #2d2d30;
+        border: 1px solid #3e3e42;
+        color: #cccccc;
+        padding: 4px 10px;
+        border-radius: 16px;
+        font-size: 11px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s;
+      }
+
+      .quick-chip:hover {
+        background: #3e3e42;
+        color: #ffffff;
+        border-color: #667eea;
+      }
+
       /* ═══════════════ RESPONSIVE LAYOUT ═══════════════ */
 
       /* Large screens — shrink chat slightly */
@@ -980,13 +1027,21 @@
       <!-- Chatbot Panel -->
       <div class="chat-panel" id="chat-panel">
         <div class="chat-header">
-          <span>AI ASSISTANT</span>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span>AI ASSISTANT</span>
+            <span class="llm-badge" id="llm-badge">🤖 Gemini</span>
+          </div>
           <div class="chat-status" id="chat-status"></div>
         </div>
         <div class="chat-messages" id="chat-messages">
           <div class="chat-message system">
             AI Assistant ready to help with code review
           </div>
+        </div>
+        <div class="chat-quick-actions" id="quick-actions">
+          <div class="quick-chip" onclick="insertPrompt('Run a bug bounty scan')">🏴‍☠️ Bug Bounty</div>
+          <div class="quick-chip" onclick="insertPrompt('Extract all secrets from the code')">🔑 Find Secrets</div>
+          <div class="quick-chip" onclick="insertPrompt('Explain this code step-by-step')">💡 Explain</div>
         </div>
         <div class="chat-input-container">
           <div class="chat-input-wrapper">
@@ -1336,6 +1391,15 @@
         }
       }
 
+      // Quick action helper
+      function insertPrompt(text) {
+        const input = document.getElementById("chat-input");
+        input.value = text;
+        input.focus();
+        // Optional: auto-send after inserting
+        // sendMessage();
+      }
+
       // Send chat message
       async function sendMessage() {
         const input = document.getElementById("chat-input");
@@ -1382,6 +1446,11 @@
               "assistant",
             );
           } else {
+            if (data.llm_provider) {
+              const badge = document.getElementById("llm-badge");
+              badge.innerHTML = `🤖 ${data.llm_provider.charAt(0).toUpperCase() + data.llm_provider.slice(1)}`;
+            }
+
             // Render markdown in response
             const formattedResponse = marked.parse(
               data.response || data.message || "No response",

@@ -405,6 +405,45 @@ class ReportService:
 
         return report.get('remediation_plan', [])
 
+    def generate_ai_report(self, uid: Optional[str] = None) -> str:
+        """
+        Generate a final markdown report using the OpenAI ReportAgent.
+        
+        Args:
+            uid: Optional analysis UID.
+            
+        Returns:
+            Markdown-formatted AI-written report string
+        """
+        report = self.get_latest_report(uid)
+        if not report or report.get('is_sample'):
+            return "No report data available to generate AI report."
+            
+        findings = report.get('security_findings', []) + report.get('cve_findings', [])
+        summary = self.get_summary(uid)
+        
+        from llm_agents.report_agent import ReportAgent
+        agent = ReportAgent()
+        
+        logger.info(f"Generating AI final report via ReportAgent for uid={uid}")
+        md_report = agent.generate_report(findings=findings, summary=summary)
+        
+        # Save it to the processed output folder
+        if uid:
+            search_paths = self._get_search_paths(uid)
+            for path in search_paths:
+                if path.exists() and path.name == uid:
+                    report_path = path / "security_report_ai.md"
+                    try:
+                        with open(report_path, "w", encoding="utf-8") as f:
+                            f.write(md_report)
+                        logger.info(f"AI report saved to {report_path}")
+                        break
+                    except Exception as e:
+                        logger.error(f"Error saving AI report: {e}")
+                        
+        return md_report
+
     def _redact_recursive(self, data: Any) -> Any:
         """Recursively redact sensitive data from any structure"""
         if isinstance(data, dict):

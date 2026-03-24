@@ -1,0 +1,4 @@
+INFO     services.conversation_manager:conversation_manager.py:80 Database schema initialized
+INFO     services.conversation_manager:conversation_manager.py:34 Initialized ConversationManager with database: C:\Users\krush\AppData\Local\Temp\tmpgcrsn4i9.db
+INFO     services.conversation_manager:conversation_manager.py:106 Created session 44a8acbf-a335-4acb-a6e7-f622207091e2 for user test_user
+DEBUG    services.conversation_manager:conversation_manager.py:161 Added user message to session 44a8acbf-a335-4acb-a6e7-f622207091e2

@@ -18,20 +18,44 @@ logger = logging.getLogger(__name__)
 
 
 class ChatEngine:
-    """Interactive chat engine for code analysis discussions"""
+    """Interactive chat engine — uses Gemini exclusively for chatbot conversations."""
 
     def __init__(self):
-        """Initialize chat engine with conversation manager and agents"""
+        """Initialize chat engine with Gemini LLM and supporting agents."""
+        from llm_agents.llm_factory import LLMClientFactory
+
         self.conversation_manager = ConversationManager()
         self.security_reviewer = SecurityReviewer()
         self.refactor_agent = RefactorAgent()
         self.report_service = get_report_service()
+
+        # Strictly enforce Gemini for chat
+        try:
+            self._chat_llm = LLMClientFactory.create_chat_client()
+            logger.info(f"[ChatEngine] Chat LLM: {self._chat_llm.provider}/{self._chat_llm.model}")
+        except Exception as e:
+            logger.warning(f"[ChatEngine] create_chat_client failed ({e}), falling back to security_reviewer")
+            self._chat_llm = None
 
         # Context window management (in tokens)
         self.max_context_tokens = getattr(config, 'CHAT_CONTEXT_WINDOW', 4000)
         self.max_history_messages = getattr(config, 'CHAT_MAX_HISTORY', 50)
 
         logger.info("Initialized ChatEngine with dashboard integration")
+
+    @property
+    def provider_name(self) -> str:
+        """Return the active chat LLM provider name."""
+        if self._chat_llm:
+            return self._chat_llm.provider
+        return getattr(self.security_reviewer, 'provider', 'unknown')
+
+    @property
+    def model_name(self) -> str:
+        """Return the active chat LLM model name."""
+        if self._chat_llm:
+            return self._chat_llm.model
+        return getattr(self.security_reviewer, 'model', 'unknown')
 
     def start_session(self, user_id: str, metadata: Optional[Dict[str, Any]] = None) -> str:
         """
@@ -93,30 +117,34 @@ class ChatEngine:
         prompt = self._build_prompt(message, context, intent)
 
         if stream:
-            # Return streaming generator
-            return self._generate_streaming_response(
-                session_id, agent, prompt, context
-            )
+            return self._generate_streaming_response(session_id, agent, prompt, context)
         else:
-            # Generate response
-            response_content = agent.generate(
-                prompt=prompt,
-                system_prompt=agent.system_prompt
-            )
+            # Use Gemini client directly when available
+            if self._chat_llm is not None and intent not in ('security', 'refactor'):
+                response_content = self._chat_llm.complete(
+                    prompt=prompt,
+                    system_prompt=agent.system_prompt if hasattr(agent, 'system_prompt') else None,
+                    temperature=0.5,
+                    max_tokens=2000
+                )
+            else:
+                response_content = agent.generate(
+                    prompt=prompt,
+                    system_prompt=agent.system_prompt
+                )
 
             if not response_content:
                 response_content = "I apologize, but I encountered an error generating a response. Please try again."
 
-            # Estimate tokens (rough approximation)
             tokens_used = len(message.split()) + len(response_content.split())
 
-            # Add assistant response to history
             assistant_message_id = self.conversation_manager.add_message(
                 session_id=session_id,
                 role='assistant',
                 content=response_content,
                 tokens_used=tokens_used,
-                metadata={'intent': intent, 'agent': agent.__class__.__name__}
+                metadata={'intent': intent, 'agent': agent.__class__.__name__,
+                          'llm_provider': self.provider_name}
             )
 
             return {
@@ -124,7 +152,9 @@ class ChatEngine:
                 'tokens_used': tokens_used,
                 'message_id': assistant_message_id,
                 'intent': intent,
-                'agent': agent.__class__.__name__
+                'agent': agent.__class__.__name__,
+                'llm_provider': self.provider_name,
+                'llm_model': self.model_name,
             }
 
     def _generate_streaming_response(
@@ -222,17 +252,31 @@ class ChatEngine:
 
     def _detect_intent(self, message: str) -> str:
         """
-        Detect user intent from message
-
-        Returns:
-            'security', 'refactor', 'explain', 'general'
+        Detect user intent from message.
+        Returns: 'security', 'refactor', 'explain', 'bounty', 'extract', 'general'
         """
         message_lower = message.lower()
 
+        # Bug bounty / vulnerability hunting
+        if any(kw in message_lower for kw in [
+            'bug bounty', 'bounty', 'owasp', 'cve', 'cvss', 'exploit', 'poc',
+            'vulnerability scan', 'vuln scan', 'penetration', 'pentest', 'hack',
+            'xss', 'sqli', 'sql injection', 'ssrf', 'rce', 'command injection',
+            'hardcoded secret', 'jwt', 'open redirect', 'path traversal'
+        ]):
+            return 'bounty'
+
+        # Data extraction from code
+        if any(kw in message_lower for kw in [
+            'extract data', 'extract code', 'list functions', 'list classes',
+            'find imports', 'find endpoints', 'what functions', 'what classes'
+        ]):
+            return 'extract'
+
         # Security-related
         if any(kw in message_lower for kw in [
-            'security', 'vulnerability', 'exploit', 'injection', 'xss',
-            'hardcoded', 'secret', 'password', 'token', 'unsafe', 'cve'
+            'security', 'vulnerability', 'injection', 'unsafe', 'password', 'token',
+            'secret', 'hardcoded', 'auth'
         ]):
             return 'security'
 

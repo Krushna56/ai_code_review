@@ -31,6 +31,7 @@ from utils.structured_logging import setup_flask_logging, setup_logging, generat
 # Import API v2 routes
 from api.v2_routes import api_v2
 from api.file_issues import file_issues_bp
+from api.bounty_routes import bounty_bp
 
 # Configure structured logging
 setup_logging(
@@ -136,6 +137,7 @@ setup_flask_logging(app)
 app.register_blueprint(auth_bp)
 app.register_blueprint(api_v2)
 app.register_blueprint(file_issues_bp)
+app.register_blueprint(bounty_bp)  # Bug bounty / vulnerability scanner routes
 
 # Initialize database tables
 Repository.create_table()
