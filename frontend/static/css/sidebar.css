@@ -1,19 +1,20 @@
 /* =====================================================
    COLLAPSIBLE SIDEBAR — shared across all pages
-   Sidebar is HIDDEN by default, opens on toggle click,
-   content area shrinks to accommodate it.
+   Migrated to Stitch Design System (violet accent)
+   All original class names preserved for compatibility
    ===================================================== */
 
-/* ── CSS Variables (reuse or fallback) ── */
+/* ── CSS Variables — now delegate to Stitch tokens ── */
 :root {
-  --sb-width: 200px;
-  --sb-bg: #111827;
-  --sb-border: rgba(255, 255, 255, 0.07);
-  --sb-text: #8891aa;
-  --sb-text-active: #e8eaf0;
-  --sb-accent: #ff9b51;
-  --sb-accent-dim: rgba(255, 155, 81, 0.15);
-  --sb-chip: #1e2a3a;
+  --sb-width: 210px;
+  --sb-bg: #0d1117;
+  --sb-border: rgba(255,255,255,0.07);
+  --sb-text: #94a3b8;
+  --sb-text-active: #e2e8f4;
+  /* ⬇ was orange, now violet */
+  --sb-accent: #7C6FF7;
+  --sb-accent-dim: rgba(124,111,247,0.14);
+  --sb-chip: rgba(255,255,255,0.05);
   --sb-radius: 8px;
   --sb-transition: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -30,22 +31,20 @@
   width: 0;
   flex-shrink: 0;
   overflow: hidden;
-  background: var(--sb-bg);
+  background: rgba(13,17,23,0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-right: 1px solid var(--sb-border);
   display: flex;
   flex-direction: column;
   transition: width var(--sb-transition);
   position: relative;
-  z-index: 100;
-  /* Prevent content flash during animation */
+  z-index: 200;
   white-space: nowrap;
 }
+.sb-sidebar.sb-open { width: var(--sb-width); }
 
-.sb-sidebar.sb-open {
-  width: var(--sb-width);
-}
-
-/* ── Sidebar inner content (always full width, clipped by parent) ── */
+/* ── Sidebar inner ── */
 .sb-sidebar-inner {
   width: var(--sb-width);
   display: flex;
@@ -65,19 +64,21 @@
 .sb-brand-icon {
   width: 28px;
   height: 28px;
-  background: linear-gradient(135deg, var(--sb-accent), #ff6b1a);
+  background: linear-gradient(135deg, #7C6FF7, #5b50e0);
   border-radius: 7px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 14px;
   flex-shrink: 0;
+  box-shadow: 0 0 12px rgba(124,111,247,0.35);
 }
 .sb-brand-name {
   font-size: 0.82rem;
   font-weight: 700;
   color: var(--sb-text-active);
   letter-spacing: -0.2px;
+  font-family: 'Space Grotesk', 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
 /* Nav */
@@ -86,20 +87,15 @@
   padding: 10px 8px;
   overflow-y: auto;
 }
-.sb-nav::-webkit-scrollbar {
-  width: 4px;
-}
-.sb-nav::-webkit-scrollbar-thumb {
-  background: #2a3045;
-  border-radius: 2px;
-}
+.sb-nav::-webkit-scrollbar { width: 3px; }
+.sb-nav::-webkit-scrollbar-thumb { background: rgba(124,111,247,0.2); border-radius: 99px; }
 
 .sb-nav-label {
   font-size: 0.58rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.7px;
-  color: #4a5270;
+  letter-spacing: 0.8px;
+  color: #374151;
   padding: 8px 8px 4px;
 }
 
@@ -121,15 +117,18 @@
   text-align: left;
   margin-bottom: 2px;
   white-space: nowrap;
+  border-left: 2px solid transparent;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 .sb-item:hover {
   background: var(--sb-chip);
   color: var(--sb-text-active);
+  border-left-color: rgba(124,111,247,0.3);
 }
 .sb-item.sb-active {
   background: var(--sb-accent-dim);
   color: var(--sb-accent);
-  border: 1px solid rgba(255, 155, 81, 0.2);
+  border-left-color: var(--sb-accent);
 }
 .sb-item-icon {
   font-size: 0.95rem;
@@ -159,10 +158,7 @@
   flex-direction: column;
   overflow: hidden;
   min-width: 0;
-  /* content naturally shrinks via flex when sidebar opens */
 }
-
-/* Ensure dash-wrap fills sb-main height */
 .sb-main > .dash-wrap {
   flex: 1;
   min-height: 0;
@@ -176,68 +172,52 @@
   justify-content: center;
   align-items: center;
   gap: 4px;
-  width: 36px;
-  height: 36px;
-  background: rgba(255, 255, 255, 0.06);
+  width: 32px;
+  height: 32px;
+  background: rgba(255,255,255,0.04);
   border: 1px solid var(--sb-border);
   border-radius: 7px;
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
-  transition:
-    background 0.18s,
-    border-color 0.18s;
+  transition: background 0.18s, border-color 0.18s;
 }
 .sb-toggle-btn:hover {
-  background: var(--sb-chip);
-  border-color: rgba(255, 155, 81, 0.3);
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(124,111,247,0.4);
 }
 
 .sb-bar {
   display: block;
-  width: 16px;
-  height: 2px;
+  width: 14px;
+  height: 1.5px;
   background: var(--sb-text);
   border-radius: 2px;
-  transition:
-    transform 0.25s ease,
-    opacity 0.25s ease,
-    width 0.25s ease;
   transform-origin: center;
+  transition: transform 0.22s ease, opacity 0.22s ease, width 0.22s ease;
 }
 
 /* Animate to X when open */
-.sb-toggle-btn.sb-open .sb-bar:nth-child(1) {
-  transform: translateY(6px) rotate(45deg);
-}
-.sb-toggle-btn.sb-open .sb-bar:nth-child(2) {
-  opacity: 0;
-  width: 0;
-}
-.sb-toggle-btn.sb-open .sb-bar:nth-child(3) {
-  transform: translateY(-6px) rotate(-45deg);
-}
+.sb-toggle-btn.sb-open .sb-bar:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
+.sb-toggle-btn.sb-open .sb-bar:nth-child(2) { opacity: 0; width: 0; }
+.sb-toggle-btn.sb-open .sb-bar:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
 .sb-toggle-btn.sb-open {
-  background: var(--sb-accent-dim);
-  border-color: var(--sb-accent);
+  background: rgba(124,111,247,0.14);
+  border-color: rgba(124,111,247,0.5);
 }
-.sb-toggle-btn.sb-open .sb-bar {
-  background: var(--sb-accent);
-}
+.sb-toggle-btn.sb-open .sb-bar { background: #9d93ff; }
 
-/* ── Overlay (mobile only, optional) ── */
+/* ── Mobile overlay ── */
 .sb-overlay {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0,0,0,0.5);
   z-index: 99;
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(3px);
 }
 @media (max-width: 640px) {
-  .sb-overlay.sb-open {
-    display: block;
-  }
+  .sb-overlay.sb-open { display: block; }
   .sb-sidebar.sb-open {
     position: fixed;
     top: 0;

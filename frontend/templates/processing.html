@@ -1,208 +1,321 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Analyzing Code — AI Code Review</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/loader.css') }}">
+  <meta name="description" content="AI-powered security and code quality analysis in progress">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #1a2332 100%);
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background: #07090f;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      color: #e6edf3;
+      color: #e2e8f4;
+      overflow: hidden;
     }
 
-    .card {
-      background: rgba(22, 27, 34, 0.85);
-      border: 1px solid rgba(48, 54, 61, 0.8);
-      border-radius: 1.25rem;
-      padding: 3rem 2.5rem;
-      text-align: center;
-      max-width: 480px;
-      width: 90%;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    }
-
-    /* ── EVA Loader (falls back if loader.css loads ok) ── */
-    .loader {
-      margin-bottom: 2rem;
-    }
-
-    /* Fallback spinner when loader.css is absent */
-    .spinner-fallback {
-      display: none;
-      width: 64px;
-      height: 64px;
-      border: 4px solid rgba(255, 155, 81, 0.2);
-      border-top-color: #FF9B51;
+    /* Ambient bg orbs */
+    .bg-orb {
+      position: fixed;
       border-radius: 50%;
-      animation: spin 0.9s linear infinite;
-      margin: 0 auto 2rem;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-orb-1 {
+      width: 420px; height: 420px;
+      background: radial-gradient(circle, rgba(124,111,247,0.18) 0%, transparent 70%);
+      top: -100px; left: -100px;
+      animation: drift 12s ease-in-out infinite alternate;
+    }
+    .bg-orb-2 {
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(56,189,248,0.1) 0%, transparent 70%);
+      bottom: -80px; right: -80px;
+      animation: drift 9s ease-in-out infinite alternate-reverse;
+    }
+    @keyframes drift { from { transform: translate(0,0); } to { transform: translate(30px, 20px); } }
+
+    /* Card */
+    .card {
+      position: relative;
+      z-index: 10;
+      background: rgba(13,17,23,0.85);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 44px 42px;
+      text-align: center;
+      max-width: 460px;
+      width: 90%;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow:
+        0 0 0 1px rgba(124,111,247,0.15),
+        0 24px 64px rgba(0,0,0,0.6),
+        0 0 80px rgba(124,111,247,0.06);
+      animation: card-in 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes card-in {
+      from { opacity: 0; transform: translateY(24px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
     }
 
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
+    /* Orbital loader */
+    .loader-wrap {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 28px;
+      position: relative;
     }
+    .orbit {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1.5px solid transparent;
+      animation: spin linear infinite;
+    }
+    .orbit-1 {
+      border-top-color: #7C6FF7;
+      border-right-color: rgba(124,111,247,0.3);
+      animation-duration: 1.4s;
+    }
+    .orbit-2 {
+      inset: 12px;
+      border-top-color: #38bdf8;
+      border-left-color: rgba(56,189,248,0.3);
+      animation-duration: 1.0s;
+      animation-direction: reverse;
+    }
+    .orbit-3 {
+      inset: 26px;
+      border-bottom-color: #9d93ff;
+      border-right-color: rgba(157,147,255,0.3);
+      animation-duration: 0.7s;
+    }
+    .orbit-core {
+      position: absolute;
+      inset: 36px;
+      background: linear-gradient(135deg, #7C6FF7, #5b50e0);
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(124,111,247,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* Headings */
     h2 {
       font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      background: linear-gradient(135deg, #FF9B51, #ffd6b0);
+      font-weight: 800;
+      font-family: 'Space Grotesk', sans-serif;
+      background: linear-gradient(135deg, #9d93ff 0%, #38bdf8 60%, #e2e8f4 100%);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
     }
 
     .subtitle {
-      color: #8b949e;
-      font-size: 0.9rem;
-      margin-bottom: 1.75rem;
+      color: #64748b;
+      font-size: 0.87rem;
+      margin-bottom: 28px;
+      line-height: 1.6;
     }
 
-    /* Progress bar */
+    /* Progress */
     .progress-wrap {
-      background: rgba(48, 54, 61, 0.6);
-      border-radius: 0.5rem;
-      height: 6px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 99px;
+      height: 7px;
       overflow: hidden;
-      margin-bottom: 1rem;
+      margin-bottom: 12px;
     }
-
     .progress-bar {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, #FF9B51, #ffd6b0);
-      border-radius: 0.5rem;
-      transition: width 0.4s ease;
+      background: linear-gradient(90deg, #7C6FF7, #9d93ff, #38bdf8);
+      background-size: 200% 100%;
+      border-radius: 99px;
+      transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+      animation: progress-shimmer 2s linear infinite;
+    }
+    @keyframes progress-shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
 
     .status-text {
-      font-size: 0.82rem;
-      color: #8b949e;
+      font-size: 0.8rem;
+      color: #64748b;
       min-height: 1.2em;
+      transition: all 0.3s ease;
     }
 
+    /* Steps */
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 22px;
+      text-align: left;
+    }
+    .step-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 9px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.04);
+      font-size: 0.78rem;
+      color: #475569;
+      transition: all 0.4s ease;
+    }
+    .step-row.active {
+      background: rgba(124,111,247,0.08);
+      border-color: rgba(124,111,247,0.2);
+      color: #9d93ff;
+    }
+    .step-row.done {
+      background: rgba(52,211,153,0.06);
+      border-color: rgba(52,211,153,0.15);
+      color: #34d399;
+    }
+    .step-icon { font-size: 0.95rem; width: 18px; text-align: center; flex-shrink: 0; }
+
+    /* Error box */
     .error-box {
       display: none;
-      margin-top: 1.5rem;
-      padding: 1rem;
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      border-radius: 0.75rem;
+      margin-top: 20px;
+      padding: 14px 16px;
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: 12px;
       color: #fca5a5;
-      font-size: 0.85rem;
+      font-size: 0.83rem;
+      line-height: 1.5;
     }
 
+    /* Back button */
     .btn-home {
       display: none;
-      margin-top: 1.25rem;
-      padding: 0.6rem 1.5rem;
-      background: linear-gradient(135deg, #FF9B51, #ff8a38);
-      color: #25343F;
-      font-weight: 600;
+      margin-top: 18px;
+      padding: 9px 24px;
+      background: linear-gradient(135deg, #7C6FF7, #5b50e0);
+      color: #fff;
+      font-weight: 700;
       border: none;
-      border-radius: 0.6rem;
+      border-radius: 99px;
       cursor: pointer;
       text-decoration: none;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
+      box-shadow: 0 4px 16px rgba(124,111,247,0.35);
+      transition: all 0.2s ease;
+      font-family: 'Plus Jakarta Sans', sans-serif;
     }
+    .btn-home:hover { transform: translateY(-1px); filter: brightness(1.1); }
 
-    /* Animated dots */
-    .dots::after {
-      content: '';
-      animation: dots 1.5s steps(4, end) infinite;
-    }
-
+    /* Animated dots in heading */
+    .dots::after { content: ''; animation: dots 1.5s steps(4, end) infinite; }
     @keyframes dots {
-      0% {
-        content: '';
-      }
+      0%  { content: ''; }
+      25% { content: '.'; }
+      50% { content: '..'; }
+      75% { content: '...'; }
+    }
 
-      25% {
-        content: '.';
-      }
-
-      50% {
-        content: '..';
-      }
-
-      75% {
-        content: '...';
-      }
+    /* Watermark */
+    .wm {
+      position: fixed;
+      bottom: 20px;
+      font-size: 0.7rem;
+      color: #1e293b;
+      z-index: 1;
+      letter-spacing: 0.5px;
     }
   </style>
 </head>
-
 <body>
+
+  <!-- Ambient orbs -->
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
   <div class="card">
-    <!-- EVA Loader (from loader.css) -->
-    <div class="loader" id="evaLoader">
-      <div class="modelViewPort">
-        <div class="eva">
-          <div class="head">
-            <div class="eyeChamber">
-              <div class="eye"></div>
-              <div class="eye"></div>
-            </div>
-          </div>
-          <div class="body">
-            <div class="hand"></div>
-            <div class="hand"></div>
-            <div class="scannerThing"></div>
-            <div class="scannerOrigin"></div>
-          </div>
-        </div>
-      </div>
+
+    <!-- Orbital loader -->
+    <div class="loader-wrap">
+      <div class="orbit orbit-1"></div>
+      <div class="orbit orbit-2"></div>
+      <div class="orbit orbit-3"></div>
+      <div class="orbit-core">🛡️</div>
     </div>
 
-    <!-- Fallback spinner shown if EVA loader fails -->
-    <div class="spinner-fallback" id="spinnerFallback"></div>
-
     <h2>Analyzing Your Code<span class="dots"></span></h2>
-    <p class="subtitle" id="subtitleText">Cloning &amp; scanning your repository for vulnerabilities and code quality
-      issues</p>
+    <p class="subtitle" id="subtitleText">Cloning &amp; scanning your repository for vulnerabilities and code quality issues</p>
 
+    <!-- Progress bar -->
     <div class="progress-wrap">
       <div class="progress-bar" id="progressBar"></div>
     </div>
     <p class="status-text" id="statusText">Starting analysis…</p>
 
+    <!-- Animated step list -->
+    <div class="step-list">
+      <div class="step-row" id="step-clone"><span class="step-icon">📦</span>Cloning repository</div>
+      <div class="step-row" id="step-parse"><span class="step-icon">🔍</span>Parsing source files</div>
+      <div class="step-row" id="step-scan"><span class="step-icon">🛡️</span>Running security scan</div>
+      <div class="step-row" id="step-llm"><span class="step-icon">🤖</span>AI deep analysis</div>
+      <div class="step-row" id="step-report"><span class="step-icon">📊</span>Generating report</div>
+    </div>
+
+    <!-- Error / back -->
     <div class="error-box" id="errorBox"></div>
     <a class="btn-home" id="btnHome" href="/">← Back to Home</a>
   </div>
 
+  <div class="wm">AI Code Review Platform</div>
+
   <script>
     const uid = '{{ uid }}';
-    const progressBar = document.getElementById('progressBar');
-    const statusText = document.getElementById('statusText');
-    const errorBox = document.getElementById('errorBox');
-    const btnHome = document.getElementById('btnHome');
+    const progressBar  = document.getElementById('progressBar');
+    const statusText   = document.getElementById('statusText');
+    const errorBox     = document.getElementById('errorBox');
+    const btnHome      = document.getElementById('btnHome');
+    const steps        = ['step-clone','step-parse','step-scan','step-llm','step-report'];
 
     let fakeProgress = 0;
+    let currentStep  = 0;
 
-    // Animate a fake progress bar that crawls to 90% while we wait
+    /* Fake progress crawl */
     function advanceFake() {
       if (fakeProgress < 88) {
-        fakeProgress += Math.random() * 3 + 0.5;
+        fakeProgress += Math.random() * 3 + 0.4;
         progressBar.style.width = Math.min(fakeProgress, 88) + '%';
+
+        // Advance steps for visual feedback
+        const stepIdx = Math.floor((fakeProgress / 88) * steps.length);
+        if (stepIdx > currentStep && stepIdx < steps.length) {
+          if (currentStep > 0) document.getElementById(steps[currentStep - 1])?.classList.remove('active');
+          steps.slice(0, stepIdx).forEach(id => {
+            const el = document.getElementById(id);
+            el?.classList.remove('active');
+            el?.classList.add('done');
+          });
+          document.getElementById(steps[stepIdx])?.classList.add('active');
+          currentStep = stepIdx;
+        }
       }
     }
     const fakeTick = setInterval(advanceFake, 600);
@@ -211,9 +324,10 @@
       clearInterval(fakeTick);
       errorBox.textContent = '❌ ' + msg;
       errorBox.style.display = 'block';
-      btnHome.style.display = 'inline-block';
+      btnHome.style.display  = 'inline-block';
       statusText.textContent = 'Analysis could not be completed.';
       progressBar.style.background = '#ef4444';
+      progressBar.style.animation  = 'none';
     }
 
     function checkStatus() {
@@ -223,12 +337,20 @@
           if (data.status === 'complete') {
             clearInterval(fakeTick);
             progressBar.style.width = '100%';
+            progressBar.style.background = 'linear-gradient(90deg,#22c55e,#34d399)';
+            progressBar.style.animation = 'none';
+            steps.forEach(id => {
+              const el = document.getElementById(id);
+              el?.classList.remove('active');
+              el?.classList.add('done');
+            });
             statusText.textContent = '✅ Analysis complete! Redirecting…';
-            setTimeout(() => { window.location.href = '/chat?uid=' + uid; }, 800);
+            setTimeout(() => { window.location.href = '/chat?uid=' + uid; }, 900);
+
           } else if (data.status === 'error') {
             showError(data.error || 'Unknown error during analysis');
+
           } else {
-            // Still running — use server progress if available
             if (data.progress && data.progress > fakeProgress) {
               fakeProgress = data.progress;
               progressBar.style.width = fakeProgress + '%';
@@ -237,10 +359,7 @@
             setTimeout(checkStatus, 2000);
           }
         })
-        .catch(() => {
-          // Network hiccup — retry silently
-          setTimeout(checkStatus, 3000);
-        });
+        .catch(() => { setTimeout(checkStatus, 3000); });
     }
 
     if (uid && uid !== 'None') {
@@ -250,5 +369,4 @@
     }
   </script>
 </body>
-
 </html>
