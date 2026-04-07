@@ -59,10 +59,15 @@
     <nav class="st-nav-chips">
       <a href="/dashboard" class="st-chip active">📊 Dashboard</a>
       <a href="#bounty-tab" class="st-chip" onclick="document.getElementById('bounty-tab').scrollIntoView({behavior:'smooth'});return false;">🏴‍☠️ Bug Bounty</a>
+      <a href="/team" class="st-chip">👥 Team</a>
+      {% if uid %}<a href="/report/{{ uid }}" class="st-chip" style="background:rgba(124,111,247,0.15);color:#9d93ff;border-color:rgba(124,111,247,0.3)">📋 Full Report</a>{% endif %}
     </nav>
 
     <div class="st-topnav-right">
       <a href="/" class="st-btn-cta">▶ New Analysis</a>
+      {% if uid %}
+      <a href="/report/{{ uid }}" class="st-btn-cta" style="background:rgba(124,111,247,0.2);border:1px solid rgba(124,111,247,0.4);color:#9d93ff">📋 Detailed Report</a>
+      {% endif %}
       {% if current_user.is_authenticated %}
       <div class="st-avatar" title="{{ current_user.email }}">
         {{ (current_user.email or 'U')[0]|upper }}
@@ -81,6 +86,10 @@
         <a href="/"          class="st-rail-item"><span class="st-rail-icon">🏠</span>Home</a>
         <a href="/dashboard" class="st-rail-item active"><span class="st-rail-icon">📊</span>Dashboard</a>
         <a href="#bounty-tab" class="st-rail-item" onclick="document.getElementById('bounty-tab').scrollIntoView({behavior:'smooth'});return false;"><span class="st-rail-icon">🏴‍☠️</span>Bug Bounty</a>
+        <a href="/team"      class="st-rail-item"><span class="st-rail-icon">👥</span>Team</a>
+        {% if uid %}
+        <a href="/report/{{ uid }}" class="st-rail-item" style="color:#9d93ff"><span class="st-rail-icon">📋</span>Detailed Report</a>
+        {% endif %}
         <a href="/chat"      class="st-rail-item"><span class="st-rail-icon">💬</span>AI Chat</a>
         <a href="/code-viewer" class="st-rail-item"><span class="st-rail-icon">🖊️</span>Code Editor</a>
 

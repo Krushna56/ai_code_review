@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ZenReview | Engineering Health Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;family=Inter:wght@300..700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-primary-container": "#5c2718",
+            "on-primary-fixed-variant": "#6e3525",
+            "primary-dim": "#e79782",
+            "on-secondary-fixed": "#3f4d17",
+            "on-error": "#490013",
+            "inverse-on-surface": "#535557",
+            "tertiary-container": "#e1af7e",
+            "error-container": "#8a1632",
+            "primary": "#ffb5a1",
+            "secondary": "#bdce89",
+            "tertiary-fixed-dim": "#d3a272",
+            "primary-fixed": "#ffad97",
+            "surface-container": "#171a1d",
+            "on-tertiary-container": "#502f09",
+            "secondary-fixed-dim": "#d9eaa3",
+            "on-background": "#e3e6ea",
+            "tertiary-dim": "#ca9a6b",
+            "inverse-primary": "#8e4d3c",
+            "background": "#0c0e10",
+            "secondary-dim": "#afc07d",
+            "outline-variant": "#44484c",
+            "secondary-fixed": "#e7f9b0",
+            "on-tertiary-fixed-variant": "#5a3811",
+            "surface-dim": "#0c0e10",
+            "on-primary-fixed": "#49180a",
+            "error": "#fd6f85",
+            "on-primary": "#683020",
+            "on-tertiary-fixed": "#331b00",
+            "tertiary-fixed": "#e1af7e",
+            "surface": "#0c0e10",
+            "surface-variant": "#22262a",
+            "primary-fixed-dim": "#f09f8a",
+            "on-secondary-container": "#9aab6a",
+            "on-surface-variant": "#a8abb0",
+            "surface-tint": "#ffb5a1",
+            "on-error-container": "#ff97a3",
+            "on-tertiary": "#5b3912",
+            "surface-container-lowest": "#000000",
+            "surface-container-high": "#1d2023",
+            "on-secondary": "#38450f",
+            "inverse-surface": "#f9f9fc",
+            "error-dim": "#c8475d",
+            "surface-container-low": "#111416",
+            "on-surface": "#e3e6ea",
+            "surface-container-highest": "#22262a",
+            "secondary-container": "#1f2900",
+            "on-secondary-fixed-variant": "#5b6a31",
+            "outline": "#72767a",
+            "surface-bright": "#282d31",
+            "tertiary": "#f0bd8b",
+            "primary-container": "#f6a48f"
+          },
+          fontFamily: {
+            "headline": ["Manrope"],
+            "body": ["Manrope"],
+            "label": ["Inter"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
+    }
+.noise-overlay {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuDPqHOgpMHyIZJnt59vlvRAUMsJzIn7TwAcrQK-xoY5I7hjKqw4oDaTQfg62SdJyCm5_d7x4f3CBGn1GaKz9QtitOdEIqH526cIZD7ZayPNTC7afHi4pnTNT29XzhtHc0Bk1ZmeSR2CvvOVjswBpO5SYj_BxYdjsQsKGUYlxhCiL3_gcEhuySvT3IeYMmS-kXbSynkF9EX-fM1m1s4Ybm6ynk-IHIYGyxOnRFYOLZiWAqCj-nc8k3TyODd1n-IvJiTtGfJ8xTCyeZM);
+    opacity: 0.03;
+    pointer-events: none
+    }</style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary/30 min-h-screen">
+<div class="fixed inset-0 noise-overlay z-50"></div>
+<div class="flex min-h-screen relative">
+<!-- SideNavBar -->
+<aside class="h-screen w-64 left-0 sticky bg-[#111416] dark:bg-[#111416] flex flex-col h-full py-8 px-6 space-y-8 hidden md:flex border-r border-outline-variant/10">
+<div class="flex items-center space-x-3">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary text-xl" style="font-variation-settings: 'FILL' 1;">filter_vintage</span>
+</div>
+<div>
+<h1 class="text-[#ffb5a1] font-extrabold font-headline tracking-tighter leading-none">Project Alpha</h1>
+<p class="text-[10px] text-on-surface-variant font-label uppercase tracking-widest mt-1">Main Branch</p>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center px-4 py-3 text-[#ffb5a1] font-bold border-r-4 border-[#ffb5a1] pr-4 translate-x-1 duration-200 group" href="#">
+<span class="material-symbols-outlined mr-3" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-manrope font-semibold text-sm">Dashboard</span>
+</a>
+<a class="flex items-center px-4 py-3 text-[#94a3b8] pr-4 hover:bg-[#22262a] hover:text-[#ffb5a1] rounded-lg transition-all group" href="#">
+<span class="material-symbols-outlined mr-3">code</span>
+<span class="font-manrope font-semibold text-sm">Editor</span>
+</a>
+<a class="flex items-center px-4 py-3 text-[#94a3b8] pr-4 hover:bg-[#22262a] hover:text-[#ffb5a1] rounded-lg transition-all group" href="#">
+<span class="material-symbols-outlined mr-3">security</span>
+<span class="font-manrope font-semibold text-sm">Security</span>
+</a>
+<a class="flex items-center px-4 py-3 text-[#94a3b8] pr-4 hover:bg-[#22262a] hover:text-[#ffb5a1] rounded-lg transition-all group" href="#">
+<span class="material-symbols-outlined mr-3">group</span>
+<span class="font-manrope font-semibold text-sm">Team</span>
+</a>
+</nav>
+<div class="pt-6 border-t border-outline-variant/10">
+<button class="w-full py-3 rounded-full bg-gradient-to-r from-primary to-primary-container text-on-primary font-headline font-bold text-sm shadow-lg shadow-primary/10 hover:scale-[1.02] transition-transform">
+          New Review
+        </button>
+</div>
+<div class="space-y-2">
+<a class="flex items-center px-4 py-2 text-[#94a3b8] hover:text-[#ffb5a1] transition-colors" href="#">
+<span class="material-symbols-outlined mr-3 text-lg">description</span>
+<span class="font-manrope font-semibold text-sm">Docs</span>
+</a>
+<a class="flex items-center px-4 py-2 text-[#94a3b8] hover:text-[#ffb5a1] transition-colors" href="#">
+<span class="material-symbols-outlined mr-3 text-lg">help_outline</span>
+<span class="font-manrope font-semibold text-sm">Support</span>
+</a>
+</div>
+</aside>
+<main class="flex-1 flex flex-col min-w-0">
+<!-- TopNavBar -->
+<header class="w-full top-0 sticky z-40 bg-[#0c0e10] dark:bg-[#0c0e10] bg-[#111416] transition-colors duration-300 shadow-[0px_20px_40px_0px_rgba(0,0,0,0.06)]">
+<div class="flex justify-between items-center px-10 py-4 max-w-full mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-bold tracking-tighter text-[#ffb5a1] font-headline">ZenReview</span>
+<div class="hidden lg:flex items-center space-x-6">
+<a class="text-[#94a3b8] hover:text-[#f6a48f] transition-all font-manrope tracking-tight text-lg" href="#">Workspaces</a>
+<a class="text-[#94a3b8] hover:text-[#f6a48f] transition-all font-manrope tracking-tight text-lg" href="#">Recent</a>
+<a class="text-[#ffb5a1] border-b-2 border-[#ffb5a1] pb-1 font-manrope tracking-tight text-lg" href="#">Insights</a>
+</div>
+</div>
+<div class="flex items-center space-x-6">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+<input class="bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-sm w-64 focus:ring-1 focus:ring-primary/30 transition-all font-label" placeholder="Search insights..." type="text"/>
+</div>
+<div class="flex items-center space-x-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<img alt="User profile" class="w-8 h-8 rounded-full border border-primary/20" data-alt="professional portrait of a software engineer in a modern office setting with warm cinematic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5FtuTrLMqehnCbvfduRjKq12XTYh5pxYEnvrhtmb7n2uzXAjjCmsXyoktDAwryDslAgHfHgKm3gUYGIeXKLD52vi7Z8VQmAfak21PCgYt7BN5_y70kMpZYboiB1TTFiXCcPdXb-C6D9DrNtFYLcvGkiYxgyljFJAjPSzEEGCOmeQiRVa_-kAgj-Hn9aBlQPB2FXoY4pep-Q-tFx7WTv0aQ6KXFgacdWQ_h2JYHfhVVBzgpQ-jN5b4Y1As0ptGnfU2S7fJ7DAEb-U"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="p-10 space-y-12">
+<!-- Hero Section: Engineering Health Header -->
+<section class="space-y-4">
+<h2 class="text-5xl font-headline font-extrabold tracking-tight text-surface-tint">Engineering Health</h2>
+<p class="text-on-surface-variant max-w-2xl font-body text-lg leading-relaxed">
+            Real-time analysis of your development lifecycle. We've detected a <span class="text-secondary font-bold">12% improvement</span> in Reviewer Velocity this sprint.
+          </p>
+</section>
+<!-- Bento Grid: Top Level Metrics -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Metric 1: Code Quality -->
+<div class="bg-surface-container-low rounded-xl p-8 flex flex-col justify-between aspect-square md:aspect-auto h-48 border-t border-white/5 relative overflow-hidden group">
+<div class="z-10">
+<p class="font-label text-xs uppercase tracking-widest text-on-surface-variant mb-2">Code Quality Score</p>
+<h3 class="text-4xl font-headline font-bold text-primary italic">A-</h3>
+</div>
+<div class="flex items-end justify-between z-10">
+<span class="text-secondary flex items-center font-label text-sm">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span> +2.4%
+              </span>
+<span class="material-symbols-outlined text-4xl text-outline-variant/30">verified</span>
+</div>
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<!-- Metric 2: PR Lead Time -->
+<div class="bg-surface-container-low rounded-xl p-8 flex flex-col justify-between h-48 border-t border-white/5 relative overflow-hidden group">
+<div class="z-10">
+<p class="font-label text-xs uppercase tracking-widest text-on-surface-variant mb-2">PR Lead Time</p>
+<h3 class="text-4xl font-headline font-bold text-on-surface">18.4<span class="text-lg ml-1 font-normal text-on-surface-variant">hrs</span></h3>
+</div>
+<div class="flex items-end justify-between z-10">
+<span class="text-tertiary flex items-center font-label text-sm">
+<span class="material-symbols-outlined text-sm mr-1">schedule</span> Optimal Range
+              </span>
+<span class="material-symbols-outlined text-4xl text-outline-variant/30">speed</span>
+</div>
+</div>
+<!-- Metric 3: Active Vulnerabilities -->
+<div class="bg-surface-container-low rounded-xl p-8 flex flex-col justify-between h-48 border-t border-white/5 relative overflow-hidden group">
+<div class="z-10">
+<p class="font-label text-xs uppercase tracking-widest text-on-surface-variant mb-2">Active Vulnerabilities</p>
+<h3 class="text-4xl font-headline font-bold text-error">03</h3>
+</div>
+<div class="flex items-end justify-between z-10">
+<span class="text-on-error-container flex items-center font-label text-sm">
+<span class="material-symbols-outlined text-sm mr-1">warning</span> 1 Critical
+              </span>
+<span class="material-symbols-outlined text-4xl text-outline-variant/30">security</span>
+</div>
+</div>
+</div>
+<!-- PR Analysis Section -->
+<section class="space-y-6">
+<div class="flex items-end justify-between">
+<h4 class="text-3xl font-headline font-bold tracking-tight text-on-surface">PR Analysis</h4>
+<button class="text-primary text-sm font-label flex items-center hover:opacity-80 transition-opacity">
+        Full Health Report <span class="material-symbols-outlined ml-2 text-base">open_in_new</span>
+</button>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="bg-surface-container-low border-t border-white/5 p-6 rounded-xl space-y-4">
+<div class="flex items-center justify-between">
+<p class="font-label text-xs uppercase tracking-widest text-on-surface-variant">Average PR Lifetime</p>
+<span class="material-symbols-outlined text-secondary-dim">avg_time</span>
+</div>
+<h3 class="text-3xl font-headline font-bold text-on-surface">2.4 <span class="text-sm font-normal text-on-surface-variant">days</span></h3>
+<div class="flex items-center space-x-2">
+<div class="flex-1 bg-surface-container-highest h-1 rounded-full overflow-hidden">
+<div class="bg-secondary h-full w-[65%]"></div>
+</div>
+<span class="text-[10px] font-label text-secondary">-12% vs last week</span>
+</div>
+</div>
+<div class="bg-surface-container-low border-t border-white/5 p-6 rounded-xl space-y-4">
+<div class="flex items-center justify-between">
+<p class="font-label text-xs uppercase tracking-widest text-on-surface-variant">Reviewer Workload</p>
+<span class="material-symbols-outlined text-tertiary-dim">group_work</span>
+</div>
+<h3 class="text-3xl font-headline font-bold text-on-surface">3.8 <span class="text-sm font-normal text-on-surface-variant">PRs / dev</span></h3>
+<p class="text-[10px] font-label text-on-surface-variant leading-tight">Balanced across 12 active engineers. No bottlenecks detected.</p>
+</div>
+<div class="bg-surface-container-low border-t border-white/5 p-6 rounded-xl space-y-4">
+<div class="flex items-center justify-between">
+<p class="font-label text-xs uppercase tracking-widest text-on-surface-variant">Review Depth</p>
+<span class="material-symbols-outlined text-primary-dim">visibility</span>
+</div>
+<h3 class="text-3xl font-headline font-bold text-on-surface">14.2 <span class="text-sm font-normal text-on-surface-variant">comments / PR</span></h3>
+<p class="text-[10px] font-label text-primary-dim leading-tight flex items-center">
+<span class="material-symbols-outlined text-xs mr-1">info</span> High engagement in core services.
+            </p>
+</div>
+</div>
+</section>
+<!-- Asymmetric Layout: Velocity Chart & Priority PRs -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Reviewer Velocity Chart (Asymmetric larger side) -->
+<div class="lg:col-span-8 bg-surface-container-low rounded-xl p-8 border-t border-white/5 min-h-[450px] flex flex-col">
+<div class="flex justify-between items-center mb-10">
+<div>
+<h4 class="text-xl font-headline font-bold">Reviewer Velocity</h4>
+<p class="text-on-surface-variant text-sm font-label">Cycles per dev over 14 days</p>
+</div>
+<div class="flex space-x-2">
+<button class="px-3 py-1 text-xs rounded-full bg-surface-container-highest text-on-surface font-label hover:bg-primary/20 transition-colors">Daily</button>
+<button class="px-3 py-1 text-xs rounded-full bg-primary text-on-primary font-label">Weekly</button>
+</div>
+</div>
+<div class="flex-1 flex items-end justify-between gap-4 pb-4">
+<!-- Mock Chart Bars -->
+<div class="flex-1 flex flex-col items-center group">
+<div class="w-full bg-surface-container-highest rounded-t-lg h-24 group-hover:bg-primary-dim/30 transition-all relative">
+<div class="absolute bottom-0 left-0 right-0 bg-primary-dim rounded-t-lg h-1/2"></div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-label mt-3">MON</span>
+</div>
+<div class="flex-1 flex flex-col items-center group">
+<div class="w-full bg-surface-container-highest rounded-t-lg h-36 group-hover:bg-primary-dim/30 transition-all relative">
+<div class="absolute bottom-0 left-0 right-0 bg-primary-dim rounded-t-lg h-3/4"></div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-label mt-3">TUE</span>
+</div>
+<div class="flex-1 flex flex-col items-center group">
+<div class="w-full bg-surface-container-highest rounded-t-lg h-32 group-hover:bg-primary-dim/30 transition-all relative">
+<div class="absolute bottom-0 left-0 right-0 bg-primary-dim rounded-t-lg h-2/3"></div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-label mt-3">WED</span>
+</div>
+<div class="flex-1 flex flex-col items-center group">
+<div class="w-full bg-surface-container-highest rounded-t-lg h-48 group-hover:bg-primary-dim/30 transition-all relative">
+<div class="absolute bottom-0 left-0 right-0 bg-primary rounded-t-lg h-5/6"></div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-label mt-3">THU</span>
+</div>
+<div class="flex-1 flex flex-col items-center group">
+<div class="w-full bg-surface-container-highest rounded-t-lg h-40 group-hover:bg-primary-dim/30 transition-all relative">
+<div class="absolute bottom-0 left-0 right-0 bg-primary-dim rounded-t-lg h-4/5"></div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-label mt-3">FRI</span>
+</div>
+<div class="flex-1 flex flex-col items-center group opacity-40">
+<div class="w-full bg-surface-container-highest rounded-t-lg h-12"></div>
+<span class="text-[10px] text-on-surface-variant font-label mt-3">SAT</span>
+</div>
+<div class="flex-1 flex flex-col items-center group opacity-40">
+<div class="w-full bg-surface-container-highest rounded-t-lg h-10"></div>
+<span class="text-[10px] text-on-surface-variant font-label mt-3">SUN</span>
+</div>
+</div>
+<div class="mt-8 pt-8 border-t border-outline-variant/10 flex justify-around">
+<div class="text-center">
+<p class="text-[10px] text-on-surface-variant font-label uppercase tracking-widest mb-1">Mean Speed</p>
+<p class="font-headline font-bold text-on-surface">4.2 reviews/day</p>
+</div>
+<div class="text-center">
+<p class="text-[10px] text-on-surface-variant font-label uppercase tracking-widest mb-1">Top Performer</p>
+<p class="font-headline font-bold text-on-surface">Alex Rivera</p>
+</div>
+</div>
+</div>
+<!-- High Priority PRs (Asymmetric smaller side) -->
+<div class="lg:col-span-4 bg-surface-container-low rounded-xl p-8 border-t border-white/5 min-h-[450px]">
+<div class="flex justify-between items-center mb-8">
+<h4 class="text-xl font-headline font-bold">High Priority PRs</h4>
+<span class="bg-error/20 text-error-dim text-[10px] px-2 py-1 rounded-full font-bold">3 Action Required</span>
+</div>
+<div class="space-y-6">
+<!-- PR 1 -->
+<div class="group cursor-pointer">
+<div class="flex items-start justify-between mb-2">
+<span class="text-xs font-label text-outline">#1402 • Auth Module</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-error-container text-on-error-container">Critical</span>
+</div>
+<div class="flex items-center space-x-3 mb-3">
+<img alt="Sarah Chen" class="w-8 h-8 rounded-full border border-outline-variant" data-alt="portrait of a focused female developer with dark hair and glasses in a softly lit technical workspace" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQ9o3P2eRrexoNbGa3NU1xSeTwCahNzxSkydqQdzE1SlpiMVO6zALBgx1p5PikAQept0Bsv36fTlAIAIXQ-WMAPgq_-gOVUluaOXInyDgWUeIEYoM9_Y6HOyMkw0iyuKGQqVzwPU1UpO9qJoPgLHWXaOigPDUjuaRKeJ2lRkkGzxyIeI6Sx2v4eExOZGu-25VNgqAtJDbmKW0Lqh23ZMReTriYXJsOGr20E1XCO1APzG5co3wEJc9Vo_sON_j_nVFmJsbQ7NpmH6c"/>
+<p class="text-sm font-headline font-semibold text-on-surface group-hover:text-primary transition-colors">Fix: JWT session invalidation bug</p>
+</div>
+<div class="flex items-center text-[11px] text-on-surface-variant space-x-4">
+<span class="flex items-center"><span class="material-symbols-outlined text-sm mr-1">chat_bubble</span> 12</span>
+<span class="flex items-center"><span class="material-symbols-outlined text-sm mr-1">history</span> 2h ago</span>
+</div>
+</div>
+<!-- PR 2 -->
+<div class="group cursor-pointer">
+<div class="flex items-start justify-between mb-2">
+<span class="text-xs font-label text-outline">#1398 • UI Core</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-secondary-container text-on-secondary-container">Standard</span>
+</div>
+<div class="flex items-center space-x-3 mb-3">
+<img alt="Marcus T" class="w-8 h-8 rounded-full border border-outline-variant" data-alt="smiling young creative professional man in a bright studio environment with warm natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCWu2VM6r6T8w-brJ8JvIDTlQRnWIIa_O6p_fD_GDRX5qSJMZ2mJgQBV6jFwyyJZy3KhD-o4gfUOcZ78r_r4sB4-VxWjlda1y5qfHcgJ6jo62nG5MJvUE053RZWlnbB4eRog8pgiXFFfipaZmvXEy_M69sjuGpcni1LHcyiGakTdZQP5KM2cA5bBcjAOCvali6RRkPN51PhZ9kPQat9A7iqAHU3szksdYRjEdipSsjXCXt65gf8Y8P7ZHMBtQ-rqcE6jdQtCMO1VAs"/>
+<p class="text-sm font-headline font-semibold text-on-surface group-hover:text-primary transition-colors">Feat: Add glassmorphism component</p>
+</div>
+<div class="flex items-center text-[11px] text-on-surface-variant space-x-4">
+<span class="flex items-center"><span class="material-symbols-outlined text-sm mr-1">chat_bubble</span> 4</span>
+<span class="flex items-center"><span class="material-symbols-outlined text-sm mr-1">history</span> 5h ago</span>
+</div>
+</div>
+<!-- PR 3 -->
+<div class="group cursor-pointer">
+<div class="flex items-start justify-between mb-2">
+<span class="text-xs font-label text-outline">#1405 • Data Engine</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-tertiary-container/20 text-tertiary">Urgent</span>
+</div>
+<div class="flex items-center space-x-3 mb-3">
+<img alt="Elena V" class="w-8 h-8 rounded-full border border-outline-variant" data-alt="headshot of a confident woman engineer in a minimalist office with warm ambient lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHRrYTpxWYLj27sUiVkHXZ7A7SNxu7w7TXvC-_jOK06hDTakDH6w00GMi2gCb2MuHOEj-c6Dc2L7-pZOaujXmUfP704HcXBzM2v7lhxOmMdCRwShKikYGzlmwRB8zII-WDRKtBfNESMNaanPbLbCJVmTiPSKVAiaUcqbiWtDPCfycmxb6L0_WuE5WXG_61qdZZl0AqNVMVw2l3KvyHZGeI_JtxCqkL-zSLjpkwp9crFqde8l_A8t_KW-21CFP39l1nik-1Uu7vVe0"/>
+<p class="text-sm font-headline font-semibold text-on-surface group-hover:text-primary transition-colors">Refactor: Postgres connection pooling</p>
+</div>
+<div class="flex items-center text-[11px] text-on-surface-variant space-x-4">
+<span class="flex items-center"><span class="material-symbols-outlined text-sm mr-1">chat_bubble</span> 8</span>
+<span class="flex items-center"><span class="material-symbols-outlined text-sm mr-1">history</span> 1d ago</span>
+</div>
+</div>
+</div>
+<button class="w-full mt-8 py-3 rounded-lg bg-surface-container-highest text-on-surface font-label text-xs hover:bg-primary/10 transition-colors uppercase tracking-widest font-bold">
+              View All 24 Pull Requests
+            </button>
+</div>
+</div>
+<!-- Section: Tactile Sanctuary Footer / More Insights -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-12 pt-12 border-t border-outline-variant/10">
+<div class="space-y-4">
+<h5 class="text-2xl font-headline font-bold text-on-surface">Hotspots &amp; Bottlenecks</h5>
+<p class="text-on-surface-variant font-body">The <code class="text-tertiary">/lib/core-engine</code> directory has seen the highest concentration of churn this week. Consider a dedicated refactor session.</p>
+<div class="relative w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="absolute inset-y-0 left-0 bg-primary w-[75%]"></div>
+</div>
+<p class="text-[10px] text-outline font-label uppercase tracking-widest">75% risk confidence based on current commit frequency</p>
+</div>
+<div class="bg-surface-variant/60 backdrop-blur-xl rounded-2xl p-8 border border-white/5 flex items-center justify-between">
+<div class="space-y-2">
+<h5 class="text-xl font-headline font-bold text-on-surface">Weekly Digest</h5>
+<p class="text-sm text-on-surface-variant font-body">Your personalized health report is ready.</p>
+<button class="text-primary text-sm font-label flex items-center group">
+                Download PDF <span class="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+<div class="w-24 h-24 rounded-full bg-gradient-to-tr from-primary/20 to-tertiary/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-primary" style="font-variation-settings: 'FILL' 1;">analytics</span>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+<!-- Responsive Navigation Shell for Mobile -->
+<footer class="md:hidden fixed bottom-0 left-0 right-0 bg-surface-container-low border-t border-outline-variant/10 z-50">
+<div class="flex justify-around items-center h-16">
+<button class="text-primary flex flex-col items-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-[10px] font-label mt-1">Home</span>
+</button>
+<button class="text-on-surface-variant flex flex-col items-center">
+<span class="material-symbols-outlined">code</span>
+<span class="text-[10px] font-label mt-1">Editor</span>
+</button>
+<button class="text-on-surface-variant flex flex-col items-center">
+<span class="material-symbols-outlined">security</span>
+<span class="text-[10px] font-label mt-1">Security</span>
+</button>
+<button class="text-on-surface-variant flex flex-col items-center">
+<span class="material-symbols-outlined">group</span>
+<span class="text-[10px] font-label mt-1">Team</span>
+</button>
+</div>
+</footer>
+</body></html>

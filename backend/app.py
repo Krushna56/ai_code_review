@@ -32,6 +32,7 @@ from utils.structured_logging import setup_flask_logging, setup_logging, generat
 from api.v2_routes import api_v2
 from api.file_issues import file_issues_bp
 from api.bounty_routes import bounty_bp
+from api.team_routes import team_bp
 
 # Configure structured logging
 setup_logging(
@@ -138,10 +139,22 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(api_v2)
 app.register_blueprint(file_issues_bp)
 app.register_blueprint(bounty_bp)  # Bug bounty / vulnerability scanner routes
+app.register_blueprint(team_bp)    # Team management routes
 
 # Initialize database tables
 Repository.create_table()
 logger.info("Initialized repository tracking table")
+
+# Initialize TeamMember table
+try:
+    from models.team_member import TeamMember
+    TeamMember.init_db()
+    logger.info("Initialized team_members table")
+except Exception as _te:
+    logger.warning(f"Team member DB init failed (non-fatal): {_te}")
+
+# Shared bus registry: uid → AgentBus instance
+_agent_buses: dict = {}
 
 
 # -----------------------------------------------------------------------
@@ -327,27 +340,163 @@ def extract_zip(zip_path, extract_to):
 
 
 def run_analysis_background(input_path, output_path, uid):
-    """Run analysis in background thread"""
+    """
+    4-Agent coordinated analysis pipeline.
+
+    Agents run in parallel threads:
+      SecurityAgent  (Mistral)    → OWASP / CWE findings
+      QualityAgent   (Anthropic)  → code smells, tech debt
+      DependencyAgent             → CVE & unpinned packages
+      OrchestratorAgent (OpenAI)  → waits for all 3, merges + roadmap
+
+    Live progress is pushed via AgentBus → analysis_status[uid].
+    """
     try:
-        logger.info(f"Background analysis started for {uid}")
+        from llm_agents.agent_bus import AgentBus
+        from llm_agents.security_agent import SecurityAgent
+        from llm_agents.quality_agent import QualityAgent
+        from llm_agents.dependency_agent import DependencyAgent
+        from llm_agents.orchestrator_agent import OrchestratorAgent
+
+        logger.info(f"[4-Agent] Pipeline started for {uid}")
         analysis_status[uid]['status'] = 'running'
-        analysis_status[uid]['progress'] = 10
-        
-        # Run analysis
+        analysis_status[uid]['progress'] = 5
+        analysis_status[uid]['agent_log'] = []
+        analysis_status[uid]['agents'] = {
+            'security':     {'status': 'waiting', 'progress': 0},
+            'quality':      {'status': 'waiting', 'progress': 0},
+            'dependency':   {'status': 'waiting', 'progress': 0},
+            'orchestrator': {'status': 'waiting', 'progress': 0},
+        }
+
+        # ── Step 1: Traditional codebase analysis (AST, metrics, etc.) ──────
         analysis_result = analyze_codebase(input_path, output_path)
-        analysis_status[uid]['progress'] = 80
-        
-        # Sync to dashboard
+        analysis_status[uid]['progress'] = 20
+        logger.info(f"[4-Agent] Traditional analysis done for {uid}")
+
+        # ── Step 2: Collect code content for LLM agents ──────────────────────
+        code_chunks = []
+        file_list = []
+        for root, dirs, files in os.walk(input_path):
+            dirs[:] = [d for d in dirs if d not in {
+                'node_modules', '.git', '__pycache__', '.venv', 'venv', 'env', 'dist', 'build'
+            }]
+            for fname in files:
+                if should_ignore_file(os.path.join(root, fname)):
+                    continue
+                fpath = os.path.join(root, fname)
+                rel = os.path.relpath(fpath, input_path).replace('\\', '/')
+                file_list.append(rel)
+                try:
+                    with open(fpath, 'r', encoding='utf-8', errors='replace') as f:
+                        content = f.read()
+                    if content.strip():
+                        code_chunks.append(f"# === {rel} ===\n{content[:3000]}")
+                except Exception:
+                    pass
+                if len('\n'.join(code_chunks)) > 30000:
+                    break
+
+        combined_code = '\n\n'.join(code_chunks)
+        agent_context = {
+            'language': 'python',
+            'files': file_list,
+            'project_path': input_path,
+        }
+
+        # ── Step 3: Create AgentBus ───────────────────────────────────────────
+        bus = AgentBus(uid)
+        _agent_buses[uid] = bus
+
+        # Progress callback → analysis_status
+        def _on_progress(agent_name, status, progress, message):
+            analysis_status[uid]['agents'][agent_name] = {
+                'status': status, 'progress': progress or 0, 'message': message
+            }
+            # Compute overall from bus
+            overall = bus._overall_progress()
+            # Map 0-100% of agents onto 20-90% of overall progress
+            analysis_status[uid]['progress'] = 20 + int(overall * 0.70)
+            analysis_status[uid]['message'] = f"[{agent_name}] {message}"
+            log_entry = {'agent': agent_name, 'status': status, 'message': message}
+            analysis_status[uid].setdefault('agent_log', []).append(log_entry)
+
+        bus.register_progress_callback(_on_progress)
+
+        # ── Step 4: Launch specialist agents in parallel ──────────────────────
+        def _run_security():
+            try:
+                SecurityAgent().run_on_bus(combined_code, bus, agent_context)
+            except Exception as e:
+                logger.error(f"[SecurityAgent thread] {e}", exc_info=True)
+                bus.mark_error('security', str(e))
+
+        def _run_quality():
+            # Wait briefly so security findings are available for coordination
+            import time; time.sleep(2)
+            try:
+                QualityAgent().run_on_bus(combined_code, bus, agent_context)
+            except Exception as e:
+                logger.error(f"[QualityAgent thread] {e}", exc_info=True)
+                bus.mark_error('quality', str(e))
+
+        def _run_dependency():
+            try:
+                DependencyAgent().run_on_bus(combined_code, bus, agent_context)
+            except Exception as e:
+                logger.error(f"[DependencyAgent thread] {e}", exc_info=True)
+                bus.mark_error('dependency', str(e))
+
+        def _run_orchestrator():
+            try:
+                OrchestratorAgent().run_on_bus(combined_code, bus, agent_context)
+            except Exception as e:
+                logger.error(f"[OrchestratorAgent thread] {e}", exc_info=True)
+                bus.mark_error('orchestrator', str(e))
+
+        threads = [
+            threading.Thread(target=_run_security, daemon=True, name=f"{uid}-security"),
+            threading.Thread(target=_run_quality, daemon=True, name=f"{uid}-quality"),
+            threading.Thread(target=_run_dependency, daemon=True, name=f"{uid}-dependency"),
+            threading.Thread(target=_run_orchestrator, daemon=True, name=f"{uid}-orchestrator"),
+        ]
+        for t in threads:
+            t.start()
+        logger.info(f"[4-Agent] All 4 agent threads launched for {uid}")
+
+        # ── Step 5: Wait for orchestrator to finish ───────────────────────────
+        threads[-1].join(timeout=300)  # max 5 min
+
+        # ── Step 6: Save agent results to disk ──────────────────────────────
+        try:
+            import json as _json
+            agent_results = {
+                'security': bus.read_all('security'),
+                'quality': bus.read_all('quality'),
+                'dependency': bus.read_all('dependency'),
+                'orchestrator': bus.read_all('orchestrator'),
+                'agent_log': bus.get_agent_log(),
+            }
+            results_path = os.path.join(output_path, 'agent_results.json')
+            # Remove non-serializable keys
+            safe = _json.dumps(agent_results, default=str)
+            with open(results_path, 'w') as f:
+                f.write(safe)
+            logger.info(f"[4-Agent] Agent results saved to {results_path}")
+        except Exception as e:
+            logger.warning(f"[4-Agent] Could not save agent results: {e}")
+
+        # ── Step 7: Sync and complete ─────────────────────────────────────────
         sync_results_to_dashboard(output_path)
         save_last_analysis_path(input_path)
-        analysis_status[uid]['progress'] = 90
-        
-        # Mark as complete
+
         analysis_status[uid]['status'] = 'complete'
         analysis_status[uid]['progress'] = 100
-        logger.info(f"Background analysis complete for {uid}")
+        analysis_status[uid]['message'] = 'Analysis complete'
+        logger.info(f"[4-Agent] Pipeline complete for {uid}")
+
     except Exception as e:
-        logger.error(f"Background analysis error for {uid}: {e}", exc_info=True)
+        logger.error(f"[4-Agent] Pipeline error for {uid}: {e}", exc_info=True)
         analysis_status[uid]['status'] = 'error'
         analysis_status[uid]['error'] = str(e)
 
@@ -1358,6 +1507,110 @@ def api_github_track_repo():
     except Exception as e:
         logger.error(f"GitHub track repo error: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500
+
+
+# ============================================================================
+# TEAM MANAGEMENT PAGE
+# ============================================================================
+
+@app.route('/team')
+@jwt_required
+def team_page():
+    """Team management dashboard page."""
+    return render_template('team.html')
+
+
+# ============================================================================
+# DETAILED REPORT
+# ============================================================================
+
+@app.route('/report/<uid>')
+@jwt_required
+def detailed_report_page(uid):
+    """Render the full detailed report page for a given analysis UID."""
+    try:
+        processed_path = os.path.join(app.config['PROCESSED_FOLDER'], uid)
+        # Load agent results if available
+        report_data = {}
+        agent_results_path = os.path.join(processed_path, 'agent_results.json')
+        security_report_path = os.path.join(processed_path, 'security_report.json')
+
+        if os.path.exists(agent_results_path):
+            with open(agent_results_path, 'r') as f:
+                import json as _json
+                agent_results = _json.load(f)
+            report_data = {
+                'vulnerabilities': agent_results.get('security', {}).get('findings', []),
+                'quality_issues': agent_results.get('quality', {}).get('findings', []),
+                'dependency_findings': agent_results.get('dependency', {}).get('findings', []),
+                'orchestrator': agent_results.get('orchestrator', {}),
+                'security_score': agent_results.get('security', {}).get('security_score', 5.0),
+                'quality_score': agent_results.get('quality', {}).get('quality_score', 5.0),
+                'tech_debt_hours': agent_results.get('quality', {}).get('tech_debt_hours', 0),
+            }
+        elif os.path.exists(security_report_path):
+            with open(security_report_path, 'r') as f:
+                import json as _json
+                report_data = _json.load(f)
+
+        bus_snapshot = None
+        if uid in _agent_buses:
+            bus_snapshot = _agent_buses[uid].get_snapshot()
+
+        from reporting.detailed_report import DetailedReportGenerator
+        generator = DetailedReportGenerator()
+        full_report = generator.generate(uid, report_data, bus_snapshot)
+
+        # Save HTML report to disk
+        html_path = os.path.join(processed_path, 'detailed_report.html')
+        try:
+            with open(html_path, 'w', encoding='utf-8') as f:
+                f.write(full_report.get('html_report', ''))
+        except Exception as _e:
+            logger.warning(f"Could not save HTML report: {_e}")
+
+        return render_template('report.html', uid=uid, report=full_report)
+    except Exception as e:
+        logger.error(f"Detailed report error for {uid}: {e}", exc_info=True)
+        return render_template('report.html', uid=uid, report={'error': str(e)})
+
+
+@app.route('/api/agent/status/<uid>')
+def get_agent_status(uid):
+    """Return live agent pipeline status for the processing page."""
+    try:
+        status = analysis_status.get(uid, {'status': 'not_found'})
+        bus_snapshot = None
+        if uid in _agent_buses:
+            bus_snapshot = _agent_buses[uid].get_snapshot()
+        return jsonify({
+            **status,
+            'bus': bus_snapshot,
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/download/<uid>/detailed_report.html')
+@jwt_required
+def download_detailed_report_html(uid):
+    """Download the detailed HTML report."""
+    processed_path = os.path.abspath(os.path.join(app.config['PROCESSED_FOLDER'], uid))
+    html_path = os.path.join(processed_path, 'detailed_report.html')
+    if os.path.exists(html_path):
+        return send_file(html_path, as_attachment=True, download_name=f'security_report_{uid[:8]}.html')
+    return jsonify({'error': 'Report not yet generated. Visit /report/{uid} first.'}), 404
+
+
+@app.route('/download/<uid>/detailed_report.json')
+@jwt_required
+def download_detailed_report_json(uid):
+    """Download agent_results.json as JSON."""
+    processed_path = os.path.abspath(os.path.join(app.config['PROCESSED_FOLDER'], uid))
+    json_path = os.path.join(processed_path, 'agent_results.json')
+    if os.path.exists(json_path):
+        return send_file(json_path, as_attachment=True, download_name=f'analysis_{uid[:8]}.json')
+    return jsonify({'error': 'No agent results found. Run analysis first.'}), 404
 
 
 @app.errorhandler(413)
