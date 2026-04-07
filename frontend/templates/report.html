@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Detailed Report — AI Code Review</title>
+  <meta name="description" content="Comprehensive multi-agent security and code quality report">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/stitch.css') }}">
+  <style>
+    /* ── Shell ─────────────────────────────────────────────────────────────── */
+    .report-page { padding: 28px 32px; max-width: 1100px; margin: 0 auto; }
+
+    /* ── Header ─────────────────────────────────────────────────────────────── */
+    .report-header {
+      background: linear-gradient(135deg, rgba(124,111,247,0.1) 0%, rgba(56,189,248,0.05) 100%);
+      border: 1px solid rgba(124,111,247,0.2);
+      border-radius: 20px;
+      padding: 32px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .report-header::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%237C6FF7' fill-opacity='0.03'%3E%3Ccircle cx='20' cy='20' r='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat; pointer-events: none; }
+    .report-top-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .report-title-wrap { flex: 1; min-width: 0; }
+    .report-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(124,111,247,0.15); color: #9d93ff; border: 1px solid rgba(124,111,247,0.25); border-radius: 99px; padding: 4px 12px; font-size: 0.7rem; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .report-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg,#9d93ff,#38bdf8); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; }
+    .report-meta { color: #64748b; font-size: 0.78rem; font-family: 'JetBrains Mono', monospace; }
+
+    /* Risk score */
+    .risk-score-ring { width: 90px; height: 90px; border-radius: 50%; position: relative; flex-shrink: 0; }
+    .risk-score-ring svg { transform: rotate(-90deg); display: block; }
+    .risk-score-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .risk-score-val { font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 800; line-height: 1; }
+    .risk-score-lbl { font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.4px; color: #64748b; margin-top: 2px; }
+
+    /* Stats row */
+    .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 24px; }
+    .kpi { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 14px; text-align: center; transition: all 0.2s; }
+    .kpi:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-1px); }
+    .kpi-val { font-size: 1.7rem; font-weight: 800; font-family: 'Space Grotesk', sans-serif; line-height: 1; }
+    .kpi-lbl { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.4px; color: #64748b; margin-top: 3px; }
+
+    /* Actions bar */
+    .actions-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; border: none; border-radius: 99px; cursor: pointer; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s; text-decoration: none; }
+    .btn-primary { background: linear-gradient(135deg,#7C6FF7,#5b50e0); color: #fff; padding: 10px 22px; font-size: 0.83rem; box-shadow: 0 4px 16px rgba(124,111,247,0.35); }
+    .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.1); }
+    .btn-ghost { background: rgba(255,255,255,0.05); color: #94a3b8; border: 1px solid rgba(255,255,255,0.1); padding: 9px 18px; font-size: 0.82rem; }
+    .btn-ghost:hover { background: rgba(255,255,255,0.09); color: #e2e8f4; }
+
+    /* Section card */
+    .section-card { background: rgba(13,17,23,0.7); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 22px 24px; margin-bottom: 16px; }
+    .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; color: #e2e8f4; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .section-badge { font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: rgba(124,111,247,0.12); color: #9d93ff; border: 1px solid rgba(124,111,247,0.2); }
+
+    /* Executive summary */
+    .exec-body { color: #94a3b8; line-height: 1.8; white-space: pre-line; font-size: 0.87rem; }
+
+    /* Findings table */
+    .finds-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    .finds-table th { color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.6rem; letter-spacing: 0.5px; padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.07); text-align: left; }
+    .finds-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: top; }
+    .finds-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .finds-table tr:last-child td { border-bottom: none; }
+
+    .sev-badge { padding: 2px 8px; border-radius: 99px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
+    .sev-critical { background: rgba(239,68,68,0.12); color: #ef4444; border: 1px solid rgba(239,68,68,0.25); }
+    .sev-high     { background: rgba(249,115,22,0.12); color: #f97316; border: 1px solid rgba(249,115,22,0.25); }
+    .sev-medium   { background: rgba(234,179,8,0.12);  color: #eab308; border: 1px solid rgba(234,179,8,0.25); }
+    .sev-low      { background: rgba(34,197,94,0.1);   color: #22c55e; border: 1px solid rgba(34,197,94,0.2); }
+    .sev-info     { background: rgba(59,130,246,0.1);  color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); }
+
+    .file-path { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #38bdf8; white-space: nowrap; }
+    .find-title { font-weight: 600; color: #e2e8f4; margin-bottom: 2px; }
+    .find-desc  { color: #64748b; max-width: 340px; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
+    .agent-pill { font-size: 0.6rem; padding: 1px 7px; border-radius: 99px; background: rgba(255,255,255,0.05); color: #64748b; border: 1px solid rgba(255,255,255,0.08); white-space: nowrap; }
+
+    /* Tab navigation */
+    .tabs { display: flex; gap: 4px; border-bottom: 1px solid rgba(255,255,255,0.07); margin-bottom: 18px; overflow-x: auto; }
+    .tab { padding: 10px 16px; font-size: 0.8rem; font-weight: 600; color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; background: transparent; border-top: none; border-left: none; border-right: none; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .tab:hover { color: #e2e8f4; }
+    .tab.active { color: #9d93ff; border-bottom-color: #7C6FF7; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Roadmap */
+    .roadmap-phase { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
+    .phase-title { font-size: 0.88rem; font-weight: 700; color: #e2e8f4; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .phase-num { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg,#7C6FF7,#5b50e0); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; color: #fff; flex-shrink: 0; }
+    .phase-items { padding-left: 32px; }
+    .phase-items li { color: #94a3b8; font-size: 0.82rem; margin-bottom: 5px; line-height: 1.5; position: relative; }
+    .phase-items li::before { content: '→'; position: absolute; left: -14px; color: #7C6FF7; }
+
+    /* Enhancement cards */
+    .enh-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: flex-start; gap: 14px; }
+    .enh-priority { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+    .enh-title { font-size: 0.88rem; font-weight: 700; color: #e2e8f4; margin-bottom: 3px; }
+    .enh-desc  { color: #64748b; font-size: 0.78rem; line-height: 1.5; }
+    .enh-meta  { display: flex; gap: 8px; margin-top: 6px; align-items: center; }
+
+    /* Pattern pills */
+    .pattern-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pattern-pill { background: rgba(234,179,8,0.08); color: #fbbf24; border: 1px solid rgba(234,179,8,0.18); padding: 5px 12px; border-radius: 99px; font-size: 0.73rem; }
+
+    /* Agent log */
+    .agent-log-entry { font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; color: #64748b; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.03); display: flex; gap: 10px; }
+    .log-agent { color: #9d93ff; font-weight: 600; min-width: 80px; }
+    .log-status-done { color: #34d399; }
+    .log-status-error { color: #ef4444; }
+    .log-status-running { color: #fbbf24; }
+
+    /* Overflow scroll */
+    .table-wrap { overflow-x: auto; }
+
+    /* Download / print floating buttons */
+    .fab-group { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+    .fab { border: none; border-radius: 99px; cursor: pointer; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; padding: 11px 20px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
+    .fab-primary { background: linear-gradient(135deg,#7C6FF7,#5b50e0); color: #fff; box-shadow: 0 4px 20px rgba(124,111,247,0.4); }
+    .fab-primary:hover { transform: translateY(-2px); filter: brightness(1.1); }
+    .fab-dark { background: rgba(13,17,23,0.9); color: #94a3b8; border: 1px solid rgba(255,255,255,0.1); }
+    .fab-dark:hover { color: #e2e8f4; }
+
+    @media (max-width: 640px) {
+      .report-page { padding: 16px; }
+      .kpi-row { grid-template-columns: repeat(3,1fr); }
+      .report-top-row { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  {% include 'partials/sidebar.html' ignore missing %}
+
+  <div class="main-content" id="mainContent">
+    <div class="report-page">
+
+      {% set report = report or {} %}
+      {% set stats  = report.get('stats', {}) %}
+      {% set sevs   = stats.get('by_severity', {}) %}
+      {% set overall = report.get('overall_risk_score', 5.0) %}
+      {% set risk_color = '#ef4444' if overall < 4 else '#f97316' if overall < 6 else '#eab308' if overall < 8 else '#22c55e' %}
+      {% set circumference = 226.2 %}
+      {% set dash_offset = circumference - (overall / 10.0 * circumference) %}
+
+      <!-- ── Header ────────────────────────────────────────────────────────── -->
+      <div class="report-header">
+        <div class="report-top-row">
+          <div class="report-title-wrap">
+            <div class="report-badge">🛡️ Multi-Agent Security Report</div>
+            <div class="report-title">Detailed Analysis Report</div>
+            <div class="report-meta">
+              Analysis ID: {{ uid[:8] }}… &nbsp;·&nbsp;
+              Generated: {{ report.get('generated_at', '')[:10] or 'just now' }} &nbsp;·&nbsp;
+              Agents: Security (Mistral) · Quality (Claude) · Dependency · Orchestrator (GPT-4o)
+            </div>
+          </div>
+          <div class="risk-score-ring">
+            <svg width="90" height="90" viewBox="0 0 90 90">
+              <circle cx="45" cy="45" r="36" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="6"/>
+              <circle cx="45" cy="45" r="36" fill="none" stroke="{{ risk_color }}" stroke-width="6"
+                stroke-dasharray="{{ circumference }}"
+                stroke-dashoffset="{{ dash_offset }}"
+                stroke-linecap="round"/>
+            </svg>
+            <div class="risk-score-center">
+              <div class="risk-score-val" style="color:{{ risk_color }}">{{ '%0.1f' % overall }}</div>
+              <div class="risk-score-lbl">Risk</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── KPIs ──────────────────────────────────────────────────────────── -->
+      <div class="kpi-row">
+        <div class="kpi"><div class="kpi-val" style="color:#ef4444">{{ sevs.get('critical', 0) }}</div><div class="kpi-lbl">Critical</div></div>
+        <div class="kpi"><div class="kpi-val" style="color:#f97316">{{ sevs.get('high', 0) }}</div><div class="kpi-lbl">High</div></div>
+        <div class="kpi"><div class="kpi-val" style="color:#eab308">{{ sevs.get('medium', 0) }}</div><div class="kpi-lbl">Medium</div></div>
+        <div class="kpi"><div class="kpi-val" style="color:#22c55e">{{ sevs.get('low', 0) }}</div><div class="kpi-lbl">Low</div></div>
+        <div class="kpi"><div class="kpi-val" style="color:#e2e8f4">{{ stats.get('total_findings', 0) }}</div><div class="kpi-lbl">Total</div></div>
+        <div class="kpi"><div class="kpi-val" style="color:#38bdf8">{{ stats.get('tech_debt_hours', 0) }}h</div><div class="kpi-lbl">Tech Debt</div></div>
+        <div class="kpi"><div class="kpi-val" style="color:#9d93ff">{{ stats.get('files_with_issues', 0) }}</div><div class="kpi-lbl">Files</div></div>
+      </div>
+
+      <!-- ── Download Actions ──────────────────────────────────────────────── -->
+      <div class="actions-bar">
+        <a class="btn btn-primary" href="/download/{{ uid }}/detailed_report.html" target="_blank">📄 Download HTML Report</a>
+        <a class="btn btn-ghost"   href="/download/{{ uid }}/detailed_report.json" target="_blank">📦 Download JSON Data</a>
+        <button class="btn btn-ghost" onclick="window.print()">🖨️ Print</button>
+        <a class="btn btn-ghost" href="/chat?uid={{ uid }}">💬 Open in Chat</a>
+      </div>
+
+      <!-- ── Tabs ──────────────────────────────────────────────────────────── -->
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('summary', this)">📋 Summary</button>
+        <button class="tab" onclick="switchTab('findings', this)">🚨 Findings ({{ stats.get('total_findings', 0) }})</button>
+        <button class="tab" onclick="switchTab('roadmap', this)">🗺️ Roadmap</button>
+        <button class="tab" onclick="switchTab('enhancements', this)">✨ Enhancements</button>
+        <button class="tab" onclick="switchTab('agents', this)">🤖 Agent Log</button>
+      </div>
+
+      <!-- TAB: Summary -->
+      <div id="tab-summary" class="tab-content active">
+        {% if report.get('executive_summary') %}
+        <div class="section-card">
+          <div class="section-title">📋 Executive Summary</div>
+          <div class="exec-body">{{ report.get('executive_summary', 'No summary available.') }}</div>
+        </div>
+        {% endif %}
+
+        {% if report.get('architecture_overview') %}
+        <div class="section-card">
+          <div class="section-title">🏗️ Architecture Overview</div>
+          <div class="exec-body">{{ report.get('architecture_overview', '') }}</div>
+        </div>
+        {% endif %}
+
+        {% set patterns = report.get('systemic_patterns', []) %}
+        {% if patterns %}
+        <div class="section-card">
+          <div class="section-title">🔍 Systemic Patterns <span class="section-badge">{{ patterns|length }}</span></div>
+          <div class="pattern-pills">
+            {% for p in patterns %}
+            <span class="pattern-pill">{{ p }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- TAB: Findings -->
+      <div id="tab-findings" class="tab-content">
+        <div class="section-card">
+          <div class="section-title">🚨 All Findings <span class="section-badge">{{ report.get('merged_findings', [])|length }}</span></div>
+          <div class="table-wrap">
+            <table class="finds-table">
+              <thead>
+                <tr>
+                  <th>Severity</th>
+                  <th>Title / Description</th>
+                  <th>Location</th>
+                  <th>Agent</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for f in report.get('merged_findings', [])[:200] %}
+                <tr>
+                  <td>
+                    <span class="sev-badge sev-{{ f.get('severity', 'info') }}">
+                      {% if f.get('severity') == 'critical' %}🔴{% elif f.get('severity') == 'high' %}🟠{% elif f.get('severity') == 'medium' %}🟡{% else %}🟢{% endif %}
+                      {{ f.get('severity', 'info') }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="find-title">{{ f.get('title', '—') }}</div>
+                    <div class="find-desc">{{ f.get('description', f.get('remediation', ''))[:120] }}{% if f.get('description', '')|length > 120 %}…{% endif %}</div>
+                  </td>
+                  <td>
+                    <div class="file-path">{{ f.get('file', '—') }}{% if f.get('line') %}:{{ f.get('line') }}{% endif %}</div>
+                  </td>
+                  <td>
+                    <span class="agent-pill">{{ ', '.join(f.get('source_agents', [f.get('agent', 'ai')])) }}</span>
+                  </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4" style="text-align:center;color:#475569;padding:32px">No findings recorded.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Roadmap -->
+      <div id="tab-roadmap" class="tab-content">
+        {% set roadmap = report.get('remediation_roadmap', []) %}
+        {% if roadmap %}
+        <div class="section-card">
+          <div class="section-title">🗺️ Remediation Roadmap</div>
+          {% for phase in roadmap %}
+          <div class="roadmap-phase">
+            <div class="phase-title">
+              <div class="phase-num">{{ phase.get('phase', '?') }}</div>
+              {{ phase.get('title', '') }}
+            </div>
+            <ul class="phase-items">
+              {% for item in phase.get('items', []) %}
+              <li>{{ item }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="section-card" style="text-align:center;padding:48px;color:#475569">
+          <div style="font-size:2rem;margin-bottom:12px">🗺️</div>
+          <div>Roadmap will appear after the full analysis is orchestrated.</div>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- TAB: Enhancements -->
+      <div id="tab-enhancements" class="tab-content">
+        {% set enhancements = report.get('enhancements', []) %}
+        {% if enhancements %}
+        <div class="section-card">
+          <div class="section-title">✨ Enhancement Recommendations <span class="section-badge">{{ enhancements|length }}</span></div>
+          {% for enh in enhancements %}
+          {% set p = enh.get('priority', 'medium') %}
+          {% set p_icon = '🔴' if p == 'critical' else '🟠' if p == 'high' else '🟡' if p == 'medium' else '🟢' %}
+          {% set p_color = '#ef4444' if p == 'critical' else '#f97316' if p == 'high' else '#eab308' if p == 'medium' else '#22c55e' %}
+          <div class="enh-card" style="border-left: 3px solid {{ p_color }};">
+            <div class="enh-priority" style="background:{{ p_color }}20">{{ p_icon }}</div>
+            <div style="flex:1;min-width:0">
+              <div class="enh-title">{{ enh.get('title', '') }}</div>
+              <div class="enh-desc">{{ enh.get('description', '') }}</div>
+              <div class="enh-meta">
+                <span class="sev-badge sev-{{ p }}">{{ p }}</span>
+                {% if enh.get('effort') %}<span style="font-size:0.7rem;color:#475569">⏱ {{ enh.get('effort') }}</span>{% endif %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="section-card" style="text-align:center;padding:48px;color:#475569">
+          <div style="font-size:2rem;margin-bottom:12px">✨</div>
+          <div>Enhancement recommendations are generated by GPT-4o after full analysis.</div>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- TAB: Agent Log -->
+      <div id="tab-agents" class="tab-content">
+        <div class="section-card">
+          <div class="section-title">🤖 Agent Execution Log</div>
+          {% set agent_log = report.get('agent_log', []) %}
+          {% if agent_log %}
+          <div style="font-family:'JetBrains Mono',monospace">
+            {% for entry in agent_log %}
+            <div class="agent-log-entry">
+              <span class="log-agent">{{ entry.get('agent', '?') }}</span>
+              <span class="log-status-{{ entry.get('status', 'running') }}">{{ entry.get('status', '') }}</span>
+              <span>{{ entry.get('message', '') }}</span>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p style="color:#475569;font-size:0.82rem">Agent log will appear here after analysis completes.</p>
+          {% endif %}
+        </div>
+      </div>
+
+    </div><!-- /report-page -->
+  </div><!-- /main-content -->
+
+  <!-- FABs for download / print -->
+  <div class="fab-group">
+    <a class="fab fab-primary" href="/download/{{ uid }}/detailed_report.html" target="_blank">📄 Get Full Report</a>
+    <button class="fab fab-dark" onclick="window.print()">🖨️ Print</button>
+  </div>
+
+  <script>
+    function switchTab(name, el) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('tab-' + name).classList.add('active');
+      el.classList.add('active');
+    }
+  </script>
+</body>
+</html>

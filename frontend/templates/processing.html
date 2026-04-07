@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Analyzing Code — AI Code Review</title>
-  <meta name="description" content="AI-powered security and code quality analysis in progress">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <meta name="description" content="4-Agent AI security and code quality analysis in progress">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -18,352 +18,356 @@
       align-items: center;
       justify-content: center;
       color: #e2e8f4;
-      overflow: hidden;
+      overflow-x: hidden;
+      padding: 24px 16px;
     }
 
-    /* Ambient bg orbs */
-    .bg-orb {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(80px);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .bg-orb-1 {
-      width: 420px; height: 420px;
-      background: radial-gradient(circle, rgba(124,111,247,0.18) 0%, transparent 70%);
-      top: -100px; left: -100px;
-      animation: drift 12s ease-in-out infinite alternate;
-    }
-    .bg-orb-2 {
-      width: 320px; height: 320px;
-      background: radial-gradient(circle, rgba(56,189,248,0.1) 0%, transparent 70%);
-      bottom: -80px; right: -80px;
-      animation: drift 9s ease-in-out infinite alternate-reverse;
-    }
-    @keyframes drift { from { transform: translate(0,0); } to { transform: translate(30px, 20px); } }
+    /* Ambient orbs */
+    .bg-orb { position: fixed; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0; }
+    .bg-orb-1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(124,111,247,0.14) 0%, transparent 70%); top: -150px; left: -150px; animation: drift 14s ease-in-out infinite alternate; }
+    .bg-orb-2 { width: 380px; height: 380px; background: radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 70%); bottom: -100px; right: -100px; animation: drift 10s ease-in-out infinite alternate-reverse; }
+    .bg-orb-3 { width: 280px; height: 280px; background: radial-gradient(circle, rgba(52,211,153,0.06) 0%, transparent 70%); top: 50%; right: -80px; animation: drift 16s ease-in-out infinite; }
+    @keyframes drift { from { transform: translate(0,0); } to { transform: translate(40px, 25px); } }
 
-    /* Card */
-    .card {
-      position: relative;
-      z-index: 10;
-      background: rgba(13,17,23,0.85);
+    /* Main card */
+    .wrap { position: relative; z-index: 10; width: 100%; max-width: 620px; display: flex; flex-direction: column; gap: 14px; }
+
+    /* Top card */
+    .top-card {
+      background: rgba(13,17,23,0.88);
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 20px;
-      padding: 44px 42px;
+      padding: 32px 32px 24px;
       text-align: center;
-      max-width: 460px;
-      width: 90%;
       backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      box-shadow:
-        0 0 0 1px rgba(124,111,247,0.15),
-        0 24px 64px rgba(0,0,0,0.6),
-        0 0 80px rgba(124,111,247,0.06);
+      box-shadow: 0 0 0 1px rgba(124,111,247,0.12), 0 24px 64px rgba(0,0,0,0.6);
       animation: card-in 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
     }
-    @keyframes card-in {
-      from { opacity: 0; transform: translateY(24px) scale(0.97); }
-      to   { opacity: 1; transform: translateY(0) scale(1); }
-    }
+    @keyframes card-in { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-    /* Orbital loader */
-    .loader-wrap {
-      width: 100px;
-      height: 100px;
-      margin: 0 auto 28px;
-      position: relative;
-    }
-    .orbit {
-      position: absolute;
-      inset: 0;
+    /* Central animation */
+    .agents-ring {
+      width: 110px; height: 110px;
       border-radius: 50%;
+      margin: 0 auto 20px;
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ring-orbit {
+      position: absolute; inset: 0; border-radius: 50%;
       border: 1.5px solid transparent;
       animation: spin linear infinite;
     }
-    .orbit-1 {
-      border-top-color: #7C6FF7;
-      border-right-color: rgba(124,111,247,0.3);
-      animation-duration: 1.4s;
-    }
-    .orbit-2 {
-      inset: 12px;
-      border-top-color: #38bdf8;
-      border-left-color: rgba(56,189,248,0.3);
-      animation-duration: 1.0s;
-      animation-direction: reverse;
-    }
-    .orbit-3 {
-      inset: 26px;
-      border-bottom-color: #9d93ff;
-      border-right-color: rgba(157,147,255,0.3);
-      animation-duration: 0.7s;
-    }
-    .orbit-core {
-      position: absolute;
-      inset: 36px;
-      background: linear-gradient(135deg, #7C6FF7, #5b50e0);
-      border-radius: 50%;
-      box-shadow: 0 0 20px rgba(124,111,247,0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 15px;
-    }
+    .ring-orbit:nth-child(1) { border-top-color: #7C6FF7; border-right-color: rgba(124,111,247,0.25); animation-duration: 1.6s; }
+    .ring-orbit:nth-child(2) { inset: 14px; border-top-color: #38bdf8; border-left-color: rgba(56,189,248,0.25); animation-duration: 1.1s; animation-direction: reverse; }
+    .ring-orbit:nth-child(3) { inset: 30px; border-bottom-color: #34d399; border-right-color: rgba(52,211,153,0.25); animation-duration: 0.75s; }
+    .ring-core { position: absolute; inset: 42px; background: linear-gradient(135deg,#7C6FF7,#5b50e0); border-radius: 50%; box-shadow: 0 0 24px rgba(124,111,247,0.6); display: flex; align-items: center; justify-content: center; font-size: 16px; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Headings */
     h2 {
-      font-size: 1.5rem;
-      font-weight: 800;
+      font-size: 1.45rem; font-weight: 800;
       font-family: 'Space Grotesk', sans-serif;
-      background: linear-gradient(135deg, #9d93ff 0%, #38bdf8 60%, #e2e8f4 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 6px;
-      letter-spacing: -0.3px;
+      background: linear-gradient(135deg,#9d93ff 0%,#38bdf8 60%,#e2e8f4 100%);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 6px; letter-spacing: -0.3px;
     }
+    .subtitle { color: #64748b; font-size: 0.84rem; margin-bottom: 22px; line-height: 1.6; }
 
-    .subtitle {
-      color: #64748b;
-      font-size: 0.87rem;
-      margin-bottom: 28px;
-      line-height: 1.6;
-    }
+    /* Progress bar */
+    .progress-wrap { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.07); border-radius: 99px; height: 7px; overflow: hidden; margin-bottom: 10px; }
+    .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg,#7C6FF7,#9d93ff,#38bdf8); background-size: 200% 100%; border-radius: 99px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); animation: shimmer 2s linear infinite; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .status-text { font-size: 0.78rem; color: #64748b; min-height: 1.2em; font-family: 'JetBrains Mono', monospace; }
 
-    /* Progress */
-    .progress-wrap {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 99px;
-      height: 7px;
-      overflow: hidden;
-      margin-bottom: 12px;
-    }
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #7C6FF7, #9d93ff, #38bdf8);
-      background-size: 200% 100%;
-      border-radius: 99px;
-      transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
-      animation: progress-shimmer 2s linear infinite;
-    }
-    @keyframes progress-shimmer {
-      0%   { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    .status-text {
-      font-size: 0.8rem;
-      color: #64748b;
-      min-height: 1.2em;
-      transition: all 0.3s ease;
-    }
-
-    /* Steps */
-    .step-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 22px;
-      text-align: left;
-    }
-    .step-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 12px;
-      border-radius: 9px;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.04);
-      font-size: 0.78rem;
-      color: #475569;
-      transition: all 0.4s ease;
-    }
-    .step-row.active {
-      background: rgba(124,111,247,0.08);
-      border-color: rgba(124,111,247,0.2);
-      color: #9d93ff;
-    }
-    .step-row.done {
-      background: rgba(52,211,153,0.06);
-      border-color: rgba(52,211,153,0.15);
-      color: #34d399;
-    }
-    .step-icon { font-size: 0.95rem; width: 18px; text-align: center; flex-shrink: 0; }
-
-    /* Error box */
-    .error-box {
-      display: none;
-      margin-top: 20px;
-      padding: 14px 16px;
-      background: rgba(239,68,68,0.08);
-      border: 1px solid rgba(239,68,68,0.25);
-      border-radius: 12px;
-      color: #fca5a5;
-      font-size: 0.83rem;
-      line-height: 1.5;
-    }
-
-    /* Back button */
-    .btn-home {
-      display: none;
-      margin-top: 18px;
-      padding: 9px 24px;
-      background: linear-gradient(135deg, #7C6FF7, #5b50e0);
-      color: #fff;
-      font-weight: 700;
-      border: none;
-      border-radius: 99px;
-      cursor: pointer;
-      text-decoration: none;
-      font-size: 0.85rem;
-      box-shadow: 0 4px 16px rgba(124,111,247,0.35);
-      transition: all 0.2s ease;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
+    /* Error */
+    .error-box { display: none; margin-top: 16px; padding: 13px 16px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); border-radius: 12px; color: #fca5a5; font-size: 0.82rem; line-height: 1.5; }
+    .btn-home { display: none; margin-top: 14px; padding: 9px 24px; background: linear-gradient(135deg,#7C6FF7,#5b50e0); color: #fff; font-weight: 700; border: none; border-radius: 99px; cursor: pointer; text-decoration: none; font-size: 0.84rem; box-shadow: 0 4px 16px rgba(124,111,247,0.35); transition: all 0.2s ease; font-family: 'Plus Jakarta Sans', sans-serif; }
     .btn-home:hover { transform: translateY(-1px); filter: brightness(1.1); }
 
-    /* Animated dots in heading */
-    .dots::after { content: ''; animation: dots 1.5s steps(4, end) infinite; }
-    @keyframes dots {
-      0%  { content: ''; }
-      25% { content: '.'; }
-      50% { content: '..'; }
-      75% { content: '...'; }
+    /* 4 Agent cards */
+    .agents-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      animation: card-in 0.5s 0.1s cubic-bezier(0.34,1.56,0.64,1) both;
     }
 
-    /* Watermark */
-    .wm {
-      position: fixed;
-      bottom: 20px;
-      font-size: 0.7rem;
-      color: #1e293b;
-      z-index: 1;
-      letter-spacing: 0.5px;
+    .agent-card {
+      background: rgba(13,17,23,0.85);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      padding: 14px 16px;
+      backdrop-filter: blur(20px);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
     }
+    .agent-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--ac, #7C6FF7); opacity: 0.6; transition: opacity 0.3s; }
+    .agent-card.running { border-color: rgba(124,111,247,0.3); box-shadow: 0 0 20px rgba(124,111,247,0.08); }
+    .agent-card.running::before { opacity: 1; animation: pulse-line 1.5s ease infinite; }
+    .agent-card.done { border-color: rgba(52,211,153,0.3); }
+    .agent-card.done::before { background: #34d399; opacity: 1; }
+    .agent-card.error { border-color: rgba(239,68,68,0.3); }
+    .agent-card.error::before { background: #ef4444; opacity: 1; }
+
+    @keyframes pulse-line { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
+
+    .agent-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .agent-icon { font-size: 1.4rem; line-height: 1; }
+    .agent-info { flex: 1; min-width: 0; }
+    .agent-name { font-size: 0.82rem; font-weight: 700; color: #e2e8f4; font-family: 'Space Grotesk', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .agent-provider { font-size: 0.65rem; color: #475569; font-family: 'JetBrains Mono', monospace; }
+
+    .agent-status-badge {
+      font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+      padding: 2px 7px; border-radius: 99px;
+      background: rgba(255,255,255,0.06); color: #64748b;
+      border: 1px solid rgba(255,255,255,0.08);
+      white-space: nowrap; flex-shrink: 0;
+      transition: all 0.3s;
+    }
+    .agent-status-badge.running { background: rgba(124,111,247,0.15); color: #9d93ff; border-color: rgba(124,111,247,0.3); }
+    .agent-status-badge.done { background: rgba(52,211,153,0.12); color: #34d399; border-color: rgba(52,211,153,0.25); }
+    .agent-status-badge.error { background: rgba(239,68,68,0.12); color: #f87171; border-color: rgba(239,68,68,0.25); }
+
+    .agent-progress-track { height: 4px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; margin-bottom: 6px; }
+    .agent-progress-fill { height: 100%; width: 0%; border-radius: 99px; background: var(--ac, #7C6FF7); transition: width 0.6s ease; }
+    .agent-card.done .agent-progress-fill { background: #34d399; }
+    .agent-card.error .agent-progress-fill { background: #ef4444; }
+
+    .agent-msg { font-size: 0.68rem; color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'JetBrains Mono', monospace; min-height: 1.1em; }
+
+    /* Findings counters */
+    .finding-pills { display: flex; gap: 5px; margin-top: 8px; flex-wrap: wrap; }
+    .finding-pill { font-size: 0.6rem; font-weight: 700; padding: 1px 6px; border-radius: 99px; background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+    .finding-pill.quality { background: rgba(249,115,22,0.1); color: #fb923c; border-color: rgba(249,115,22,0.2); }
+    .finding-pill.dep { background: rgba(234,179,8,0.1); color: #fbbf24; border-color: rgba(234,179,8,0.2); }
+    .finding-pill.orch { background: rgba(124,111,247,0.1); color: #9d93ff; border-color: rgba(124,111,247,0.2); }
+
+    /* Watermark */
+    .wm { position: fixed; bottom: 16px; font-size: 0.65rem; color: #1e293b; z-index: 1; }
   </style>
 </head>
 <body>
 
-  <!-- Ambient orbs -->
   <div class="bg-orb bg-orb-1"></div>
   <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
 
-  <div class="card">
+  <div class="wrap">
 
-    <!-- Orbital loader -->
-    <div class="loader-wrap">
-      <div class="orbit orbit-1"></div>
-      <div class="orbit orbit-2"></div>
-      <div class="orbit orbit-3"></div>
-      <div class="orbit-core">🛡️</div>
+    <!-- Top card with progress -->
+    <div class="top-card">
+      <div class="agents-ring">
+        <div class="ring-orbit"></div>
+        <div class="ring-orbit"></div>
+        <div class="ring-orbit"></div>
+        <div class="ring-core">🛡️</div>
+      </div>
+
+      <h2>Multi-Agent Analysis<span id="dotAnim"></span></h2>
+      <p class="subtitle" id="subtitleText">4 specialized AI agents are collaborating on your codebase</p>
+
+      <div class="progress-wrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <p class="status-text" id="statusText">Initializing pipeline…</p>
+
+      <div class="error-box" id="errorBox"></div>
+      <a class="btn-home" id="btnHome" href="/">← Back to Home</a>
     </div>
 
-    <h2>Analyzing Your Code<span class="dots"></span></h2>
-    <p class="subtitle" id="subtitleText">Cloning &amp; scanning your repository for vulnerabilities and code quality issues</p>
+    <!-- 4 Agent cards -->
+    <div class="agents-grid">
 
-    <!-- Progress bar -->
-    <div class="progress-wrap">
-      <div class="progress-bar" id="progressBar"></div>
+      <!-- Security Agent -->
+      <div class="agent-card" id="card-security" style="--ac:#ef4444">
+        <div class="agent-header">
+          <div class="agent-icon">🔒</div>
+          <div class="agent-info">
+            <div class="agent-name">Security Agent</div>
+            <div class="agent-provider">mistral-large · OWASP</div>
+          </div>
+          <span class="agent-status-badge" id="badge-security">waiting</span>
+        </div>
+        <div class="agent-progress-track">
+          <div class="agent-progress-fill" id="fill-security"></div>
+        </div>
+        <div class="agent-msg" id="msg-security">Waiting to start…</div>
+        <div class="finding-pills" id="pills-security"></div>
+      </div>
+
+      <!-- Quality Agent -->
+      <div class="agent-card" id="card-quality" style="--ac:#f97316">
+        <div class="agent-header">
+          <div class="agent-icon">🧠</div>
+          <div class="agent-info">
+            <div class="agent-name">Quality Agent</div>
+            <div class="agent-provider">claude-3.5 · Code Quality</div>
+          </div>
+          <span class="agent-status-badge" id="badge-quality">waiting</span>
+        </div>
+        <div class="agent-progress-track">
+          <div class="agent-progress-fill" id="fill-quality"></div>
+        </div>
+        <div class="agent-msg" id="msg-quality">Waiting for SecurityAgent…</div>
+        <div class="finding-pills" id="pills-quality"></div>
+      </div>
+
+      <!-- Dependency Agent -->
+      <div class="agent-card" id="card-dependency" style="--ac:#eab308">
+        <div class="agent-header">
+          <div class="agent-icon">📦</div>
+          <div class="agent-info">
+            <div class="agent-name">Dependency Agent</div>
+            <div class="agent-provider">mistral · CVE Scanner</div>
+          </div>
+          <span class="agent-status-badge" id="badge-dependency">waiting</span>
+        </div>
+        <div class="agent-progress-track">
+          <div class="agent-progress-fill" id="fill-dependency"></div>
+        </div>
+        <div class="agent-msg" id="msg-dependency">Scanning dependency files…</div>
+        <div class="finding-pills" id="pills-dependency"></div>
+      </div>
+
+      <!-- Orchestrator Agent -->
+      <div class="agent-card" id="card-orchestrator" style="--ac:#7C6FF7">
+        <div class="agent-header">
+          <div class="agent-icon">🎯</div>
+          <div class="agent-info">
+            <div class="agent-name">Orchestrator</div>
+            <div class="agent-provider">gpt-4o · Coordinator</div>
+          </div>
+          <span class="agent-status-badge" id="badge-orchestrator">waiting</span>
+        </div>
+        <div class="agent-progress-track">
+          <div class="agent-progress-fill" id="fill-orchestrator"></div>
+        </div>
+        <div class="agent-msg" id="msg-orchestrator">Awaiting specialist agents…</div>
+        <div class="finding-pills" id="pills-orchestrator"></div>
+      </div>
+
     </div>
-    <p class="status-text" id="statusText">Starting analysis…</p>
-
-    <!-- Animated step list -->
-    <div class="step-list">
-      <div class="step-row" id="step-clone"><span class="step-icon">📦</span>Cloning repository</div>
-      <div class="step-row" id="step-parse"><span class="step-icon">🔍</span>Parsing source files</div>
-      <div class="step-row" id="step-scan"><span class="step-icon">🛡️</span>Running security scan</div>
-      <div class="step-row" id="step-llm"><span class="step-icon">🤖</span>AI deep analysis</div>
-      <div class="step-row" id="step-report"><span class="step-icon">📊</span>Generating report</div>
-    </div>
-
-    <!-- Error / back -->
-    <div class="error-box" id="errorBox"></div>
-    <a class="btn-home" id="btnHome" href="/">← Back to Home</a>
   </div>
 
-  <div class="wm">AI Code Review Platform</div>
+  <div class="wm">AI Code Review · 4-Agent Pipeline</div>
 
   <script>
     const uid = '{{ uid }}';
-    const progressBar  = document.getElementById('progressBar');
-    const statusText   = document.getElementById('statusText');
-    const errorBox     = document.getElementById('errorBox');
-    const btnHome      = document.getElementById('btnHome');
-    const steps        = ['step-clone','step-parse','step-scan','step-llm','step-report'];
+    const progressBar = document.getElementById('progressBar');
+    const statusText  = document.getElementById('statusText');
+    const errorBox    = document.getElementById('errorBox');
+    const btnHome     = document.getElementById('btnHome');
 
-    let fakeProgress = 0;
-    let currentStep  = 0;
+    // Dot animation
+    let dotState = 0;
+    const dotEl = document.getElementById('dotAnim');
+    setInterval(() => {
+      dotState = (dotState + 1) % 4;
+      dotEl.textContent = ['','.','..','\u2026'][dotState];
+    }, 500);
 
-    /* Fake progress crawl */
-    function advanceFake() {
-      if (fakeProgress < 88) {
-        fakeProgress += Math.random() * 3 + 0.4;
-        progressBar.style.width = Math.min(fakeProgress, 88) + '%';
+    const AGENT_KEYS = ['security','quality','dependency','orchestrator'];
 
-        // Advance steps for visual feedback
-        const stepIdx = Math.floor((fakeProgress / 88) * steps.length);
-        if (stepIdx > currentStep && stepIdx < steps.length) {
-          if (currentStep > 0) document.getElementById(steps[currentStep - 1])?.classList.remove('active');
-          steps.slice(0, stepIdx).forEach(id => {
-            const el = document.getElementById(id);
-            el?.classList.remove('active');
-            el?.classList.add('done');
-          });
-          document.getElementById(steps[stepIdx])?.classList.add('active');
-          currentStep = stepIdx;
-        }
-      }
+    function updateAgentCard(name, info) {
+      const status   = (info.status || 'waiting').toLowerCase();
+      const progress = info.progress || 0;
+      const message  = info.message || '';
+
+      const card  = document.getElementById('card-' + name);
+      const badge = document.getElementById('badge-' + name);
+      const fill  = document.getElementById('fill-' + name);
+      const msg   = document.getElementById('msg-' + name);
+      if (!card) return;
+
+      // Update status class
+      card.className = 'agent-card ' + (status === 'done' ? 'done' : status === 'error' ? 'error' : status === 'running' ? 'running' : '');
+      badge.className = 'agent-status-badge ' + (status === 'done' ? 'done' : status === 'error' ? 'error' : status === 'running' ? 'running' : '');
+      badge.textContent = status === 'done' ? '✓ done' : status === 'error' ? '✗ error' : status === 'running' ? '⟳ running' : 'waiting';
+      fill.style.width = progress + '%';
+      if (message) msg.textContent = message;
     }
-    const fakeTick = setInterval(advanceFake, 600);
+
+    function updateFindings(name, findings) {
+      const pills = document.getElementById('pills-' + name);
+      if (!pills || !findings) return;
+      const cnt = Array.isArray(findings) ? findings.length : 0;
+      if (cnt === 0) return;
+
+      const cls = name === 'quality' ? 'quality' : name === 'dependency' ? 'dep' : name === 'orchestrator' ? 'orch' : '';
+      pills.innerHTML = `<span class="finding-pill ${cls}">${cnt} finding${cnt !== 1 ? 's' : ''}</span>`;
+    }
 
     function showError(msg) {
-      clearInterval(fakeTick);
-      errorBox.textContent = '❌ ' + msg;
+      errorBox.textContent = '\u274c ' + msg;
       errorBox.style.display = 'block';
-      btnHome.style.display  = 'inline-block';
+      btnHome.style.display = 'inline-block';
       statusText.textContent = 'Analysis could not be completed.';
       progressBar.style.background = '#ef4444';
-      progressBar.style.animation  = 'none';
+      progressBar.style.animation = 'none';
     }
 
     function checkStatus() {
-      fetch('/api/analysis/status/' + uid, { credentials: 'same-origin' })
+      // Fetch both regular status and agent-specific status
+      fetch('/api/agent/status/' + uid, { credentials: 'same-origin' })
         .then(r => r.json())
         .then(data => {
-          if (data.status === 'complete') {
-            clearInterval(fakeTick);
+          const status = data.status || 'running';
+          const progress = data.progress || 0;
+          progressBar.style.width = progress + '%';
+
+          // Update parent status
+          if (data.message) statusText.textContent = data.message;
+
+          // Update each agent card
+          const agents = data.agents || (data.bus && data.bus.agents) || {};
+          AGENT_KEYS.forEach(name => {
+            if (agents[name]) updateAgentCard(name, agents[name]);
+          });
+
+          // Update findings counts from bus log
+          const busData = data.bus || {};
+          if (busData.agents) {
+            AGENT_KEYS.forEach(name => {
+              if (busData.agents[name]) updateAgentCard(name, busData.agents[name]);
+            });
+          }
+
+          // Check for agent findings counts from full status
+          if (data.security_findings_count !== undefined) {
+            updateFindings('security', new Array(data.security_findings_count).fill({}));
+          }
+
+          if (status === 'complete') {
             progressBar.style.width = '100%';
             progressBar.style.background = 'linear-gradient(90deg,#22c55e,#34d399)';
             progressBar.style.animation = 'none';
-            steps.forEach(id => {
-              const el = document.getElementById(id);
-              el?.classList.remove('active');
-              el?.classList.add('done');
+            AGENT_KEYS.forEach(name => {
+              const card = document.getElementById('card-' + name);
+              const badge = document.getElementById('badge-' + name);
+              if (card && !card.classList.contains('error')) {
+                card.className = 'agent-card done';
+                badge.className = 'agent-status-badge done';
+                badge.textContent = '✓ done';
+                document.getElementById('fill-' + name).style.width = '100%';
+              }
             });
-            statusText.textContent = '✅ Analysis complete! Redirecting…';
-            setTimeout(() => { window.location.href = '/chat?uid=' + uid; }, 900);
+            statusText.textContent = '\u2705 Analysis complete! Redirecting\u2026';
+            setTimeout(() => { window.location.href = '/chat?uid=' + uid; }, 1200);
 
-          } else if (data.status === 'error') {
+          } else if (status === 'error') {
             showError(data.error || 'Unknown error during analysis');
 
           } else {
-            if (data.progress && data.progress > fakeProgress) {
-              fakeProgress = data.progress;
-              progressBar.style.width = fakeProgress + '%';
-            }
-            statusText.textContent = data.message || 'Analysis in progress…';
             setTimeout(checkStatus, 2000);
           }
         })
-        .catch(() => { setTimeout(checkStatus, 3000); });
+        .catch(() => setTimeout(checkStatus, 3000));
     }
 
     if (uid && uid !== 'None') {
-      setTimeout(checkStatus, 1500);
+      setTimeout(checkStatus, 1000);
     } else {
       showError('No analysis UID found. Please go back and try again.');
     }

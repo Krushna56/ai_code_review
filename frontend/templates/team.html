@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Management — AI Code Review</title>
+  <meta name="description" content="Manage your engineering team members, view commit history and PR security ratings">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/stitch.css') }}">
+  <style>
+    /* ── Page shell ─────────────────────────────────────────────────────── */
+    .team-page { padding: 28px 32px; max-width: 1200px; margin: 0 auto; }
+    .page-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+    .page-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 800; background: linear-gradient(135deg,#9d93ff,#38bdf8); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .page-sub { color: #64748b; font-size: 0.82rem; margin-top: 2px; }
+
+    .hdr-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .btn { display: inline-flex; align-items: center; gap: 6px; border: none; border-radius: 99px; cursor: pointer; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s ease; text-decoration: none; }
+    .btn-primary { background: linear-gradient(135deg,#7C6FF7,#5b50e0); color: #fff; padding: 10px 20px; font-size: 0.83rem; box-shadow: 0 4px 16px rgba(124,111,247,0.35); }
+    .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.1); }
+    .btn-ghost { background: rgba(255,255,255,0.05); color: #94a3b8; border: 1px solid rgba(255,255,255,0.1); padding: 9px 18px; font-size: 0.82rem; }
+    .btn-ghost:hover { background: rgba(255,255,255,0.09); color: #e2e8f4; }
+    .btn-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); color: #64748b; cursor: pointer; transition: all 0.2s; }
+    .btn-icon:hover { background: rgba(255,255,255,0.1); color: #e2e8f4; }
+
+    /* Stats bar */
+    .stats-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 24px; }
+    .stat-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 16px; text-align: center; }
+    .stat-val { font-size: 1.8rem; font-weight: 800; font-family: 'Space Grotesk', sans-serif; line-height: 1; }
+    .stat-lbl { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; margin-top: 3px; }
+
+    /* Toolbar */
+    .toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+    .search-wrap { flex: 1; min-width: 200px; position: relative; }
+    .search-wrap input { width: 100%; padding: 9px 14px 9px 38px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; color: #e2e8f4; font-size: 0.83rem; font-family: 'Plus Jakarta Sans', sans-serif; outline: none; transition: border-color 0.2s; }
+    .search-wrap input:focus { border-color: rgba(124,111,247,0.5); }
+    .search-wrap::before { content: '🔍'; position: absolute; left: 11px; top: 50%; transform: translateY(-50%); font-size: 0.85rem; pointer-events: none; }
+
+    /* Member grid */
+    .members-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+
+    /* Member card */
+    .member-card {
+      background: rgba(13,17,23,0.7);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 18px;
+      padding: 20px;
+      backdrop-filter: blur(16px);
+      transition: all 0.25s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .member-card:hover { border-color: rgba(124,111,247,0.35); transform: translateY(-2px); box-shadow: 0 12px 36px rgba(0,0,0,0.4), 0 0 0 1px rgba(124,111,247,0.12); }
+    .member-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,#7C6FF7,#38bdf8); opacity: 0; transition: opacity 0.3s; }
+    .member-card:hover::after { opacity: 1; }
+
+    /* Avatar + name row */
+    .member-top { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+    .member-avatar { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(124,111,247,0.3); flex-shrink: 0; }
+    .member-avatar-fallback { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg,#7C6FF7,#5b50e0); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 800; color: #fff; flex-shrink: 0; font-family: 'Space Grotesk', sans-serif; }
+    .member-name-wrap { flex: 1; min-width: 0; }
+    .member-name { font-size: 0.95rem; font-weight: 700; color: #e2e8f4; font-family: 'Space Grotesk', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .member-gh { font-size: 0.7rem; color: #64748b; font-family: 'JetBrains Mono', monospace; }
+    .member-role-badge { padding: 2px 9px; background: rgba(124,111,247,0.13); color: #9d93ff; border: 1px solid rgba(124,111,247,0.25); border-radius: 99px; font-size: 0.65rem; font-weight: 700; white-space: nowrap; }
+
+    /* Stats row */
+    .member-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .mini-stat { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 10px; text-align: center; }
+    .mini-stat .val { font-size: 1.1rem; font-weight: 800; font-family: 'Space Grotesk', sans-serif; line-height: 1; }
+    .mini-stat .lbl { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.4px; color: #64748b; margin-top: 2px; }
+
+    /* Security rating ring */
+    .sec-rating { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .sec-ring-wrap { position: relative; width: 42px; height: 42px; flex-shrink: 0; }
+    .sec-ring-wrap svg { transform: rotate(-90deg); }
+    .sec-ring-wrap .ring-center { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; font-family: 'Space Grotesk', sans-serif; }
+    .sec-info .lbl { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.4px; color: #64748b; }
+    .sec-info .val { font-size: 0.82rem; font-weight: 700; }
+
+    /* Commit preview */
+    .commit-preview { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; }
+    .commit-item { display: flex; align-items: flex-start; gap: 7px; margin-bottom: 5px; }
+    .commit-dot { width: 6px; height: 6px; border-radius: 50%; background: #7C6FF7; margin-top: 4px; flex-shrink: 0; }
+    .commit-msg { font-size: 0.7rem; color: #64748b; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'JetBrains Mono', monospace; }
+
+    /* PR list */
+    .pr-item { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
+    .pr-state { font-size: 0.58rem; font-weight: 700; padding: 1px 6px; border-radius: 99px; }
+    .pr-state.open { background: rgba(52,211,153,0.12); color: #34d399; border: 1px solid rgba(52,211,153,0.25); }
+    .pr-state.closed { background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+    .pr-state.merged { background: rgba(124,111,247,0.12); color: #9d93ff; border: 1px solid rgba(124,111,247,0.25); }
+    .pr-title { font-size: 0.68rem; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* Card footer */
+    .member-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
+    .last-commit { font-size: 0.65rem; color: #475569; }
+    .card-actions { display: flex; gap: 6px; }
+
+    /* Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.open { display: flex; animation: fade-in 0.2s ease; }
+    @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+    .modal { background: #0d1117; border: 1px solid rgba(255,255,255,0.09); border-radius: 20px; padding: 28px; width: 100%; max-width: 480px; box-shadow: 0 24px 80px rgba(0,0,0,0.8); animation: slide-in 0.3s cubic-bezier(0.34,1.56,0.64,1) both; }
+    @keyframes slide-in { from { transform: scale(0.94) translateY(10px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+    .modal h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 800; color: #e2e8f4; margin-bottom: 20px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: 0.75rem; font-weight: 600; color: #94a3b8; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.4px; }
+    .form-group input, .form-group select { width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #e2e8f4; font-size: 0.84rem; font-family: 'Plus Jakarta Sans', sans-serif; outline: none; transition: border-color 0.2s; }
+    .form-group input:focus, .form-group select:focus { border-color: rgba(124,111,247,0.5); }
+    .form-group select option { background: #0d1117; }
+    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+    .modal-close { position: absolute; top: 16px; right: 16px; background: transparent; border: none; color: #64748b; font-size: 1.3rem; cursor: pointer; }
+
+    /* Toast */
+    .toast { position: fixed; bottom: 24px; right: 24px; background: rgba(52,211,153,0.15); border: 1px solid rgba(52,211,153,0.3); color: #34d399; padding: 12px 20px; border-radius: 12px; font-size: 0.83rem; font-weight: 600; z-index: 2000; transform: translateX(200px); opacity: 0; transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+    .toast.visible { transform: translateX(0); opacity: 1; }
+
+    /* Empty state */
+    .empty-state { text-align: center; padding: 64px 20px; }
+    .empty-icon { font-size: 3rem; margin-bottom: 16px; }
+    .empty-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; color: #e2e8f4; margin-bottom: 8px; }
+    .empty-sub { color: #64748b; font-size: 0.83rem; max-width: 360px; margin: 0 auto 20px; }
+
+    /* Loader */
+    .loading-spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.1); border-top-color: #7C6FF7; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 640px) {
+      .team-page { padding: 16px; }
+      .stats-bar { grid-template-columns: repeat(2,1fr); }
+      .members-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  {% include 'partials/sidebar.html' ignore missing %}
+
+  <div class="main-content" id="mainContent">
+    <div class="team-page">
+
+      <!-- Header -->
+      <div class="page-header">
+        <div>
+          <div class="page-title">👥 Team Management</div>
+          <div class="page-sub">Members auto-extracted from git commits · GitHub PR security ratings</div>
+        </div>
+        <div class="hdr-actions">
+          <button class="btn btn-ghost" id="btnRefresh" title="Refresh members">🔄 Refresh</button>
+          <button class="btn btn-ghost" id="btnExtract" onclick="openExtractModal()">⚡ Extract from Commits</button>
+          <button class="btn btn-primary" onclick="openAddModal()">➕ Add Member</button>
+        </div>
+      </div>
+
+      <!-- Stats bar -->
+      <div class="stats-bar" id="statsBar">
+        <div class="stat-box"><div class="stat-val" id="statTotal" style="color:#7C6FF7">—</div><div class="stat-lbl">Total Members</div></div>
+        <div class="stat-box"><div class="stat-val" id="statCommits" style="color:#38bdf8">—</div><div class="stat-lbl">Total Commits</div></div>
+        <div class="stat-box"><div class="stat-val" id="statPRs" style="color:#34d399">—</div><div class="stat-lbl">PRs Reviewed</div></div>
+        <div class="stat-box"><div class="stat-val" id="statAvgRating" style="color:#f97316">—</div><div class="stat-lbl">Avg PR Security</div></div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="search-wrap">
+          <input type="text" id="searchInput" placeholder="Search by name or username…" oninput="filterMembers()">
+        </div>
+        <select id="roleFilter" onchange="filterMembers()" style="padding:9px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:10px;color:#e2e8f4;font-size:0.82rem;font-family:'Plus Jakarta Sans',sans-serif;outline:none">
+          <option value="">All Roles</option>
+          <option value="Developer">Developer</option>
+          <option value="Lead">Lead</option>
+          <option value="Security">Security</option>
+          <option value="DevOps">DevOps</option>
+        </select>
+        <select id="sortBy" onchange="filterMembers()" style="padding:9px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:10px;color:#e2e8f4;font-size:0.82rem;font-family:'Plus Jakarta Sans',sans-serif;outline:none">
+          <option value="commits">Sort: Commits</option>
+          <option value="rating">Sort: PR Rating</option>
+          <option value="name">Sort: Name</option>
+        </select>
+      </div>
+
+      <!-- Members grid -->
+      <div id="membersWrap">
+        <div class="members-grid" id="membersGrid"></div>
+        <div class="empty-state" id="emptyState" style="display:none">
+          <div class="empty-icon">👤</div>
+          <div class="empty-title">No team members yet</div>
+          <div class="empty-sub">Extract team members from your codebase's git commit history, or add them manually.</div>
+          <button class="btn btn-primary" onclick="openExtractModal()">⚡ Extract from Commits</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Extract Modal -->
+  <div class="modal-overlay" id="extractModal">
+    <div class="modal" style="position:relative">
+      <button class="modal-close" onclick="closeModal('extractModal')">✕</button>
+      <h3>⚡ Extract Team from Git Commits</h3>
+      <p style="color:#64748b;font-size:0.82rem;margin-bottom:20px">Automatically discovers contributors from the git history of an analyzed codebase and fetches GitHub data.</p>
+      <div class="form-group">
+        <label>Analysis UID (from your last analysis)</label>
+        <input type="text" id="extractUid" placeholder="e.g. a7f3d2b1…" value="">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('extractModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="doExtract()" id="btnDoExtract">⚡ Extract Members</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Member Modal -->
+  <div class="modal-overlay" id="addModal">
+    <div class="modal" style="position:relative">
+      <button class="modal-close" onclick="closeModal('addModal')">✕</button>
+      <h3>➕ Add Team Member</h3>
+      <div class="form-group">
+        <label>GitHub Username</label>
+        <input type="text" id="addUsername" placeholder="e.g. torvalds">
+      </div>
+      <div class="form-group">
+        <label>Display Name (optional)</label>
+        <input type="text" id="addDisplayName" placeholder="Full name…">
+      </div>
+      <div class="form-group">
+        <label>Role</label>
+        <select id="addRole">
+          <option value="Developer">Developer</option>
+          <option value="Lead">Lead</option>
+          <option value="Security">Security Engineer</option>
+          <option value="DevOps">DevOps</option>
+          <option value="QA">QA Engineer</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('addModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="doAddMember()">Add Member</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    let allMembers = [];
+
+    // ── Utility ──────────────────────────────────────────────────────────────
+    function showToast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.background = isError ? 'rgba(239,68,68,0.15)' : 'rgba(52,211,153,0.15)';
+      t.style.borderColor = isError ? 'rgba(239,68,68,0.3)' : 'rgba(52,211,153,0.3)';
+      t.style.color = isError ? '#f87171' : '#34d399';
+      t.classList.add('visible');
+      setTimeout(() => t.classList.remove('visible'), 3000);
+    }
+
+    function openExtractModal() { document.getElementById('extractModal').classList.add('open'); }
+    function openAddModal()     { document.getElementById('addModal').classList.add('open'); }
+    function closeModal(id)     { document.getElementById(id).classList.remove('open'); }
+
+    // Close on backdrop click
+    document.querySelectorAll('.modal-overlay').forEach(el =>
+      el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); }));
+
+    // ── Security rating helpers ──────────────────────────────────────────────
+    function ratingColor(r) {
+      if (r === null || r === undefined) return '#64748b';
+      if (r >= 8) return '#34d399';
+      if (r >= 6) return '#eab308';
+      if (r >= 4) return '#f97316';
+      return '#ef4444';
+    }
+
+    function ratingRingHTML(rating) {
+      if (rating === null || rating === undefined) {
+        return `<div class="sec-ring-wrap"><svg width="42" height="42"><circle cx="21" cy="21" r="17" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="4"/></svg><div class="ring-center" style="color:#475569">—</div></div>`;
+      }
+      const pct = (rating / 10) * 100;
+      const circumference = 2 * Math.PI * 17;
+      const dashOffset = circumference - (pct / 100) * circumference;
+      const color = ratingColor(rating);
+      return `<div class="sec-ring-wrap">
+        <svg width="42" height="42">
+          <circle cx="21" cy="21" r="17" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="4"/>
+          <circle cx="21" cy="21" r="17" fill="none" stroke="${color}" stroke-width="4"
+            stroke-dasharray="${circumference.toFixed(2)}"
+            stroke-dashoffset="${dashOffset.toFixed(2)}"
+            stroke-linecap="round"/>
+        </svg>
+        <div class="ring-center" style="color:${color}">${rating.toFixed(1)}</div>
+      </div>`;
+    }
+
+    // ── Render members ───────────────────────────────────────────────────────
+    function renderMembers(members) {
+      const grid = document.getElementById('membersGrid');
+      const empty = document.getElementById('emptyState');
+      if (!members.length) {
+        grid.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+
+      grid.innerHTML = members.map(m => {
+        const commits = m.commit_history || [];
+        const prs = m.pr_summary || [];
+        const rating = m.pr_security_rating;
+        const rColor = ratingColor(rating);
+        const initials = (m.display_name || m.github_username || '?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+
+        const avatarHTML = m.avatar_url
+          ? `<img class="member-avatar" src="${m.avatar_url}" alt="${m.display_name}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`
+          : '';
+        const fallbackHTML = `<div class="member-avatar-fallback" style="${m.avatar_url?'display:none':''}">${initials}</div>`;
+
+        const commitRows = commits.slice(0,3).map(c =>
+          `<div class="commit-item"><div class="commit-dot"></div><div class="commit-msg">${(c.message||'').replace(/</g,'&lt;')}</div></div>`
+        ).join('');
+
+        const prRows = prs.slice(0,2).map(pr => {
+          const stateClass = pr.state === 'open' ? 'open' : pr.state === 'merged' ? 'merged' : 'closed';
+          return `<div class="pr-item"><span class="pr-state ${stateClass}">${pr.state}</span><span class="pr-title">${(pr.title||'').replace(/</g,'&lt;')}</span></div>`;
+        }).join('');
+
+        const lastCommit = m.last_commit_at ? m.last_commit_at.split('T')[0] : '';
+
+        return `<div class="member-card" data-id="${m.id}" data-name="${m.display_name||''}" data-role="${m.role||''}" data-commits="${m.commit_count||0}" data-rating="${rating||0}">
+          <div class="member-top">
+            ${avatarHTML}${fallbackHTML}
+            <div class="member-name-wrap">
+              <div class="member-name">${(m.display_name||m.github_username).replace(/</g,'&lt;')}</div>
+              <div class="member-gh">@${m.github_username}</div>
+            </div>
+            <span class="member-role-badge">${m.role||'Developer'}</span>
+          </div>
+
+          <div class="member-stats">
+            <div class="mini-stat">
+              <div class="val" style="color:#38bdf8">${m.commit_count||0}</div>
+              <div class="lbl">Commits</div>
+            </div>
+            <div class="mini-stat">
+              <div class="val" style="color:#34d399">${prs.length}</div>
+              <div class="lbl">PRs</div>
+            </div>
+          </div>
+
+          <div class="sec-rating">
+            ${ratingRingHTML(rating)}
+            <div class="sec-info">
+              <div class="lbl">PR Security Rating</div>
+              <div class="val" style="color:${rColor}">${rating !== null && rating !== undefined ? (rating >= 8 ? '🟢 Excellent' : rating >= 6 ? '🟡 Good' : rating >= 4 ? '🟠 Fair' : '🔴 At Risk') : '— Not computed'}</div>
+            </div>
+          </div>
+
+          ${commits.length ? `<div class="commit-preview">${commitRows}</div>` : ''}
+          ${prRows ? `<div style="margin-top:8px">${prRows}</div>` : ''}
+
+          <div class="member-footer">
+            <div class="last-commit">${lastCommit ? '🕐 ' + lastCommit : ''}</div>
+            <div class="card-actions">
+              <button class="btn-icon" title="Edit role" onclick="editMember(${m.id}, '${(m.display_name||'').replace(/'/g,"\\'")}', '${m.role||'Developer'}'); event.stopPropagation()">✏️</button>
+              <button class="btn-icon" style="color:#ef4444" title="Remove" onclick="deleteMember(${m.id},'${(m.display_name||m.github_username||'?').replace(/'/g,"\\'")}'); event.stopPropagation()">🗑</button>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    // ── Load & filter ────────────────────────────────────────────────────────
+    function filterMembers() {
+      const query  = (document.getElementById('searchInput').value || '').toLowerCase();
+      const role   = document.getElementById('roleFilter').value;
+      const sortBy = document.getElementById('sortBy').value;
+
+      let filtered = allMembers.filter(m => {
+        const nameMatch = (m.display_name||'').toLowerCase().includes(query) || (m.github_username||'').toLowerCase().includes(query);
+        const roleMatch = !role || m.role === role;
+        return nameMatch && roleMatch;
+      });
+
+      filtered.sort((a,b) => {
+        if (sortBy === 'commits') return (b.commit_count||0) - (a.commit_count||0);
+        if (sortBy === 'rating') return (b.pr_security_rating||0) - (a.pr_security_rating||0);
+        return (a.display_name||'').localeCompare(b.display_name||'');
+      });
+
+      renderMembers(filtered);
+    }
+
+    function updateStats(members) {
+      document.getElementById('statTotal').textContent    = members.length;
+      document.getElementById('statCommits').textContent  = members.reduce((s,m) => s+(m.commit_count||0), 0);
+      const totalPRs = members.reduce((s,m) => s+((m.pr_summary||[]).length), 0);
+      document.getElementById('statPRs').textContent      = totalPRs;
+      const rated = members.filter(m => m.pr_security_rating !== null && m.pr_security_rating !== undefined);
+      const avg = rated.length ? (rated.reduce((s,m) => s+m.pr_security_rating, 0) / rated.length) : null;
+      document.getElementById('statAvgRating').textContent = avg !== null ? avg.toFixed(1) : '—';
+    }
+
+    async function loadMembers() {
+      try {
+        const resp = await fetch('/api/team/members', { credentials: 'same-origin' });
+        if (!resp.ok) throw new Error('Failed to load team');
+        const data = await resp.json();
+        allMembers = data.members || [];
+        updateStats(allMembers);
+        filterMembers();
+      } catch (e) {
+        showToast('Error loading team: ' + e.message, true);
+      }
+    }
+
+    // ── Actions ──────────────────────────────────────────────────────────────
+    async function doExtract() {
+      const uid = document.getElementById('extractUid').value.trim();
+      if (!uid) { showToast('Please enter an analysis UID', true); return; }
+      const btn = document.getElementById('btnDoExtract');
+      btn.innerHTML = '<span class="loading-spinner"></span> Extracting…';
+      btn.disabled = true;
+      try {
+        const resp = await fetch('/api/team/extract/' + uid, { method: 'POST', credentials: 'same-origin' });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.error || 'Extraction failed');
+        closeModal('extractModal');
+        showToast(`✅ Extracted ${data.total} team members!`);
+        await loadMembers();
+      } catch (e) {
+        showToast('Error: ' + e.message, true);
+      } finally {
+        btn.innerHTML = '⚡ Extract Members';
+        btn.disabled = false;
+      }
+    }
+
+    async function doAddMember() {
+      const username = document.getElementById('addUsername').value.trim();
+      if (!username) { showToast('GitHub username is required', true); return; }
+      try {
+        const resp = await fetch('/api/team/members', {
+          method: 'POST', credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            github_username: username,
+            display_name: document.getElementById('addDisplayName').value.trim(),
+            role: document.getElementById('addRole').value,
+          }),
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.error || 'Failed to add');
+        closeModal('addModal');
+        showToast('✅ Member added!');
+        await loadMembers();
+      } catch (e) {
+        showToast('Error: ' + e.message, true);
+      }
+    }
+
+    async function deleteMember(id, name) {
+      if (!confirm(`Remove "${name}" from the team?`)) return;
+      try {
+        const resp = await fetch('/api/team/members/' + id, { method: 'DELETE', credentials: 'same-origin' });
+        if (!resp.ok) throw new Error('Delete failed');
+        showToast('👋 Member removed');
+        await loadMembers();
+      } catch (e) {
+        showToast('Error: ' + e.message, true);
+      }
+    }
+
+    function editMember(id, name, role) {
+      const newRole = prompt(`Editing "${name}"\nEnter new role (Developer, Lead, Security, DevOps, QA):`, role);
+      if (!newRole) return;
+      fetch('/api/team/members/' + id, {
+        method: 'PUT', credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: newRole }),
+      }).then(r => r.json()).then(() => { showToast('✅ Updated'); loadMembers(); }).catch(e => showToast('Error: ' + e, true));
+    }
+
+    document.getElementById('btnRefresh').addEventListener('click', () => {
+      document.getElementById('btnRefresh').innerHTML = '<span class="loading-spinner"></span>';
+      loadMembers().finally(() => document.getElementById('btnRefresh').innerHTML = '🔄 Refresh');
+    });
+
+    // Init
+    loadMembers();
+  </script>
+</body>
+</html>
