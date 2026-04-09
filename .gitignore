@@ -15,6 +15,9 @@ backend/vector_db/
 backend/.cache/
 backend/last_analysis_path.txt
 backend/server_log.txt
+backend/tests/pytest.log
+backend/backend/tests/pytest.log
+*.log
 last_analysis_path.txt
 uploads/
 processed/
