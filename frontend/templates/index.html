@@ -420,7 +420,7 @@
 
     <!-- ── TOPBAR ── -->
     <header class="st-topnav" style="height:52px">
-      <button class="st-ham" id="sidebarToggle" onclick="toggleSidebar()" title="Toggle menu">
+      <button class="st-ham" id="sidebarToggle" onclick="toggleSidebar()" title="Toggle menu" aria-label="Toggle sidebar navigation" aria-controls="mainSidebar" aria-expanded="false">
         <span class="st-ham-bar"></span>
         <span class="st-ham-bar"></span>
         <span class="st-ham-bar"></span>
@@ -441,7 +441,7 @@
       <div class="st-topnav-right">
         {% if current_user.is_authenticated %}
         <div class="profile-dropdown">
-          <button class="profile-btn" onclick="toggleProfile(event)">
+          <button class="profile-btn" onclick="toggleProfile(event)" aria-label="Open profile menu" aria-haspopup="menu" aria-expanded="false">
             <div class="profile-avatar">
               {{ (current_user.email or current_user.github_username or 'U')[0] | upper }}
             </div>
@@ -645,19 +645,30 @@
 <script>
   /* ── Sidebar ── */
   function toggleSidebar() {
-    document.getElementById('mainSidebar').classList.toggle('open');
-    document.getElementById('sidebarToggle').classList.toggle('open');
+    const sidebar = document.getElementById('mainSidebar');
+    const toggle = document.getElementById('sidebarToggle');
+    const isOpen = sidebar.classList.toggle('open');
+    toggle.classList.toggle('open', isOpen);
+    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
   }
 
   /* ── Profile dropdown ── */
   function toggleProfile(e) {
     e.stopPropagation();
-    document.getElementById('profileMenu')?.classList.toggle('open');
+    const menu = document.getElementById('profileMenu');
+    const btn = document.querySelector('.profile-btn');
+    if (!menu || !btn) return;
+    const isOpen = menu.classList.toggle('open');
+    btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
   }
   document.addEventListener('click', (e) => {
     const dd = document.querySelector('.profile-dropdown');
     const menu = document.getElementById('profileMenu');
-    if (menu && dd && !dd.contains(e.target)) menu.classList.remove('open');
+    if (menu && dd && !dd.contains(e.target)) {
+      menu.classList.remove('open');
+      const btn = document.querySelector('.profile-btn');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    }
   });
 
   /* ── File inputs ── */

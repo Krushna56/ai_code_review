@@ -45,7 +45,7 @@
 
   <!-- ════ TOP NAV ════ -->
   <header class="st-topnav">
-    <button class="st-ham" id="hamBtn" onclick="toggleSidebar()" title="Toggle menu">
+    <button class="st-ham" id="hamBtn" onclick="toggleSidebar()" title="Toggle menu" aria-label="Toggle sidebar navigation" aria-controls="dashSidebar" aria-expanded="false">
       <span class="st-ham-bar"></span>
       <span class="st-ham-bar"></span>
       <span class="st-ham-bar"></span>
@@ -94,7 +94,7 @@
         <a href="/code-viewer" class="st-rail-item"><span class="st-rail-icon">🖊️</span>Code Editor</a>
 
         <div class="st-rail-section" style="margin-top:8px">Settings</div>
-        <button onclick="toggleTheme()" class="st-rail-item"><span class="st-rail-icon">⚙️</span>Settings</button>
+        <button onclick="toggleTheme()" id="themeToggle" class="st-rail-item" aria-label="Toggle high contrast theme"><span class="st-rail-icon">⚙️</span>Settings</button>
         <a href="https://owasp.org/Top10/" target="_blank" class="st-rail-item"><span class="st-rail-icon">📖</span>Docs</a>
 
         <div class="st-rail-spacer"></div>
@@ -331,7 +331,7 @@
               <div class="st-card-title" style="color:var(--s-red);font-size:0.95rem">🏴‍☠️ Bug Bounty Scanner</div>
               <div class="st-card-sub">Vulnerabilities detected by Mistral &amp; Anthropic analysis</div>
             </div>
-            <button onclick="runBountyScan()" class="st-btn st-btn-danger" style="padding:6px 14px;font-size:0.78rem">⚡ Run Fresh Scan</button>
+            <button onclick="runBountyScan()" class="st-btn st-btn-danger" style="padding:6px 14px;font-size:0.78rem" aria-label="Run a fresh bug bounty scan">⚡ Run Fresh Scan</button>
           </div>
 
           <table class="st-table" id="bountyTable">
@@ -374,14 +374,6 @@
 <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () { loadDashboard(); });
-
-  function toggleSidebar() {
-    const sb  = document.getElementById('dashSidebar');
-    const btn = document.getElementById('hamBtn');
-    sb.classList.toggle('open');
-    btn.classList.toggle('open');
-  }
-  function toggleTheme() { document.body.classList.toggle('light-theme'); }
 </script>
 </body>
 </html>

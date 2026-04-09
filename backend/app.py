@@ -96,17 +96,17 @@ from flask import Request as FlaskRequest
 class LargeUploadRequest(FlaskRequest):
     """Custom request class with increased multipart limits"""
     max_content_length = config.MAX_CONTENT_LENGTH
-    max_form_memory_size = config.MAX_CONTENT_LENGTH  
+    max_form_memory_size = config.MAX_FORM_MEMORY_SIZE
     max_form_parts = 100000  # Increased from default 1000
 
 app = Flask(__name__, 
             static_folder='../frontend/static',
             template_folder='../frontend/templates')
 app.request_class = LargeUploadRequest  # Use custom request class
-app.config['UPLOAD_FOLDER'] = 'uploads'
-app.config['PROCESSED_FOLDER'] = 'processed'
+app.config['UPLOAD_FOLDER'] = str(config.UPLOAD_FOLDER)
+app.config['PROCESSED_FOLDER'] = str(config.PROCESSED_FOLDER)
 app.config['MAX_CONTENT_LENGTH'] = config.MAX_CONTENT_LENGTH
-app.config['MAX_FORM_MEMORY_SIZE'] = config.MAX_CONTENT_LENGTH  # Werkzeug multipart limit
+app.config['MAX_FORM_MEMORY_SIZE'] = config.MAX_FORM_MEMORY_SIZE  # Werkzeug multipart limit
 app.config['MAX_FORM_PARTS'] = 100000  # Werkzeug 3.x: max parts in multipart upload
 app.config['SECRET_KEY'] = config.SECRET_KEY
 
@@ -693,7 +693,16 @@ def api_analyze_repo():
         if not data or 'repo_url' not in data:
             return jsonify({'error': 'No repository URL provided'}), 400
 
-        repo_url = data['repo_url']
+        repo_url = data['repo_url'].strip()
+        parsed_repo = GitHubAPIClient.parse_github_url(repo_url)
+        if not parsed_repo:
+            return jsonify({
+                'error': 'Invalid GitHub repository URL. Use https://github.com/owner/repo'
+            }), 400
+
+        owner = parsed_repo['owner']
+        repo = parsed_repo['repo']
+        safe_repo_url = f'https://github.com/{owner}/{repo}.git'
         logger.info(f"Cloning repository: {repo_url}")
 
         # Generate unique ID for this analysis
@@ -707,9 +716,9 @@ def api_analyze_repo():
         # Clone repository
         try:
             # Add --depth 1 for faster cloning
-            subprocess.run(['git', 'clone', '--depth', '1', repo_url, input_path], 
+            subprocess.run(['git', 'clone', '--depth', '1', safe_repo_url, input_path], 
                            check=True, capture_output=True, text=True)
-            logger.info(f"Cloned {repo_url} to {input_path}")
+            logger.info(f"Cloned {safe_repo_url} to {input_path}")
         except subprocess.CalledProcessError as e:
             logger.error(f"Git clone failed: {e.stderr}")
             return jsonify({'error': f"Failed to clone repository: {e.stderr}"}), 500
