@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ZenReview | Project Alpha</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;family=Inter:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary-container": "#5c2718",
+              "on-primary-fixed-variant": "#6e3525",
+              "primary-dim": "#e79782",
+              "on-secondary-fixed": "#3f4d17",
+              "on-error": "#490013",
+              "inverse-on-surface": "#535557",
+              "tertiary-container": "#e1af7e",
+              "error-container": "#8a1632",
+              "primary": "#ffb5a1",
+              "secondary": "#bdce89",
+              "tertiary-fixed-dim": "#d3a272",
+              "primary-fixed": "#ffad97",
+              "surface-container": "#171a1d",
+              "on-tertiary-container": "#502f09",
+              "secondary-fixed-dim": "#d9eaa3",
+              "on-background": "#e3e6ea",
+              "tertiary-dim": "#ca9a6b",
+              "inverse-primary": "#8e4d3c",
+              "background": "#0c0e10",
+              "secondary-dim": "#afc07d",
+              "outline-variant": "#44484c",
+              "secondary-fixed": "#e7f9b0",
+              "on-tertiary-fixed-variant": "#5a3811",
+              "surface-dim": "#0c0e10",
+              "on-primary-fixed": "#49180a",
+              "error": "#fd6f85",
+              "on-primary": "#683020",
+              "on-tertiary-fixed": "#331b00",
+              "tertiary-fixed": "#e1af7e",
+              "surface": "#0c0e10",
+              "surface-variant": "#22262a",
+              "primary-fixed-dim": "#f09f8a",
+              "on-secondary-container": "#9aab6a",
+              "on-surface-variant": "#a8abb0",
+              "surface-tint": "#ffb5a1",
+              "on-error-container": "#ff97a3",
+              "on-tertiary": "#5b3912",
+              "surface-container-lowest": "#000000",
+              "surface-container-high": "#1d2023",
+              "on-secondary": "#38450f",
+              "inverse-surface": "#f9f9fc",
+              "error-dim": "#c8475d",
+              "surface-container-low": "#111416",
+              "surface-container-highest": "#22262a",
+              "secondary-container": "#1f2900",
+              "on-secondary-fixed-variant": "#5b6a31",
+              "outline": "#72767a",
+              "surface-bright": "#282d31",
+              "tertiary": "#f0bd8b",
+              "primary-container": "#f6a48f"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>body {
+    background-color: #0c0e10;
+    position: relative;
+    overflow: hidden
+    }
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuAoFNLB-uWOATTe4VPAwRtEE0AyA2GBvonMN1bfOrgwhdldYUV-8JyjhKOooxb03HftAabaxz-8mFBvvghdPFrXpEo0BOY4NpLCV2feqiEqeSsu8uqaS-CV5-RU7yqVwd3Acz8W0CKdZL849Hs5o2wOgMX6VEli_tncQ2qKuqCGjPon1wIn843xNsiImIKVXJFxJe3lUtT-lgO6Ab65Kl-SvLMeyVasmXIIy9ELBCdvNnTbP7kGzr12tzm8zi6jGkPrkEGShjQKCuc);
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 50
+    }
+.code-syntax-keyword {
+    color: #ffb5a1
+    }
+.code-syntax-func {
+    color: #bdce89
+    }
+.code-syntax-string {
+    color: #f0bd8b
+    }
+.code-syntax-comment {
+    color: #72767a;
+    font-style: italic
+    }
+.no-scrollbar::-webkit-scrollbar {
+    display: none
+    }</style>
+</head>
+<body class="font-body text-on-surface h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="w-full top-0 sticky bg-[#0c0e10] dark:bg-[#0c0e10] bg-[#111416] transition-colors duration-300 shadow-[0px_20px_40px_0px_rgba(0,0,0,0.06)] z-40">
+<div class="flex justify-between items-center px-10 py-4 max-w-full mx-auto">
+<div class="flex items-center gap-12">
+<span class="text-2xl font-bold tracking-tighter text-[#ffb5a1]">ZenReview</span>
+<nav class="hidden md:flex gap-8 items-center font-manrope tracking-tight text-lg">
+<a class="text-[#22262a] dark:text-[#94a3b8] hover:text-[#f6a48f] transition-all" href="#">Workspaces</a>
+<a class="text-[#ffb5a1] border-b-2 border-[#ffb5a1] pb-1" href="#">Recent</a>
+<a class="text-[#22262a] dark:text-[#94a3b8] hover:text-[#f6a48f] transition-all" href="#">Insights</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-outline">search</span>
+<input class="bg-surface-container border-none rounded-full pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-primary w-64 transition-all" placeholder="Search workspace..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all">settings</button>
+<img alt="User profile" class="w-8 h-8 rounded-full border border-outline-variant" data-alt="Close up portrait of a professional man with a neutral expression in soft studio lighting with a clean dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKuTko0lteTEEwTKktZfEnEOIlY35c-DvwO6lUETi9QPXcf8yP-43yZwMgU4sBBN-I8a2ec-qbdmNyjIzi5exwlODBxFyQjJ2L9epzGYwJVZpMwf045LUbtpcBNQSphLNMZpNqw1COFSktzEn5lWOb7ErRKxdPvsgcMHpUV09F9_ILXW9NKbBd-Z-TTlSHRKt7CRc3PON-4mYOdwp1PWAxWMQwrKp_hSlJ9k1YaIBCeqUBd-rjFsy43n2IFBhkF41mrMkrTC42uRw"/>
+</div>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- SideNavBar (File Explorer) -->
+<aside class="h-screen w-64 left-0 sticky bg-[#111416] dark:bg-[#111416] flex flex-col py-8 px-6 space-y-8 z-30">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-[#ffb5a1]">folder_open</span>
+</div>
+<div>
+<h3 class="text-[#ffb5a1] font-extrabold font-manrope font-semibold text-sm">Project Alpha</h3>
+<p class="text-xs text-outline">Main Branch</p>
+</div>
+</div>
+<button class="w-full py-3 px-4 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-full font-bold text-sm flex items-center justify-center gap-2 transition-transform hover:scale-95 duration-150">
+<span class="material-symbols-outlined text-sm">add</span>
+                New Review
+            </button>
+<nav class="flex flex-col gap-1 overflow-y-auto no-scrollbar">
+<div class="flex items-center gap-3 py-2 px-3 text-[#ffb5a1] font-bold border-r-4 border-[#ffb5a1] pr-4 translate-x-1 duration-200">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-manrope font-semibold text-sm">Dashboard</span>
+</div>
+<div class="flex items-center gap-3 py-2 px-3 text-[#94a3b8] pr-4 hover:bg-[#22262a] hover:text-[#ffb5a1] rounded-lg transition-all group">
+<span class="material-symbols-outlined group-hover:scale-110">code</span>
+<span class="font-manrope font-semibold text-sm">Editor</span>
+</div>
+<div class="flex items-center gap-3 py-2 px-3 text-[#94a3b8] pr-4 hover:bg-[#22262a] hover:text-[#ffb5a1] rounded-lg transition-all group">
+<span class="material-symbols-outlined group-hover:scale-110">security</span>
+<span class="font-manrope font-semibold text-sm">Security</span>
+</div>
+<div class="flex items-center gap-3 py-2 px-3 text-[#94a3b8] pr-4 hover:bg-[#22262a] hover:text-[#ffb5a1] rounded-lg transition-all group">
+<span class="material-symbols-outlined group-hover:scale-110">group</span>
+<span class="font-manrope font-semibold text-sm">Team</span>
+</div>
+</nav>
+<div class="mt-auto pt-8 flex flex-col gap-2">
+<div class="flex items-center gap-3 py-2 px-3 text-[#94a3b8] hover:text-[#ffb5a1] transition-all">
+<span class="material-symbols-outlined text-sm">description</span>
+<span class="text-xs font-label uppercase tracking-widest">Docs</span>
+</div>
+<div class="flex items-center gap-3 py-2 px-3 text-[#94a3b8] hover:text-[#ffb5a1] transition-all">
+<span class="material-symbols-outlined text-sm">help_outline</span>
+<span class="text-xs font-label uppercase tracking-widest">Support</span>
+</div>
+</div>
+</aside>
+<!-- Main Code Editor Canvas -->
+<main class="flex-1 flex flex-col bg-surface border-x border-outline-variant border-opacity-10 overflow-hidden relative">
+<!-- Editor Tabs -->
+<div class="flex bg-surface-container-low px-4 pt-3 gap-2">
+<div class="bg-surface px-4 py-2 rounded-t-lg text-xs font-label flex items-center gap-2 border-b-2 border-primary">
+<span class="material-symbols-outlined text-[14px] text-tertiary">javascript</span>
+                    authentication.js
+                </div>
+<div class="text-outline-variant px-4 py-2 rounded-t-lg text-xs font-label flex items-center gap-2 hover:bg-surface-container transition-colors cursor-pointer">
+<span class="material-symbols-outlined text-[14px]">css</span>
+                    globals.css
+                </div>
+</div>
+<!-- Editor Surface -->
+<div class="flex-1 bg-surface-container-highest p-8 font-mono text-sm leading-relaxed overflow-y-auto no-scrollbar selection:bg-primary-container selection:text-on-primary-container">
+<div class="flex gap-6">
+<div class="text-outline-variant text-right select-none opacity-40 font-label text-xs pt-1">
+                        1<br/>2<br/>3<br/>4<br/>5<br/>6<br/>7<br/>8<br/>9<br/>10<br/>11<br/>12<br/>13<br/>14<br/>15<br/>16
+                    </div>
+<div class="flex-1">
+<p><span class="code-syntax-keyword">import</span> { createAuth } <span class="code-syntax-keyword">from</span> <span class="code-syntax-string">'@zen/core'</span>;</p>
+<p> </p>
+<p><span class="code-syntax-comment">// Initialize the security layer with tactful defaults</span></p>
+<p><span class="code-syntax-keyword">const</span> securityConfig = {</p>
+<p class="pl-4">mode: <span class="code-syntax-string">'zen-strict'</span>,</p>
+<p class="pl-4">timeout: <span class="code-syntax-func">3600</span>,</p>
+<p class="pl-4">allowRefresh: <span class="code-syntax-keyword">true</span></p>
+<p>};</p>
+<p> </p>
+<p><span class="code-syntax-keyword">export const</span> <span class="code-syntax-func">validateUserSession</span> = (token) =&gt; {</p>
+<p class="pl-4"><span class="code-syntax-keyword">if</span> (!token) {</p>
+<p class="pl-8"><span class="code-syntax-keyword">throw new</span> <span class="code-syntax-func">Error</span>(<span class="code-syntax-string">'Unauthorized Sanctuary Access'</span>);</p>
+<p class="pl-4">}</p>
+<p class="pl-4 bg-error/10 border-l-2 border-error my-1 py-1 rounded-r">
+<span class="code-syntax-keyword">return</span> <span class="code-syntax-func">verifySync</span>(token, process.env.SECRET);
+                        </p>
+<p class="pl-4"><span class="code-syntax-comment">// Security risk detected: Synchronous verification in async context</span></p>
+<p>};</p>
+<p> </p>
+<p><span class="code-syntax-keyword">async function</span> <span class="code-syntax-func">handleHandshake</span>() {</p>
+<p class="pl-4"><span class="code-syntax-keyword">const</span> session = <span class="code-syntax-keyword">await</span> <span class="code-syntax-func">fetchSessionData</span>();</p>
+<p class="pl-4 text-on-surface-variant">console.log(<span class="code-syntax-string">'Tactile state initialized'</span>, session.id);</p>
+<p>}</p>
+</div>
+</div>
+</div>
+<!-- Editor Action Bar -->
+<div class="p-4 bg-surface-container-low flex justify-between items-center">
+<div class="flex items-center gap-4 text-xs text-outline">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">fork_right</span> Main</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">sync</span> Synced</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="bg-surface-container-highest text-on-surface px-4 py-1.5 rounded-lg text-xs font-semibold hover:bg-surface-bright transition-colors">Preview</button>
+<button class="bg-gradient-to-r from-primary to-primary-container text-on-primary px-4 py-1.5 rounded-lg text-xs font-bold shadow-lg">Commit</button>
+</div>
+</div>
+</main>
+<!-- Right AI Chat Panel -->
+<aside class="w-80 bg-surface-container-low flex flex-col border-l border-outline-variant border-opacity-10">
+<div class="p-6 border-b border-outline-variant border-opacity-10">
+<h2 class="font-headline font-bold text-lg text-primary flex items-center gap-2">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                    Zen AI
+                </h2>
+<p class="text-xs text-on-surface-variant mt-1 font-label">Context-aware assistant active</p>
+</div>
+<div class="flex-1 p-6 overflow-y-auto space-y-6 no-scrollbar">
+<!-- Suggestion Card 1 -->
+<div class="bg-surface-container-highest p-4 rounded-xl border-l-4 border-error shadow-sm">
+<div class="flex items-center gap-2 text-error mb-2">
+<span class="material-symbols-outlined text-sm">warning</span>
+<span class="text-xs font-bold uppercase tracking-wider">Security Risk</span>
+</div>
+<p class="text-sm text-on-surface leading-snug">
+                        Synchronous verification found on <span class="text-primary">line 13</span>. This will block the event loop in high-traffic scenarios.
+                    </p>
+<button class="mt-3 text-xs font-bold text-tertiary flex items-center gap-1 hover:underline">
+                        Apply Fix <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+</button>
+</div>
+<!-- Suggestion Card 2 -->
+<div class="bg-surface-container-highest p-4 rounded-xl border-l-4 border-secondary shadow-sm">
+<div class="flex items-center gap-2 text-secondary mb-2">
+<span class="material-symbols-outlined text-sm">bolt</span>
+<span class="text-xs font-bold uppercase tracking-wider">Performance Tip</span>
+</div>
+<p class="text-sm text-on-surface leading-snug">
+                        Memoize the <code class="bg-surface-dim px-1 rounded">securityConfig</code> object to prevent unnecessary re-renders in your UI components.
+                    </p>
+</div>
+<!-- Chat Bubbles -->
+<div class="space-y-4 pt-4">
+<div class="flex justify-start">
+<div class="bg-surface-variant text-on-surface p-3 rounded-2xl rounded-tl-none text-sm max-w-[90%]">
+                            How can I improve the tactile feel of this interface?
+                        </div>
+</div>
+<div class="flex justify-end">
+<div class="bg-primary-container text-on-primary-container p-3 rounded-2xl rounded-tr-none text-sm max-w-[90%]">
+                            Zen UI recommends increasing your <code class="bg-white/10 px-1 rounded">spacing-scale</code> and using background-tone shifts instead of borders. I've highlighted line 4 in your CSS to adjust.
+                        </div>
+</div>
+</div>
+</div>
+<!-- Input Area -->
+<div class="p-6">
+<div class="relative">
+<textarea class="w-full bg-surface-container-highest border-none rounded-xl p-4 pr-12 text-sm focus:ring-1 focus:ring-primary-dim resize-none placeholder:text-outline-variant" placeholder="Ask Zen AI anything..." rows="2"></textarea>
+<button class="absolute bottom-4 right-4 bg-primary text-on-primary w-8 h-8 rounded-full flex items-center justify-center hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-sm">send</span>
+</button>
+</div>
+</div>
+</aside>
+</div>
+<!-- Floating Action Button (FAB) - Suppressed as per instructions for focus -->
+<!-- Footer / Status Bar -->
+<footer class="bg-[#111416] px-6 py-2 flex justify-between items-center text-[10px] text-outline tracking-wider font-label uppercase z-50">
+<div class="flex items-center gap-6">
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-secondary"></span> System Healthy</span>
+<span>UTF-8</span>
+<span>Javascript</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="text-tertiary">Line 13, Col 24</span>
+<span class="material-symbols-outlined text-[14px]">cloud_done</span>
+</div>
+</footer>
+</body></html>

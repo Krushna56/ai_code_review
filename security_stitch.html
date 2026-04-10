@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Security Posture - ZenReview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary-container": "#5c2718",
+              "on-primary-fixed-variant": "#6e3525",
+              "primary-dim": "#e79782",
+              "on-secondary-fixed": "#3f4d17",
+              "on-error": "#490013",
+              "inverse-on-surface": "#535557",
+              "tertiary-container": "#e1af7e",
+              "error-container": "#8a1632",
+              "primary": "#ffb5a1",
+              "secondary": "#bdce89",
+              "tertiary-fixed-dim": "#d3a272",
+              "primary-fixed": "#ffad97",
+              "surface-container": "#171a1d",
+              "on-tertiary-container": "#502f09",
+              "secondary-fixed-dim": "#d9eaa3",
+              "on-background": "#e3e6ea",
+              "tertiary-dim": "#ca9a6b",
+              "inverse-primary": "#8e4d3c",
+              "background": "#0c0e10",
+              "secondary-dim": "#afc07d",
+              "outline-variant": "#44484c",
+              "secondary-fixed": "#e7f9b0",
+              "on-tertiary-fixed-variant": "#5a3811",
+              "surface-dim": "#0c0e10",
+              "on-primary-fixed": "#49180a",
+              "error": "#fd6f85",
+              "on-primary": "#683020",
+              "on-tertiary-fixed": "#331b00",
+              "tertiary-fixed": "#e1af7e",
+              "surface": "#0c0e10",
+              "surface-variant": "#22262a",
+              "primary-fixed-dim": "#f09f8a",
+              "on-secondary-container": "#9aab6a",
+              "on-surface-variant": "#a8abb0",
+              "surface-tint": "#ffb5a1",
+              "on-error-container": "#ff97a3",
+              "on-tertiary": "#5b3912",
+              "surface-container-lowest": "#000000",
+              "surface-container-high": "#1d2023",
+              "on-secondary": "#38450f",
+              "inverse-surface": "#f9f9fc",
+              "error-dim": "#c8475d",
+              "surface-container-low": "#111416",
+              "on-surface": "#e3e6ea",
+              "surface-container-highest": "#22262a",
+              "secondary-container": "#1f2900",
+              "on-secondary-fixed-variant": "#5b6a31",
+              "outline": "#72767a",
+              "surface-bright": "#282d31",
+              "tertiary": "#f0bd8b",
+              "primary-container": "#f6a48f"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0c0e10;
+            color: #e3e6ea;
+            font-family: 'Manrope', sans-serif;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 150px;
+            opacity: 0.98;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-panel {
+            background: rgba(34, 38, 42, 0.6);
+            backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<!-- SideNavBar Component (Semantic Shell) -->
+<aside class="h-screen w-64 left-0 sticky bg-[#111416] flex flex-col py-8 px-6 space-y-8 z-50">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-container"></div>
+<div class="text-[#ffb5a1] font-extrabold font-headline tracking-tighter">ZenReview</div>
+</div>
+<div class="space-y-4 pt-4">
+<div class="px-2">
+<p class="text-[10px] uppercase tracking-[0.2em] text-outline font-label mb-4 opacity-50">Main Menu</p>
+<nav class="space-y-2">
+<a class="flex items-center gap-3 text-[#94a3b8] pr-4 py-2 hover:bg-[#22262a] hover:text-[#ffb5a1] rounded-lg transition-all translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-manrope font-semibold text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 text-[#94a3b8] pr-4 py-2 hover:bg-[#22262a] hover:text-[#ffb5a1] rounded-lg transition-all translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="code">code</span>
+<span class="font-manrope font-semibold text-sm">Editor</span>
+</a>
+<a class="flex items-center gap-3 text-[#ffb5a1] font-bold border-r-4 border-[#ffb5a1] pr-4 py-2" href="#">
+<span class="material-symbols-outlined" data-icon="security" style="font-variation-settings: 'FILL' 1;">security</span>
+<span class="font-manrope font-semibold text-sm">Security</span>
+</a>
+<a class="flex items-center gap-3 text-[#94a3b8] pr-4 py-2 hover:bg-[#22262a] hover:text-[#ffb5a1] rounded-lg transition-all translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-manrope font-semibold text-sm">Team</span>
+</a>
+</nav>
+</div>
+</div>
+<div class="mt-auto pt-8 border-t border-outline-variant/10">
+<nav class="space-y-2">
+<a class="flex items-center gap-3 text-[#94a3b8] pr-4 py-2 hover:bg-[#22262a] hover:text-[#ffb5a1] rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-manrope font-semibold text-sm">Docs</span>
+</a>
+<a class="flex items-center gap-3 text-[#94a3b8] pr-4 py-2 hover:bg-[#22262a] hover:text-[#ffb5a1] rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span class="font-manrope font-semibold text-sm">Support</span>
+</a>
+</nav>
+<div class="mt-6 p-4 rounded-xl bg-surface-container-highest flex items-center gap-3">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="professional developer avatar with a warm smile and soft lighting, cinematic portrait style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBNj1OiO67pK6wHRZDNk54YnxP2FunEhu3AXnqNECWzSuG_1lFSuZ223m7QM6eBcvetm-yIBhTvr3KD07hP5TRRYH7Ce7iWgu1aDm0ln3QbLhq4zADWIa84eNJ_zZGnm6L-w9ZlQJMvXx6C3KtTlqp9gcOz2xcyu_kx3elBVKD0gyB_z4M7Una00kffRo_WeG_Wtz5If3liAnDon0ivd3STjdHaDWPnW3Oz4f73lj__ZjeigRgCybQ7JQqMKWSdVV91bIuAPNFtyQ"/>
+<div class="overflow-hidden">
+<p class="text-xs font-bold text-on-surface truncate">Alex Rivera</p>
+<p class="text-[10px] text-on-surface-variant truncate">Pro Plan</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col min-w-0">
+<!-- TopAppBar Component -->
+<header class="w-full top-0 sticky bg-[#111416] transition-colors duration-300 shadow-[0px_20px_40px_0px_rgba(0,0,0,0.06)] z-40">
+<div class="flex justify-between items-center px-10 py-4 max-w-full mx-auto">
+<div class="flex items-center gap-12">
+<h1 class="text-2xl font-bold tracking-tighter text-[#ffb5a1] font-headline">Security Posture</h1>
+<nav class="hidden md:flex gap-8">
+<a class="text-[#22262a] dark:text-[#94a3b8] font-manrope tracking-tight text-lg hover:text-[#f6a48f] transition-all" href="#">Workspaces</a>
+<a class="text-[#22262a] dark:text-[#94a3b8] font-manrope tracking-tight text-lg hover:text-[#f6a48f] transition-all" href="#">Recent</a>
+<a class="text-[#ffb5a1] border-b-2 border-[#ffb5a1] pb-1 font-manrope tracking-tight text-lg" href="#">Insights</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant/30 mx-2"></div>
+<button class="px-6 py-2 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-full font-headline font-bold text-sm shadow-lg shadow-primary/20 hover:scale-105 transition-transform">
+                        New Review
+                    </button>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="flex-1 p-10 space-y-12">
+<!-- Hero Section: Risk Score & Summary -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+<!-- Central Risk Score Gauge -->
+<div class="lg:col-span-5 bg-surface-container-low rounded-3xl p-10 flex flex-col items-center justify-center relative overflow-hidden">
+<!-- Subtle Glow -->
+<div class="absolute -top-24 -left-24 w-64 h-64 bg-primary/10 rounded-full blur-[80px]"></div>
+<div class="absolute -bottom-24 -right-24 w-64 h-64 bg-tertiary/10 rounded-full blur-[80px]"></div>
+<div class="relative w-64 h-64">
+<!-- SVG Gauge -->
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-surface-container-highest" cx="128" cy="128" fill="transparent" r="110" stroke="currentColor" stroke-width="12"></circle>
+<circle class="text-primary" cx="128" cy="128" fill="transparent" r="110" stroke="currentColor" stroke-dasharray="691" stroke-dashoffset="172" stroke-linecap="round" stroke-width="12"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+<span class="text-6xl font-extrabold font-headline text-on-surface tracking-tighter">75</span>
+<span class="text-sm font-label uppercase tracking-widest text-primary font-semibold">Healthy</span>
+</div>
+</div>
+<div class="mt-8 text-center space-y-2">
+<h3 class="text-xl font-headline font-bold text-on-surface">Overall Risk Exposure</h3>
+<p class="text-on-surface-variant font-body text-sm max-w-xs">Your posture has improved by 12% since the last automated audit 4 hours ago.</p>
+</div>
+</div>
+<!-- Stats Bento -->
+<div class="lg:col-span-7 grid grid-cols-2 gap-4">
+<div class="bg-surface-container rounded-3xl p-8 flex flex-col justify-between">
+<span class="material-symbols-outlined text-primary text-4xl" data-icon="shield_with_heart">shield_with_heart</span>
+<div>
+<p class="text-3xl font-headline font-bold">142</p>
+<p class="text-on-surface-variant text-sm font-label">Scanned Assets</p>
+</div>
+</div>
+<div class="bg-surface-container rounded-3xl p-8 flex flex-col justify-between border-l-4 border-error/40">
+<span class="material-symbols-outlined text-error text-4xl" data-icon="bolt">bolt</span>
+<div>
+<p class="text-3xl font-headline font-bold text-error">3</p>
+<p class="text-on-surface-variant text-sm font-label">Critical Alerts</p>
+</div>
+</div>
+<div class="col-span-2 bg-surface-container-highest rounded-3xl p-8 flex items-center justify-between group cursor-pointer hover:bg-surface-bright transition-colors">
+<div class="flex items-center gap-6">
+<div class="w-16 h-16 rounded-2xl bg-tertiary/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-3xl" data-icon="history">history</span>
+</div>
+<div>
+<h4 class="text-lg font-headline font-bold">Timeline of Detected Threats</h4>
+<p class="text-on-surface-variant text-sm font-body">View the past 30 days of security incidents and resolution speed.</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</div>
+</section>
+<!-- Detailed Vulnerabilities List -->
+<section class="space-y-6">
+<div class="flex items-end justify-between px-2">
+<div class="space-y-1">
+<h2 class="text-3xl font-headline font-bold tracking-tight">Active Vulnerabilities</h2>
+<p class="text-on-surface-variant font-body">Prioritized list of system weaknesses requiring immediate attention.</p>
+</div>
+<div class="flex gap-4">
+<div class="bg-surface-container-low px-4 py-2 rounded-lg flex items-center gap-2 border border-outline-variant/10">
+<span class="material-symbols-outlined text-sm" data-icon="filter_list">filter_list</span>
+<span class="text-xs font-label font-semibold">Filter: All</span>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<!-- Vulnerability Row 1 -->
+<div class="bg-surface-container-low rounded-2xl p-6 flex items-center gap-8 group hover:bg-surface-container transition-all">
+<div class="w-12 h-12 rounded-xl bg-error/10 flex items-center justify-center text-error">
+<span class="material-symbols-outlined" data-icon="gpp_maybe">gpp_maybe</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-1">
+<h4 class="font-headline font-bold text-lg">CVE-2024-1293: Remote Code Execution</h4>
+<span class="px-2 py-0.5 rounded-full bg-error-container text-on-error-container text-[10px] font-extrabold uppercase tracking-wider">Critical</span>
+</div>
+<p class="text-on-surface-variant text-sm font-body">Unauthorized access possible via malformed websocket handshake in legacy Auth module.</p>
+</div>
+<div class="text-right px-6 border-l border-outline-variant/20 hidden md:block">
+<p class="text-xs font-label text-on-surface-variant uppercase tracking-tighter">Detected</p>
+<p class="font-body font-semibold">22m ago</p>
+</div>
+<button class="bg-surface-container-highest hover:bg-primary hover:text-on-primary px-5 py-2.5 rounded-xl font-label font-bold text-sm transition-all flex items-center gap-2">
+                            Suggested Fix
+                            <span class="material-symbols-outlined text-sm" data-icon="auto_fix_high">auto_fix_high</span>
+</button>
+</div>
+<!-- Vulnerability Row 2 -->
+<div class="bg-surface-container-low rounded-2xl p-6 flex items-center gap-8 group hover:bg-surface-container transition-all">
+<div class="w-12 h-12 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" data-icon="key">key</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-1">
+<h4 class="font-headline font-bold text-lg">Weak SSH Key Algorithm</h4>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-container text-on-tertiary-container text-[10px] font-extrabold uppercase tracking-wider">High</span>
+</div>
+<p class="text-on-surface-variant text-sm font-body">Infrastructure node 'Prod-West-02' is using deprecated RSA 1024-bit keys.</p>
+</div>
+<div class="text-right px-6 border-l border-outline-variant/20 hidden md:block">
+<p class="text-xs font-label text-on-surface-variant uppercase tracking-tighter">Detected</p>
+<p class="font-body font-semibold">2h ago</p>
+</div>
+<button class="bg-surface-container-highest hover:bg-primary hover:text-on-primary px-5 py-2.5 rounded-xl font-label font-bold text-sm transition-all flex items-center gap-2">
+                            Suggested Fix
+                            <span class="material-symbols-outlined text-sm" data-icon="auto_fix_high">auto_fix_high</span>
+</button>
+</div>
+<!-- Vulnerability Row 3 -->
+<div class="bg-surface-container-low rounded-2xl p-6 flex items-center gap-8 group hover:bg-surface-container transition-all">
+<div class="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="dns">dns</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-3 mb-1">
+<h4 class="font-headline font-bold text-lg">Subdomain Takeover Risk</h4>
+<span class="px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-[10px] font-extrabold uppercase tracking-wider">Medium</span>
+</div>
+<p class="text-on-surface-variant text-sm font-body">Dangling CNAME record detected for 'staging-beta.zenreview.io' pointing to expired S3 bucket.</p>
+</div>
+<div class="text-right px-6 border-l border-outline-variant/20 hidden md:block">
+<p class="text-xs font-label text-on-surface-variant uppercase tracking-tighter">Detected</p>
+<p class="font-body font-semibold">1d ago</p>
+</div>
+<button class="bg-surface-container-highest hover:bg-primary hover:text-on-primary px-5 py-2.5 rounded-xl font-label font-bold text-sm transition-all flex items-center gap-2">
+                            Suggested Fix
+                            <span class="material-symbols-outlined text-sm" data-icon="auto_fix_high">auto_fix_high</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Bottom Dashboard Area: Assets & Network -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="bg-surface-container-low rounded-3xl p-8 space-y-6">
+<div class="flex justify-between items-center">
+<h3 class="text-xl font-headline font-bold">Network Traffic Flow</h3>
+<span class="text-secondary text-xs font-label font-bold">Real-time</span>
+</div>
+<div class="h-48 w-full bg-surface-container-highest rounded-2xl relative overflow-hidden flex items-end px-4 gap-2">
+<!-- Abstract Waveform/Bar Chart -->
+<div class="flex-1 bg-primary/20 rounded-t-md h-[40%]"></div>
+<div class="flex-1 bg-primary/40 rounded-t-md h-[60%]"></div>
+<div class="flex-1 bg-primary/20 rounded-t-md h-[30%]"></div>
+<div class="flex-1 bg-primary/50 rounded-t-md h-[80%]"></div>
+<div class="flex-1 bg-primary/30 rounded-t-md h-[50%]"></div>
+<div class="flex-1 bg-primary/20 rounded-t-md h-[45%]"></div>
+<div class="flex-1 bg-primary/40 rounded-t-md h-[70%]"></div>
+<div class="flex-1 bg-primary/60 rounded-t-md h-[90%] animate-pulse"></div>
+<div class="flex-1 bg-primary/40 rounded-t-md h-[65%]"></div>
+<div class="flex-1 bg-primary/20 rounded-t-md h-[35%]"></div>
+</div>
+<div class="flex justify-around pt-2">
+<div class="text-center">
+<p class="text-xs text-on-surface-variant font-label">Inbound</p>
+<p class="font-headline font-bold text-primary">2.4 GB/s</p>
+</div>
+<div class="text-center">
+<p class="text-xs text-on-surface-variant font-label">Outbound</p>
+<p class="font-headline font-bold text-tertiary">842 MB/s</p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-3xl p-8 flex flex-col justify-between">
+<div class="space-y-4">
+<h3 class="text-xl font-headline font-bold">Secure Zone Status</h3>
+<div class="flex flex-wrap gap-3">
+<div class="px-4 py-2 bg-surface-container rounded-full flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<span class="text-sm font-body">Database Clusters</span>
+</div>
+<div class="px-4 py-2 bg-surface-container rounded-full flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<span class="text-sm font-body">User Identity</span>
+</div>
+<div class="px-4 py-2 bg-surface-container rounded-full flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-error"></div>
+<span class="text-sm font-body">Edge Nodes</span>
+</div>
+<div class="px-4 py-2 bg-surface-container rounded-full flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<span class="text-sm font-body">API Gateways</span>
+</div>
+</div>
+</div>
+<div class="mt-8 relative h-32 rounded-2xl overflow-hidden grayscale contrast-125 opacity-40">
+<img class="w-full h-full object-cover" data-alt="abstract server room with blinking led lights and geometric rack patterns, dark atmospheric aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNKTRprV2w-0cvX4Mjheuj4LDk87gtYrOkiHQdZMNghZ0tJ-TRrXt0RFdQfDBbEDfjewu4z4G6QgMb-iZA_pVM1YfNaV2uOvJ9POaRovdwvkQXjhrlsbNJ1hR0OD2sNFW517cuxhNUR5aTYbQewGLsO-N-4xLwgoea-PTk9SBNI1N4cAWafWEprf6P4FRtEsAYyR_AilzD4n_5CysCLN8D4vpB1DxR3cOnoI_27rFCFjwDbUBKIfir19J2nCQSI33_PY8ENKf_bXc"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-low to-transparent"></div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</body></html>

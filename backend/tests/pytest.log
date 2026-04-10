@@ -1,4 +1,42 @@
+DEBUG    urllib3.connectionpool:connectionpool.py:241 Starting new HTTP connection (1): localhost:5000
+DEBUG    urllib3.connectionpool:connectionpool.py:544 http://localhost:5000 "POST /api/v2/chat/session HTTP/1.1" 201 98
+DEBUG    urllib3.connectionpool:connectionpool.py:241 Starting new HTTP connection (1): localhost:5000
+DEBUG    urllib3.connectionpool:connectionpool.py:544 http://localhost:5000 "POST /api/v2/chat/message HTTP/1.1" 200 304
+DEBUG    urllib3.connectionpool:connectionpool.py:241 Starting new HTTP connection (1): localhost:5000
+DEBUG    urllib3.connectionpool:connectionpool.py:544 http://localhost:5000 "POST /api/v2/chat/session HTTP/1.1" 201 98
+DEBUG    urllib3.connectionpool:connectionpool.py:241 Starting new HTTP connection (1): localhost:5000
+DEBUG    urllib3.connectionpool:connectionpool.py:544 http://localhost:5000 "POST /api/v2/chat/message HTTP/1.1" 200 304
+DEBUG    faiss.loader:loader.py:96 Environment variable FAISS_OPT_LEVEL is not set, so let's pick the instruction set according to the current CPU
+INFO     faiss.loader:loader.py:132 Loading faiss with AVX2 support.
+INFO     faiss.loader:loader.py:134 Successfully loaded faiss with AVX2 support.
 INFO     services.conversation_manager:conversation_manager.py:80 Database schema initialized
-INFO     services.conversation_manager:conversation_manager.py:34 Initialized ConversationManager with database: C:\Users\krush\AppData\Local\Temp\tmpgcrsn4i9.db
-INFO     services.conversation_manager:conversation_manager.py:106 Created session 44a8acbf-a335-4acb-a6e7-f622207091e2 for user test_user
-DEBUG    services.conversation_manager:conversation_manager.py:161 Added user message to session 44a8acbf-a335-4acb-a6e7-f622207091e2
+INFO     services.conversation_manager:conversation_manager.py:34 Initialized ConversationManager with database: c:\Users\krush\OneDrive\Desktop\ai_code_review\backend\vector_db\conversations.db
+INFO     services.conversation_manager:conversation_manager.py:80 Database schema initialized
+INFO     services.conversation_manager:conversation_manager.py:34 Initialized ConversationManager with database: c:\Users\krush\OneDrive\Desktop\ai_code_review\backend\vector_db\conversations.db
+INFO     llm_agents.llm_factory:llm_factory.py:426 [ROUTING] Creating ANALYSIS client → mistral (fallback: anthropic)
+INFO     llm_agents.llm_factory:llm_factory.py:365 Attempting to initialize mistral client...
+INFO     llm_agents.llm_factory:llm_factory.py:172 Initialized Mistral client with model: mistral-large-latest
+INFO     llm_agents.llm_factory:llm_factory.py:325 Created mistral LLM client successfully
+INFO     llm_agents.llm_factory:llm_factory.py:367 Successfully initialized mistral client
+INFO     llm_agents.base_agent:base_agent.py:28 [BaseAgent] Using analysis client: mistral/mistral-large-latest
+INFO     llm_agents.llm_factory:llm_factory.py:426 [ROUTING] Creating ANALYSIS client → mistral (fallback: anthropic)
+INFO     llm_agents.llm_factory:llm_factory.py:365 Attempting to initialize mistral client...
+INFO     llm_agents.llm_factory:llm_factory.py:172 Initialized Mistral client with model: mistral-large-latest
+INFO     llm_agents.llm_factory:llm_factory.py:325 Created mistral LLM client successfully
+INFO     llm_agents.llm_factory:llm_factory.py:367 Successfully initialized mistral client
+INFO     llm_agents.base_agent:base_agent.py:28 [BaseAgent] Using analysis client: mistral/mistral-large-latest
+INFO     llm_agents.llm_factory:llm_factory.py:411 [ROUTING] Creating CHAT client → gemini
+ERROR    llm_agents.llm_factory:llm_factory.py:237 Failed to initialize Gemini client: module 'google.genai' has no attribute 'configure'
+ERROR    llm_agents.llm_factory:llm_factory.py:328 Failed to create gemini LLM client: module 'google.genai' has no attribute 'configure'
+WARNING  llm_agents.llm_factory:llm_factory.py:415 Chat provider 'gemini' failed (module 'google.genai' has no attribute 'configure'), trying fallback
+INFO     llm_agents.llm_factory:llm_factory.py:365 Attempting to initialize gemini client...
+ERROR    llm_agents.llm_factory:llm_factory.py:237 Failed to initialize Gemini client: module 'google.genai' has no attribute 'configure'
+ERROR    llm_agents.llm_factory:llm_factory.py:328 Failed to create gemini LLM client: module 'google.genai' has no attribute 'configure'
+WARNING  llm_agents.llm_factory:llm_factory.py:371 Failed to initialize gemini: module 'google.genai' has no attribute 'configure'. Trying next...
+INFO     llm_agents.llm_factory:llm_factory.py:365 Attempting to initialize openai client...
+INFO     llm_agents.llm_factory:llm_factory.py:57 Initialized OpenAI client with model: claude-3-5-sonnet-20241022
+INFO     llm_agents.llm_factory:llm_factory.py:325 Created openai LLM client successfully
+INFO     llm_agents.llm_factory:llm_factory.py:367 Successfully initialized openai client
+INFO     llm_agents.chat_engine:chat_engine.py:35 [ChatEngine] Chat LLM: openai/claude-3-5-sonnet-20241022
+INFO     llm_agents.chat_engine:chat_engine.py:44 Initialized ChatEngine with dashboard integration
+INFO     api.v2_routes:v2_routes.py:23 Successfully initialized all chat services

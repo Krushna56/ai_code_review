@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;family=Inter:wght@300..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-primary-container": "#5c2718",
+            "on-primary-fixed-variant": "#6e3525",
+            "primary-dim": "#e79782",
+            "on-secondary-fixed": "#3f4d17",
+            "on-error": "#490013",
+            "inverse-on-surface": "#535557",
+            "tertiary-container": "#e1af7e",
+            "error-container": "#8a1632",
+            "primary": "#ffb5a1",
+            "secondary": "#bdce89",
+            "tertiary-fixed-dim": "#d3a272",
+            "primary-fixed": "#ffad97",
+            "surface-container": "#171a1d",
+            "on-tertiary-container": "#502f09",
+            "secondary-fixed-dim": "#d9eaa3",
+            "on-background": "#e3e6ea",
+            "tertiary-dim": "#ca9a6b",
+            "inverse-primary": "#8e4d3c",
+            "background": "#0c0e10",
+            "secondary-dim": "#afc07d",
+            "outline-variant": "#44484c",
+            "secondary-fixed": "#e7f9b0",
+            "on-tertiary-fixed-variant": "#5a3811",
+            "surface-dim": "#0c0e10",
+            "on-primary-fixed": "#49180a",
+            "error": "#fd6f85",
+            "on-primary": "#683020",
+            "on-tertiary-fixed": "#331b00",
+            "tertiary-fixed": "#e1af7e",
+            "surface": "#0c0e10",
+            "surface-variant": "#22262a",
+            "primary-fixed-dim": "#f09f8a",
+            "on-secondary-container": "#9aab6a",
+            "on-surface-variant": "#a8abb0",
+            "surface-tint": "#ffb5a1",
+            "on-error-container": "#ff97a3",
+            "on-tertiary": "#5b3912",
+            "surface-container-lowest": "#000000",
+            "surface-container-high": "#1d2023",
+            "on-secondary": "#38450f",
+            "inverse-surface": "#f9f9fc",
+            "error-dim": "#c8475d",
+            "surface-container-low": "#111416",
+            "on-surface": "#e3e6ea",
+            "surface-container-highest": "#22262a",
+            "secondary-container": "#1f2900",
+            "on-secondary-fixed-variant": "#5b6a31",
+            "outline": "#72767a",
+            "surface-bright": "#282d31",
+            "tertiary": "#f0bd8b",
+            "primary-container": "#f6a48f"
+          },
+          fontFamily: {
+            "headline": ["Manrope"],
+            "body": ["Manrope"],
+            "label": ["Inter"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
+    }
+.noise-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.03;
+    z-index: 50;
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuAIt9yLRDSSmq9vfdQQ7BWIsGwuuedsKi-UmaCQweme2Lh-QKU-AdLoc7z27xkXlidtM-lomKB_b0eipUWpHnz-Qy9ro4b4bARJsZlPj_KFgQfKZ24h2_3ABRWRJhSlj0nmW2PU-e_XVAEfJCiPaJ364EUd9IRI_yVknReKERV6NsbadJIO96gs9GExR1pG6GFCDXETZ21bNCLnbiXNla02570nlNaX0AuP-MD4iywVVMCvlPXEYXaSwksSwFoRyWXTQEVPNYKS_Eg)
+    }
+::-webkit-scrollbar {
+    width: 6px
+    }
+::-webkit-scrollbar-track {
+    background: #0c0e10
+    }
+::-webkit-scrollbar-thumb {
+    background: #22262a;
+    border-radius: 10px
+    }</style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container">
+<div class="noise-overlay"></div>
+<!-- Shell Wrapper -->
+<div class="flex min-h-screen">
+<!-- SideNavBar (Authority JSON applied) -->
+<aside class="hidden md:flex flex-col h-screen w-64 left-0 sticky bg-[#111416] py-8 px-6 space-y-8 z-40 border-r border-outline-variant/10">
+<div class="flex flex-col gap-1">
+<h1 class="text-[#ffb5a1] font-extrabold text-2xl tracking-tighter">ZenReview</h1>
+<p class="font-label text-xs uppercase tracking-widest text-outline">Obsidian Hearth</p>
+</div>
+<div class="flex items-center gap-3 p-3 rounded-xl bg-surface-container-high/50">
+<div class="w-10 h-10 rounded-lg overflow-hidden bg-surface-container-highest flex items-center justify-center">
+<img alt="Workspace Avatar" class="w-full h-full object-cover" data-alt="minimalist abstract icon representing a technical workspace project alpha" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnVO3R9NYRWi_HFwKssTsCE7qQuPMOzxX8JmY7OfiJgGTIh1d8ZrD2xif6RxiIeO7OWjMgat7ZnXrR7jIcNjz3QVQmMaj34St1Z6yR00xv5RZl0QqBIf6MrjNqYhWW7Dn2dt9ylX-wdDrj8xl68bRe3HhXkX7U6w8Le6tM8f_APIvNEYSsGyY7xeazxQCSvl0aY8KT859ZPy3_QbniU-iDReW7E_1DdUpLoRc2HvmCAUZHKm4GUJvIQJC0NYCOFB_HbpW387tloY4"/>
+</div>
+<div class="flex flex-col">
+<span class="font-manrope font-semibold text-sm text-[#ffb5a1]">Project Alpha</span>
+<span class="text-[10px] text-outline font-label">Main Branch</span>
+</div>
+</div>
+<nav class="flex-1 space-y-2">
+<!-- Dashboard is Active -->
+<a class="flex items-center gap-3 py-3 px-4 text-[#ffb5a1] font-bold border-r-4 border-[#ffb5a1] bg-[#22262a]/30 rounded-l-lg translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-manrope font-semibold text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 text-[#94a3b8] hover:bg-[#22262a] hover:text-[#ffb5a1] rounded-lg transition-all pr-4" href="#">
+<span class="material-symbols-outlined" data-icon="code">code</span>
+<span class="font-manrope font-semibold text-sm">Editor</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 text-[#94a3b8] hover:bg-[#22262a] hover:text-[#ffb5a1] rounded-lg transition-all pr-4" href="#">
+<span class="material-symbols-outlined" data-icon="security">security</span>
+<span class="font-manrope font-semibold text-sm">Security</span>
+</a>
+<a class="flex items-center gap-3 py-3 px-4 text-[#94a3b8] hover:bg-[#22262a] hover:text-[#ffb5a1] rounded-lg transition-all pr-4" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-manrope font-semibold text-sm">Team</span>
+</a>
+</nav>
+<div class="pt-4 space-y-4">
+<button class="w-full py-3 px-4 bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold rounded-full text-sm shadow-lg shadow-primary/5 transition-transform active:scale-95">
+          New Review
+        </button>
+<div class="flex flex-col gap-2 pt-4 border-t border-outline-variant/10">
+<a class="flex items-center gap-3 py-2 px-4 text-[#94a3b8] hover:text-[#ffb5a1] transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-manrope font-semibold text-sm">Docs</span>
+</a>
+<a class="flex items-center gap-3 py-2 px-4 text-[#94a3b8] hover:text-[#ffb5a1] transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+<span class="font-manrope font-semibold text-sm">Support</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="flex-1 min-w-0 flex flex-col">
+<!-- TopNavBar (Authority JSON applied) -->
+<header class="w-full top-0 sticky z-30 bg-[#0c0e10] transition-colors duration-300 shadow-[0px_20px_40px_0px_rgba(0,0,0,0.06)]">
+<div class="flex justify-between items-center px-10 py-4 max-w-full mx-auto">
+<div class="flex items-center gap-8">
+<div class="relative group">
+<span class="absolute inset-y-0 left-3 flex items-center text-outline group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined text-xl">search</span>
+</span>
+<input class="bg-surface-container-low border-none rounded-full pl-10 pr-6 py-2 text-sm w-80 focus:ring-1 focus:ring-primary/20 placeholder:text-outline/50 font-label" placeholder="Search repositories..." type="text"/>
+</div>
+<nav class="hidden lg:flex items-center gap-6">
+<a class="text-[#ffb5a1] border-b-2 border-[#ffb5a1] pb-1 font-manrope tracking-tight text-lg hover:text-[#f6a48f] transition-all" href="#">Workspaces</a>
+<a class="text-[#94a3b8] font-manrope tracking-tight text-lg hover:text-[#f6a48f] transition-all" href="#">Recent</a>
+<a class="text-[#94a3b8] font-manrope tracking-tight text-lg hover:text-[#f6a48f] transition-all" href="#">Insights</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-outline hover:text-primary transition-all p-2 rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-outline hover:text-primary transition-all p-2 rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full border-2 border-primary/20 p-0.5 ml-2">
+<img alt="User profile" class="w-full h-full object-cover rounded-full" data-alt="professional portrait of a young man with a warm smile and soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPz07g1yOzy6HV4hkUp26TrVILKEdmg6dNO1iIH9LZAZiiY-PD0XfUejb8koWiTa5k1YP90gup2XCIO_uFHJGYl7Y3fcBbbeKjC28F-YftUbF7xt__1lBqnbK1wbkdHoZK6KxaoLPOVB52T7KXovFuSAk_wzmxSTFQuTU2EhrCJmX1k8Tr0qc2smULxTYrrGvw_YDL6l43Tt0iUTvRqOPCFLYQuXw8GOAnY6m7HEABryPA6VTO0G5fGZSPVEt0WOAfXKrt1gyTpnY"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Content Grid -->
+<div class="p-10 max-w-7xl mx-auto w-full space-y-16">
+<!-- Hero Section -->
+<section class="flex flex-col md:flex-row items-center gap-12 py-10">
+<div class="flex-1 space-y-6">
+<span class="px-4 py-1.5 rounded-full bg-secondary-container text-on-secondary-container font-label text-[10px] font-bold uppercase tracking-widest inline-block">System Status: Optimal</span>
+<h2 class="text-6xl font-headline font-extrabold tracking-tighter text-on-surface leading-[1.1]">
+              Tend the <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-tertiary">Fire</span> of your Codebase.
+            </h2>
+<p class="text-xl text-on-surface-variant font-light max-w-xl leading-relaxed">
+              Welcome to Obsidian Hearth. A serene sanctuary designed for high-precision code reviews and technical stewardship.
+            </p>
+<div class="flex gap-4 pt-4">
+<button class="flex items-center gap-2 px-6 py-4 bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold rounded-full text-base shadow-xl shadow-primary/10 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-xl">upload</span>
+  Upload Local Codebase
+</button>
+<button class="flex items-center gap-2 px-6 py-4 bg-surface-container-highest text-on-surface border border-outline-variant/20 font-bold rounded-full text-base hover:bg-surface-bright transition-all">
+<span class="material-symbols-outlined text-xl">link</span>
+  Analyze from Repository URL
+</button>
+</div>
+</div>
+<div class="flex-1 relative">
+<div class="absolute -inset-4 bg-primary/5 blur-3xl rounded-full"></div>
+<div class="relative bg-surface-container-low p-2 rounded-[2rem] shadow-2xl border border-outline-variant/10">
+<img alt="Code visualization" class="rounded-[1.75rem] shadow-inner grayscale contrast-125 opacity-80" data-alt="close-up abstract view of glowing lines of code on a dark monitor with warm amber light reflections" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAfvwTO46ayETcf1MsqE46U_bc8ChpLTdAK8J8aYAJ4Jjl8UhRV6cYAbumqi36Pkoukg7le1AdVjh2xxj49u9PB70E6GdTQoFl5aIBZ1YSJK5A_-Lku4em12Xt5Pz0vfGJ1SkwjwK9z6jZsRwDvqkpIB5ztM-H0X19dm9qtImSLJE_vADiP-49-n4maRfc4D8_8kKHTXdqpEccCn0Xf27aXYX23bkBcsUBGwUubUD8qUDKqPwpwheKcNtxudeNMEF2eT8xQ0ll22Y"/>
+</div>
+</div>
+</section>
+<!-- Recently Active Projects (Bento) -->
+<section class="space-y-10">
+<div class="flex justify-between items-end">
+<div class="space-y-2">
+<h3 class="text-3xl font-headline font-bold text-on-surface tracking-tight">Recently Active Projects</h3>
+<p class="text-on-surface-variant font-label text-sm uppercase tracking-wide">Monitoring Health &amp; Throughput</p>
+</div>
+<button class="text-tertiary font-label font-bold text-sm hover:underline underline-offset-4">View All Repositories</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Project Card 1 -->
+<div class="col-span-1 md:col-span-2 group bg-surface-container-low p-8 rounded-2xl border border-outline-variant/5 hover:bg-surface-container transition-all flex flex-col justify-between min-h-[320px]">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">terminal</span>
+</div>
+<div>
+<h4 class="text-2xl font-manrope font-bold text-on-surface">hearth-core-v3</h4>
+<span class="text-xs text-outline font-label uppercase">Last active 4m ago</span>
+</div>
+</div>
+<div class="px-3 py-1 rounded-full bg-secondary/10 text-secondary text-[10px] font-bold uppercase tracking-tighter">Healthy</div>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-end">
+<span class="text-sm font-label text-on-surface-variant">Security Health Score</span>
+<span class="text-xl font-manrope font-bold text-primary">94%</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-1.5 overflow-hidden">
+<div class="bg-primary h-full rounded-full transition-all duration-1000" style="width: 94%"></div>
+</div>
+</div>
+<div class="grid grid-cols-4 gap-4 pt-4 border-t border-outline-variant/10">
+<div class="text-center">
+<p class="text-xs text-outline font-label uppercase">Reviews</p>
+<p class="text-lg font-bold">12</p>
+</div>
+<div class="text-center">
+<p class="text-xs text-outline font-label uppercase">Prs</p>
+<p class="text-lg font-bold">04</p>
+</div>
+<div class="text-center">
+<p class="text-xs text-outline font-label uppercase">Coverage</p>
+<p class="text-lg font-bold">88%</p>
+</div>
+<div class="text-center">
+<p class="text-xs text-outline font-label uppercase">Issues</p>
+<p class="text-lg font-bold">02</p>
+</div>
+</div>
+</div>
+<!-- Project Card 2 -->
+<div class="group bg-surface-container-low p-8 rounded-2xl border border-outline-variant/5 hover:bg-surface-container transition-all flex flex-col justify-between">
+<div class="space-y-4">
+<div class="w-12 h-12 bg-tertiary/10 rounded-xl flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-3xl">api</span>
+</div>
+<div>
+<h4 class="text-xl font-manrope font-bold text-on-surface">nexus-gateway</h4>
+<span class="text-xs text-outline font-label uppercase">Active 2h ago</span>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-end">
+<span class="text-xs font-label text-on-surface-variant">Audit Progress</span>
+<span class="text-sm font-manrope font-bold text-tertiary">62%</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-1 overflow-hidden">
+<div class="bg-tertiary h-full rounded-full" style="width: 62%"></div>
+</div>
+</div>
+</div>
+<!-- Project Card 3 -->
+<div class="group bg-surface-container-low p-8 rounded-2xl border border-outline-variant/5 hover:bg-surface-container transition-all flex flex-col justify-between">
+<div class="space-y-4">
+<div class="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-3xl">deployed_code</span>
+</div>
+<div>
+<h4 class="text-xl font-manrope font-bold text-on-surface">obsidian-ui</h4>
+<span class="text-xs text-outline font-label uppercase">Active Yesterday</span>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between items-end">
+<span class="text-xs font-label text-on-surface-variant">Stability</span>
+<span class="text-sm font-manrope font-bold text-secondary">99.8%</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-1 overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 99.8%"></div>
+</div>
+</div>
+</div>
+<!-- Project Card 4 -->
+<div class="col-span-1 md:col-span-2 group bg-surface-container-low p-8 rounded-2xl border border-outline-variant/5 hover:bg-surface-container transition-all flex items-center gap-8">
+<div class="flex-1 space-y-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="auto_awesome">auto_awesome</span>
+<h4 class="text-xl font-manrope font-bold text-on-surface">Insight Engine</h4>
+</div>
+<p class="text-sm text-on-surface-variant">Our AI assistant detected 3 potential memory leaks in the recent merge to <code class="bg-surface-container-highest px-1.5 py-0.5 rounded text-primary text-xs">production/main</code>.</p>
+<button class="text-primary font-bold text-sm flex items-center gap-2 group-hover:gap-4 transition-all">
+                  Analyze Findings <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="hidden sm:block w-32 h-32 bg-surface-container-lowest rounded-full border border-outline-variant/10 flex items-center justify-center relative">
+<div class="absolute inset-2 rounded-full border-2 border-dashed border-primary/20 animate-spin-slow"></div>
+<span class="material-symbols-outlined text-4xl text-primary/40">radar</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Getting Started Guide -->
+<section class="pb-20">
+<div class="bg-surface-container p-12 rounded-[2.5rem] relative overflow-hidden">
+<div class="absolute top-0 right-0 w-96 h-96 bg-primary/5 blur-[120px] -mr-48 -mt-48"></div>
+<div class="relative z-10 flex flex-col md:flex-row gap-12 items-center">
+<div class="flex-1 space-y-6">
+<h3 class="text-4xl font-headline font-bold text-on-surface tracking-tight">Master the Hearth</h3>
+<p class="text-on-surface-variant text-lg">Follow these essential steps to align your development workflow with Obsidian standards.</p>
+<div class="space-y-4">
+<div class="flex gap-4 group">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant/20 flex items-center justify-center text-xs font-bold text-primary shrink-0 group-hover:bg-primary group-hover:text-on-primary transition-colors">1</div>
+<div>
+<p class="font-bold text-on-surface">Sync your VCS</p>
+<p class="text-sm text-outline">Connect GitHub or GitLab to populate your workspace.</p>
+</div>
+</div>
+<div class="flex gap-4 group">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant/20 flex items-center justify-center text-xs font-bold text-primary shrink-0 group-hover:bg-primary group-hover:text-on-primary transition-colors">2</div>
+<div>
+<p class="font-bold text-on-surface">Define Audit Rules</p>
+<p class="text-sm text-outline">Set custom security and performance linting targets.</p>
+</div>
+</div>
+<div class="flex gap-4 group">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest border border-outline-variant/20 flex items-center justify-center text-xs font-bold text-primary shrink-0 group-hover:bg-primary group-hover:text-on-primary transition-colors">3</div>
+<div>
+<p class="font-bold text-on-surface">Invite the Architects</p>
+<p class="text-sm text-outline">Onboard your lead engineers to start the review cycle.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="flex-1 grid grid-cols-2 gap-4">
+<div class="p-6 bg-surface-container-low rounded-2xl border border-outline-variant/10 text-center space-y-2 hover:scale-[1.02] transition-transform">
+<span class="material-symbols-outlined text-primary text-3xl">school</span>
+<p class="font-bold text-sm">Zen Academy</p>
+<p class="text-xs text-outline">Learn advanced patterns</p>
+</div>
+<div class="p-6 bg-surface-container-low rounded-2xl border border-outline-variant/10 text-center space-y-2 hover:scale-[1.02] transition-transform">
+<span class="material-symbols-outlined text-secondary text-3xl">history_edu</span>
+<p class="font-bold text-sm">Guidelines</p>
+<p class="text-xs text-outline">Team coding standards</p>
+</div>
+<div class="p-6 bg-surface-container-low rounded-2xl border border-outline-variant/10 text-center space-y-2 hover:scale-[1.02] transition-transform">
+<span class="material-symbols-outlined text-tertiary text-3xl">forum</span>
+<p class="font-bold text-sm">Community</p>
+<p class="text-xs text-outline">Join the campfire</p>
+</div>
+<div class="p-6 bg-surface-container-low rounded-2xl border border-outline-variant/10 text-center space-y-2 hover:scale-[1.02] transition-transform">
+<span class="material-symbols-outlined text-on-surface text-3xl">terminal</span>
+<p class="font-bold text-sm">CLI Tools</p>
+<p class="text-xs text-outline">Automation scripts</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+<!-- Mobile Navigation (Authority JSON applied) -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-[#111416] p-4 flex justify-around items-center border-t border-outline-variant/10 z-50">
+<a class="flex flex-col items-center gap-1 text-[#ffb5a1]" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-[10px] font-label font-bold uppercase tracking-tighter">Dash</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-[#94a3b8]" href="#">
+<span class="material-symbols-outlined" data-icon="code">code</span>
+<span class="text-[10px] font-label font-bold uppercase tracking-tighter">Editor</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-[#94a3b8]" href="#">
+<span class="material-symbols-outlined" data-icon="security">security</span>
+<span class="text-[10px] font-label font-bold uppercase tracking-tighter">Secure</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-[#94a3b8]" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="text-[10px] font-label font-bold uppercase tracking-tighter">Team</span>
+</a>
+</nav>
+<!-- Contextual FAB (Authorized for Home) -->
+<button class="fixed bottom-24 right-10 md:bottom-12 md:right-12 w-16 h-16 bg-gradient-to-tr from-primary to-primary-container text-on-primary rounded-full shadow-2xl flex items-center justify-center group hover:scale-110 transition-all duration-300 z-40">
+<span class="material-symbols-outlined text-3xl font-bold group-hover:rotate-90 transition-transform">add</span>
+</button>
+</body></html>
