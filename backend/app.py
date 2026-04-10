@@ -11,7 +11,6 @@ import time
 from datetime import datetime, timedelta
 from collections import defaultdict
 from pathlib import Path
-
 import config
 import google.genai as genai
 from analyzer import analyze_codebase
@@ -114,6 +113,16 @@ app.config['SECRET_KEY'] = config.SECRET_KEY
 def health():
     """Early health check for quick deployment validation"""
     return {"status": "ok"}, 200
+
+
+@app.route("/favicon.ico")
+def favicon():
+    """Serve favicon to prevent noisy 404 errors in logs"""
+    favicon_path = os.path.join(app.static_folder, 'favicon.ico')
+    if os.path.exists(favicon_path):
+        return send_file(favicon_path, mimetype='image/vnd.microsoft.icon')
+    # Return empty 204 if favicon file doesn't exist yet
+    return '', 204
 
 logger.info(f"Configured MAX_CONTENT_LENGTH: {app.config['MAX_CONTENT_LENGTH']} bytes")
 logger.info(f"Configured MAX_FORM_MEMORY_SIZE: {app.config['MAX_FORM_MEMORY_SIZE']} bytes")
@@ -942,10 +951,20 @@ def processing():
 
 
 
+@app.route('/code-viewer')
+@jwt_required
+def code_viewer():
+    """Code viewer page — redirects to chat with current session UID if available"""
+    uid = request.args.get('uid') or session.get('current_uid')
+    if uid:
+        return redirect(url_for('chat', uid=uid))
+    return redirect(url_for('chat'))
+
+
 @app.route('/code-viewer/<uid>')
 @jwt_required
 def code_viewer_redirect(uid):
-    """Legacy redirect for code viewer"""
+    """Legacy redirect for code viewer with uid param"""
     return redirect(url_for('chat', uid=uid))
 
 
@@ -1090,6 +1109,34 @@ def api_security_summary():
         return jsonify(summary), 200
     except Exception as e:
         logger.error(f"Summary API error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/dashboard/stats')
+@jwt_required
+def api_dashboard_stats():
+    """Combined dashboard stats endpoint — summary + top findings in one call"""
+    try:
+        service = get_report_service()
+        uid = request.args.get('uid') or session.get('current_uid')
+        logger.info(f"Dashboard stats API using UID: {uid}")
+
+        summary = service.get_summary(uid=uid)
+        findings_data = service.get_findings(
+            severity=None,
+            owasp_category=None,
+            limit=10,
+            offset=0,
+            uid=uid
+        )
+        findings = findings_data.get('findings', []) if isinstance(findings_data, dict) else findings_data
+
+        return jsonify({
+            'summary': summary,
+            'findings': findings
+        }), 200
+    except Exception as e:
+        logger.error(f"Dashboard stats API error: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
 
@@ -1611,6 +1658,18 @@ def download_detailed_report_json(uid):
     if os.path.exists(json_path):
         return send_file(json_path, as_attachment=True, download_name=f'analysis_{uid[:8]}.json')
     return jsonify({'error': 'No agent results found. Run analysis first.'}), 404
+
+
+@app.errorhandler(404)
+def not_found(error):
+    """Handle 404 Not Found errors — prevents them escalating to 500"""
+    # Silently ignore favicon requests
+    if request.path == '/favicon.ico':
+        return '', 204
+    logger.warning(f"404 Not Found: {request.path}")
+    if request.path.startswith('/api/'):
+        return jsonify({'error': f'Endpoint not found: {request.path}'}), 404
+    return render_template('index.html', error=f"Page not found: {request.path}"), 404
 
 
 @app.errorhandler(413)

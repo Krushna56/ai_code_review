@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Detailed Report — AI Code Review</title>
-  <meta name="description" content="Comprehensive multi-agent security and code quality report">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/stitch.css') }}">
+{% extends "base.html" %}
+
+{% block title %}Detailed Report — AI Code Review{% endblock %}
+
+{% block extra_head %}
   <style>
     /* ── Shell ─────────────────────────────────────────────────────────────── */
     .report-page { padding: 28px 32px; max-width: 1100px; margin: 0 auto; }
@@ -25,34 +21,29 @@
     .report-top-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
     .report-title-wrap { flex: 1; min-width: 0; }
     .report-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(124,111,247,0.15); color: #9d93ff; border: 1px solid rgba(124,111,247,0.25); border-radius: 99px; padding: 4px 12px; font-size: 0.7rem; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .report-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg,#9d93ff,#38bdf8); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; }
-    .report-meta { color: #64748b; font-size: 0.78rem; font-family: 'JetBrains Mono', monospace; }
+    .report-title { font-family: var(--s-font-heading); font-size: 1.8rem; font-weight: 800; color: var(--s-primary); margin-bottom: 6px; }
+    .report-meta { color: #64748b; font-size: 0.78rem; font-family: var(--s-font-mono); }
 
     /* Risk score */
     .risk-score-ring { width: 90px; height: 90px; border-radius: 50%; position: relative; flex-shrink: 0; }
     .risk-score-ring svg { transform: rotate(-90deg); display: block; }
     .risk-score-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .risk-score-val { font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 800; line-height: 1; }
+    .risk-score-val { font-family: var(--s-font-heading); font-size: 1.6rem; font-weight: 800; line-height: 1; }
     .risk-score-lbl { font-size: 0.55rem; text-transform: uppercase; letter-spacing: 0.4px; color: #64748b; margin-top: 2px; }
 
     /* Stats row */
     .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 24px; }
     .kpi { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 14px; text-align: center; transition: all 0.2s; }
     .kpi:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-1px); }
-    .kpi-val { font-size: 1.7rem; font-weight: 800; font-family: 'Space Grotesk', sans-serif; line-height: 1; }
+    .kpi-val { font-size: 1.7rem; font-weight: 800; font-family: var(--s-font-heading); line-height: 1; }
     .kpi-lbl { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.4px; color: #64748b; margin-top: 3px; }
 
     /* Actions bar */
     .actions-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
-    .btn { display: inline-flex; align-items: center; gap: 6px; border: none; border-radius: 99px; cursor: pointer; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s; text-decoration: none; }
-    .btn-primary { background: linear-gradient(135deg,#7C6FF7,#5b50e0); color: #fff; padding: 10px 22px; font-size: 0.83rem; box-shadow: 0 4px 16px rgba(124,111,247,0.35); }
-    .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.1); }
-    .btn-ghost { background: rgba(255,255,255,0.05); color: #94a3b8; border: 1px solid rgba(255,255,255,0.1); padding: 9px 18px; font-size: 0.82rem; }
-    .btn-ghost:hover { background: rgba(255,255,255,0.09); color: #e2e8f4; }
 
     /* Section card */
     .section-card { background: rgba(13,17,23,0.7); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 22px 24px; margin-bottom: 16px; }
-    .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 1rem; font-weight: 700; color: #e2e8f4; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+    .section-title { font-family: var(--s-font-heading); font-size: 1rem; font-weight: 700; color: #e2e8f4; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
     .section-badge { font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: rgba(124,111,247,0.12); color: #9d93ff; border: 1px solid rgba(124,111,247,0.2); }
 
     /* Executive summary */
@@ -72,14 +63,14 @@
     .sev-low      { background: rgba(34,197,94,0.1);   color: #22c55e; border: 1px solid rgba(34,197,94,0.2); }
     .sev-info     { background: rgba(59,130,246,0.1);  color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); }
 
-    .file-path { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #38bdf8; white-space: nowrap; }
+    .file-path { font-family: var(--s-font-mono); font-size: 0.7rem; color: #38bdf8; white-space: nowrap; }
     .find-title { font-weight: 600; color: #e2e8f4; margin-bottom: 2px; }
     .find-desc  { color: #64748b; max-width: 340px; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
     .agent-pill { font-size: 0.6rem; padding: 1px 7px; border-radius: 99px; background: rgba(255,255,255,0.05); color: #64748b; border: 1px solid rgba(255,255,255,0.08); white-space: nowrap; }
 
     /* Tab navigation */
     .tabs { display: flex; gap: 4px; border-bottom: 1px solid rgba(255,255,255,0.07); margin-bottom: 18px; overflow-x: auto; }
-    .tab { padding: 10px 16px; font-size: 0.8rem; font-weight: 600; color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; background: transparent; border-top: none; border-left: none; border-right: none; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .tab { padding: 10px 16px; font-size: 0.8rem; font-weight: 600; color: #64748b; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; background: transparent; border-top: none; border-left: none; border-right: none; font-family: var(--s-font-heading); }
     .tab:hover { color: #e2e8f4; }
     .tab.active { color: #9d93ff; border-bottom-color: #7C6FF7; }
     .tab-content { display: none; }
@@ -88,7 +79,7 @@
     /* Roadmap */
     .roadmap-phase { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
     .phase-title { font-size: 0.88rem; font-weight: 700; color: #e2e8f4; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-    .phase-num { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg,#7C6FF7,#5b50e0); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; color: #fff; flex-shrink: 0; }
+    .phase-num { width: 24px; height: 24px; border-radius: 50%; background: var(--s-primary); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; color: #fff; flex-shrink: 0; }
     .phase-items { padding-left: 32px; }
     .phase-items li { color: #94a3b8; font-size: 0.82rem; margin-bottom: 5px; line-height: 1.5; position: relative; }
     .phase-items li::before { content: '→'; position: absolute; left: -14px; color: #7C6FF7; }
@@ -104,36 +95,16 @@
     .pattern-pills { display: flex; flex-wrap: wrap; gap: 8px; }
     .pattern-pill { background: rgba(234,179,8,0.08); color: #fbbf24; border: 1px solid rgba(234,179,8,0.18); padding: 5px 12px; border-radius: 99px; font-size: 0.73rem; }
 
-    /* Agent log */
-    .agent-log-entry { font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; color: #64748b; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.03); display: flex; gap: 10px; }
-    .log-agent { color: #9d93ff; font-weight: 600; min-width: 80px; }
-    .log-status-done { color: #34d399; }
-    .log-status-error { color: #ef4444; }
-    .log-status-running { color: #fbbf24; }
-
-    /* Overflow scroll */
-    .table-wrap { overflow-x: auto; }
-
-    /* Download / print floating buttons */
-    .fab-group { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 8px; z-index: 100; }
-    .fab { border: none; border-radius: 99px; cursor: pointer; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; padding: 11px 20px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
-    .fab-primary { background: linear-gradient(135deg,#7C6FF7,#5b50e0); color: #fff; box-shadow: 0 4px 20px rgba(124,111,247,0.4); }
-    .fab-primary:hover { transform: translateY(-2px); filter: brightness(1.1); }
-    .fab-dark { background: rgba(13,17,23,0.9); color: #94a3b8; border: 1px solid rgba(255,255,255,0.1); }
-    .fab-dark:hover { color: #e2e8f4; }
-
     @media (max-width: 640px) {
       .report-page { padding: 16px; }
       .kpi-row { grid-template-columns: repeat(3,1fr); }
       .report-top-row { flex-direction: column; }
     }
   </style>
-</head>
-<body>
-  {% include 'partials/sidebar.html' ignore missing %}
+{% endblock %}
 
-  <div class="main-content" id="mainContent">
-    <div class="report-page">
+{% block content %}
+  <div class="report-page">
 
       {% set report = report or {} %}
       {% set stats  = report.get('stats', {}) %}
@@ -184,10 +155,9 @@
 
       <!-- ── Download Actions ──────────────────────────────────────────────── -->
       <div class="actions-bar">
-        <a class="btn btn-primary" href="/download/{{ uid }}/detailed_report.html" target="_blank">📄 Download HTML Report</a>
-        <a class="btn btn-ghost"   href="/download/{{ uid }}/detailed_report.json" target="_blank">📦 Download JSON Data</a>
-        <button class="btn btn-ghost" onclick="window.print()">🖨️ Print</button>
-        <a class="btn btn-ghost" href="/chat?uid={{ uid }}">💬 Open in Chat</a>
+        <a class="st-btn st-btn-primary" href="/download/{{ uid }}/detailed_report.html" target="_blank"><span class="material-symbols-outlined">description</span> Full Report (HTML)</a>
+        <a class="st-btn st-btn-tonal" href="/download/{{ uid }}/detailed_report.json" target="_blank"><span class="material-symbols-outlined">data_object</span> Raw Data (JSON)</a>
+        <button class="st-btn st-btn-tonal" onclick="window.print()"><span class="material-symbols-outlined">print</span> Print</button>
       </div>
 
       <!-- ── Tabs ──────────────────────────────────────────────────────────── -->
@@ -351,15 +321,10 @@
         </div>
       </div>
 
-    </div><!-- /report-page -->
-  </div><!-- /main-content -->
+  </div><!-- /report-page -->
+{% endblock %}
 
-  <!-- FABs for download / print -->
-  <div class="fab-group">
-    <a class="fab fab-primary" href="/download/{{ uid }}/detailed_report.html" target="_blank">📄 Get Full Report</a>
-    <button class="fab fab-dark" onclick="window.print()">🖨️ Print</button>
-  </div>
-
+{% block extra_scripts %}
   <script>
     function switchTab(name, el) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -368,5 +333,4 @@
       el.classList.add('active');
     }
   </script>
-</body>
-</html>
+{% endblock %}

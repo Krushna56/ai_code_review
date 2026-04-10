@@ -64,6 +64,18 @@ class ReportService:
                 Path('output'),
                 Path('.')
             ]
+            
+            # Check processed directory for the latest report
+            processed_dir = Path('processed')
+            if processed_dir.exists() and processed_dir.is_dir():
+                try:
+                    # Get all subdirectories, sorted by modification time descending
+                    subdirs = sorted([d for d in processed_dir.iterdir() if d.is_dir()], key=lambda x: x.stat().st_mtime, reverse=True)
+                    # Add them to the beginning of search_paths
+                    search_paths = subdirs + search_paths
+                except Exception as e:
+                    import logging
+                    logging.getLogger(__name__).warning("Could not sort processed dirs: %s", e)
 
         report_files = [
             'security_report.json',

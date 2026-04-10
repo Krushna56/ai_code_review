@@ -1,382 +1,155 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Code Review — Home</title>
-  <meta name="description" content="Next-generation AI-powered code analysis with interactive chat, streaming responses, and comprehensive security scanning">
-  <link rel="stylesheet" href="/static/css/stitch.css">
+{% extends "base.html" %}
+
+{% block extra_head %}
   <style>
     /* ── Hero ── */
-    .home-hero {
+    .hero-section {
       text-align: center;
-      padding: 32px 0 20px;
-      position: relative;
+      padding: var(--s-space-12) 0 var(--s-space-8);
     }
-    .home-hero-badge {
+    .hero-badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 4px 14px;
+      gap: 8px;
+      padding: 6px 16px;
       border-radius: var(--s-radius-pill);
-      background: var(--s-violet-dim);
-      border: 1px solid rgba(124,111,247,0.3);
-      color: var(--s-violet-2);
-      font-size: 0.72rem;
-      font-weight: 600;
-      margin-bottom: 16px;
-      letter-spacing: 0.3px;
+      background: rgba(163, 166, 255, 0.1);
+      color: var(--s-primary);
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      border: 1px solid rgba(163, 166, 255, 0.2);
     }
-    .home-hero-title {
-      font-size: 2.2rem;
+    .hero-title {
+      font-size: 3.5rem;
       font-weight: 800;
-      background: linear-gradient(135deg, var(--s-violet-2) 0%, var(--s-sky) 50%, #e2e8f4 100%);
+      color: var(--s-on-surface);
+      margin-bottom: 16px;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+    }
+    .hero-title span {
+      background: linear-gradient(135deg, var(--s-primary), var(--s-tertiary));
       -webkit-background-clip: text;
       background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 12px;
-      line-height: 1.15;
-      font-family: 'Space Grotesk', var(--s-font);
-      letter-spacing: -0.5px;
+      color: transparent;
     }
-    .home-hero-sub {
-      font-size: 0.9rem;
-      color: var(--s-text-2);
-      max-width: 520px;
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--s-on-surface-variant);
+      max-width: 600px;
       margin: 0 auto;
-      line-height: 1.7;
     }
 
     /* ── Upload Panels ── */
     .upload-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin: 22px 0;
+      gap: 24px;
+      margin-bottom: 48px;
     }
     .upload-panel {
-      background: var(--s-surface);
-      border: 1px dashed rgba(124,111,247,0.3);
-      border-radius: var(--s-radius);
-      padding: 24px;
+      position: relative;
+      background: var(--s-surface-container-low);
+      border-radius: var(--s-radius-lg);
+      padding: 32px;
       transition: all var(--s-dur) var(--s-ease);
-      cursor: default;
+      border-top: 1px solid rgba(255,255,255,0.05); /* Tonal layer separator */
     }
-    .upload-panel:hover {
-      border-color: var(--s-violet);
-      background: rgba(124,111,247,0.04);
+    .upload-panel:hover, .upload-panel.dragover {
+      background: var(--s-surface-container-highest);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
     }
-    .upload-panel.solid { border-style: solid; border-color: var(--s-border); }
-    .upload-panel.solid:hover { border-color: var(--s-violet); }
-    .upload-panel.dragover { border-color: var(--s-violet); background: rgba(124,111,247,0.08); }
-
+    
     .panel-hdr {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 0.88rem;
+      gap: 12px;
+      font-size: 1.25rem;
+      font-family: var(--s-font-heading);
       font-weight: 700;
-      color: var(--s-text);
-      margin-bottom: 6px;
-      font-family: 'Space Grotesk', var(--s-font);
+      color: var(--s-on-surface);
+      margin-bottom: 12px;
     }
     .panel-hdr-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: var(--s-radius-sm);
-      background: var(--s-violet-dim);
+      width: 48px;
+      height: 48px;
+      border-radius: var(--s-radius);
+      background: linear-gradient(135deg, rgba(163, 166, 255, 0.1), rgba(163, 166, 255, 0.05));
+      color: var(--s-primary);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1rem;
+      font-size: 1.5rem;
     }
-    .panel-desc { font-size: 0.72rem; color: var(--s-text-2); margin-bottom: 18px; }
-
-    .panel-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-
-    .btn-panel-outline {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 14px;
-      border-radius: var(--s-radius-sm);
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-      background: var(--s-surface);
-      border: 1px solid var(--s-border);
-      color: var(--s-text);
-      transition: all var(--s-dur) var(--s-ease);
-      font-family: var(--s-font);
+    .panel-desc {
+      font-size: 0.9rem;
+      color: var(--s-on-surface-variant);
+      margin-bottom: 24px;
+      line-height: 1.6;
     }
-    .btn-panel-outline:hover { border-color: var(--s-violet); color: var(--s-violet-2); }
 
-    .btn-analyze-full {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      width: 100%;
-      padding: 10px;
-      margin-top: 14px;
-      border-radius: var(--s-radius-sm);
-      font-size: 0.82rem;
-      font-weight: 700;
-      cursor: pointer;
-      background: linear-gradient(135deg, var(--s-violet), #5b50e0);
-      border: none;
-      color: #fff;
-      transition: all var(--s-dur) var(--s-ease);
-      box-shadow: 0 4px 16px var(--s-violet-glow);
-      font-family: var(--s-font);
-    }
-    .btn-analyze-full:hover { transform: translateY(-1px); filter: brightness(1.1); }
-    .btn-analyze-full:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-    .repo-url-row { display: flex; gap: 8px; align-items: center; }
-    .repo-url-input {
-      flex: 1;
-      padding: 9px 13px;
-      background: rgba(0,0,0,0.3);
-      border: 1px solid var(--s-border);
-      border-radius: var(--s-radius-sm);
-      color: var(--s-text);
-      font-size: 0.8rem;
-      outline: none;
-      transition: border-color var(--s-dur) var(--s-ease), box-shadow var(--s-dur) var(--s-ease);
-      font-family: var(--s-font);
-    }
-    .repo-url-input::placeholder { color: var(--s-text-3); }
-    .repo-url-input:focus { border-color: var(--s-violet); box-shadow: 0 0 0 3px var(--s-violet-dim); }
-
-    #codebase, #folderInput { display: none; }
+    .panel-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
 
     .file-notice {
-      margin-top: 8px;
-      font-size: 0.72rem;
-      color: var(--s-green);
-      min-height: 16px;
-      text-align: center;
-    }
-
-    /* ── Repos ── */
-    .st-section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .repo-controls { display: flex; align-items: center; gap: 8px; }
-    .repo-search {
-      padding: 6px 12px;
-      background: var(--s-surface);
-      border: 1px solid var(--s-border);
-      border-radius: var(--s-radius-pill);
-      color: var(--s-text);
-      font-size: 0.75rem;
-      outline: none;
-      width: 170px;
-      transition: all var(--s-dur) var(--s-ease);
-      font-family: var(--s-font);
-    }
-    .repo-search::placeholder { color: var(--s-text-3); }
-    .repo-search:focus { border-color: var(--s-violet); box-shadow: 0 0 0 3px var(--s-violet-dim); }
-
-    .filter-pill {
-      padding: 4px 12px;
-      border-radius: var(--s-radius-pill);
-      font-size: 0.72rem;
-      font-weight: 500;
-      cursor: pointer;
-      border: 1px solid var(--s-border);
-      background: var(--s-surface);
-      color: var(--s-text-2);
-      transition: all 0.15s;
-    }
-    .filter-pill.active, .filter-pill:hover { background: var(--s-violet-dim); border-color: rgba(124,111,247,0.3); color: var(--s-violet-2); }
-
-    .repos-wrap {
-      background: var(--s-surface);
-      border: 1px solid var(--s-border);
-      border-radius: var(--s-radius);
-      overflow: hidden;
-    }
-    .repo-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 11px 16px;
-      border-bottom: 1px solid var(--s-border);
-      transition: background 0.15s;
-    }
-    .repo-row:last-child { border-bottom: none; }
-    .repo-row:hover { background: var(--s-surface-hov); }
-
-    .repo-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 7px;
-      background: linear-gradient(135deg, rgba(124,111,247,0.2), rgba(91,80,224,0.2));
-      border: 1px solid rgba(124,111,247,0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      color: var(--s-secondary);
       font-size: 0.85rem;
-      flex-shrink: 0;
-    }
-    .repo-name-col { flex: 1; min-width: 0; }
-    .repo-name { font-size: 0.82rem; font-weight: 600; color: var(--s-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .repo-name a { color: inherit; text-decoration: none; }
-    .repo-name a:hover { color: var(--s-violet-2); }
-    .repo-stats { display: flex; gap: 12px; align-items: center; font-size: 0.72rem; color: var(--s-text-2); flex-shrink: 0; }
-    .repo-stat { display: flex; align-items: center; gap: 3px; }
-    .repo-lang-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
-    .repo-private-badge { font-size: 0.62rem; padding: 2px 7px; border-radius: 99px; background: rgba(239,68,68,0.1); color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); white-space: nowrap; }
-    .delta-pos { color: var(--s-green); }
-
-    .btn-analyze-repo {
-      padding: 5px 14px;
-      background: var(--s-surface);
-      border: 1px solid var(--s-border);
-      border-radius: var(--s-radius-sm);
-      color: var(--s-text);
-      font-size: 0.75rem;
+      min-height: 20px;
       font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
-      flex-shrink: 0;
-      font-family: var(--s-font);
+      margin-bottom: 16px;
     }
-    .btn-analyze-repo:hover { border-color: var(--s-violet); color: var(--s-violet-2); }
-    .btn-analyze-repo:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    /* Connect GitHub banner */
-    .connect-banner {
-      background: var(--s-surface);
-      border: 1px dashed rgba(124,111,247,0.3);
-      border-radius: var(--s-radius);
-      padding: 22px;
-      text-align: center;
-      color: var(--s-text-2);
-      font-size: 0.82rem;
-      margin-bottom: 20px;
+    /* Repo Inputs */
+    .repo-url-row {
+      display: flex;
+      gap: 12px;
     }
-    .connect-banner a {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 16px;
-      margin-top: 12px;
-      background: var(--s-violet-dim);
-      border: 1px solid rgba(124,111,247,0.3);
-      border-radius: var(--s-radius-pill);
-      color: var(--s-violet-2);
-      font-weight: 600;
-      font-size: 0.8rem;
-      text-decoration: none;
-      transition: all 0.2s;
-    }
-    .connect-banner a:hover { background: rgba(124,111,247,0.25); }
 
-    /* Feature cards */
+    /* Hidden inputs */
+    #codebase, #folderInput { display: none; }
+
+    /* Features Grid */
     .features-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-top: 20px;
+      gap: 24px;
     }
     .feature-card {
-      background: var(--s-surface);
-      border: 1px solid var(--s-border);
-      border-radius: var(--s-radius);
-      padding: 20px;
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      transition: all var(--s-dur) var(--s-ease);
+      background: var(--s-surface-container-low);
+      border-radius: var(--s-radius-lg);
+      padding: 24px;
+      border-top: 1px solid rgba(255,255,255,0.05);
     }
-    .feature-card:hover { border-color: rgba(124,111,247,0.3); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
     .feat-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
+      width: 48px;
+      height: 48px;
+      border-radius: var(--s-radius);
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+    }
+    .feat-icon.violet { background: rgba(163, 166, 255, 0.1); color: var(--s-primary); }
+    .feat-icon.amber { background: rgba(234, 179, 8, 0.1); color: #eab308; }
+    .feat-icon.sky { background: rgba(56, 189, 248, 0.1); color: #38bdf8; }
+    .feat-title {
+      font-family: var(--s-font-heading);
       font-size: 1.1rem;
-      flex-shrink: 0;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--s-on-surface);
     }
-    .feat-icon.violet { background: var(--s-violet-dim); }
-    .feat-icon.amber  { background: rgba(251,191,36,0.15); }
-    .feat-icon.sky    { background: rgba(56,189,248,0.15); }
-    .feat-title { font-size: 0.84rem; font-weight: 700; color: var(--s-text); margin-bottom: 4px; font-family: 'Space Grotesk', var(--s-font); }
-    .feat-desc  { font-size: 0.72rem; color: var(--s-text-2); line-height: 1.6; }
 
-    /* Error banner */
-    .error-banner { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px; color: #fca5a5; font-size: 0.8rem; }
-
-    /* Profile dropdown */
-    .profile-dropdown { position: relative; }
-    .profile-btn {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--s-surface);
-      border: 1px solid var(--s-border);
-      border-radius: var(--s-radius-pill);
-      padding: 5px 12px 5px 6px;
-      color: var(--s-text);
-      font-size: 0.78rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: var(--s-font);
+    /* Connect Banner */
+    .connect-banner {
+      background: var(--s-surface-container-low); margin-bottom: 48px; border-radius: var(--s-radius-lg);
+      padding: 32px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05);
     }
-    .profile-btn:hover { border-color: var(--s-violet); }
-    .profile-avatar { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, var(--s-violet), #5b50e0); display: flex; align-items: center; justify-content: center; font-size: 11px; color: #fff; font-weight: 700; flex-shrink: 0; }
-    .profile-chevron { font-size: 0.6rem; color: var(--s-text-2); }
-
-    .profile-menu {
-      display: none;
-      position: absolute;
-      top: calc(100% + 8px);
-      right: 0;
-      min-width: 248px;
-      background: var(--s-bg-2);
-      border: 1px solid var(--s-border-2);
-      border-radius: var(--s-radius);
-      padding: 12px;
-      box-shadow: 0 16px 48px rgba(0,0,0,0.6);
-      z-index: 999;
-    }
-    .profile-menu.open { display: block; }
-    .pm-section { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--s-border); }
-    .pm-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--s-text-3); margin-bottom: 4px; }
-    .pm-value { font-size: 0.8rem; color: var(--s-text); font-weight: 500; overflow: hidden; text-overflow: ellipsis; }
-    .pm-conn {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 7px 9px; background: rgba(0,0,0,0.2); border-radius: 7px; margin-bottom: 6px; border: 1px solid var(--s-border);
-    }
-    .pm-conn-left { display: flex; align-items: center; gap: 8px; }
-    .pm-conn-name { font-size: 0.78rem; font-weight: 600; color: var(--s-text); }
-    .pm-conn-sub { font-size: 0.68rem; color: var(--s-text-3); }
-    .pm-conn-sub.connected { color: var(--s-green); }
-    .pm-link {
-      font-size: 0.7rem; color: var(--s-violet-2); text-decoration: none;
-      padding: 2px 9px; border: 1px solid rgba(124,111,247,0.3); border-radius: var(--s-radius-pill); transition: all 0.2s;
-    }
-    .pm-link:hover { background: var(--s-violet-dim); }
-    .pm-logout {
-      display: block; width: 100%; padding: 7px; text-align: center;
-      background: rgba(239,68,68,0.08); color: #fca5a5; text-decoration: none;
-      border-radius: 7px; font-size: 0.8rem; transition: all 0.2s; border: none; cursor: pointer;
-      font-family: var(--s-font);
-    }
-    .pm-logout:hover { background: rgba(239,68,68,0.18); }
-
-    /* Skeleton */
-    .st-sk {
-      background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
-      background-size: 200% 100%;
-      animation: st-shimmer 1.4s infinite;
-      border-radius: 4px;
-      height: 14px;
+    .connect-banner a {
+      display: inline-flex; align-items: center; gap: 8px; margin-top: 16px;
+      padding: 10px 20px; background: var(--s-primary); color: #000; border-radius: var(--s-radius-sm); font-weight: 700; text-decoration: none;
     }
 
     @media (max-width: 900px) {
@@ -384,282 +157,109 @@
       .features-grid { grid-template-columns: 1fr; }
     }
   </style>
-</head>
+{% endblock %}
 
-<body>
-<div class="st-shell">
-
-  <!-- ════ SIDEBAR (collapsible) ════ -->
-  <aside class="st-rail" id="mainSidebar">
-    <div class="st-rail-inner">
-      <div class="st-rail-section">Main</div>
-      <a href="/"           class="st-rail-item active"><span class="st-rail-icon">🏠</span>Home</a>
-      <a href="/dashboard"  class="st-rail-item"><span class="st-rail-icon">📊</span>Dashboard</a>
-      <a href="/chat"       class="st-rail-item"><span class="st-rail-icon">💬</span>AI Chat</a>
-      <a href="/code-viewer" class="st-rail-item"><span class="st-rail-icon">🖊️</span>Code Editor</a>
-      <a href="/dashboard"  class="st-rail-item"><span class="st-rail-icon">📄</span>Report</a>
-
-      <div class="st-rail-section" style="margin-top:8px">Resources</div>
-      <a href="https://owasp.org/Top10/" target="_blank" class="st-rail-item"><span class="st-rail-icon">📖</span>Docs</a>
-
-      <div class="st-rail-spacer"></div>
-      <div class="st-rail-divider"></div>
-      {% if current_user.is_authenticated %}
-      <div class="st-rail-item" style="cursor:default;color:var(--s-text-3);font-size:0.7rem">
-        <span class="st-rail-icon">🟢</span><span>Connected</span>
-      </div>
-      <a href="{{ url_for('auth.logout') }}" class="st-rail-item" style="color:#fca5a5;margin-bottom:8px">
-        <span class="st-rail-icon">🚪</span>Sign Out
-      </a>
-      {% endif %}
-    </div>
-  </aside>
-
-  <!-- ════ MAIN AREA ════ -->
-  <div class="st-body" style="flex-direction:column">
-
-    <!-- ── TOPBAR ── -->
-    <header class="st-topnav" style="height:52px">
-      <button class="st-ham" id="sidebarToggle" onclick="toggleSidebar()" title="Toggle menu">
-        <span class="st-ham-bar"></span>
-        <span class="st-ham-bar"></span>
-        <span class="st-ham-bar"></span>
-      </button>
-
-      <a href="/" class="st-brand">
-        <div class="st-brand-icon">🛡️</div>
-        <span class="st-brand-name">AI Code Review</span>
-      </a>
-
-      <nav class="st-nav-chips">
-        <a href="/"           class="st-chip active">🏠 Home</a>
-        <a href="/dashboard"  class="st-chip">📊 Dashboard</a>
-        <a href="/chat"       class="st-chip">💬 Chat</a>
-        <a href="/code-viewer" class="st-chip">🖊️ Editor</a>
-      </nav>
-
-      <div class="st-topnav-right">
-        {% if current_user.is_authenticated %}
-        <div class="profile-dropdown">
-          <button class="profile-btn" onclick="toggleProfile(event)">
-            <div class="profile-avatar">
-              {{ (current_user.email or current_user.github_username or 'U')[0] | upper }}
-            </div>
-            <span style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">
-              {{ current_user.email or current_user.github_username }}
-            </span>
-            <span class="profile-chevron">▾</span>
-          </button>
-
-          <div class="profile-menu" id="profileMenu">
-            <div class="pm-section">
-              <div class="pm-label">Signed in as</div>
-              <div class="pm-value">{{ current_user.email or 'No Email' }}</div>
-            </div>
-
-            <div style="margin-bottom:10px">
-              <div class="pm-label">Connections</div>
-              <!-- GitHub -->
-              <div class="pm-conn">
-                <div class="pm-conn-left">
-                  <svg height="15" viewBox="0 0 16 16" fill="currentColor" style="color:var(--s-text-2)"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-                  <div>
-                    <div class="pm-conn-name">GitHub</div>
-                    {% if current_user.github_username %}
-                    <div class="pm-conn-sub connected">{{ current_user.github_username }}</div>
-                    {% else %}
-                    <div class="pm-conn-sub">Not connected</div>
-                    {% endif %}
-                  </div>
-                </div>
-                {% if current_user.github_username %}
-                <span style="color:var(--s-green)">✓</span>
-                {% else %}
-                <a href="{{ url_for('auth.github_login') }}" class="pm-link">Link</a>
-                {% endif %}
-              </div>
-
-              <!-- LinkedIn -->
-              <div class="pm-conn">
-                <div class="pm-conn-left">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" style="color:var(--s-text-2)"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                  <div>
-                    <div class="pm-conn-name">LinkedIn</div>
-                    {% if current_user.linkedin_username %}
-                    <div class="pm-conn-sub connected">{{ current_user.linkedin_username }}</div>
-                    {% else %}
-                    <div class="pm-conn-sub">Not connected</div>
-                    {% endif %}
-                  </div>
-                </div>
-                {% if current_user.linkedin_username %}
-                <span style="color:var(--s-green)">✓</span>
-                {% else %}
-                <a href="{{ url_for('auth.linkedin_login') }}" class="pm-link">Link</a>
-                {% endif %}
-              </div>
-            </div>
-
-            <a href="{{ url_for('auth.logout') }}" class="pm-logout">Sign Out</a>
-          </div>
-        </div>
-        {% else %}
-        <a href="{{ url_for('auth.login') }}" class="st-btn-cta">Sign In</a>
-        {% endif %}
-      </div>
-    </header>
-
-    <!-- ── CONTENT ── -->
-    <main class="st-main">
-      <div class="st-content" style="max-width:880px;margin:0 auto;width:100%">
+{% block content %}
 
         {% if error %}
-        <div class="error-banner">❌ {{ error }}</div>
+        <div style="background:var(--s-error-container); color:var(--s-on-error-container); padding:16px; border-radius:var(--s-radius-sm); margin-bottom:24px;">{{ error }}</div>
         {% endif %}
 
         <!-- Hero -->
-        <div class="home-hero st-anim-1">
-          <div class="home-hero-badge">✨ Powered by Gemini, Claude &amp; Mistral</div>
-          <h1 class="home-hero-title">AI Code Review Platform</h1>
-          <p class="home-hero-sub">Next-generation AI-powered code analysis with interactive chat, streaming responses, and comprehensive security scanning</p>
+        <div class="hero-section st-anim-1">
+          <div class="hero-badge"><span class="material-symbols-outlined" style="font-size:16px;">auto_awesome</span> Powered by Zenith Intelligence</div>
+          <h1 class="hero-title">Elevate Your <span>Engineering Health</span></h1>
+          <p class="hero-sub">Next-generation abstract syntax tree analysis combined with deep multimodal AI to catch critical OWASP vulnerabilities before they hit production.</p>
         </div>
 
-        <!-- Upload panels -->
+        <!-- Upload Panels -->
         <div class="upload-grid st-anim-2">
-
-          <!-- Upload local codebase -->
+          
           <form method="POST" enctype="multipart/form-data" id="upload-form">
             <div class="upload-panel" id="upload-area">
               <div class="panel-hdr">
-                <div class="panel-hdr-icon">📦</div>
-                Upload Local Codebase
+                <div class="panel-hdr-icon"><span class="material-symbols-outlined">folder_zip</span></div>
+                Local Codebase
               </div>
-              <p class="panel-desc">Supports ZIP files, individual code files, or entire directories</p>
-
-              <input type="file" name="codebase" id="codebase" multiple
-                accept=".py,.js,.ts,.java,.cpp,.c,.h,.html,.css,.json,.xml,.yaml,.yml,.sh,.md,.txt,.zip">
+              <p class="panel-desc">Drag and drop ZIP files, individual source logic, or secure directories directly into the scanning vault.</p>
+              
+              <input type="file" name="codebase" id="codebase" multiple accept=".py,.js,.ts,.java,.cpp,.c,.h,.html,.css,.json,.xml,.yaml,.yml,.sh,.md,.txt,.zip">
               <input type="file" id="folderInput" name="codebase" multiple webkitdirectory>
 
               <div class="panel-actions">
-                <button type="button" onclick="selectFiles()" class="btn-panel-outline">📄 Select Files</button>
-                <button type="button" onclick="selectFolder()" class="btn-panel-outline">📁 Select Folder</button>
+                <button type="button" onclick="selectFiles()" class="st-btn-secondary"><span class="material-symbols-outlined" style="font-size:16px; margin-right:6px;">note_add</span> Select Files</button>
+                <button type="button" onclick="selectFolder()" class="st-btn-secondary"><span class="material-symbols-outlined" style="font-size:16px; margin-right:6px;">drive_folder_upload</span> Default Directory</button>
               </div>
 
               <div class="file-notice" id="fileNotice"></div>
-              <button type="submit" class="btn-analyze-full" id="analyze-btn">🔍 Analyze Code</button>
+              <button type="submit" class="st-btn-primary" style="width:100%;" id="analyze-btn">Initiate Analysis</button>
             </div>
           </form>
 
-          <!-- Analyze from repo URL -->
-          <div class="upload-panel solid">
+          <div class="upload-panel">
             <div class="panel-hdr">
-              <div class="panel-hdr-icon">🔗</div>
-              Analyze from Repository URL
+              <div class="panel-hdr-icon"><span class="material-symbols-outlined">public</span></div>
+              Remote Repository
             </div>
-            <p class="panel-desc">Enter a public GitHub, GitLab, or Bitbucket URL</p>
+            <p class="panel-desc">Point ZenReview to an external Git URL endpoint. The engine will transparently clone and parse the repository context.</p>
 
             <div class="repo-url-row">
-              <input type="text" id="repo-url" class="repo-url-input" placeholder="https://github.com/user/repo">
-              <button onclick="analyzeRepo()" class="st-btn st-btn-primary" id="repo-btn">🔀 Clone &amp; Analyze</button>
+              <input type="text" id="repo-url" class="st-input" placeholder="https://github.com/organization/repository">
+              <button onclick="analyzeRepo()" class="st-btn-primary" id="repo-btn">Clone Target</button>
             </div>
           </div>
 
-        </div><!-- /upload-grid -->
-
-        <!-- Recent Repositories -->
-        {% if current_user.is_authenticated and current_user.github_username %}
-        <div class="st-section-hdr st-anim-3">
-          <span class="st-section-title">Recent Repositories</span>
-          <div class="repo-controls">
-            <input type="text" class="repo-search" id="repoSearchInput" placeholder="🔍 Search repos…" oninput="filterRepos()">
-            <button class="filter-pill active" onclick="setFilter(this,'all')">All</button>
-            <button class="filter-pill" onclick="setFilter(this,'public')">Public</button>
-            <button class="filter-pill" onclick="setFilter(this,'private')">Private</button>
-          </div>
         </div>
 
-        <div class="repos-wrap st-anim-3" id="reposGrid">
-          <!-- Skeleton rows -->
-          <div class="repo-row">
-            <div class="st-sk" style="width:28px;height:28px;border-radius:7px;flex-shrink:0"></div>
-            <div style="flex:1"><div class="st-sk" style="width:180px"></div></div>
-            <div class="st-sk" style="width:120px;height:12px"></div>
-            <div class="st-sk" style="width:68px;height:28px;border-radius:7px"></div>
-          </div>
-          <div class="repo-row">
-            <div class="st-sk" style="width:28px;height:28px;border-radius:7px;flex-shrink:0"></div>
-            <div style="flex:1"><div class="st-sk" style="width:150px"></div></div>
-            <div class="st-sk" style="width:100px;height:12px"></div>
-            <div class="st-sk" style="width:68px;height:28px;border-radius:7px"></div>
-          </div>
-          <div class="repo-row">
-            <div class="st-sk" style="width:28px;height:28px;border-radius:7px;flex-shrink:0"></div>
-            <div style="flex:1"><div class="st-sk" style="width:200px"></div></div>
-            <div class="st-sk" style="width:80px;height:12px"></div>
-            <div class="st-sk" style="width:68px;height:28px;border-radius:7px"></div>
-          </div>
-        </div>
-
-        {% elif current_user.is_authenticated %}
+        {% if current_user.is_authenticated and not current_user.github_username %}
         <div class="connect-banner st-anim-3">
-          🐙 Connect GitHub to browse and scan your repositories directly
-          <br>
-          <a href="{{ url_for('auth.github_login') }}">
-            <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-            Connect GitHub
-          </a>
+          <h3 style="font-family:var(--s-font-heading); font-size:1.5rem; margin-bottom:12px;">Unified Repository Access</h3>
+          <p style="color:var(--s-on-surface-variant);">Connect your GitHub account to directly analyze your private repositories with Zero-Trust compliance.</p>
+          <a href="{{ url_for('auth.github_login') }}"><span class="material-symbols-outlined">integration_instructions</span> Connect GitHub</a>
+        </div>
+        {% elif current_user.is_authenticated and current_user.github_username %}
+        <div class="st-anim-3" style="margin-bottom:48px;">
+          <h3 style="font-family:var(--s-font-heading); font-size:1.5rem; margin-bottom:24px;">Recent Workspaces</h3>
+          <div id="reposGrid" style="display:grid; gap:16px;">
+            <p style="color:var(--s-on-surface-variant);">Loading remote structures...</p>
+          </div>
         </div>
         {% endif %}
 
-        <!-- Feature cards -->
+        <!-- Features -->
         <div class="features-grid st-anim-4">
           <div class="feature-card">
-            <div class="feat-icon violet">🛡️</div>
-            <div>
-              <div class="feat-title">Static + LLM Analysis</div>
-              <div class="feat-desc">Combines static code analysis, CVE tracking, and LLM intelligence for deep insights.</div>
-            </div>
+            <div class="feat-icon violet"><span class="material-symbols-outlined">security</span></div>
+            <div class="feat-title">Architectural Security</div>
+            <div class="feat-desc">Validates against deep dependency paths and configuration drift using static and AST traversal.</div>
           </div>
           <div class="feature-card">
-            <div class="feat-icon amber">⚠️</div>
-            <div>
-              <div class="feat-title">Deep Security Scanning</div>
-              <div class="feat-desc">Detects CVEs, secrets, OWASP risks, and vulnerable files automatically.</div>
-            </div>
+            <div class="feat-icon amber"><span class="material-symbols-outlined">speed</span></div>
+            <div class="feat-title">Reviewer Velocity</div>
+            <div class="feat-desc">Cuts PR review times by auto-resolving standard style, lint, and common pattern errors invisibly.</div>
           </div>
-          <div class="feature-card">
-            <div class="feat-icon sky">💬</div>
-            <div>
-              <div class="feat-title">Interactive Code Chat</div>
-              <div class="feat-desc">Engage in interactive chat with AI agents for in-depth reviews and refactoring.</div>
-            </div>
-          </div>
+          <a href="/chat" style="text-decoration:none;" class="feature-card">
+            <div class="feat-icon sky"><span class="material-symbols-outlined">forum</span></div>
+            <div class="feat-title">Conversational Engine</div>
+            <div class="feat-desc">An interactive sub-agent terminal available inside your workspace to contextually rewrite functions.</div>
+          </a>
+          <a href="/code-viewer" style="text-decoration:none;" class="feature-card">
+            <div class="feat-icon" style="background: rgba(34, 197, 94, 0.1); color: #22c55e;"><span class="material-symbols-outlined">code</span></div>
+            <div class="feat-title">Deep Code Editor</div>
+            <div class="feat-desc">Explore syntax, vulnerabilities, and AST structural references via the AI infused IDE.</div>
+          </a>
+          <a href="/dashboard#bounty-sec" style="text-decoration:none;" class="feature-card">
+            <div class="feat-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;"><span class="material-symbols-outlined">bug_report</span></div>
+            <div class="feat-title">Bug Bounty</div>
+            <div class="feat-desc">Gamified vulnerability patching logic to improve overall health scores across platforms.</div>
+          </a>
         </div>
 
-      </div><!-- /st-content -->
-    </main>
-  </div><!-- /st-body -->
+      </div>
+{% endblock %}
 
-</div><!-- /st-shell -->
-
+{% block extra_scripts %}
 <script>
-  /* ── Sidebar ── */
-  function toggleSidebar() {
-    document.getElementById('mainSidebar').classList.toggle('open');
-    document.getElementById('sidebarToggle').classList.toggle('open');
-  }
-
-  /* ── Profile dropdown ── */
-  function toggleProfile(e) {
-    e.stopPropagation();
-    document.getElementById('profileMenu')?.classList.toggle('open');
-  }
-  document.addEventListener('click', (e) => {
-    const dd = document.querySelector('.profile-dropdown');
-    const menu = document.getElementById('profileMenu');
-    if (menu && dd && !dd.contains(e.target)) menu.classList.remove('open');
-  });
-
   /* ── File inputs ── */
   function selectFiles()  { document.getElementById('codebase').click(); }
   function selectFolder() { document.getElementById('folderInput').click(); }
@@ -670,7 +270,7 @@
 
   function updateNotice(files) {
     if (!files || !files.length) { fileNotice.textContent = ''; return; }
-    fileNotice.textContent = `✅ ${files.length} file${files.length > 1 ? 's' : ''} selected`;
+    fileNotice.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle; margin-right:4px;">check_circle</span> ${files.length} payload(s) loaded`;
   }
 
   codebaseInput?.addEventListener('change', () => updateNotice(codebaseInput.files));
@@ -698,7 +298,7 @@
   const uploadForm = document.getElementById('upload-form');
   const analyzeBtn = document.getElementById('analyze-btn');
   uploadForm?.addEventListener('submit', () => {
-    if (analyzeBtn) { analyzeBtn.disabled = true; analyzeBtn.textContent = '⏳ Analyzing...'; }
+    if (analyzeBtn) { analyzeBtn.disabled = true; analyzeBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle; animation: spin 1s linear infinite;">sync</span> Computing...'; }
   });
 
   /* ── Repo URL analyze ── */
@@ -706,7 +306,7 @@
     const url = document.getElementById('repo-url').value.trim();
     if (!url) { alert('Please enter a repository URL'); return; }
     const btn = document.getElementById('repo-btn');
-    btn.disabled = true; btn.textContent = '⏳ Cloning...';
+    btn.disabled = true; btn.textContent = 'Cloning...';
     try {
       const res  = await fetch('/api/analyze/repo', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ repo_url: url }) });
       const data = await res.json();
@@ -714,81 +314,54 @@
         window.location.href = `/processing?uid=${data.task_id || data.uid}`;
       } else {
         alert(data.error || 'Failed to start analysis');
-        btn.disabled = false; btn.textContent = '🔀 Clone & Analyze';
+        btn.disabled = false; btn.textContent = 'Clone Target';
       }
     } catch (e) {
       alert('Error: ' + e.message);
-      btn.disabled = false; btn.textContent = '🔀 Clone & Analyze';
+      btn.disabled = false; btn.textContent = 'Clone Target';
     }
   }
 
   /* ── GitHub Repos ── */
-  let allRepos = [], currentFilter = 'all';
   async function loadRepos() {
     const grid = document.getElementById('reposGrid');
     if (!grid) return;
     try {
       const res = await fetch('/auth/github/repos');
-      if (!res.ok) { grid.innerHTML = '<div style="padding:20px;text-align:center;color:var(--s-text-3)">Unable to load repositories — please try reconnecting GitHub</div>'; return; }
+      if (!res.ok) { grid.innerHTML = '<div style="color:var(--s-on-surface-variant)">Unable to map remote endpoints. Restoring connection.</div>'; return; }
       const data = await res.json();
-      allRepos = data.repos || data || [];
-      renderRepos();
-    } catch (e) {
-      if (grid) grid.innerHTML = '<div style="padding:20px;text-align:center;color:var(--s-text-3)">Unable to load repositories</div>';
-    }
-  }
-
-  function renderRepos() {
-    const grid   = document.getElementById('reposGrid');
-    if (!grid) return;
-    const search = (document.getElementById('repoSearchInput')?.value || '').toLowerCase();
-    const filtered = allRepos.filter(r => {
-      const mf = currentFilter === 'all' || (currentFilter === 'private' ? r.private : !r.private);
-      const ms = !search || r.full_name.toLowerCase().includes(search) || (r.description||'').toLowerCase().includes(search);
-      return mf && ms;
-    });
-    if (!filtered.length) { grid.innerHTML = '<div style="padding:22px;text-align:center;color:var(--s-text-3);font-size:0.8rem">No repositories found</div>'; return; }
-    const LANG = { Python:'#3572A5', JavaScript:'#f1e05a', TypeScript:'#2b7489', Java:'#b07219', Go:'#00ADD8', Rust:'#dea584', Ruby:'#701516', C:'#555555','C++':'#f34b7d', Shell:'#89e051', HTML:'#e34c26', CSS:'#563d7c' };
-    grid.innerHTML = filtered.slice(0,12).map(r => {
-      const lc    = LANG[r.language] || '#8891aa';
-      const stars = r.stars || r.stargazers_count || 0;
-      const forks = r.forks || r.forks_count || 0;
-      const issues= r.open_issues_count || 0;
-      const badge = r.private ? `<span class="repo-private-badge">Private</span>` : '';
-      const delta = stars > 5 ? `<span class="delta-pos">+${Math.round(stars*0.15)}</span>` : '';
-      return `<div class="repo-row" data-private="${r.private}" data-name="${(r.full_name||'').toLowerCase()}">
-        <div class="repo-icon">📁</div>
-        <div class="repo-name-col"><div class="repo-name"><a href="${r.html_url}" target="_blank">${r.full_name}</a>${badge}</div></div>
-        <div class="repo-stats">
-          <span class="repo-stat">⭐ ${stars}${delta}</span>
-          <span class="repo-stat">🔀 ${forks}</span>
-          <span class="repo-stat">🐛 +${issues}</span>
-          ${r.language ? `<span class="repo-stat"><span class="repo-lang-dot" style="background:${lc}"></span>${r.language}</span>` : ''}
+      const repos = data.repos || data || [];
+      if(!repos.length) { grid.innerHTML = '<div style="color:var(--s-on-surface-variant)">No active workspaces documented.</div>'; return; }
+      
+      grid.innerHTML = repos.slice(0,6).map(r => `
+        <div style="background:var(--s-surface-container-low); padding:16px 24px; border-radius:var(--s-radius-sm); display:flex; align-items:center; justify-content:space-between; border-top: 1px solid rgba(255,255,255,0.05);">
+          <div>
+            <div style="font-family:var(--s-font-heading); font-weight:700; color:var(--s-primary); font-size:1.1rem; margin-bottom:4px;">${r.full_name}</div>
+            <div style="font-size:0.8rem; color:var(--s-on-surface-variant); display:flex; gap:16px;">
+              <span>⭐ ${r.stars || r.stargazers_count || 0}</span>
+              <span>${r.language || 'Mixed'}</span>
+              ${r.private ? '<span style="color:#ff97a3;">Private Domain</span>' : ''}
+            </div>
+          </div>
+          <button class="st-btn-secondary" onclick="analyzeGitRepo('${r.clone_url||r.html_url}', this)">Scan Origin</button>
         </div>
-        <button class="btn-analyze-repo" onclick="analyzeGitRepo('${r.clone_url||r.html_url}',this)">Analyze</button>
-      </div>`;
-    }).join('');
-  }
-
-  function filterRepos() { renderRepos(); }
-  function setFilter(el, filter) {
-    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-    el.classList.add('active');
-    currentFilter = filter; renderRepos();
+      `).join('');
+    } catch (e) {
+      if (grid) grid.innerHTML = '<div style="color:var(--s-on-surface-variant)">Workspace rendering disrupted.</div>';
+    }
   }
 
   async function analyzeGitRepo(url, btn) {
     if (!url) return;
-    btn.disabled = true; btn.textContent = 'Analyzing…';
+    btn.disabled = true; btn.textContent = 'Processing...';
     try {
       const res  = await fetch('/api/analyze/repo', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ repo_url: url }) });
       const data = await res.json();
       if (data.task_id || data.uid) { window.location.href = `/processing?uid=${data.task_id||data.uid}`; }
-      else { alert(data.error || 'Failed to start analysis'); btn.disabled = false; btn.textContent = 'Analyze'; }
-    } catch (e) { alert('Error: '+e.message); btn.disabled = false; btn.textContent = 'Analyze'; }
+      else { alert(data.error || 'Failed to start analysis'); btn.disabled = false; btn.textContent = 'Scan Origin'; }
+    } catch (e) { alert('Error: '+e.message); btn.disabled = false; btn.textContent = 'Scan Origin'; }
   }
 
   document.addEventListener('DOMContentLoaded', loadRepos);
 </script>
-</body>
-</html>
+{% endblock %}

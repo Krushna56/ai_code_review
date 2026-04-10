@@ -1,334 +1,285 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Code Editor — AI Code Review</title>
-  <meta name="description" content="AI-powered code editor with security issue highlighting and inline review assistant">
-  <link rel="stylesheet" href="/static/css/stitch.css">
-  <style>
-    body { overflow: hidden; height: 100vh; }
+{% extends "base.html" %}
 
-    .editor-shell {
+{% block title %}Deep Code Editor — AI Code Review{% endblock %}
+
+{% block extra_head %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@500;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    .cv-main-wrapper {
+      flex: 1;
       display: flex;
       flex-direction: column;
-      height: 100vh;
       overflow: hidden;
+      height: calc(100vh - 60px);
       background: var(--s-bg);
     }
 
-    /* ── Top bar ── */
-    .editor-topbar {
-      height: 42px;
-      flex-shrink: 0;
-      background: rgba(7,9,15,0.92);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--s-border);
-      display: flex;
-      align-items: center;
-      padding: 0 14px;
-      gap: 12px;
-      z-index: 200;
-    }
-    .e-breadcrumb {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 0.8rem; color: var(--s-text-2);
-    }
-    .e-bc-sep { color: var(--s-text-3); }
-    .e-top-actions { display: flex; gap: 6px; margin-left: auto; }
-    .e-top-btn {
-      background: var(--s-surface);
-      border: 1px solid var(--s-border);
-      color: var(--s-text-2);
-      padding: 4px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 0.75rem;
-      font-weight: 500;
-      transition: all 0.2s;
-      text-decoration: none;
-      font-family: var(--s-font);
-    }
-    .e-top-btn:hover { border-color: var(--s-violet); color: var(--s-violet-2); }
-
-    /* ── Body row ── */
-    .editor-body {
+    .cv-worktop {
       flex: 1;
       display: flex;
       overflow: hidden;
-      min-height: 0;
+      background: var(--s-surface-container-lowest);
     }
 
-    /* ── Nav rail ── (shared .st-rail from stitch.css) */
+    .cv-explorer {
+      width: 260px;
+      flex-shrink: 0;
+      background: var(--s-surface-container-low);
+      display: flex;
+      flex-direction: column;
+    }
+    .cv-explorer-hdr {
+      padding: 16px;
+      font-family: var(--s-font-heading);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--s-on-surface-variant);
+    }
+    .cv-file-tree {
+      flex: 1; overflow-y: auto; padding: 0 8px 16px 8px;
+    }
+    
+    .folder-header {
+      display: flex; align-items: center; padding: 6px 8px; cursor: pointer; 
+      font-size: 0.85rem; font-weight: 600; font-family: var(--s-font-body);
+      border-radius: var(--s-radius-sm);
+      transition: background 0.15s;
+    }
+    .folder-header:hover { background: var(--s-surface-container-highest); }
+    .folder-icon { font-size: 16px; margin-right: 8px; transition: transform 0.2s; color: var(--s-primary); }
+    .folder.expanded .folder-icon { transform: rotate(90deg); }
+    .folder-content { display: none; padding-left: 12px; border-left: 1px solid var(--s-surface-container-high); margin-left: 15px; margin-top: 4px; border-radius: 0 0 0 4px; }
+    .folder.expanded > .folder-content { display: block; }
+    
+    .file-item {
+      display: flex; align-items: center; padding: 6px 8px; cursor: pointer; 
+      font-size: 0.8rem; font-family: var(--s-font-mono);
+      border-radius: var(--s-radius-sm);
+      color: var(--s-on-surface-variant); margin-top: 2px;
+      transition: all 0.15s;
+    }
+    .file-item:hover { background: var(--s-surface-container-highest); color: var(--s-on-surface); }
+    .file-item.active { background: rgba(163, 166, 255, 0.1); color: var(--s-primary); }
+    .file-item-icon { font-size: 16px; margin-right: 8px; }
 
-    /* ── Main worktop ── */
-    .editor-main {
+    .cv-editor-area {
       flex: 1;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      background: var(--s-surface-container-lowest);
       min-width: 0;
     }
-
-    /* File explorer */
-    .file-explorer {
-      width: 230px;
-      flex-shrink: 0;
-      background: rgba(13,17,23,0.98);
-      border-right: 1px solid var(--s-border);
+    .cv-editor-tabs {
+      background: var(--s-surface-container-low);
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      min-height: 40px;
     }
-    .explorer-header {
-      padding: 9px 14px;
-      font-size: 0.6rem;
-      text-transform: uppercase;
-      color: var(--s-text-3);
-      font-weight: 700;
-      letter-spacing: 0.8px;
-      border-bottom: 1px solid var(--s-border);
+    .cv-editor-tab {
+      padding: 10px 24px;
+      font-size: 0.8rem;
+      font-family: var(--s-font-mono);
+      color: var(--s-on-surface-variant);
+      background: rgba(0,0,0,0.2);
+      border-top-right-radius: var(--s-radius-sm);
+      border-top-left-radius: var(--s-radius-sm);
     }
-    .file-tree { flex: 1; overflow-y: auto; padding: 4px 0; }
+    .cv-editor-tab.active {
+      background: var(--s-surface-container-lowest);
+      color: var(--s-primary);
+      border-top: 2px solid var(--s-primary);
+    }
 
-    .folder { user-select: none; }
-    .folder-header { display: flex; align-items: center; padding: 3px 10px; cursor: pointer; font-size: 0.78rem; transition: background 0.1s; height: 24px; gap: 2px; }
-    .folder-header:hover { background: var(--s-surface); }
-    .folder-icon { margin-right: 5px; font-size: 13px; transition: transform 0.2s; }
-    .folder.expanded .folder-icon { transform: rotate(0deg); }
-    .folder-content { display: none; padding-left: 14px; }
-    .folder.expanded > .folder-content { display: block; }
-
-    .file-item { display: flex; align-items: center; padding: 2px 10px; cursor: pointer; font-size: 0.78rem; transition: background 0.1s; height: 24px; color: var(--s-text-2); }
-    .file-item:hover { background: var(--s-surface); color: var(--s-text); }
-    .file-item.active { background: var(--s-violet-dim); color: var(--s-violet-2); }
-    .file-item-icon { margin-right: 6px; font-size: 13px; }
-
-    /* Resize handle */
-    .resize-handle { width: 3px; background: transparent; cursor: col-resize; transition: background 0.2s; flex-shrink: 0; }
-    .resize-handle:hover, .resize-handle:active { background: var(--s-violet); }
-
-    /* Editor */
-    .editor-panel { flex: 1; display: flex; flex-direction: column; background: #0d1117; min-width: 0; }
-    .editor-tabs { background: rgba(13,17,23,0.98); border-bottom: 1px solid var(--s-border); display: flex; align-items: center; min-height: 36px; padding: 0 8px; }
-    .editor-tab { display: flex; align-items: center; gap: 8px; padding: 8px 14px; background: transparent; border: none; color: var(--s-text-3); cursor: pointer; font-size: 0.8rem; transition: all 0.2s; border-right: 1px solid var(--s-border); font-family: var(--s-font); }
-    .editor-tab.active { background: #0d1117; color: var(--s-text); border-bottom: 2px solid var(--s-violet); }
-    .editor-tab:hover { color: var(--s-text); }
-    .editor-container { flex: 1; position: relative; }
+    .cv-editor-container { flex: 1; position: relative; }
     #monaco-editor { width: 100%; height: 100%; }
-    .empty-editor { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--s-text-3); gap: 12px; }
-    .empty-editor .empty-icon { font-size: 56px; }
-    .empty-editor h3 { font-size: 1rem; color: var(--s-text-2); font-family: 'Space Grotesk', var(--s-font); }
-    .empty-editor p { font-size: 0.78rem; }
-    .editor-loading { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); }
+    
+    .empty-editor {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100%; color: var(--s-on-surface-variant); gap: 16px;
+    }
+    .empty-editor .material-symbols-outlined { font-size: 48px; color: var(--s-surface-container-highest); }
+    .empty-editor h3 { font-family: var(--s-font-heading); font-size: 1.2rem; color: var(--s-on-surface); }
 
-    /* Chat panel */
-    .chat-panel {
-      width: 320px;
+    .cv-loader { display: none; position: absolute; inset: 0; background: rgba(6, 14, 32, 0.5); backdrop-filter: blur(4px); z-index: 10; align-items: center; justify-content: center; }
+
+    .resize-handle { width: 4px; background: var(--s-surface-container-high); cursor: col-resize; transition: background 0.2s; flex-shrink: 0; }
+    .resize-handle:hover, .resize-handle:active { background: var(--s-primary); }
+
+    .cv-chat {
+      width: 380px;
       flex-shrink: 0;
-      background: var(--s-bg-1);
-      border-left: 1px solid var(--s-border);
+      background: var(--s-surface-container-low);
       display: flex;
       flex-direction: column;
+      border-left: 1px solid var(--s-surface-container-high);
     }
-    .chat-header {
-      padding: 10px 14px;
-      font-size: 0.6rem;
-      text-transform: uppercase;
-      color: var(--s-text-3);
-      font-weight: 700;
-      letter-spacing: 0.8px;
-      background: rgba(7,9,15,0.9);
-      border-bottom: 1px solid var(--s-border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .cv-chat-hdr {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--s-surface-container-high);
+      display: flex; align-items: center; justify-content: space-between;
     }
-    .chat-messages { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+    .cv-chat-hdr h4 { font-family: var(--s-font-heading); color: var(--s-on-surface); font-size: 0.9rem; margin: 0; }
 
-    .chat-message { padding: 10px 13px; border-radius: 8px; font-size: 0.8rem; line-height: 1.55; word-wrap: break-word; }
-    .chat-message.user { background: linear-gradient(135deg, var(--s-violet), #5b50e0); color: #fff; align-self: flex-end; max-width: 86%; border-radius: 12px 12px 4px 12px; }
-    .chat-message.assistant { background: var(--s-bg-3); color: var(--s-text); border: 1px solid var(--s-border-2); align-self: flex-start; max-width: 86%; border-radius: 12px 12px 12px 4px; }
-    .chat-message.system { background: var(--s-surface); font-size: 0.72rem; color: var(--s-text-2); text-align: center; align-self: center; border: 1px solid var(--s-border); border-radius: 8px; }
+    #chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .chat-bubble { max-width: 90%; padding: 12px 16px; border-radius: var(--s-radius-sm); font-size: 0.85rem; line-height: 1.5; }
+    .chat-bubble.assistant { align-self: flex-start; background: var(--s-surface-container-highest); color: var(--s-on-surface); border-bottom-left-radius: 2px; }
+    .chat-bubble.user { align-self: flex-end; background: var(--s-primary); color: #000; font-weight: 500; border-bottom-right-radius: 2px; }
 
-    .chat-input-container { padding: 12px; border-top: 1px solid var(--s-border); background: rgba(7,9,15,0.8); }
-    .chat-input-wrapper { display: flex; gap: 8px; }
-    .chat-input { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid var(--s-border); color: var(--s-text); padding: 9px 12px; border-radius: 9px; font-size: 0.8rem; font-family: var(--s-font); resize: none; max-height: 100px; transition: all 0.2s; }
-    .chat-input:focus { outline: none; border-color: var(--s-violet); box-shadow: 0 0 0 3px var(--s-violet-dim); }
-    .chat-input::placeholder { color: var(--s-text-3); }
-    .chat-send-btn { background: linear-gradient(135deg, var(--s-violet), #5b50e0); border: none; color: #fff; padding: 9px 16px; border-radius: 9px; cursor: pointer; font-size: 0.8rem; font-weight: 700; transition: all 0.2s; box-shadow: 0 3px 10px var(--s-violet-glow); font-family: var(--s-font); }
-    .chat-send-btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
-    .chat-send-btn:disabled { background: var(--s-surface); border: 1px solid var(--s-border); cursor: not-allowed; box-shadow: none; opacity: 0.5; }
+    .cv-chat-input-area { padding: 16px; border-top: 1px solid var(--s-surface-container-high); }
+    .chat-input-wrapper { background: var(--s-surface-container-lowest); border-radius: var(--s-radius-sm); border: 1px solid var(--s-surface-container-high); padding: 8px; display: flex; flex-direction: column; gap: 8px; }
+    #chat-input { background: transparent; border: none; color: var(--s-on-surface); font-family: var(--s-font-body); font-size: 0.85rem; resize: none; min-height: 60px; outline: none; padding: 4px; }
+    .chat-actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 
-    /* Status bar */
-    .editor-status {
-      background: rgba(124,111,247,0.85);
-      backdrop-filter: blur(10px);
-      color: #fff;
-      padding: 4px 14px;
-      font-size: 0.72rem;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex-shrink: 0;
-    }
-    .status-item { display: flex; align-items: center; gap: 4px; }
-
-    @media (max-width: 1400px) { .chat-panel { width: 280px; } }
-    @media (max-width: 1200px) { .file-explorer { width: 190px; } .chat-panel { width: 260px; } }
-    @media (max-width: 1200px) { .chat-message { font-size: 0.75rem; } }
+    .st-issue-line-critical { border-left: 3px solid #ef4444 !important; background: rgba(239, 68, 68, 0.1); }
+    .st-issue-line-high { border-left: 3px solid #f97316 !important; background: rgba(249, 115, 22, 0.1); }
+    .st-issue-line-medium { border-left: 3px solid #eab308 !important; background: rgba(234, 179, 8, 0.1); }
   </style>
-</head>
+{% endblock %}
 
-<body>
-<div class="editor-shell">
+{% block container_style %}padding: 0; max-width: 100%; height: 100%;{% endblock %}
 
-  <!-- ── Nav rail ── -->
-  <div class="editor-body">
-    <aside class="st-rail" id="editorSidebar">
-      <div class="st-rail-inner">
-        <a href="/"           class="st-rail-item"><span class="st-rail-icon">🏠</span>Home</a>
-        <a href="/dashboard"  class="st-rail-item"><span class="st-rail-icon">📊</span>Dashboard</a>
-        <a href="/chat"       class="st-rail-item"><span class="st-rail-icon">💬</span>AI Chat</a>
-        <a href="/code-viewer" class="st-rail-item active"><span class="st-rail-icon">🖊️</span>Code Editor</a>
-        <a href="/dashboard"  class="st-rail-item"><span class="st-rail-icon">📄</span>Report</a>
-        <div class="st-rail-spacer"></div>
-        <div class="st-rail-divider"></div>
-        <a href="{{ url_for('auth.logout') }}" class="st-rail-item" style="color:#fca5a5;margin-bottom:8px">
-          <span class="st-rail-icon">🚪</span>Logout
-        </a>
-      </div>
-    </aside>
-
-    <!-- ── Main ── -->
-    <div class="editor-main">
-
-      <!-- Top bar -->
-      <div class="editor-topbar">
-        <div style="display:flex;align-items:center;gap:8px">
-          <button class="st-ham" id="editorSidebarToggle" onclick="toggleEditorSidebar()">
-            <span class="st-ham-bar"></span>
-            <span class="st-ham-bar"></span>
-            <span class="st-ham-bar"></span>
-          </button>
-          <div class="e-breadcrumb">
-            <span>📁</span>
-            <span style="font-weight:700;color:var(--s-text)" id="project-name">AI Code Review</span>
-            <span class="e-bc-sep">›</span>
-            <span>src</span>
-            <span class="e-bc-sep">›</span>
-            <span id="current-file-name">app.py</span>
-          </div>
-        </div>
-        <div class="e-top-actions">
-          <button class="e-top-btn" id="edit-btn" onclick="toggleEditMode()">✏️ Edit</button>
-          <a href="/" class="e-top-btn">🏠 Home</a>
-          <a href="/dashboard" class="e-top-btn" id="dashboard-btn">📊 Dashboard</a>
-          <a href="{{ url_for('auth.logout') }}" class="e-top-btn" style="color:#fca5a5;border-color:rgba(239,68,68,0.2)">🚪 Logout</a>
-        </div>
-      </div>
-
-      <!-- Worktop row -->
-      <div style="flex:1;display:flex;overflow:hidden;min-height:0">
-
-        <!-- File explorer -->
-        <div class="file-explorer" id="file-explorer">
-          <div class="explorer-header">Explorer</div>
-          <div class="file-tree" id="file-tree"><!-- populated by JS --></div>
-        </div>
-
-        <div class="resize-handle" id="explorer-resize"></div>
-
-        <!-- Editor -->
-        <div class="editor-panel">
-          <div class="editor-tabs">
-            <div class="editor-tab active" id="editor-tab">
-              <span id="tab-file-name">Select a file</span>
-            </div>
-          </div>
-          <div class="editor-container">
-            <div id="monaco-editor"></div>
-            <div class="empty-editor" id="empty-editor">
-              <div class="empty-icon">📝</div>
-              <h3>No file selected</h3>
-              <p>Select a file from the explorer to start editing</p>
-            </div>
-            <div class="editor-loading" id="loading">
-              <div class="st-spinner"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="resize-handle" id="chat-resize"></div>
-
-        <!-- Chat panel -->
-        <div class="chat-panel" id="chat-panel">
-          <div class="chat-header">
-            <span>Review Assistant</span>
-            <span id="chat-status" style="color:var(--s-green);font-size:1rem">●</span>
-          </div>
-          <div class="chat-messages" id="chat-messages">
-            <div class="chat-message system">AI Assistant ready to help with code review</div>
-          </div>
-          <div class="chat-input-container">
-            <div class="chat-input-wrapper">
-              <textarea class="chat-input" id="chat-input" placeholder="Ask about this code..." rows="1"></textarea>
-              <button class="chat-send-btn" id="chat-send-btn" onclick="sendMessage()">Send</button>
-            </div>
-          </div>
-        </div>
-
-      </div><!-- /worktop row -->
-    </div><!-- /editor-main -->
-  </div><!-- /editor-body -->
-
-  <!-- Status bar -->
-  <div class="editor-status" id="status-bar">
-    <div class="status-item"><span>⏳</span><span id="status-text">Analyzing code...</span></div>
+{% block topnav_extra %}
+  <div class="cv-breadcrumb">
+    <span class="material-symbols-outlined" style="font-size:16px;">folder_open</span>
+    <span class="bc-dir">source</span>
+    <span class="bc-sep">/</span>
+    <span class="bc-file" id="current-file-name">Select a file</span>
   </div>
+  <div style="flex:1"></div>
+  <div style="display:flex; gap:12px;">
+    <button class="st-btn-secondary" id="edit-btn" onclick="toggleEditMode()">
+      <span class="material-symbols-outlined" style="font-size:18px;">edit</span> Edit Mode
+    </button>
+  </div>
+{% endblock %}
 
-</div><!-- /editor-shell -->
+{% block content %}
+  <div class="cv-main-wrapper">
+    <div class="cv-worktop">
+      <div class="cv-explorer" id="file-explorer">
+        <div class="cv-explorer-hdr">Project Structure</div>
+        <div class="cv-file-tree" id="file-tree"></div>
+      </div>
 
-<!-- Monaco -->
-<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+      <div class="resize-handle" id="explorer-resize"></div>
+
+      <div class="cv-editor-area">
+        <div class="cv-editor-tabs">
+          <div class="cv-editor-tab active" id="editor-tab">
+            <span id="tab-file-name">Welcome</span>
+          </div>
+        </div>
+        <div class="cv-editor-container">
+          <div id="monaco-editor"></div>
+          <div class="empty-editor" id="empty-editor">
+            <span class="material-symbols-outlined">code_blocks</span>
+            <h3>No file selected</h3>
+            <p>Select a file from the explorer to begin viewing code</p>
+          </div>
+          <div class="cv-loader" id="loading">
+            <div class="st-spinner"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="resize-handle" id="chat-resize"></div>
+
+      <div class="cv-chat" id="chat-panel">
+        <div class="cv-chat-hdr">
+          <h4>Auto-Reviewer</h4>
+        </div>
+        <div id="chat-messages">
+          <div class="chat-bubble assistant">Zenith Assistant securely connected. Ask questions to augment your code review.</div>
+        </div>
+        <div class="cv-chat-input-area">
+          <div class="chat-input-wrapper">
+            <textarea id="chat-input" placeholder="Analyze current file..."></textarea>
+            <div class="chat-actions">
+              <button class="st-btn-primary" onclick="sendMessage()">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
 <script>
+  const fileTree = {{ file_tree|tojson if file_tree else '[]' }};
   const uid = "{{ uid }}";
-  const fileTree = {{ file_tree | tojson | safe }};
-  let editor = null, currentFilePath = null, isEditMode = false, currentDecorations = [];
+  let editor = null;
+  let currentFilePath = null;
+  let currentDecorations = [];
+  let isEditMode = false;
 
-  require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' } });
+  require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' } });
   require(['vs/editor/editor.main'], function() {
-    editor = monaco.editor.create(document.getElementById('monaco-editor'), {
-      value: '', language: 'python', theme: 'vs-dark', automaticLayout: true,
-      fontSize: 14, lineNumbers: 'on', minimap: { enabled: true },
-      scrollBeyondLastLine: false, renderWhitespace: 'selection', tabSize: 4, readOnly: true
+    monaco.editor.defineTheme('nocturnal', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [
+        { token: 'comment', foreground: '6272a4', fontStyle: 'italic' },
+        { token: 'keyword', foreground: 'a3a6ff', fontStyle: 'bold' },
+        { token: 'string', foreground: 'f1fa8c' },
+        { token: 'number', foreground: 'bd93f9' },
+      ],
+      colors: {
+        'editor.background': '#0d1117',
+        'editor.foreground': '#dee5ff',
+        'editorLineNumber.foreground': '#475569',
+        'editor.selectionBackground': '#a3a6ff33',
+        'editorSuggestWidget.background': '#0f172a',
+        'editorSuggestWidget.border': '#1e293b',
+      }
     });
-    document.getElementById('monaco-editor').style.display = 'none';
+
+    editor = monaco.editor.create(document.getElementById('monaco-editor'), {
+      value: '', language: 'python', theme: 'nocturnal', automaticLayout: true,
+      fontFamily: "'JetBrains Mono', monospace", fontSize: 13,
+      lineNumbers: 'on', minimap: { enabled: false },
+      scrollBeyondLastLine: false, renderWhitespace: 'selection', tabSize: 4, readOnly: true,
+      padding: { top: 16, bottom: 16 }
+    });
   });
 
   function populateFileTree() {
     const container = document.getElementById('file-tree');
-    if (!fileTree || !fileTree.length) { container.innerHTML = '<div style="padding:12px;color:var(--s-text-3)">No files found</div>'; return; }
+    if (!fileTree || !fileTree.length) { container.innerHTML = '<div style="padding:16px;color:var(--s-on-surface-variant);font-size:0.8rem;">No files found</div>'; return; }
+    
     const structure = {};
     fileTree.forEach(item => {
       const parts = item.path.split('/'); let cur = structure;
       parts.forEach((part, i) => {
-        if (i === parts.length - 1) { if (!cur._files) cur._files = []; cur._files.push({ name: part, path: item.path }); }
-        else { if (!cur[part]) cur[part] = {}; cur = cur[part]; }
+        if (i === parts.length - 1) { 
+          if (!cur._files) cur._files = []; 
+          cur._files.push({ name: part, path: item.path }); 
+        } else { 
+          if (!cur[part]) cur[part] = {}; 
+          cur = cur[part]; 
+        }
       });
     });
+
     function renderTree(obj, c) {
       for (const key in obj) {
         if (key === '_files') {
           obj[key].forEach(file => {
             const fd = document.createElement('div'); fd.className = 'file-item';
-            fd.innerHTML = `<span class="file-item-icon">${getFileIcon(file.name)}</span><span>${file.name}</span>`;
-            fd.onclick = () => loadFile(file.path);
+            fd.innerHTML = `<span class="file-item-icon material-symbols-outlined">insert_drive_file</span><span>${file.name}</span>`;
+            fd.onclick = (e) => loadFile(file.path, e);
             c.appendChild(fd);
           });
         } else {
           const fod = document.createElement('div'); fod.className = 'folder';
           const foh = document.createElement('div'); foh.className = 'folder-header';
-          foh.innerHTML = `<span class="folder-icon">▶</span><span>📁 ${key}</span>`;
+          foh.innerHTML = `<span class="folder-icon material-symbols-outlined">chevron_right</span><span>${key}</span>`;
           const foc = document.createElement('div'); foc.className = 'folder-content';
           foh.onclick = () => fod.classList.toggle('expanded');
           fod.appendChild(foh); fod.appendChild(foc); c.appendChild(fod);
@@ -339,115 +290,46 @@
     renderTree(structure, container);
   }
 
-  function getFileIcon(name) {
-    const ext = name.split('.').pop().toLowerCase();
-    const icons = { py:'🐍', js:'📜', ts:'📘', java:'☕', cpp:'⚙️', c:'⚙️', html:'🌐', css:'🎨', json:'📋', md:'📝', txt:'📄' };
-    return icons[ext] || '📄';
-  }
-
   function toggleEditMode() {
     isEditMode = !isEditMode; editor.updateOptions({ readOnly: !isEditMode });
     const btn = document.getElementById('edit-btn');
-    btn.textContent = isEditMode ? '🔒 Read Only' : '✏️ Edit';
-    btn.style.borderColor = isEditMode ? 'var(--s-green)' : '';
-    btn.style.color = isEditMode ? 'var(--s-green)' : '';
+    btn.innerHTML = `<span class="material-symbols-outlined" style="font-size:18px;">${isEditMode ? 'lock_open' : 'edit'}</span> ${isEditMode ? 'Editing Enabled' : 'Edit Mode'}`;
   }
 
-  async function loadFileIssues(filepath) {
-    try {
-      const res = await fetch(`/api/file/issues/${uid}/${filepath}`);
-      const data = await res.json();
-      if (data.issues && data.issues.length > 0) highlightIssues(data.issues);
-    } catch(e) { console.error('Error loading issues:', e); }
-  }
-
-  function highlightIssues(issues) {
-    currentDecorations = editor.deltaDecorations(currentDecorations, []);
-    const decorations = issues.map(issue => {
-      const ln = issue.line_number || 1; const sev = issue.severity || 'UNKNOWN';
-      const hv = [`**${sev}**: ${issue.title}`, '', issue.description||'', issue.remediation ? `\n**Remediation**: ${issue.remediation}` : ''].filter(Boolean).join('\n');
-      return { range: new monaco.Range(ln,1,ln,1), options: { isWholeLine: false, glyphMarginClassName: `issue-glyph-${sev.toLowerCase()}`, glyphMarginHoverMessage: { value: hv }, linesDecorationsClassName: `issue-decoration-${sev.toLowerCase()}` } };
-    });
-    currentDecorations = editor.deltaDecorations([], decorations);
-  }
-
-  async function loadFile(filepath) {
-    document.getElementById('loading').style.display = 'block';
+  async function loadFile(filepath, event) {
+    document.getElementById('loading').style.display = 'flex';
     document.getElementById('empty-editor').style.display = 'none';
+    
+    document.querySelectorAll('.file-item').forEach(i => i.classList.remove('active'));
+    if (event) event.currentTarget.classList.add('active');
+    
     try {
       const res = await fetch(`/api/file/content/${uid}/${filepath}`);
       const data = await res.json();
-      if (data.error) { alert('Error loading file: ' + data.error); return; }
       currentFilePath = filepath;
-      const fname = filepath.split('/').pop();
-      document.getElementById('current-file-name').textContent = fname;
-      document.getElementById('tab-file-name').textContent = fname;
-      document.getElementById('monaco-editor').style.display = 'block';
+      document.getElementById('current-file-name').textContent = filepath.split('/').pop();
       editor.setValue(data.content);
-      monaco.editor.setModelLanguage(editor.getModel(), data.language || 'plaintext');
-      await loadFileIssues(filepath);
-      document.querySelectorAll('.file-item').forEach(i => i.classList.remove('active'));
-      event.target?.closest('.file-item')?.classList.add('active');
-    } catch(e) { console.error(e); alert('Failed to load file'); }
-    finally { document.getElementById('loading').style.display = 'none'; }
-  }
-
-  async function sendMessage() {
-    const input = document.getElementById('chat-input');
-    const message = input.value.trim(); if (!message) return;
-    addChatMessage(message, 'user'); input.value = '';
-    setTimeout(() => addChatMessage('Let me analyze that for you...', 'assistant'), 500);
-  }
-
-  function addChatMessage(text, type) {
-    const c = document.getElementById('chat-messages');
-    const el = document.createElement('div'); el.className = `chat-message ${type}`;
-    el.textContent = text; c.appendChild(el); c.scrollTop = c.scrollHeight;
+      monaco.editor.setModelLanguage(editor.getModel(), data.language || 'python');
+    } catch(e) { console.error(e); } finally { document.getElementById('loading').style.display = 'none'; }
   }
 
   function initResizePanels() {
     const eh = document.getElementById('explorer-resize'), ch = document.getElementById('chat-resize');
     const fe = document.getElementById('file-explorer'), cp = document.getElementById('chat-panel');
     let isResizing = false, currentHandle = null;
-    [eh, ch].forEach(h => h.addEventListener('mousedown', e => { isResizing = true; currentHandle = h; document.body.style.cursor = 'col-resize'; e.preventDefault(); }));
+    
+    [eh, ch].forEach(h => h.addEventListener('mousedown', e => { isResizing = true; currentHandle = h; e.preventDefault(); }));
     document.addEventListener('mousemove', e => {
       if (!isResizing) return;
-      if (currentHandle === eh) { const w = e.clientX - (document.getElementById('editorSidebar').offsetWidth || 0); if (w >= 150 && w <= 480) fe.style.width = w + 'px'; }
-      else if (currentHandle === ch) { const w = window.innerWidth - e.clientX; if (w >= 240 && w <= 580) cp.style.width = w + 'px'; }
+      if (currentHandle === eh) fe.style.width = Math.max(180, Math.min(480, e.clientX - 60)) + 'px';
+      else if (currentHandle === ch) cp.style.width = Math.max(280, Math.min(600, window.innerWidth - e.clientX)) + 'px';
     });
-    document.addEventListener('mouseup', () => { isResizing = false; currentHandle = null; document.body.style.cursor = 'default'; });
+    document.addEventListener('mouseup', () => { isResizing = false; });
   }
 
-  async function checkAnalysisStatus() {
-    try {
-      const res = await fetch(`/api/analysis/status/${uid}`);
-      const data = await res.json();
-      const statusBar = document.getElementById('status-bar');
-      const statusText = document.getElementById('status-text');
-      if (data.status === 'complete') {
-        statusBar.style.background = 'rgba(34,197,94,0.85)'; statusText.textContent = '✓ Analysis complete!';
-        const dbtn = document.getElementById('dashboard-btn'); if (dbtn) { dbtn.onclick = () => window.location.href = '/dashboard'; }
-        return false;
-      } else if (data.status === 'error') {
-        statusBar.style.background = 'rgba(239,68,68,0.85)'; statusText.textContent = '✗ Analysis failed'; return false;
-      } else { statusText.textContent = 'Analyzing code...'; return true; }
-    } catch(e) { console.error(e); return true; }
-  }
-
-  function startStatusPolling() {
-    const poll = async () => { const c = await checkAnalysisStatus(); if (c) setTimeout(poll, 3000); };
-    poll();
-  }
-
-  document.getElementById('chat-input')?.addEventListener('input', function() { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 100) + 'px'; });
-  document.getElementById('chat-input')?.addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
-
-  function toggleEditorSidebar() {
-    document.getElementById('editorSidebar').classList.toggle('open');
-    document.getElementById('editorSidebarToggle').classList.toggle('open');
-  }
-
-  document.addEventListener('DOMContentLoaded', () => { populateFileTree(); initResizePanels(); startStatusPolling(); });
+  document.addEventListener('DOMContentLoaded', () => { 
+    populateFileTree(); 
+    initResizePanels(); 
+  });
 </script>
-</body>
-</html>
+{% endblock %}

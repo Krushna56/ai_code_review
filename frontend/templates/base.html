@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}ZenReview{% endblock %}</title>
+  <meta name="description" content="Next-generation AI-powered code analysis">
+  <link rel="stylesheet" href="/static/css/stitch.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <style>
+    /* ═══════════════════════════════════════════
+       TOP NAVBAR — ZenReview Unified Shell
+       ═══════════════════════════════════════════ */
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--s-surface);
+    }
+
+    /* ── Fixed Glassmorphic Navbar ── */
+    .zr-navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 64px;
+      z-index: 1000;
+      background: rgba(6, 14, 32, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(163, 166, 255, 0.08);
+      box-shadow: 0 4px 32px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 0;
+    }
+
+    /* ── Brand ── */
+    .zr-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      flex-shrink: 0;
+      margin-right: 32px;
+    }
+    .zr-brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--s-primary), var(--s-primary-dim));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 16px rgba(163,166,255,0.3);
+      color: #000;
+      font-size: 18px;
+    }
+    .zr-brand-name {
+      font-family: var(--s-font-heading);
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--s-primary);
+      letter-spacing: -0.5px;
+    }
+    .zr-brand-badge {
+      font-size: 0.6rem;
+      font-weight: 700;
+      background: rgba(163,166,255,0.15);
+      color: var(--s-primary);
+      padding: 2px 6px;
+      border-radius: 99px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-left: 2px;
+    }
+
+    /* ── Nav Links (center) ── */
+    .zr-nav {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex: 1;
+    }
+    .zr-nav-link {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--s-on-surface-variant);
+      text-decoration: none;
+      font-family: var(--s-font-body);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      position: relative;
+    }
+    .zr-nav-link .nb-icon {
+      font-size: 16px;
+      transition: color 0.2s;
+    }
+    .zr-nav-link:hover {
+      color: var(--s-on-surface);
+      background: rgba(163,166,255,0.06);
+    }
+    .zr-nav-link.active {
+      color: var(--s-primary);
+      background: rgba(163,166,255,0.1);
+    }
+    .zr-nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 14px;
+      right: 14px;
+      height: 2px;
+      background: var(--s-primary);
+      border-radius: 2px 2px 0 0;
+    }
+
+    /* ── Right side actions ── */
+    .zr-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    /* ── Profile Dropdown ── */
+    .profile-dropdown { position: relative; }
+    .profile-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(163,166,255,0.06);
+      border: 1px solid rgba(163,166,255,0.12);
+      border-radius: 99px;
+      padding: 5px 14px 5px 5px;
+      color: var(--s-on-surface);
+      cursor: pointer;
+      font-family: var(--s-font-body);
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+    .profile-btn:hover {
+      border-color: var(--s-primary);
+      background: rgba(163,166,255,0.1);
+      box-shadow: 0 0 12px rgba(163,166,255,0.15);
+    }
+    .profile-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--s-primary), var(--s-primary-dim));
+      color: #000;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800;
+    }
+    .profile-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: calc(100% + 10px);
+      width: 260px;
+      background: rgba(9, 19, 40, 0.97);
+      border: 1px solid rgba(163,166,255,0.1);
+      border-radius: 14px;
+      box-shadow: 0 20px 48px rgba(0,0,0,0.6);
+      padding: 16px;
+      z-index: 200;
+      backdrop-filter: blur(24px);
+    }
+    .profile-menu.open {
+      display: block;
+      animation: fadeDropdown 0.2s ease forwards;
+    }
+    @keyframes fadeDropdown {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .pm-section-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--s-on-surface-variant);
+      margin-bottom: 8px;
+    }
+    .pm-user-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .pm-user-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--s-primary), var(--s-primary-dim));
+      color: #000;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; font-weight: 800;
+    }
+    .pm-user-name { font-weight: 700; font-size: 0.9rem; color: var(--s-on-surface); }
+    .pm-user-sub  { font-size: 0.75rem; color: var(--s-on-surface-variant); margin-top: 2px; }
+    .pm-github-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.03);
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+    .pm-github-info { display: flex; align-items: center; gap: 8px; }
+    .pm-github-info .material-symbols-outlined { font-size: 16px; color: var(--s-primary); }
+    .pm-github-label { font-size: 0.8rem; font-weight: 700; color: var(--s-on-surface); }
+    .pm-github-sub   { font-size: 0.7rem; color: var(--s-on-surface-variant); }
+    .pm-link { color: var(--s-primary); font-size: 0.75rem; font-weight: 700; text-decoration: none; }
+    .pm-link:hover { text-decoration: underline; }
+    .pm-logout {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      padding: 9px;
+      background: rgba(239,68,68,0.08);
+      color: #ff97a3;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-top: 4px;
+      transition: background 0.2s;
+    }
+    .pm-logout:hover { background: rgba(239,68,68,0.16); }
+
+    /* ── Mobile Hamburger ── */
+    .zr-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      width: 36px; height: 36px;
+      align-items: center; justify-content: center;
+      background: none; border: none;
+      cursor: pointer; flex-shrink: 0;
+    }
+    .zr-hamburger span {
+      display: block; width: 18px; height: 2px;
+      background: var(--s-on-surface-variant);
+      border-radius: 2px;
+      transition: all 0.2s ease;
+    }
+    .zr-hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); background: var(--s-primary); }
+    .zr-hamburger.open span:nth-child(2) { opacity: 0; }
+    .zr-hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); background: var(--s-primary); }
+
+    /* ── Mobile Nav Drawer ── */
+    .zr-mobile-nav {
+      display: none;
+      position: fixed;
+      top: 64px; left: 0; right: 0;
+      background: rgba(6,14,32,0.98);
+      border-bottom: 1px solid rgba(163,166,255,0.1);
+      backdrop-filter: blur(24px);
+      z-index: 999;
+      padding: 16px;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .zr-mobile-nav.open { display: flex; animation: slideDown 0.2s ease; }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .zr-mobile-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      color: var(--s-on-surface-variant);
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .zr-mobile-link .material-symbols-outlined { font-size: 20px; }
+    .zr-mobile-link:hover, .zr-mobile-link.active {
+      background: rgba(163,166,255,0.08);
+      color: var(--s-primary);
+    }
+
+    /* ── Page wrapper ── */
+    .zr-page {
+      margin-top: 64px; /* offset for fixed navbar */
+      flex: 1;
+      min-height: calc(100vh - 64px);
+      overflow-y: auto;
+    }
+    .st-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--s-space-8);
+    }
+
+    /* ── Extra button styles for topnav_extra block ── */
+    .zr-actions .st-btn-primary,
+    .zr-actions .st-btn-secondary {
+      font-size: 0.82rem;
+      padding: 8px 16px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .zr-nav { display: none; }
+      .zr-hamburger { display: flex; }
+      .zr-actions .st-btn-primary,
+      .zr-actions .st-btn-secondary { display: none; }
+    }
+    @media (max-width: 600px) {
+      .zr-brand-badge { display: none; }
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body{% if uid is defined and uid %} data-uid="{{ uid }}"{% endif %}>
+
+  <!-- ════ FIXED TOP NAVBAR ════ -->
+  <nav class="zr-navbar" id="mainNavbar">
+
+    <!-- Brand -->
+    <a href="/" class="zr-brand">
+      <div class="zr-brand-icon">
+        <span class="material-symbols-outlined" style="font-size:20px;">filter_vintage</span>
+      </div>
+      <span class="zr-brand-name">ZenReview</span>
+      <span class="zr-brand-badge">AI</span>
+    </a>
+
+    <!-- Nav Links -->
+    <div class="zr-nav" id="mainNav">
+      <a href="/" class="zr-nav-link {% if request.path == '/' %}active{% endif %}">
+        <span class="material-symbols-outlined nb-icon">home</span>Home
+      </a>
+      <a href="/dashboard" class="zr-nav-link {% if request.path == '/dashboard' %}active{% endif %}">
+        <span class="material-symbols-outlined nb-icon">dashboard</span>Dashboard
+      </a>
+      <a href="/chat{% if uid is defined and uid %}?uid={{ uid }}{% endif %}" class="zr-nav-link {% if request.path == '/chat' %}active{% endif %}">
+        <span class="material-symbols-outlined nb-icon">chat</span>AI Chat
+      </a>
+      <a href="/code-viewer{% if uid is defined and uid %}?uid={{ uid }}{% endif %}" class="zr-nav-link {% if request.path == '/code-viewer' %}active{% endif %}">
+        <span class="material-symbols-outlined nb-icon">code</span>Code Editor
+      </a>
+      {% if uid is defined and uid %}
+      <a href="/report/{{ uid }}" class="zr-nav-link {% if '/report' in request.path %}active{% endif %}">
+        <span class="material-symbols-outlined nb-icon">description</span>Report
+      </a>
+      {% endif %}
+      <a href="/team" class="zr-nav-link {% if request.path == '/team' %}active{% endif %}">
+        <span class="material-symbols-outlined nb-icon">group</span>Team
+      </a>
+    </div>
+
+    <!-- Right actions slot -->
+    <div class="zr-actions">
+      {% block topnav_extra %}{% endblock %}
+
+      {% if current_user.is_authenticated %}
+      <div class="profile-dropdown" id="profileDropdown">
+        <button class="profile-btn" onclick="toggleProfile(event)" id="profileBtn" aria-expanded="false">
+          <div class="profile-avatar">{{ (current_user.email or current_user.github_username or 'U')[0] | upper }}</div>
+          <span>{{ (current_user.email or current_user.github_username or 'User') | truncate(16, true, '') }}</span>
+          <span class="material-symbols-outlined" style="font-size:14px; color:var(--s-on-surface-variant);">expand_more</span>
+        </button>
+        <div class="profile-menu" id="profileMenu">
+          <!-- User info -->
+          <div class="pm-user-row">
+            <div class="pm-user-avatar">{{ (current_user.email or current_user.github_username or 'U')[0] | upper }}</div>
+            <div>
+              <div class="pm-user-name">{{ current_user.email or current_user.github_username }}</div>
+              <div class="pm-user-sub">ZenReview Member</div>
+            </div>
+          </div>
+
+          <!-- GitHub connection -->
+          <div class="pm-section-label">Connections</div>
+          <div class="pm-github-row">
+            <div class="pm-github-info">
+              <span class="material-symbols-outlined">code_blocks</span>
+              <div>
+                <div class="pm-github-label">GitHub</div>
+                <div class="pm-github-sub">{{ current_user.github_username or 'Not Connected' }}</div>
+              </div>
+            </div>
+            {% if not current_user.github_username %}
+            <a href="{{ url_for('auth.github_login') }}" class="pm-link">Link</a>
+            {% else %}
+            <span style="color:#22c55e; font-size:0.75rem; font-weight:700;">✓ Linked</span>
+            {% endif %}
+          </div>
+
+          <a href="{{ url_for('auth.logout') }}" class="pm-logout">
+            <span class="material-symbols-outlined" style="font-size:16px;">logout</span>Sign Out
+          </a>
+        </div>
+      </div>
+      {% else %}
+      <a href="{{ url_for('auth.login') }}" class="st-btn-primary">Sign In</a>
+      {% endif %}
+
+      <!-- Mobile hamburger -->
+      <button class="zr-hamburger" id="mobileMenuBtn" onclick="toggleMobileNav()" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ════ MOBILE DRAWER ════ -->
+  <div class="zr-mobile-nav" id="mobileNav">
+    <a href="/" class="zr-mobile-link {% if request.path == '/' %}active{% endif %}">
+      <span class="material-symbols-outlined">home</span>Home
+    </a>
+    <a href="/dashboard" class="zr-mobile-link {% if request.path == '/dashboard' %}active{% endif %}">
+      <span class="material-symbols-outlined">dashboard</span>Dashboard
+    </a>
+    <a href="/chat{% if uid is defined and uid %}?uid={{ uid }}{% endif %}" class="zr-mobile-link {% if request.path == '/chat' %}active{% endif %}">
+      <span class="material-symbols-outlined">chat</span>AI Chat
+    </a>
+    <a href="/code-viewer{% if uid is defined and uid %}?uid={{ uid }}{% endif %}" class="zr-mobile-link {% if request.path == '/code-viewer' %}active{% endif %}">
+      <span class="material-symbols-outlined">code</span>Code Editor
+    </a>
+    {% if uid is defined and uid %}
+    <a href="/report/{{ uid }}" class="zr-mobile-link {% if '/report' in request.path %}active{% endif %}">
+      <span class="material-symbols-outlined">description</span>Detailed Report
+    </a>
+    {% endif %}
+    <a href="/team" class="zr-mobile-link {% if request.path == '/team' %}active{% endif %}">
+      <span class="material-symbols-outlined">group</span>Team
+    </a>
+    {% if current_user.is_authenticated %}
+    <a href="{{ url_for('auth.logout') }}" class="zr-mobile-link" style="color:#ff97a3; margin-top:8px;">
+      <span class="material-symbols-outlined">logout</span>Sign Out
+    </a>
+    {% else %}
+    <a href="{{ url_for('auth.login') }}" class="zr-mobile-link" style="color:var(--s-primary);">
+      <span class="material-symbols-outlined">login</span>Sign In
+    </a>
+    {% endif %}
+  </div>
+
+  <!-- ════ MAIN PAGE CONTENT ════ -->
+  <div class="zr-page" id="mainContent">
+    <div class="st-container" style="{% block container_style %}{% endblock %}">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+
+<script>
+  /* ── Profile dropdown ── */
+  function toggleProfile(e) {
+    e.stopPropagation();
+    const menu = document.getElementById('profileMenu');
+    const btn  = document.getElementById('profileBtn');
+    const open = menu?.classList.toggle('open');
+    btn?.setAttribute('aria-expanded', open);
+  }
+  document.addEventListener('click', () => {
+    document.getElementById('profileMenu')?.classList.remove('open');
+    document.getElementById('profileBtn')?.setAttribute('aria-expanded', 'false');
+  });
+
+  /* ── Mobile nav ── */
+  function toggleMobileNav() {
+    const nav = document.getElementById('mobileNav');
+    const btn = document.getElementById('mobileMenuBtn');
+    nav?.classList.toggle('open');
+    btn?.classList.toggle('open');
+  }
+
+  /* ── Close mobile nav on link click ── */
+  document.querySelectorAll('.zr-mobile-link').forEach(link => {
+    link.addEventListener('click', () => {
+      document.getElementById('mobileNav')?.classList.remove('open');
+      document.getElementById('mobileMenuBtn')?.classList.remove('open');
+    });
+  });
+
+  /* ── Navbar scroll effect ── */
+  const navbar = document.getElementById('mainNavbar');
+  window.addEventListener('scroll', () => {
+    const page = document.getElementById('mainContent');
+    if (page && page.scrollTop > 10) {
+      navbar?.classList.add('scrolled');
+    } else {
+      navbar?.classList.remove('scrolled');
+    }
+  }, { passive: true });
+</script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

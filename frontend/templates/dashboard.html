@@ -1,387 +1,411 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Code Review — Dashboard</title>
-  <meta name="description" content="AI-powered security & code quality dashboard">
+{% extends "base.html" %}
+
+{% block title %}ZenReview | Engineering Health Dashboard{% endblock %}
+
+{% block extra_head %}
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <link rel="stylesheet" href="/static/css/stitch.css">
   <style>
-    /* Page-specific overrides only */
-    .stat-badge-cnt {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 18px; height: 18px; background: var(--s-critical);
-      border-radius: 50%; font-size: 0.62rem; color: #fff; font-weight: 700; vertical-align: middle;
+    /* Page Specific Metric Cards mapping to Nocturnal Architect */
+    .metric-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
     }
-    .sev-pills { display: flex; gap: 12px; align-items: center; margin-left: auto; flex-wrap: wrap; }
-    .sev-pill  { display: flex; align-items: center; gap: 5px; font-size: 0.72rem; }
-    .sev-pill .count { font-weight: 800; color: var(--s-text); }
-    .sev-pill .note  { color: var(--s-text-2); font-size: 0.65rem; }
-    .stat-bar-row {
-      background: var(--s-surface); border: 1px solid var(--s-border);
-      border-radius: var(--s-radius); display: flex; align-items: center;
-      padding: 10px 18px; gap: 0; flex-wrap: wrap;
+    
+    .metric-card {
+      position: relative;
+      background: var(--s-surface-container-low);
+      border-radius: var(--s-radius-lg);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 192px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      overflow: hidden;
     }
-    .stat-bar-item { padding: 0 20px; }
-    .stat-bar-item:first-child { padding-left: 0; }
-    .stat-bar-lbl { font-size: 0.6rem; text-transform: uppercase; font-weight: 600; color: var(--s-text-2); letter-spacing: 0.5px; }
-    .stat-bar-val { font-size: 1.35rem; font-weight: 800; color: var(--s-text); line-height: 1.2; font-family: 'Space Grotesk', sans-serif; }
-    .stat-bar-sub { font-size: 0.6rem; color: var(--s-text-3); }
-    .stat-bar-div { width: 1px; height: 32px; background: var(--s-border); margin: 0 4px; flex-shrink: 0; }
+    
+    .metric-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--s-on-surface-variant);
+      margin-bottom: 8px;
+      font-family: var(--s-font-body);
+      font-weight: 600;
+    }
+    
+    .metric-value {
+      font-size: 2.25rem;
+      font-weight: 800;
+      font-family: var(--s-font-heading);
+      color: var(--s-on-surface);
+    }
+    
+    .metric-sub {
+      font-size: 0.85rem;
+      color: var(--s-on-surface-variant);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .metric-icon {
+      font-size: 2.5rem;
+      color: rgba(64, 72, 93, 0.3); /* outline-variant at 30% */
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+    }
 
-    /* Bounty panel */
-    #bounty-tab { border-color: rgba(239,68,68,0.3) !important; }
-    #bounty-tab::before { content: ''; position: absolute; inset: 0; border-radius: var(--s-radius); background: rgba(239,68,68,0.03); pointer-events: none; }
-    #bounty-tab { position: relative; }
+    /* Chart Containers */
+    .chart-section {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+    .chart-card {
+      background: var(--s-surface-container-low);
+      border-radius: var(--s-radius-lg);
+      padding: 32px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .chart-title {
+      font-size: 1.25rem;
+      font-family: var(--s-font-heading);
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+    
+    /* Bug Bounty Panel */
+    .bounty-card {
+      background: var(--s-surface-container-highest);
+      border-radius: var(--s-radius-lg);
+      padding: 24px;
+      border-left: 4px solid var(--s-primary);
+    }
+    
+    /* Layout utilities */
+    .hero-section {
+      margin-bottom: 40px;
+    }
+    .hero-title {
+      font-size: 3rem;
+      font-family: var(--s-font-heading);
+      font-weight: 800;
+      color: var(--s-primary);
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+    .hero-subtitle {
+      font-size: 1.125rem;
+      color: var(--s-on-surface-variant);
+      max-width: 600px;
+    }
 
-    /* loading state */
-    td.loading { color: var(--s-text-3); font-style: italic; text-align: center; padding: 14px; }
+    @media (max-width: 1024px) {
+      .chart-section { grid-template-columns: 1fr; }
+    }
   </style>
-</head>
+{% endblock %}
 
-<body{% if uid %} data-uid="{{ uid }}"{% endif %}>
-<div class="st-shell">
+{% block topnav_extra %}
+  <a href="/" class="st-btn-secondary">New Analysis</a>
+  {% if uid %}
+  <a href="/report/{{ uid }}" class="st-btn-primary">View Report</a>
+  {% endif %}
+{% endblock %}
 
-  <!-- ════ TOP NAV ════ -->
-  <header class="st-topnav">
-    <button class="st-ham" id="hamBtn" onclick="toggleSidebar()" title="Toggle menu">
-      <span class="st-ham-bar"></span>
-      <span class="st-ham-bar"></span>
-      <span class="st-ham-bar"></span>
-    </button>
+{% block content %}
+        
+        <!-- Hero Section -->
+        <div class="hero-section st-anim-1">
+          <h1 class="hero-title">Engineering Health</h1>
+          <p class="hero-subtitle">Real-time analysis of your development lifecycle. We've detected active insights based on recent code scans.</p>
+        </div>
 
-    <a href="/" class="st-brand">
-      <div class="st-brand-icon">🛡️</div>
-      <span class="st-brand-name">AI Code Review</span>
-    </a>
-
-    <nav class="st-nav-chips">
-      <a href="/dashboard" class="st-chip active">📊 Dashboard</a>
-      <a href="#bounty-tab" class="st-chip" onclick="document.getElementById('bounty-tab').scrollIntoView({behavior:'smooth'});return false;">🏴‍☠️ Bug Bounty</a>
-      <a href="/team" class="st-chip">👥 Team</a>
-      {% if uid %}<a href="/report/{{ uid }}" class="st-chip" style="background:rgba(124,111,247,0.15);color:#9d93ff;border-color:rgba(124,111,247,0.3)">📋 Full Report</a>{% endif %}
-    </nav>
-
-    <div class="st-topnav-right">
-      <a href="/" class="st-btn-cta">▶ New Analysis</a>
-      {% if uid %}
-      <a href="/report/{{ uid }}" class="st-btn-cta" style="background:rgba(124,111,247,0.2);border:1px solid rgba(124,111,247,0.4);color:#9d93ff">📋 Detailed Report</a>
-      {% endif %}
-      {% if current_user.is_authenticated %}
-      <div class="st-avatar" title="{{ current_user.email }}">
-        {{ (current_user.email or 'U')[0]|upper }}
-      </div>
-      {% endif %}
-    </div>
-  </header>
-
-  <!-- ════ BODY ════ -->
-  <div class="st-body">
-
-    <!-- Left rail -->
-    <aside class="st-rail" id="dashSidebar">
-      <div class="st-rail-inner">
-        <div class="st-rail-section">Navigation</div>
-        <a href="/"          class="st-rail-item"><span class="st-rail-icon">🏠</span>Home</a>
-        <a href="/dashboard" class="st-rail-item active"><span class="st-rail-icon">📊</span>Dashboard</a>
-        <a href="#bounty-tab" class="st-rail-item" onclick="document.getElementById('bounty-tab').scrollIntoView({behavior:'smooth'});return false;"><span class="st-rail-icon">🏴‍☠️</span>Bug Bounty</a>
-        <a href="/team"      class="st-rail-item"><span class="st-rail-icon">👥</span>Team</a>
-        {% if uid %}
-        <a href="/report/{{ uid }}" class="st-rail-item" style="color:#9d93ff"><span class="st-rail-icon">📋</span>Detailed Report</a>
-        {% endif %}
-        <a href="/chat"      class="st-rail-item"><span class="st-rail-icon">💬</span>AI Chat</a>
-        <a href="/code-viewer" class="st-rail-item"><span class="st-rail-icon">🖊️</span>Code Editor</a>
-
-        <div class="st-rail-section" style="margin-top:8px">Settings</div>
-        <button onclick="toggleTheme()" class="st-rail-item"><span class="st-rail-icon">⚙️</span>Settings</button>
-        <a href="https://owasp.org/Top10/" target="_blank" class="st-rail-item"><span class="st-rail-icon">📖</span>Docs</a>
-
-        <div class="st-rail-spacer"></div>
-        <div class="st-rail-divider"></div>
-        <a href="{{ url_for('auth.logout') }}" class="st-rail-item" style="color:#fca5a5;margin-bottom:8px">
-          <span class="st-rail-icon">🚪</span>Log Out
-        </a>
-      </div>
-    </aside>
-
-    <!-- Main -->
-    <main class="st-main">
-      <div class="st-content">
-
-        <!-- ── ROW 0: STAT CARDS ── -->
-        <div class="st-stat-grid st-anim-1">
+        <!-- Metric Cards -->
+        <div class="metric-card-grid st-anim-2">
+          
+          <!-- Code Quality Score (used to be Total Issues / Rating) -->
+          <div class="metric-card">
+            <div style="z-index: 10;">
+              <div class="metric-label">Code Quality Score</div>
+              <div class="metric-value" style="color:var(--s-primary)" id="qualityGrade">A-</div>
+            </div>
+            <div class="metric-sub" style="z-index: 10; color: var(--s-secondary);">
+              <span class="material-symbols-outlined" style="font-size:16px;">trending_up</span> <span id="qualityScore">92</span>/100
+            </div>
+            <span class="material-symbols-outlined metric-icon">verified</span>
+          </div>
 
           <!-- Total Issues -->
-          <div class="st-stat" style="--st-accent:var(--s-sky)">
-            <div class="st-stat-label"><span class="st-stat-dot"></span>Total Issues</div>
-            <div style="display:flex;align-items:baseline;gap:4px">
-              <span class="st-stat-value" id="statTotalIssues">—</span>
+          <div class="metric-card">
+            <div style="z-index: 10;">
+              <div class="metric-label">Total Detected Issues</div>
+              <div class="metric-value" id="statTotalIssues">24</div>
             </div>
+            <div class="metric-sub" style="z-index: 10; color: var(--s-tertiary);">
+              <span class="material-symbols-outlined" style="font-size:16px;">bug_report</span> Across components
+            </div>
+            <span class="material-symbols-outlined metric-icon">analytics</span>
           </div>
 
-          <!-- Critical -->
-          <div class="st-stat" style="--st-accent:var(--s-critical)">
-            <div class="st-stat-label"><span class="st-stat-dot"></span>Critical</div>
-            <div style="display:flex;align-items:baseline;gap:6px">
-              <span class="st-stat-value" id="statCritical">—</span>
-              <span class="stat-badge-cnt" id="statCriticalBadge" style="display:none">!</span>
+          <!-- Critical Vulnerabilities -->
+          <div class="metric-card">
+            <div style="z-index: 10;">
+              <div class="metric-label">Active Vulnerabilities</div>
+              <div class="metric-value" style="color:#fd6f85" id="statCritical">0</div>
             </div>
+            <div class="metric-sub" style="z-index: 10; color: #ff97a3;">
+              <span class="material-symbols-outlined" style="font-size:16px;">warning</span> <span id="statCriticalBadge" style="display:none">Critical</span>
+            </div>
+            <span class="material-symbols-outlined metric-icon">security</span>
           </div>
 
-          <!-- Technical Debt -->
-          <div class="st-stat" style="--st-accent:var(--s-orange)">
-            <div class="st-stat-label"><span class="st-stat-dot"></span>Tech Debt</div>
-            <div style="display:flex;align-items:baseline;gap:4px">
-              <span class="st-stat-value" id="statDebt">—</span>
-              <span class="st-stat-unit">h</span>
-            </div>
-          </div>
+        </div>
 
-          <!-- Security Rating -->
-          <div class="st-stat" style="--st-accent:var(--s-green)">
-            <div class="st-stat-label"><span class="st-stat-dot"></span>Security Rating</div>
-            <div style="display:flex;align-items:baseline;gap:4px">
-              <span class="st-stat-value" id="statRating">—</span>
-              <span class="st-stat-unit">/10</span>
-            </div>
-          </div>
-
-          <!-- Code Quality Gauge -->
-          <div class="st-gauge">
-            <div class="st-gauge-label">Code Quality</div>
-            <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
-              <canvas id="gaugeQuality" width="90" height="52" style="display:block"></canvas>
-              <div class="st-gauge-footer">
-                <span class="st-gauge-grade" id="qualityGrade">—</span>
-                <span class="st-gauge-score" id="qualityScore">—</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Security Score Gauge -->
-          <div class="st-gauge">
-            <div class="st-gauge-label">Security Score</div>
-            <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
-              <canvas id="gaugeSecurity" width="90" height="52" style="display:block"></canvas>
-              <div class="st-gauge-footer">
-                <span class="st-gauge-grade" id="securityGrade" style="background:var(--s-green)">—</span>
-                <span class="st-gauge-score" id="securityScore">—</span>
-              </div>
-            </div>
-          </div>
-
-        </div><!-- /stat-grid -->
-
-        <!-- ── ROW 1: Donut | Timeline | Right stack ── -->
-        <div class="st-grid-3 st-anim-2">
-
-          <!-- Issues by Severity Donut -->
-          <div class="st-card st-card-p st-flex-col" style="gap:12px">
-            <div class="st-card-title">Issues by Severity</div>
-            <div class="st-donut-wrap">
-              <canvas id="chartDonut"></canvas>
-              <div class="st-donut-center">
-                <div class="st-donut-pct" id="donutPct">—</div>
-                <div class="st-donut-sub">health</div>
-              </div>
-            </div>
-            <ul class="st-legend" id="donutLegend">
-              <li><span class="st-swatch" style="background:var(--s-critical)"></span><span class="st-legend-name">Critical</span><span class="st-legend-pct" id="pctCritical">0%</span><span class="st-legend-cnt" id="cntCritical">0</span></li>
-              <li><span class="st-swatch" style="background:var(--s-high)"></span><span class="st-legend-name">High</span><span class="st-legend-pct" id="pctHigh">0%</span><span class="st-legend-cnt" id="cntHigh">0</span></li>
-              <li><span class="st-swatch" style="background:var(--s-medium)"></span><span class="st-legend-name">Medium</span><span class="st-legend-pct" id="pctMedium">0%</span><span class="st-legend-cnt" id="cntMedium">0</span></li>
-              <li><span class="st-swatch" style="background:var(--s-low)"></span><span class="st-legend-name">Low</span><span class="st-legend-pct" id="pctLow">0%</span><span class="st-legend-cnt" id="cntLow">0</span></li>
-              <li><span class="st-swatch" style="background:var(--s-info)"></span><span class="st-legend-name">Info</span><span class="st-legend-pct" id="pctInfo">0%</span><span class="st-legend-cnt" id="cntInfo">0</span></li>
-            </ul>
-          </div>
-
-          <!-- Issues Over Time -->
-          <div class="st-card st-card-p st-flex-col" style="gap:10px">
-            <div class="st-card-header">
-              <div>
-                <div class="st-card-title">Issues Over Time</div>
-                <div class="st-card-sub">Last 30 days</div>
-              </div>
-              <div style="display:flex;gap:10px;align-items:center;font-size:0.68rem;color:var(--s-text-2);flex-wrap:wrap">
-                <span><span style="display:inline-block;width:16px;height:2px;background:var(--s-high);border-radius:1px;vertical-align:middle;margin-right:3px"></span>New</span>
-                <span><span style="display:inline-block;width:16px;height:2px;background:var(--s-green);border-radius:1px;vertical-align:middle;margin-right:3px"></span>Resolved</span>
-              </div>
-            </div>
-            <div class="st-chart-wrap h-180">
+        <!-- Chart Section -->
+        <div class="chart-section st-anim-3">
+          
+          <!-- Timeline Chart -->
+          <div class="chart-card">
+            <div class="chart-title">Reviewer Velocity & Trends</div>
+            <div style="height: 300px; position:relative;">
               <canvas id="chartTimeline"></canvas>
             </div>
           </div>
 
-          <!-- Right stack -->
-          <div class="st-flex-col st-gap-12">
-            <div class="st-card st-card-p st-flex-col" style="gap:10px">
-              <div class="st-card-title">Issues by Type</div>
-              <ul class="st-barlist" id="issuesByTypeList">
-                <li class="st-baritem">
-                  <span class="st-bar-label"><span class="st-dot" style="background:var(--s-critical)"></span>Bugs</span>
-                  <div class="st-bar-track"><div class="st-bar-fill" style="background:var(--s-critical);width:0%" id="typeBarBugs"></div></div>
-                  <span class="st-bar-val" id="typeValBugs">—</span>
-                </li>
-                <li class="st-baritem">
-                  <span class="st-bar-label"><span class="st-dot" style="background:var(--s-high)"></span>Vulns</span>
-                  <div class="st-bar-track"><div class="st-bar-fill" style="background:var(--s-high);width:0%" id="typeBarVuln"></div></div>
-                  <span class="st-bar-val" id="typeValVuln">—</span>
-                </li>
-                <li class="st-baritem">
-                  <span class="st-bar-label"><span class="st-dot" style="background:var(--s-medium)"></span>Smells</span>
-                  <div class="st-bar-track"><div class="st-bar-fill" style="background:var(--s-medium);width:0%" id="typeBarSmell"></div></div>
-                  <span class="st-bar-val" id="typeValSmell">—</span>
-                </li>
-                <li class="st-baritem">
-                  <span class="st-bar-label"><span class="st-dot" style="background:var(--s-low)"></span>Perf</span>
-                  <div class="st-bar-track"><div class="st-bar-fill" style="background:var(--s-low);width:0%" id="typeBarPerf"></div></div>
-                  <span class="st-bar-val" id="typeValPerf">—</span>
-                </li>
-              </ul>
+          <!-- Donut Chart -->
+          <div class="chart-card">
+            <div class="chart-title">Severity Breakdown</div>
+            <div style="height: 200px; position:relative; margin-bottom: 24px;">
+              <canvas id="chartDonut"></canvas>
             </div>
-            <div class="st-card st-card-p st-flex-col" style="gap:8px">
-              <div class="st-card-title">Top Risky Files</div>
-              <ul class="st-barlist" id="miniRiskyFiles" style="font-size:0.68rem">
-                <li style="color:var(--s-text-3);font-size:0.7rem;padding:4px 0">Loading...</li>
-              </ul>
-            </div>
+            <!-- Custom Legend -->
+            <ul style="list-style:none; display:flex; flex-direction:column; gap:12px;">
+              <li style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="display:flex; align-items:center; gap:8px; font-size:0.85rem;"><span style="width:10px;height:10px;border-radius:50%;background:#ef4444;"></span>Critical</span>
+                <span style="font-weight:700;" id="cntCritical">0</span>
+              </li>
+              <li style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="display:flex; align-items:center; gap:8px; font-size:0.85rem;"><span style="width:10px;height:10px;border-radius:50%;background:#f97316;"></span>High</span>
+                <span style="font-weight:700;" id="cntHigh">0</span>
+              </li>
+              <li style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="display:flex; align-items:center; gap:8px; font-size:0.85rem;"><span style="width:10px;height:10px;border-radius:50%;background:#eab308;"></span>Medium</span>
+                <span style="font-weight:700;" id="cntMedium">0</span>
+              </li>
+              <li style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="display:flex; align-items:center; gap:8px; font-size:0.85rem;"><span style="width:10px;height:10px;border-radius:50%;background:#22c55e;"></span>Low</span>
+                <span style="font-weight:700;" id="cntLow">0</span>
+              </li>
+            </ul>
           </div>
 
-        </div><!-- /row-3col -->
+        </div>
 
-        <!-- ── ROW 2 ── -->
-        <div class="st-grid-3eq st-anim-3">
-
-          <!-- Created vs Resolved -->
-          <div class="st-card st-card-p st-flex-col" style="gap:10px">
-            <div class="st-card-header">
-              <div>
-                <div class="st-card-title">Created vs Resolved</div>
-                <div class="st-card-sub">Last 72 days</div>
-              </div>
-              <div style="display:flex;gap:8px;align-items:center;font-size:0.68rem;color:var(--s-text-2)">
-                <span><span style="display:inline-block;width:10px;height:10px;background:var(--s-high);border-radius:2px;vertical-align:middle;margin-right:3px"></span>Created</span>
-                <span><span style="display:inline-block;width:10px;height:10px;background:var(--s-green);border-radius:2px;vertical-align:middle;margin-right:3px"></span>Resolved</span>
-              </div>
-            </div>
-            <div class="st-chart-wrap h-160">
-              <canvas id="chartCreatedResolved"></canvas>
-            </div>
-          </div>
-
-          <!-- Top Risky Files table -->
-          <div class="st-card st-card-p st-flex-col" style="gap:10px">
-            <div class="st-card-header">
-              <div>
-                <div class="st-card-title">Top Risky Files</div>
-                <div class="st-card-sub">Last 730 issues</div>
-              </div>
-            </div>
-            <table class="st-table" id="riskyFilesTable">
+        <!-- Issue List / Detailed Analysis -->
+        <div class="chart-card st-anim-3">
+          <div class="chart-title">Hotspots & Bottlenecks</div>
+          <p style="color:var(--s-on-surface-variant); margin-bottom: 24px;">Recent high-priority findings requiring immediate review.</p>
+          <div style="background:var(--s-surface-container-lowest); border-radius:var(--s-radius); overflow-x:auto;">
+            <table class="st-table" style="width:100%;">
               <thead>
                 <tr>
-                  <th>File</th>
-                  <th>Risk</th>
-                  <th class="td-right">Score</th>
+                  <th>Severity</th>
+                  <th>Component</th>
+                  <th>Issue Description</th>
+                  <th>Status</th>
                 </tr>
               </thead>
-              <tbody id="riskyFilesTbody">
-                <tr><td colspan="3" class="loading">Loading...</td></tr>
+              <tbody id="issueList">
+                <tr><td colspan="4" style="text-align:center; padding: 24px; color:var(--s-on-surface-variant);">Waiting for analysis data...</td></tr>
               </tbody>
             </table>
           </div>
+        </div>
 
-          <!-- Vulnerabilities by Type -->
-          <div class="st-card st-card-p st-flex-col" style="gap:10px">
-            <div class="st-card-title">Vulnerabilities by Type</div>
-            <table class="st-table" id="vulnTypeTable">
-              <thead>
-                <tr>
-                  <th>Type</th>
-                  <th>Dist</th>
-                  <th class="td-right">Count</th>
-                </tr>
-              </thead>
-              <tbody id="vulnTypeTbody">
-                <tr><td colspan="3" class="loading">Loading...</td></tr>
-              </tbody>
-            </table>
-          </div>
-
-        </div><!-- /row-3eq -->
-
-        <!-- ── ROW 3: Code Hotspots ── -->
-        <div class="st-card st-card-p st-flex-col st-anim-4" style="gap:10px">
-          <div class="st-card-header">
-            <div>
-              <div class="st-card-title">Code Hotspots</div>
-              <div class="st-card-sub">File-level complexity &amp; churn analysis</div>
+        <!-- Bug Bounty Integration -->
+        <div class="chart-section st-anim-3" style="margin-top:32px;" id="bounty-sec">
+          <div class="bounty-card">
+            <h4 class="chart-title" style="color:var(--s-primary);">Active Bug Bounty</h4>
+            <p style="color:var(--s-on-surface-variant); margin-bottom: 24px;">Identify and patch vulnerabilities to earn reputation points.</p>
+            <div style="display:flex; gap:24px;">
+              <div>
+                <div class="metric-label">Accumulated Score</div>
+                <div class="metric-value" id="bountyScore">0</div>
+              </div>
+              <div>
+                <div class="metric-label">Bugs Patched</div>
+                <div class="metric-value" id="bountyBugs">0</div>
+              </div>
+              <div style="display:flex; align-items:flex-end; flex:1; justify-content:flex-end;">
+                <button id="btnCollect" class="st-btn-secondary" style="font-size:0.85rem;" disabled>Collect Reward</button>
+              </div>
             </div>
-            <div style="font-size:0.65rem;color:var(--s-text-3)">📋 <span id="hotspotsSubtitle">Lines Analyzed</span></div>
-          </div>
-          <div class="st-chart-wrap h-160">
-            <canvas id="chartHotspots"></canvas>
+            <div style="margin-top: 16px; font-family:var(--s-font-mono); font-size:0.8rem; color:var(--s-on-surface-variant);" id="bountyAlerts">
+              > AI scanning for patchable vulnerabilities...
+            </div>
           </div>
         </div>
 
-        <!-- ── BUG BOUNTY PANEL ── -->
-        <div class="st-card st-card-p st-flex-col st-anim-5" id="bounty-tab" style="margin-top:2rem;gap:14px;border-color:rgba(239,68,68,0.3)">
-          <div class="st-card-header" style="border-bottom:1px solid var(--s-border);padding-bottom:14px;margin-bottom:0">
-            <div>
-              <div class="st-card-title" style="color:var(--s-red);font-size:0.95rem">🏴‍☠️ Bug Bounty Scanner</div>
-              <div class="st-card-sub">Vulnerabilities detected by Mistral &amp; Anthropic analysis</div>
-            </div>
-            <button onclick="runBountyScan()" class="st-btn st-btn-danger" style="padding:6px 14px;font-size:0.78rem">⚡ Run Fresh Scan</button>
-          </div>
-
-          <table class="st-table" id="bountyTable">
-            <thead>
-              <tr>
-                <th>Severity</th>
-                <th>Vulnerability</th>
-                <th>CVSS Score</th>
-                <th>Location</th>
-                <th>Remediation</th>
-              </tr>
-            </thead>
-            <tbody id="bountyTbody">
-              <tr>
-                <td colspan="5" style="text-align:center;padding:2.5rem;color:var(--s-text-3)">
-                  <div style="font-size:2rem;margin-bottom:1rem">🤖</div>
-                  <div>Click <strong style="color:var(--s-text)">Run Fresh Scan</strong> to detect high-value vulnerabilities.</div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-      </div><!-- /st-content -->
-    </main>
-
-  </div><!-- /st-body -->
-</div><!-- /st-shell -->
-
-<!-- Modal -->
-<div id="findingModal" class="st-modal">
-  <div class="st-modal-box">
-    <span onclick="closeModal()" style="float:right;cursor:pointer;font-size:1.3rem;color:var(--s-text-2)">&times;</span>
-    <div id="modalBody"></div>
-  </div>
-</div>
-
-<div id="feedbackToast" class="st-toast">Done!</div>
-
-<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', function () { loadDashboard(); });
 
-  function toggleSidebar() {
-    const sb  = document.getElementById('dashSidebar');
-    const btn = document.getElementById('hamBtn');
-    sb.classList.toggle('open');
-    btn.classList.toggle('open');
+  // ── DASHBOARD LOGIC (Preserved IDs & ChartJS) ──
+  let _chartDonut, _chartTimeline;
+
+  async function fetchDashboard() {
+    const uid = document.body.dataset.uid;
+    // We fetch from the persistent security APIs rather than the ephemeral analysis_status map
+    try {
+      const q = uid ? `?uid=${uid}` : '';
+      const [rSum, rFind] = await Promise.all([
+        fetch(`/api/security/summary${q}`),
+        fetch(`/api/security/findings${q ? q + '&limit=10' : '?limit=10'}`)
+      ]);
+      
+      if (!rSum.ok) return;
+      const summary = await rSum.json();
+      
+      let vulns = [];
+      if (rFind.ok) {
+        const fdata = await rFind.json();
+        vulns = fdata.findings || fdata || [];
+      }
+      
+      updateDashboard({ summary, findings: vulns });
+    } catch(e) { console.error('Dashboard Error:', e); }
   }
-  function toggleTheme() { document.body.classList.toggle('light-theme'); }
+
+
+
+  function updateDashboard(data) {
+    const s = data.summary || {};
+    const vulns = data.findings || [];
+    
+    const total = s.total_findings || s.total_issues || 0;
+    const crit = s.critical_count || 0;
+    const high = s.high_count || 0;
+
+    document.getElementById('statTotalIssues').textContent = total;
+    document.getElementById('statCritical').textContent = crit;
+    
+    const badge = document.getElementById('statCriticalBadge');
+    if (crit > 0) { badge.style.display = 'inline'; badge.textContent = 'Action Required'; }
+    else { badge.style.display = 'none'; }
+
+    // Quality Grade mock based on issues
+    let grade = 'A', score = 100;
+    if (total > 50) { grade = 'C'; score = 65; }
+    else if (total > 20) { grade = 'B'; score = 82; }
+    else if (total > 5) { grade = 'A-'; score = 91; }
+    document.getElementById('qualityGrade').textContent = grade;
+    document.getElementById('qualityScore').textContent = score;
+
+    renderDonut(s);
+    renderTimeline(s);
+    renderTable(vulns);
+  }
+
+  function renderTable(vulns) {
+    const tbody = document.getElementById('issueList');
+    if(!vulns || !vulns.length) {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding: 24px; color:var(--s-on-surface-variant);">No vulnerabilities detected</td></tr>`;
+      return;
+    }
+    const html = vulns.slice(0, 10).map(v => {
+      let color = '#22c55e';
+      const sev = (v.severity || 'low').toLowerCase();
+      if(sev==='critical') color = '#ef4444';
+      if(sev==='high') color = '#f97316';
+      if(sev==='medium') color = '#eab308';
+      
+      return `<tr>
+        <td><span class="st-chip" style="background:${color}20; color:${color}; font-size:0.7rem;">${sev.toUpperCase()}</span></td>
+        <td style="font-family:var(--s-font-mono); font-size:0.8rem;">${(v.file || 'Unknown').split('/').pop()}</td>
+        <td>${v.title || v.category || 'Vulnerability'}</td>
+        <td>Active</td>
+      </tr>`;
+    }).join('');
+    tbody.innerHTML = html;
+  }
+
+  function renderDonut(s) {
+    const dist = s.severity_distribution || {};
+    const dCrit = dist.CRITICAL || s.critical_count || 0;
+    const dHigh = dist.HIGH || s.high_count || 0;
+    const dMed = dist.MEDIUM || 0;
+    const dLow = dist.LOW || 0;
+    const dInfo = dist.INFO || 0;
+
+    document.getElementById('cntCritical').textContent = dCrit;
+    document.getElementById('cntHigh').textContent = dHigh;
+    document.getElementById('cntMedium').textContent = dMed;
+    document.getElementById('cntLow').textContent = dLow;
+
+    const ctx = document.getElementById('chartDonut');
+    if(!ctx) return;
+    if(_chartDonut) _chartDonut.destroy();
+    
+    Chart.defaults.color = "#a3aac4";
+    Chart.defaults.font.family = "'Inter', sans-serif";
+
+    _chartDonut = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Critical','High','Medium','Low','Info'],
+        datasets: [{
+          data: [dCrit, dHigh, dMed, dLow, dInfo],
+          backgroundColor: ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6'],
+          borderWidth: 0,
+          hoverOffset: 4
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        cutout: '75%',
+        plugins: { legend: { display: false }, tooltip: {
+          backgroundColor: '#192540', titleColor: '#dee5ff', bodyColor: '#dee5ff',
+          borderColor: '#40485d', borderWidth: 1
+        }}
+      }
+    });
+  }
+
+  function renderTimeline(s) {
+    const ctx = document.getElementById('chartTimeline');
+    if(!ctx) return;
+    if(_chartTimeline) _chartTimeline.destroy();
+
+    const mockData = [5, 12, 8, 15, 2, 7, (s.total_findings || s.total_issues || 10)];
+    _chartTimeline = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        datasets: [{
+          label: 'Issues Detected',
+          data: mockData,
+          backgroundColor: '#a3a6ff',
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        scales: {
+          y: { grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true },
+          x: { grid: { display: false } }
+        },
+        plugins: { legend: { display: false } }
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    fetchDashboard();
+    setInterval(fetchDashboard, 30000); // 30s poll
+  });
 </script>
-</body>
-</html>
+{% endblock %}

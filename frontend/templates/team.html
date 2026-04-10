@@ -1,39 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Team Management — AI Code Review</title>
-  <meta name="description" content="Manage your engineering team members, view commit history and PR security ratings">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/stitch.css') }}">
+{% extends "base.html" %}
+
+{% block title %}Team Management — AI Code Review{% endblock %}
+
+{% block extra_head %}
   <style>
     /* ── Page shell ─────────────────────────────────────────────────────── */
     .team-page { padding: 28px 32px; max-width: 1200px; margin: 0 auto; }
     .page-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
-    .page-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 800; background: linear-gradient(135deg,#9d93ff,#38bdf8); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .page-title { font-family: var(--s-font-heading); font-size: 1.6rem; font-weight: 800; color: var(--s-primary); }
     .page-sub { color: #64748b; font-size: 0.82rem; margin-top: 2px; }
 
     .hdr-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
-    .btn { display: inline-flex; align-items: center; gap: 6px; border: none; border-radius: 99px; cursor: pointer; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.2s ease; text-decoration: none; }
-    .btn-primary { background: linear-gradient(135deg,#7C6FF7,#5b50e0); color: #fff; padding: 10px 20px; font-size: 0.83rem; box-shadow: 0 4px 16px rgba(124,111,247,0.35); }
-    .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.1); }
-    .btn-ghost { background: rgba(255,255,255,0.05); color: #94a3b8; border: 1px solid rgba(255,255,255,0.1); padding: 9px 18px; font-size: 0.82rem; }
-    .btn-ghost:hover { background: rgba(255,255,255,0.09); color: #e2e8f4; }
-    .btn-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09); color: #64748b; cursor: pointer; transition: all 0.2s; }
-    .btn-icon:hover { background: rgba(255,255,255,0.1); color: #e2e8f4; }
-
     /* Stats bar */
     .stats-bar { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 24px; }
     .stat-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 16px; text-align: center; }
-    .stat-val { font-size: 1.8rem; font-weight: 800; font-family: 'Space Grotesk', sans-serif; line-height: 1; }
+    .stat-val { font-size: 1.8rem; font-weight: 800; font-family: var(--s-font-heading); line-height: 1; }
     .stat-lbl { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; margin-top: 3px; }
 
     /* Toolbar */
     .toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
     .search-wrap { flex: 1; min-width: 200px; position: relative; }
-    .search-wrap input { width: 100%; padding: 9px 14px 9px 38px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; color: #e2e8f4; font-size: 0.83rem; font-family: 'Plus Jakarta Sans', sans-serif; outline: none; transition: border-color 0.2s; }
+    .search-wrap input { width: 100%; padding: 9px 14px 9px 38px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09); border-radius: 10px; color: #e2e8f4; font-size: 0.83rem; font-family: var(--s-font-body); outline: none; transition: border-color 0.2s; }
     .search-wrap input:focus { border-color: rgba(124,111,247,0.5); }
     .search-wrap::before { content: '🔍'; position: absolute; left: 11px; top: 50%; transform: translateY(-50%); font-size: 0.85rem; pointer-events: none; }
 
@@ -59,23 +47,23 @@
     /* Avatar + name row */
     .member-top { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
     .member-avatar { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(124,111,247,0.3); flex-shrink: 0; }
-    .member-avatar-fallback { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg,#7C6FF7,#5b50e0); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 800; color: #fff; flex-shrink: 0; font-family: 'Space Grotesk', sans-serif; }
+    .member-avatar-fallback { width: 52px; height: 52px; border-radius: 50%; background: var(--s-primary); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 800; color: #fff; flex-shrink: 0; font-family: var(--s-font-heading); }
     .member-name-wrap { flex: 1; min-width: 0; }
-    .member-name { font-size: 0.95rem; font-weight: 700; color: #e2e8f4; font-family: 'Space Grotesk', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .member-gh { font-size: 0.7rem; color: #64748b; font-family: 'JetBrains Mono', monospace; }
+    .member-name { font-size: 0.95rem; font-weight: 700; color: #e2e8f4; font-family: var(--s-font-heading); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .member-gh { font-size: 0.7rem; color: #64748b; font-family: var(--s-font-mono); }
     .member-role-badge { padding: 2px 9px; background: rgba(124,111,247,0.13); color: #9d93ff; border: 1px solid rgba(124,111,247,0.25); border-radius: 99px; font-size: 0.65rem; font-weight: 700; white-space: nowrap; }
 
     /* Stats row */
     .member-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
     .mini-stat { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 8px 10px; text-align: center; }
-    .mini-stat .val { font-size: 1.1rem; font-weight: 800; font-family: 'Space Grotesk', sans-serif; line-height: 1; }
+    .mini-stat .val { font-size: 1.1rem; font-weight: 800; font-family: var(--s-font-heading); line-height: 1; }
     .mini-stat .lbl { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.4px; color: #64748b; margin-top: 2px; }
 
     /* Security rating ring */
     .sec-rating { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
     .sec-ring-wrap { position: relative; width: 42px; height: 42px; flex-shrink: 0; }
     .sec-ring-wrap svg { transform: rotate(-90deg); }
-    .sec-ring-wrap .ring-center { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; font-family: 'Space Grotesk', sans-serif; }
+    .sec-ring-wrap .ring-center { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; font-family: var(--s-font-heading); }
     .sec-info .lbl { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.4px; color: #64748b; }
     .sec-info .val { font-size: 0.82rem; font-weight: 700; }
 
@@ -83,7 +71,7 @@
     .commit-preview { border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; }
     .commit-item { display: flex; align-items: flex-start; gap: 7px; margin-bottom: 5px; }
     .commit-dot { width: 6px; height: 6px; border-radius: 50%; background: #7C6FF7; margin-top: 4px; flex-shrink: 0; }
-    .commit-msg { font-size: 0.7rem; color: #64748b; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'JetBrains Mono', monospace; }
+    .commit-msg { font-size: 0.7rem; color: #64748b; line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--s-font-mono); }
 
     /* PR list */
     .pr-item { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
@@ -96,7 +84,6 @@
     /* Card footer */
     .member-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
     .last-commit { font-size: 0.65rem; color: #475569; }
-    .card-actions { display: flex; gap: 6px; }
 
     /* Modal */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
@@ -104,12 +91,11 @@
     @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
     .modal { background: #0d1117; border: 1px solid rgba(255,255,255,0.09); border-radius: 20px; padding: 28px; width: 100%; max-width: 480px; box-shadow: 0 24px 80px rgba(0,0,0,0.8); animation: slide-in 0.3s cubic-bezier(0.34,1.56,0.64,1) both; }
     @keyframes slide-in { from { transform: scale(0.94) translateY(10px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
-    .modal h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 800; color: #e2e8f4; margin-bottom: 20px; }
+    .modal h3 { font-family: var(--s-font-heading); font-size: 1.1rem; font-weight: 800; color: #e2e8f4; margin-bottom: 20px; }
     .form-group { margin-bottom: 14px; }
     .form-group label { display: block; font-size: 0.75rem; font-weight: 600; color: #94a3b8; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.4px; }
-    .form-group input, .form-group select { width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #e2e8f4; font-size: 0.84rem; font-family: 'Plus Jakarta Sans', sans-serif; outline: none; transition: border-color 0.2s; }
+    .form-group input, .form-group select { width: 100%; padding: 10px 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #e2e8f4; font-size: 0.84rem; font-family: var(--s-font-body); outline: none; transition: border-color 0.2s; }
     .form-group input:focus, .form-group select:focus { border-color: rgba(124,111,247,0.5); }
-    .form-group select option { background: #0d1117; }
     .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
     .modal-close { position: absolute; top: 16px; right: 16px; background: transparent; border: none; color: #64748b; font-size: 1.3rem; cursor: pointer; }
 
@@ -120,7 +106,7 @@
     /* Empty state */
     .empty-state { text-align: center; padding: 64px 20px; }
     .empty-icon { font-size: 3rem; margin-bottom: 16px; }
-    .empty-title { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 700; color: #e2e8f4; margin-bottom: 8px; }
+    .empty-title { font-family: var(--s-font-heading); font-size: 1.1rem; font-weight: 700; color: #e2e8f4; margin-bottom: 8px; }
     .empty-sub { color: #64748b; font-size: 0.83rem; max-width: 360px; margin: 0 auto 20px; }
 
     /* Loader */
@@ -133,12 +119,10 @@
       .members-grid { grid-template-columns: 1fr; }
     }
   </style>
-</head>
-<body>
-  {% include 'partials/sidebar.html' ignore missing %}
+{% endblock %}
 
-  <div class="main-content" id="mainContent">
-    <div class="team-page">
+{% block content %}
+  <div class="team-page">
 
       <!-- Header -->
       <div class="page-header">
@@ -147,9 +131,9 @@
           <div class="page-sub">Members auto-extracted from git commits · GitHub PR security ratings</div>
         </div>
         <div class="hdr-actions">
-          <button class="btn btn-ghost" id="btnRefresh" title="Refresh members">🔄 Refresh</button>
-          <button class="btn btn-ghost" id="btnExtract" onclick="openExtractModal()">⚡ Extract from Commits</button>
-          <button class="btn btn-primary" onclick="openAddModal()">➕ Add Member</button>
+          <button class="st-btn st-btn-tonal" id="btnRefresh" title="Refresh members"><span class="material-symbols-outlined">refresh</span> Refresh</button>
+          <button class="st-btn st-btn-tonal" id="btnExtract" onclick="openExtractModal()"><span class="material-symbols-outlined">bolt</span> Extract from Commits</button>
+          <button class="st-btn st-btn-primary" onclick="openAddModal()"><span class="material-symbols-outlined">add</span> Add Member</button>
         </div>
       </div>
 
@@ -166,14 +150,14 @@
         <div class="search-wrap">
           <input type="text" id="searchInput" placeholder="Search by name or username…" oninput="filterMembers()">
         </div>
-        <select id="roleFilter" onchange="filterMembers()" style="padding:9px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:10px;color:#e2e8f4;font-size:0.82rem;font-family:'Plus Jakarta Sans',sans-serif;outline:none">
+        <select id="roleFilter" onchange="filterMembers()" style="padding:9px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:10px;color:#e2e8f4;font-size:0.82rem;font-family:var(--s-font-body);outline:none">
           <option value="">All Roles</option>
           <option value="Developer">Developer</option>
           <option value="Lead">Lead</option>
           <option value="Security">Security</option>
           <option value="DevOps">DevOps</option>
         </select>
-        <select id="sortBy" onchange="filterMembers()" style="padding:9px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:10px;color:#e2e8f4;font-size:0.82rem;font-family:'Plus Jakarta Sans',sans-serif;outline:none">
+        <select id="sortBy" onchange="filterMembers()" style="padding:9px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:10px;color:#e2e8f4;font-size:0.82rem;font-family:var(--s-font-body);outline:none">
           <option value="commits">Sort: Commits</option>
           <option value="rating">Sort: PR Rating</option>
           <option value="name">Sort: Name</option>
@@ -187,7 +171,7 @@
           <div class="empty-icon">👤</div>
           <div class="empty-title">No team members yet</div>
           <div class="empty-sub">Extract team members from your codebase's git commit history, or add them manually.</div>
-          <button class="btn btn-primary" onclick="openExtractModal()">⚡ Extract from Commits</button>
+          <button class="st-btn st-btn-primary" onclick="openExtractModal()"><span class="material-symbols-outlined">bolt</span> Extract from Commits</button>
         </div>
       </div>
     </div>
@@ -204,8 +188,8 @@
         <input type="text" id="extractUid" placeholder="e.g. a7f3d2b1…" value="">
       </div>
       <div class="modal-footer">
-        <button class="btn btn-ghost" onclick="closeModal('extractModal')">Cancel</button>
-        <button class="btn btn-primary" onclick="doExtract()" id="btnDoExtract">⚡ Extract Members</button>
+        <button class="st-btn st-btn-tonal" onclick="closeModal('extractModal')">Cancel</button>
+        <button class="st-btn st-btn-primary" onclick="doExtract()" id="btnDoExtract"><span class="material-symbols-outlined">bolt</span> Extract Members</button>
       </div>
     </div>
   </div>
@@ -234,8 +218,8 @@
         </select>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-ghost" onclick="closeModal('addModal')">Cancel</button>
-        <button class="btn btn-primary" onclick="doAddMember()">Add Member</button>
+        <button class="st-btn st-btn-tonal" onclick="closeModal('addModal')">Cancel</button>
+        <button class="st-btn st-btn-primary" onclick="doAddMember()"><span class="material-symbols-outlined">add</span> Add Member</button>
       </div>
     </div>
   </div>
@@ -363,8 +347,12 @@
           <div class="member-footer">
             <div class="last-commit">${lastCommit ? '🕐 ' + lastCommit : ''}</div>
             <div class="card-actions">
-              <button class="btn-icon" title="Edit role" onclick="editMember(${m.id}, '${(m.display_name||'').replace(/'/g,"\\'")}', '${m.role||'Developer'}'); event.stopPropagation()">✏️</button>
-              <button class="btn-icon" style="color:#ef4444" title="Remove" onclick="deleteMember(${m.id},'${(m.display_name||m.github_username||'?').replace(/'/g,"\\'")}'); event.stopPropagation()">🗑</button>
+              <button class="st-btn-icon" title="Edit role" onclick="editMember(${m.id}, '${(m.display_name||'').replace(/'/g,"\\'")}', '${m.role||'Developer'}'); event.stopPropagation()">
+                <span class="material-symbols-outlined">edit</span>
+              </button>
+              <button class="st-btn-icon" style="color:#ef4444" title="Remove" onclick="deleteMember(${m.id},'${(m.display_name||m.github_username||'?').replace(/'/g,"\\'")}'); event.stopPropagation()">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
             </div>
           </div>
         </div>`;
@@ -484,11 +472,10 @@
 
     document.getElementById('btnRefresh').addEventListener('click', () => {
       document.getElementById('btnRefresh').innerHTML = '<span class="loading-spinner"></span>';
-      loadMembers().finally(() => document.getElementById('btnRefresh').innerHTML = '🔄 Refresh');
+      loadMembers().finally(() => document.getElementById('btnRefresh').innerHTML = '<span class="material-symbols-outlined">refresh</span> Refresh');
     });
 
     // Init
     loadMembers();
   </script>
-</body>
-</html>
+{% endblock %}
