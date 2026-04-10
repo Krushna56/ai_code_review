@@ -1,0 +1,54 @@
+<header class="global-nav-wrap">
+  <div class="global-nav-inner">
+    <a href="/" class="st-brand">
+      <div class="st-brand-icon">🛡️</div>
+      <span class="st-brand-name">AI Code Review</span>
+    </a>
+
+    <nav class="st-nav-chips global-nav-links">
+      <a href="/" class="st-chip">🏠 Home</a>
+      <a href="/dashboard" class="st-chip">📊 Dashboard</a>
+      <a href="/chat" class="st-chip">💬 Chat</a>
+      <a href="/team" class="st-chip">👥 Team</a>
+    </nav>
+
+    <div class="global-nav-actions">
+      <button
+        class="st-ham modern-ham"
+        id="globalMenuBtn"
+        onclick="toggleGlobalMenu()"
+        aria-label="Toggle main menu"
+        aria-controls="globalMenuDrawer"
+        aria-expanded="false"
+      >
+        <span class="st-ham-bar"></span>
+        <span class="st-ham-bar"></span>
+        <span class="st-ham-bar"></span>
+      </button>
+      {% if current_user.is_authenticated %}
+      <a href="{{ url_for('auth.logout') }}" class="st-chip">🚪 Logout</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="global-menu-drawer" id="globalMenuDrawer">
+    <a href="/" class="st-rail-item"><span class="st-rail-icon">🏠</span>Home</a>
+    <a href="/dashboard" class="st-rail-item"><span class="st-rail-icon">📊</span>Dashboard</a>
+    <a href="/chat" class="st-rail-item"><span class="st-rail-icon">💬</span>Chat</a>
+    <a href="/code-viewer" class="st-rail-item"><span class="st-rail-icon">🖊️</span>Code Viewer</a>
+    <a href="/team" class="st-rail-item"><span class="st-rail-icon">👥</span>Team</a>
+    {% if current_user.is_authenticated %}
+    <a href="{{ url_for('auth.logout') }}" class="st-rail-item" style="color:#fca5a5"><span class="st-rail-icon">🚪</span>Logout</a>
+    {% endif %}
+  </div>
+</header>
+
+<script>
+  function toggleGlobalMenu() {
+    const drawer = document.getElementById('globalMenuDrawer');
+    const btn = document.getElementById('globalMenuBtn');
+    if (!drawer || !btn) return;
+    const isOpen = drawer.classList.toggle('open');
+    btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  }
+</script>

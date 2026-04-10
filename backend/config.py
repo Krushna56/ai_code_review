@@ -174,7 +174,9 @@ LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
 LOG_FILE = BASE_DIR / 'app.log'
 
 # Upload Configuration
-MAX_CONTENT_LENGTH = int(os.getenv('MAX_CONTENT_LENGTH', 20 * 1024 * 1024 * 1024)) # 20GB default
+MAX_CONTENT_LENGTH = int(os.getenv('MAX_CONTENT_LENGTH', 512 * 1024 * 1024))  # 512MB default
+# Keep multipart form-memory lower than max upload size to reduce memory pressure
+MAX_FORM_MEMORY_SIZE = int(os.getenv('MAX_FORM_MEMORY_SIZE', 32 * 1024 * 1024))  # 32MB default
 
 # Temporary File Cleanup Configuration
 # Files older than this will be deleted on app startup (in hours)

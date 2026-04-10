@@ -758,6 +758,52 @@ body {
 }
 
 /* ─────────────────────────────────────
+   GLOBAL NAV
+───────────────────────────────────── */
+.global-nav-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 800;
+  width: 100%;
+  align-self: stretch;
+  background: rgba(7, 9, 15, 0.84);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--s-border);
+}
+.global-nav-inner {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+}
+.global-nav-links {
+  margin-left: 8px;
+}
+.global-nav-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.modern-ham {
+  border: 1px solid var(--s-border);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+}
+.global-menu-drawer {
+  display: none;
+  padding: 8px 10px 12px;
+  border-top: 1px solid var(--s-border);
+  background: rgba(10, 12, 18, 0.98);
+}
+.global-menu-drawer.open { display: grid; gap: 4px; }
+
+@media (max-width: 900px) {
+  .global-nav-links { display: none; }
+}
+
+/* ─────────────────────────────────────
    STATUS PILL (online indicator)
 ───────────────────────────────────── */
 .st-status-dot {

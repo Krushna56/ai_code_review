@@ -15,6 +15,7 @@ Chart.defaults.font.size = 11;
 // ─── MAIN LOAD ────────────────────────────────────────────────────────────
 async function loadDashboard() {
   try {
+    clearDashboardBanner();
     const uid =
       new URLSearchParams(window.location.search).get("uid") ||
       document.body.getAttribute("data-uid") ||
@@ -26,6 +27,7 @@ async function loadDashboard() {
     ]);
   } catch (err) {
     console.error("Dashboard load error:", err);
+    showDashboardBanner("Unable to load dashboard data. Please refresh.", "error");
   }
 }
 
@@ -82,6 +84,7 @@ async function loadMetrics(uid) {
     setText("securityScore", sScore);
   } catch (e) {
     console.error("Metrics error:", e);
+    showDashboardBanner("Some metrics could not be loaded.", "warning");
   }
 }
 
@@ -130,6 +133,7 @@ async function loadCharts(uid) {
     _applyTimelineBadge(trendData);
   } catch (e) {
     console.error("Charts error:", e);
+    showDashboardBanner("Charts are temporarily unavailable.", "warning");
   }
 }
 
@@ -141,7 +145,7 @@ function _applyTimelineBadge(trendData) {
     : '<span style="color:#6b7280;font-size:0.6rem;margin-left:6px">● estimated</span>';
 
   // Attach to any subtitle that mentions days
-  document.querySelectorAll(".card-subtitle").forEach((el) => {
+  document.querySelectorAll(".st-card-sub").forEach((el) => {
     if (
       (el.textContent.includes("30 days") ||
         el.textContent.includes("72 days")) &&
@@ -150,6 +154,37 @@ function _applyTimelineBadge(trendData) {
       el.innerHTML += badge;
     }
   });
+}
+
+function showDashboardBanner(message, level = "warning") {
+  const existing = document.getElementById("feedbackToast");
+  if (!existing) return;
+  const isError = level === "error";
+  existing.className = "st-toast show";
+  existing.textContent = message;
+  if (isError) {
+    existing.style.background = "rgba(239, 68, 68, 0.14)";
+    existing.style.border = "1px solid rgba(239, 68, 68, 0.35)";
+    existing.style.color = "#fecaca";
+  } else {
+    existing.style.background = "";
+    existing.style.border = "";
+    existing.style.color = "";
+  }
+
+  window.clearTimeout(existing._dismissTimer);
+  existing._dismissTimer = window.setTimeout(() => {
+    existing.classList.remove("show");
+  }, 3200);
+}
+
+function clearDashboardBanner() {
+  const existing = document.getElementById("feedbackToast");
+  if (!existing) return;
+  existing.classList.remove("show");
+  existing.style.background = "";
+  existing.style.border = "";
+  existing.style.color = "";
 }
 
 // ─── DONUT CHART ──────────────────────────────────────────────────────────
@@ -928,17 +963,26 @@ function closeMenu() {
 }
 
 function toggleTheme() {
-  const isM = document.body.classList.toggle("monochrome");
+  const isM = document.body.classList.toggle("light-theme");
   const btn = document.getElementById("themeToggle");
-  if (btn) btn.innerHTML = isM ? "🌗 Color" : "🌗 Contrast";
-  localStorage.setItem("theme", isM ? "monochrome" : "default");
+  if (btn) btn.setAttribute("aria-pressed", isM ? "true" : "false");
+  localStorage.setItem("theme", isM ? "light" : "default");
+}
+
+function toggleSidebar() {
+  const sb = document.getElementById("dashSidebar");
+  const btn = document.getElementById("hamBtn");
+  if (!sb || !btn) return;
+  const isOpen = sb.classList.toggle("open");
+  btn.classList.toggle("open", isOpen);
+  btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  if (localStorage.getItem("theme") === "monochrome") {
-    document.body.classList.add("monochrome");
+  if (localStorage.getItem("theme") === "light") {
+    document.body.classList.add("light-theme");
     const btn = document.getElementById("themeToggle");
-    if (btn) btn.innerHTML = "🌗 Color";
+    if (btn) btn.setAttribute("aria-pressed", "true");
   }
 });
 

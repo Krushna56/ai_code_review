@@ -12,7 +12,7 @@
     .editor-shell {
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      height: calc(100vh - 56px);
       overflow: hidden;
       background: var(--s-bg);
     }
@@ -180,6 +180,7 @@
 </head>
 
 <body>
+  {% include '_global_nav.html' %}
 <div class="editor-shell">
 
   <!-- ── Nav rail ── -->
