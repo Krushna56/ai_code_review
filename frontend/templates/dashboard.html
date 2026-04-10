@@ -79,13 +79,174 @@
       margin-bottom: 24px;
     }
     
-    /* Bug Bounty Panel */
-    .bounty-card {
-      background: var(--s-surface-container-highest);
+    /* ── Bug Bounty Section ── */
+    .bounty-shell {
+      background: var(--s-surface-container-low);
       border-radius: var(--s-radius-lg);
-      padding: 24px;
-      border-left: 4px solid var(--s-primary);
+      padding: 32px;
+      border: 1px solid rgba(163,166,255,0.08);
+      position: relative;
+      overflow: hidden;
     }
+    .bounty-shell::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--s-primary), var(--s-secondary), var(--s-tertiary));
+      border-radius: 3px 3px 0 0;
+    }
+    .bounty-header {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 24px; margin-bottom: 28px;
+    }
+    .bounty-title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+    .bounty-badge {
+      background: rgba(239,68,68,0.12); color: #f87171;
+      font-size: 0.65rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.8px; padding: 3px 10px; border-radius: 99px;
+      border: 1px solid rgba(239,68,68,0.2); animation: pulseBadge 2s ease-in-out infinite;
+    }
+    @keyframes pulseBadge { 0%,100%{opacity:1;} 50%{opacity:0.6;} }
+    .bounty-sub { color: var(--s-on-surface-variant); font-size: 0.9rem; }
+
+    /* Score Panel */
+    .bounty-score-panel {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;
+      background: var(--s-surface-container-highest);
+      border-radius: var(--s-radius); padding: 20px; margin-bottom: 24px;
+    }
+    .bsp-item { text-align: center; }
+    .bsp-val {
+      font-size: 2rem; font-weight: 800;
+      font-family: var(--s-font-heading); color: var(--s-primary);
+      line-height: 1; animation: countUp 0.6s ease;
+    }
+    .bsp-label { font-size: 0.72rem; color: var(--s-on-surface-variant); margin-top: 4px;
+      text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
+    @keyframes countUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+    /* Rank bar */
+    .rank-row { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+    .rank-icon {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--s-primary), var(--s-secondary));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+      box-shadow: 0 0 20px rgba(163,166,255,0.3);
+    }
+    .rank-info { flex:1; min-width:0; }
+    .rank-name { font-family:var(--s-font-heading); font-weight:800; font-size:1rem; color:var(--s-on-surface); }
+    .rank-next { font-size:0.75rem; color:var(--s-on-surface-variant); margin-top:2px; }
+    .rank-bar-track {
+      height:6px; background:rgba(255,255,255,0.06);
+      border-radius:99px; overflow:hidden; margin-top:8px;
+    }
+    .rank-bar-fill {
+      height:100%; border-radius:99px;
+      background: linear-gradient(90deg, var(--s-primary), var(--s-secondary));
+      transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: 0 0 8px rgba(163,166,255,0.4);
+    }
+
+    /* Challenges */
+    .bounty-sections { display: grid; grid-template-columns: 1fr 320px; gap: 24px; }
+    @media(max-width:900px){ .bounty-sections { grid-template-columns:1fr; } }
+
+    .challenges-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .challenges-title {
+      font-family:var(--s-font-heading); font-weight:700;
+      font-size:1rem; color:var(--s-on-surface);
+    }
+    .challenge-filter {
+      display: flex; gap: 6px;
+    }
+    .cf-btn {
+      padding: 4px 12px; border-radius: 99px; font-size: 0.75rem;
+      font-weight: 700; border: 1px solid transparent; cursor: pointer;
+      transition: all 0.2s; background: var(--s-surface-container-highest);
+      color: var(--s-on-surface-variant);
+    }
+    .cf-btn.active { border-color: var(--s-primary); color: var(--s-primary); background: rgba(163,166,255,0.1); }
+
+    .challenge-list { display: flex; flex-direction: column; gap: 10px; }
+    .challenge-item {
+      background: var(--s-surface-container-highest);
+      border-radius: var(--s-radius); padding: 16px 20px;
+      display: flex; align-items: center; gap: 16px;
+      border: 1px solid rgba(255,255,255,0.04);
+      transition: all 0.2s ease; position: relative; overflow: hidden;
+    }
+    .challenge-item:hover { border-color: rgba(163,166,255,0.15); transform: translateX(2px); }
+    .challenge-item.patched { opacity: 0.5; }
+    .challenge-item.patched .patch-btn { display: none; }
+    .sev-dot {
+      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+    }
+    .challenge-info { flex: 1; min-width: 0; }
+    .challenge-title {
+      font-weight: 700; font-size: 0.88rem; color: var(--s-on-surface);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .challenge-meta {
+      font-size: 0.72rem; color: var(--s-on-surface-variant);
+      margin-top: 2px; display: flex; gap: 10px;
+    }
+    .challenge-pts {
+      font-family: var(--s-font-mono); font-size: 0.8rem;
+      font-weight: 800; color: var(--s-primary); flex-shrink: 0;
+    }
+    .patch-btn {
+      background: rgba(163,166,255,0.1); border: 1px solid rgba(163,166,255,0.2);
+      color: var(--s-primary); padding: 5px 14px; border-radius: var(--s-radius-sm);
+      font-weight: 700; font-size: 0.78rem; cursor: pointer;
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .patch-btn:hover { background: var(--s-primary); color: #000; }
+    .patched-check {
+      display: none; color: #22c55e;
+      font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+    }
+    .challenge-item.patched .patched-check { display: block; }
+
+    /* Leaderboard */
+    .leaderboard-card {
+      background: var(--s-surface-container-highest);
+      border-radius: var(--s-radius); padding: 20px;
+      height: fit-content;
+    }
+    .lb-title {
+      font-family: var(--s-font-heading); font-weight: 800;
+      font-size: 0.9rem; margin-bottom: 16px; color: var(--s-on-surface);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .lb-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .lb-row:last-child { border-bottom: none; }
+    .lb-pos { font-size: 0.75rem; font-weight: 800; color: var(--s-on-surface-variant); width: 22px; }
+    .lb-pos.top { color: #f59e0b; }
+    .lb-name { flex: 1; font-size: 0.82rem; font-weight: 700; color: var(--s-on-surface); }
+    .lb-score { font-family: var(--s-font-mono); font-size: 0.82rem; color: var(--s-primary); font-weight: 800; }
+
+    /* Reward animation */
+    @keyframes rewardPop {
+      0%   { transform: scale(0.5); opacity: 0; }
+      60%  { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1);   opacity: 1; }
+    }
+    .reward-toast {
+      position: fixed; bottom: 32px; right: 32px; z-index: 9999;
+      background: linear-gradient(135deg, var(--s-primary), var(--s-secondary));
+      color: #000; font-weight: 800; font-size: 1rem;
+      padding: 14px 24px; border-radius: var(--s-radius);
+      box-shadow: 0 8px 32px rgba(163,166,255,0.4);
+      animation: rewardPop 0.4s ease forwards;
+      display: none;
+    }
+    .reward-toast.show { display: block; }
     
     /* Layout utilities */
     .hero-section {
@@ -228,28 +389,88 @@
           </div>
         </div>
 
-        <!-- Bug Bounty Integration -->
-        <div class="chart-section st-anim-3" style="margin-top:32px;" id="bounty-sec">
-          <div class="bounty-card">
-            <h4 class="chart-title" style="color:var(--s-primary);">Active Bug Bounty</h4>
-            <p style="color:var(--s-on-surface-variant); margin-bottom: 24px;">Identify and patch vulnerabilities to earn reputation points.</p>
-            <div style="display:flex; gap:24px;">
-              <div>
-                <div class="metric-label">Accumulated Score</div>
-                <div class="metric-value" id="bountyScore">0</div>
+        <!-- ════ BUG BOUNTY SECTION ════ -->
+        <div class="bounty-shell st-anim-3" id="bounty-sec">
+
+          <!-- Header -->
+          <div class="bounty-header">
+            <div>
+              <div class="bounty-title-row">
+                <h3 style="font-family:var(--s-font-heading); font-size:1.6rem; font-weight:800; color:var(--s-on-surface);">
+                  🎯 Bug Bounty
+                </h3>
+                <span class="bounty-badge">Live</span>
               </div>
-              <div>
-                <div class="metric-label">Bugs Patched</div>
-                <div class="metric-value" id="bountyBugs">0</div>
-              </div>
-              <div style="display:flex; align-items:flex-end; flex:1; justify-content:flex-end;">
-                <button id="btnCollect" class="st-btn-secondary" style="font-size:0.85rem;" disabled>Collect Reward</button>
-              </div>
+              <p class="bounty-sub">Identify and patch vulnerabilities to earn reputation points and climb the leaderboard.</p>
             </div>
-            <div style="margin-top: 16px; font-family:var(--s-font-mono); font-size:0.8rem; color:var(--s-on-surface-variant);" id="bountyAlerts">
-              > AI scanning for patchable vulnerabilities...
+            <button id="btnRunScan" class="st-btn-primary" onclick="runBountyScan()">
+              <span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle; margin-right:4px;">radar</span>
+              Run Scan
+            </button>
+          </div>
+
+          <!-- Score Panel -->
+          <div class="bounty-score-panel">
+            <div class="bsp-item">
+              <div class="bsp-val" id="bspScore">0</div>
+              <div class="bsp-label">Total Points</div>
+            </div>
+            <div class="bsp-item">
+              <div class="bsp-val" id="bspPatched">0</div>
+              <div class="bsp-label">Bugs Patched</div>
+            </div>
+            <div class="bsp-item">
+              <div class="bsp-val" id="bspChallenges">0</div>
+              <div class="bsp-label">Active Challenges</div>
             </div>
           </div>
+
+          <!-- Rank Progress -->
+          <div class="rank-row" id="rankRow">
+            <div class="rank-icon" id="rankIcon">🔒</div>
+            <div class="rank-info">
+              <div class="rank-name" id="rankName">Script Kiddie</div>
+              <div class="rank-next" id="rankNext">Earn 100 pts to reach <b>Hacker</b></div>
+              <div class="rank-bar-track">
+                <div class="rank-bar-fill" id="rankBar" style="width:0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Challenges + Leaderboard -->
+          <div class="bounty-sections">
+
+            <!-- Left: Challenge list -->
+            <div>
+              <div class="challenges-header">
+                <div class="challenges-title">Active Challenges</div>
+                <div class="challenge-filter">
+                  <button class="cf-btn active" data-sev="ALL" onclick="filterChallenges(this)">All</button>
+                  <button class="cf-btn" data-sev="CRITICAL" onclick="filterChallenges(this)" style="color:#ef4444;">Critical</button>
+                  <button class="cf-btn" data-sev="HIGH" onclick="filterChallenges(this)" style="color:#f97316;">High</button>
+                  <button class="cf-btn" data-sev="MEDIUM" onclick="filterChallenges(this)" style="color:#eab308;">Medium</button>
+                </div>
+              </div>
+              <div class="challenge-list" id="challengeList">
+                <div style="text-align:center; padding:32px; color:var(--s-on-surface-variant);">
+                  <span class="material-symbols-outlined" style="font-size:48px; opacity:0.3; display:block; margin-bottom:12px;">radar</span>
+                  Click <b>Run Scan</b> to discover patchable vulnerabilities
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Leaderboard -->
+            <div class="leaderboard-card">
+              <div class="lb-title">
+                <span class="material-symbols-outlined" style="font-size:18px; color:#f59e0b;">emoji_events</span>
+                Leaderboard
+              </div>
+              <div id="leaderboardList">
+                <div style="color:var(--s-on-surface-variant); font-size:0.82rem;">Loading...</div>
+              </div>
+            </div>
+          </div>
+
         </div>
 
 <script>
@@ -406,6 +627,243 @@
   document.addEventListener('DOMContentLoaded', () => {
     fetchDashboard();
     setInterval(fetchDashboard, 30000); // 30s poll
+    loadLeaderboard();
+    loadBountyStats();
   });
+
+  // ═══════════════════════════════════════════════
+  //  BUG BOUNTY ENGINE
+  // ═══════════════════════════════════════════════
+  const SEV_COLORS = {
+    CRITICAL: '#ef4444', HIGH: '#f97316', MEDIUM: '#eab308', LOW: '#22c55e', INFO: '#60a5fa'
+  };
+  const SEV_ICONS = {
+    CRITICAL: '💀', HIGH: '🔴', MEDIUM: '🟡', LOW: '🟢', INFO: '🔵'
+  };
+  const RANK_ICONS = {
+    'Script Kiddie': '🔒', 'Hacker': '💻', 'Security Analyst': '🔍',
+    'Pen Tester': '🛡️', 'Ethical Hacker': '⚔️', 'Bug Hunter Elite': '🏆', 'Zero-Day Legend': '🚀'
+  };
+  const SEV_PTS = { CRITICAL: 500, HIGH: 200, MEDIUM: 80, LOW: 20, INFO: 5 };
+
+  let _bountyFindings = [];
+  let _patchedIds = new Set();
+  let _currentFilter = 'ALL';
+  const uid = document.body.dataset.uid || '';
+
+  async function runBountyScan() {
+    const btn = document.getElementById('btnRunScan');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;animation:spin 1s linear infinite;margin-right:4px;">sync</span>Scanning...';
+
+    try {
+      const res  = await fetch('/api/bounty/scan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uid })
+      });
+      const data = await res.json();
+
+      if (data.error) {
+        alert('Scan error: ' + data.error);
+        return;
+      }
+
+      _bountyFindings = data.findings || [];
+      document.getElementById('bspChallenges').textContent = _bountyFindings.length;
+      renderChallenges();
+      await loadBountyStats();
+
+    } catch (e) {
+      alert('Scan failed: ' + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;margin-right:4px;">radar</span>Run Scan';
+    }
+  }
+
+  function filterChallenges(btn) {
+    document.querySelectorAll('.cf-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    _currentFilter = btn.dataset.sev;
+    renderChallenges();
+  }
+
+  function renderChallenges() {
+    const list = document.getElementById('challengeList');
+    let findings = _bountyFindings;
+
+    if (_currentFilter !== 'ALL') {
+      findings = findings.filter(f => (f.severity || '').toUpperCase() === _currentFilter);
+    }
+
+    if (!findings.length) {
+      list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--s-on-surface-variant);">
+        No ${_currentFilter === 'ALL' ? '' : _currentFilter + ' '}findings to display.
+      </div>`;
+      return;
+    }
+
+    list.innerHTML = findings.slice(0, 30).map((f, i) => {
+      const sev   = (f.severity || 'INFO').toUpperCase();
+      const color = SEV_COLORS[sev] || '#60a5fa';
+      const pts   = SEV_PTS[sev] || 5;
+      const fid   = f.id || f.finding_id || `f-${i}`;
+      const file  = (f.file || f.filename || 'Unknown').split('/').pop();
+      const title = f.title || f.category || 'Vulnerability';
+      const owasp = f.owasp_category || '';
+      const isPatched = _patchedIds.has(fid);
+
+      return `<div class="challenge-item ${isPatched ? 'patched' : ''}" id="ci-${fid}">
+        <div class="sev-dot" style="background:${color};box-shadow:0 0 6px ${color}44;"></div>
+        <div class="challenge-info">
+          <div class="challenge-title">${title}</div>
+          <div class="challenge-meta">
+            <span style="color:${color}; font-weight:700;">${sev}</span>
+            <span>${file}</span>
+            ${owasp ? `<span style="opacity:0.6;">${owasp}</span>` : ''}
+          </div>
+        </div>
+        <div class="challenge-pts">+${pts} pts</div>
+        <button class="patch-btn" onclick="patchFinding('${fid}','${sev}',${JSON.stringify(title)})">
+          Patch
+        </button>
+        <div class="patched-check">✓ Patched</div>
+      </div>`;
+    }).join('');
+  }
+
+  async function patchFinding(findingId, severity, title) {
+    const btn = document.querySelector(`#ci-${findingId} .patch-btn`);
+    if (btn) { btn.disabled = true; btn.textContent = 'Patching...'; }
+
+    try {
+      const res  = await fetch('/api/bounty/patch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ uid, finding_id: findingId, severity, title })
+      });
+      const data = await res.json();
+
+      if (data.error && !data.already_patched) {
+        alert('Error: ' + data.error); return;
+      }
+
+      _patchedIds.add(findingId);
+      const item = document.getElementById(`ci-${findingId}`);
+      if (item) item.classList.add('patched');
+
+      // Update score panel
+      if (data.score !== undefined) {
+        animateNum('bspScore',   data.score);
+        animateNum('bspPatched', data.patched);
+        updateRank(data.score, data.rank, data.next_rank);
+        showRewardToast(data.points, severity);
+      }
+
+      // Refresh leaderboard
+      loadLeaderboard();
+
+    } catch (e) {
+      alert('Patch failed: ' + e.message);
+      if (btn) { btn.disabled = false; btn.textContent = 'Patch'; }
+    }
+  }
+
+  async function loadBountyStats() {
+    if (!uid) return;
+    try {
+      const res  = await fetch(`/api/bounty/stats/${uid}`);
+      const data = await res.json();
+      if (data.error) return;
+
+      _patchedIds = new Set(data.patched_ids || []);
+      animateNum('bspScore',   data.score   || 0);
+      animateNum('bspPatched', data.patched || 0);
+      updateRank(data.score || 0, data.rank, data.next_rank);
+
+      // Re-render challenges to reflect patched state
+      if (_bountyFindings.length) renderChallenges();
+
+    } catch (e) {}
+  }
+
+  async function loadLeaderboard() {
+    try {
+      const res  = await fetch('/api/bounty/leaderboard');
+      const data = await res.json();
+      const board = data.leaderboard || [];
+      const el    = document.getElementById('leaderboardList');
+
+      if (!board.length) {
+        el.innerHTML = '<div style="color:var(--s-on-surface-variant);font-size:0.82rem;text-align:center;padding:16px;">No entries yet. Be the first!</div>';
+        return;
+      }
+
+      const medals = ['🥇','🥈','🥉'];
+      el.innerHTML = board.map((entry, i) => `
+        <div class="lb-row">
+          <div class="lb-pos ${i < 3 ? 'top' : ''}">${medals[i] || (i + 1)}</div>
+          <div class="lb-name">${entry.user}</div>
+          <div class="lb-score">${entry.score.toLocaleString()} pts</div>
+        </div>
+      `).join('');
+    } catch (e) {}
+  }
+
+  function updateRank(score, rankName, nextRank) {
+    const el = document.getElementById('rankName');
+    if (el) el.textContent = rankName || 'Script Kiddie';
+
+    const icon = document.getElementById('rankIcon');
+    if (icon) icon.textContent = RANK_ICONS[rankName] || '🔒';
+
+    const nextEl = document.getElementById('rankNext');
+    if (nextEl && nextRank) {
+      const needed = nextRank.threshold - score;
+      nextEl.innerHTML = `Earn <b>${needed.toLocaleString()} pts</b> to reach <b>${nextRank.name}</b>`;
+    }
+
+    const bar  = document.getElementById('rankBar');
+    if (bar && nextRank) {
+      const prevThreshold = score - (nextRank.threshold - score > 0 ? 0 : 0);
+      const pct = Math.min(100, Math.round((score / nextRank.threshold) * 100));
+      bar.style.width = pct + '%';
+    }
+  }
+
+  function animateNum(id, target) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const start = parseInt(el.textContent) || 0;
+    const dur   = 600;
+    const t0    = performance.now();
+    function step(now) {
+      const p   = Math.min(1, (now - t0) / dur);
+      const val = Math.round(start + (target - start) * p);
+      el.textContent = val.toLocaleString();
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function showRewardToast(points, severity) {
+    let toast = document.getElementById('rewardToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'rewardToast';
+      toast.className = 'reward-toast';
+      document.body.appendChild(toast);
+    }
+    const sev = (severity || 'LOW').toUpperCase();
+    toast.innerHTML = `${SEV_ICONS[sev] || '✅'} +${points} pts — ${sev} bug patched!`;
+    toast.classList.add('show');
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => toast.classList.remove('show'), 3000);
+  }
+
 </script>
+<!-- Reward toast (global) -->
+<div id="rewardToast" class="reward-toast"></div>
+
 {% endblock %}
