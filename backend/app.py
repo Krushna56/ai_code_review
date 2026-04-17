@@ -1,4 +1,4 @@
-﻿from flask import Flask, render_template, request, redirect, send_from_directory, jsonify, send_file, url_for, session, g
+from flask import Flask, render_template, request, redirect, send_from_directory, jsonify, send_file, url_for, session, g
 import os
 import shutil
 import zipfile
@@ -545,6 +545,16 @@ def run_analysis_background(input_path, output_path, uid):
         # Count files analyzed
         file_count = sum(1 for _ in Path(input_path).rglob('*') if _.is_file())
         _record_analysis(uid, input_path, file_count=file_count)
+
+        analysis_status[uid]['status'] = 'complete'
+        analysis_status[uid]['progress'] = 100
+        logger.info(f"[4-Agent] Pipeline complete for {uid}")
+
+    except Exception as e:
+        logger.error(f"[4-Agent] Pipeline error for {uid}: {e}", exc_info=True)
+        analysis_status[uid]['status'] = 'error'
+        analysis_status[uid]['error'] = str(e)
+
 
 @app.errorhandler(413)
 def request_entity_too_large(error):
