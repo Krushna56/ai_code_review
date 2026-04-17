@@ -218,7 +218,7 @@ class MistralClient(LLMClient):
 
 
 class GeminiClient(LLMClient):
-    """Google Gemini LLM client"""
+    """Google Gemini LLM client (uses google-genai >= 0.3.0 SDK)"""
 
     def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
         if not api_key:
@@ -230,8 +230,8 @@ class GeminiClient(LLMClient):
 
         try:
             import google.genai as genai
-            genai.configure(api_key=api_key)
-            self.client = genai.GenerativeModel(model_name=model)
+            # New SDK: genai.Client(api_key=...) — no genai.configure()
+            self.client = genai.Client(api_key=api_key)
             logger.info(f"Initialized Gemini client with model: {model}")
         except Exception as e:
             logger.error(f"Failed to initialize Gemini client: {e}")
@@ -241,16 +241,18 @@ class GeminiClient(LLMClient):
                  temperature: float = 0.7, max_tokens: int = 2000) -> Optional[str]:
         """Generate completion using Gemini API"""
         try:
+            from google.genai import types
             full_prompt = prompt
             if system_prompt:
                 full_prompt = f"{system_prompt}\n\n{prompt}"
 
-            response = self.client.generate_content(
-                full_prompt,
-                generation_config={
-                    'temperature': temperature,
-                    'max_output_tokens': max_tokens
-                }
+            response = self.client.models.generate_content(
+                model=self.model,
+                contents=full_prompt,
+                config=types.GenerateContentConfig(
+                    temperature=temperature,
+                    max_output_tokens=max_tokens,
+                ),
             )
             return response.text
         except Exception as e:
@@ -261,20 +263,19 @@ class GeminiClient(LLMClient):
                temperature: float = 0.7, max_tokens: int = 2000):
         """Stream completion using Gemini API"""
         try:
+            from google.genai import types
             full_prompt = prompt
             if system_prompt:
                 full_prompt = f"{system_prompt}\n\n{prompt}"
 
-            response = self.client.generate_content(
-                full_prompt,
-                generation_config={
-                    'temperature': temperature,
-                    'max_output_tokens': max_tokens
-                },
-                stream=True
-            )
-
-            for chunk in response:
+            for chunk in self.client.models.generate_content_stream(
+                model=self.model,
+                contents=full_prompt,
+                config=types.GenerateContentConfig(
+                    temperature=temperature,
+                    max_output_tokens=max_tokens,
+                ),
+            ):
                 if chunk.text:
                     yield chunk.text
         except Exception as e:

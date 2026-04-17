@@ -128,16 +128,11 @@ class MetricsExtractor:
         """Initialize the Gemini generative model."""
         try:
             import google.genai as genai
-            genai.configure(api_key=config.GOOGLE_API_KEY)
-            self._model = genai.GenerativeModel(
-                model_name=getattr(config, 'GEMINI_MODEL', 'gemini-1.5-flash'),
-                generation_config={
-                    'temperature': 0.1,     # Low temperature for deterministic output
-                    'max_output_tokens': 4096,
-                }
-            )
+            # New SDK: genai.Client(api_key=...) — no genai.configure()
+            self._client = genai.Client(api_key=config.GOOGLE_API_KEY)
+            self._model_name = getattr(config, 'GEMINI_MODEL', 'gemini-1.5-flash')
             self._available = True
-            logger.info("MetricsExtractor: Gemini model initialized")
+            logger.info("MetricsExtractor: Gemini client initialized")
         except Exception as e:
             logger.warning(f"MetricsExtractor: Could not initialize Gemini - {e}")
             self._available = False
@@ -236,7 +231,15 @@ class MetricsExtractor:
             file_data=file_str,
         )
 
-        resp = self._model.generate_content(prompt)
+        from google.genai import types as genai_types
+        resp = self._client.models.generate_content(
+            model=self._model_name,
+            contents=prompt,
+            config=genai_types.GenerateContentConfig(
+                temperature=0.1,
+                max_output_tokens=4096,
+            ),
+        )
         raw = resp.text.strip()
 
         # Strip markdown code fences if present

@@ -45,7 +45,8 @@ reportlab==4.0.7
 # Web
 Jinja2==3.1.2
 
-# Vector DB (lightweight HTTP client — no local heavy index)
+# Vector DB
+faiss-cpu>=1.7.4
 qdrant-client==1.7.0
 
 # Security Analysis
