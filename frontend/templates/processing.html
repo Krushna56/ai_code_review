@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 
 {% block title %}Analyzing Code — AI Code Review{% endblock %}
 
@@ -67,6 +67,7 @@
       gap: 12px;
       animation: card-in 0.5s 0.1s cubic-bezier(0.34,1.56,0.64,1) both;
     }
+    .subtitle { color: #64748b; font-size: 0.84rem; margin-bottom: 22px; line-height: 1.6; }
 
     .agent-card {
       background: var(--s-surface-container-low);
@@ -121,23 +122,54 @@
     @media (max-width: 600px) {
       .agents-grid { grid-template-columns: 1fr; }
     }
+    .agent-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--ac, #7C6FF7); opacity: 0.6; transition: opacity 0.3s; }
+    .agent-card.running { border-color: rgba(124,111,247,0.3); box-shadow: 0 0 20px rgba(124,111,247,0.08); }
+    .agent-card.running::before { opacity: 1; animation: pulse-line 1.5s ease infinite; }
+    .agent-card.done { border-color: rgba(52,211,153,0.3); }
+    .agent-card.done::before { background: #34d399; opacity: 1; }
+    .agent-card.error { border-color: rgba(239,68,68,0.3); }
+    .agent-card.error::before { background: #ef4444; opacity: 1; }
+
+    @keyframes pulse-line { 0%,100% { opacity: 0.6; } 50% { opacity: 1; } }
+
+    .agent-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .agent-icon { font-size: 1.4rem; line-height: 1; }
+    .agent-info { flex: 1; min-width: 0; }
+    .agent-name { font-size: 0.82rem; font-weight: 700; color: #e2e8f4; font-family: 'Space Grotesk', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .agent-provider { font-size: 0.65rem; color: #475569; font-family: 'JetBrains Mono', monospace; }
+
+    .agent-status-badge {
+      font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+      padding: 2px 7px; border-radius: 99px;
+      background: rgba(255,255,255,0.06); color: #64748b;
+      border: 1px solid rgba(255,255,255,0.08);
+      white-space: nowrap; flex-shrink: 0;
+      transition: all 0.3s;
+    }
+    .agent-status-badge.running { background: rgba(124,111,247,0.15); color: #9d93ff; border-color: rgba(124,111,247,0.3); }
+    .agent-status-badge.done { background: rgba(52,211,153,0.12); color: #34d399; border-color: rgba(52,211,153,0.25); }
+    .agent-status-badge.error { background: rgba(239,68,68,0.12); color: #f87171; border-color: rgba(239,68,68,0.25); }
+
+    .agent-progress-track { height: 4px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; margin-bottom: 6px; }
+    .agent-progress-fill { height: 100%; width: 0%; border-radius: 99px; background: var(--ac, #7C6FF7); transition: width 0.6s ease; }
+    .agent-card.done .agent-progress-fill { background: #34d399; }
+    .agent-card.error .agent-progress-fill { background: #ef4444; }
+
+    .agent-msg { font-size: 0.68rem; color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'JetBrains Mono', monospace; min-height: 1.1em; }
+
+    /* Findings counters */
+    .finding-pills { display: flex; gap: 5px; margin-top: 8px; flex-wrap: wrap; }
+    .finding-pill { font-size: 0.6rem; font-weight: 700; padding: 1px 6px; border-radius: 99px; background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+    .finding-pill.quality { background: rgba(249,115,22,0.1); color: #fb923c; border-color: rgba(249,115,22,0.2); }
+    .finding-pill.dep { background: rgba(234,179,8,0.1); color: #fbbf24; border-color: rgba(234,179,8,0.2); }
+    .finding-pill.orch { background: rgba(124,111,247,0.1); color: #9d93ff; border-color: rgba(124,111,247,0.2); }
+
+    /* Watermark */
+    .wm { position: fixed; bottom: 16px; font-size: 0.65rem; color: #1e293b; z-index: 1; }
   </style>
 {% endblock %}
 
 {% block content %}
-  <div class="bg-orb bg-orb-1"></div>
-  <div class="bg-orb bg-orb-2"></div>
-
-  <div class="wrap">
-    <!-- Top card with progress -->
-    <div class="top-card">
-      <div class="agents-ring">
-        <div class="ring-orbit"></div>
-        <div class="ring-orbit"></div>
-        <div class="ring-orbit"></div>
-        <div class="ring-core">🛡️</div>
-      </div>
-
       <h2>Multi-Agent Analysis<span id="dotAnim"></span></h2>
       <p class="subtitle" id="subtitleText">4 specialized AI agents are collaborating on your codebase</p>
 
@@ -226,36 +258,6 @@
 
   <div class="wm">AI Code Review · 4-Agent Pipeline</div>
 {% endblock %}
-
-{% block extra_scripts %}
-  <script>
-    const uid = '{{ uid }}';
-    const progressBar = document.getElementById('progressBar');
-    const statusText  = document.getElementById('statusText');
-    const errorBox    = document.getElementById('errorBox');
-    const btnHome     = document.getElementById('btnHome');
-
-    // Dot animation
-    let dotState = 0;
-    const dotEl = document.getElementById('dotAnim');
-    setInterval(() => {
-      dotState = (dotState + 1) % 4;
-      dotEl.textContent = ['','.','..','\u2026'][dotState];
-    }, 500);
-
-    const AGENT_KEYS = ['security','quality','dependency','orchestrator'];
-
-    function updateAgentCard(name, info) {
-      const status   = (info.status || 'waiting').toLowerCase();
-      const progress = info.progress || 0;
-      const message  = info.message || '';
-
-      const card  = document.getElementById('card-' + name);
-      const badge = document.getElementById('badge-' + name);
-      const fill  = document.getElementById('fill-' + name);
-      const msg   = document.getElementById('msg-' + name);
-      if (!card) return;
-
       card.className = 'agent-card ' + (status === 'done' ? 'done' : status === 'error' ? 'error' : status === 'running' ? 'running' : '');
       badge.className = 'agent-status-badge ' + (status === 'done' ? 'done' : status === 'error' ? 'error' : status === 'running' ? 'running' : '');
       badge.textContent = status === 'done' ? '✓ done' : status === 'error' ? '✗ error' : status === 'running' ? '⟳ running' : 'waiting';
@@ -298,6 +300,9 @@
             if (agents[name]) updateAgentCard(name, agents[name]);
           });
 
+=======
+          // Update findings counts from bus log
+>>>>>>> 50b420b4620be03ea149dc44fc325e539a565625
           const busData = data.bus || {};
           if (busData.agents) {
             AGENT_KEYS.forEach(name => {
@@ -305,6 +310,7 @@
             });
           }
 
+<<<<<<< HEAD
           if (data.security_findings_count !== undefined) {
             updateFindings('security', new Array(data.security_findings_count).fill({}));
           }
@@ -313,7 +319,10 @@
             progressBar.style.width = '100%';
             progressBar.style.background = 'linear-gradient(90deg,#22c55e,#34d399)';
             progressBar.style.animation = 'none';
+<<<<<<< HEAD
             document.getElementById('dotAnim').style.display = 'none';
+=======
+>>>>>>> 50b420b4620be03ea149dc44fc325e539a565625
             AGENT_KEYS.forEach(name => {
               const card = document.getElementById('card-' + name);
               const badge = document.getElementById('badge-' + name);

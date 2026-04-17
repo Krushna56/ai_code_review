@@ -1,4 +1,4 @@
-"""
+﻿"""
 TeamMember Model
 
 Stores team members extracted from git commit history.
@@ -39,43 +39,6 @@ class TeamMember:
         self.joined_at = joined_at or datetime.utcnow()
         # Ties this member to a specific analysis session
         self.analysis_uid = analysis_uid
-        # JSON blobs stored as strings in DB
-        self._pr_summary_json = pr_summary_json
-        self._commit_history_json = commit_history_json
-
-    @property
-    def pr_summary(self):
-        if self._pr_summary_json:
-            try:
-                return json.loads(self._pr_summary_json)
-            except Exception:
-                pass
-        return []
-
-    @property
-    def commit_history(self):
-        if self._commit_history_json:
-            try:
-                return json.loads(self._commit_history_json)
-            except Exception:
-                pass
-        return []
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'github_username': self.github_username,
-            'display_name': self.display_name,
-            'email': self.email,
-            'avatar_url': self.avatar_url,
-            'role': self.role,
-            'commit_count': self.commit_count,
-            'pr_security_rating': self.pr_security_rating,
-            'last_commit_at': self.last_commit_at.isoformat() if isinstance(self.last_commit_at, datetime) else self.last_commit_at,
-            'joined_at': self.joined_at.isoformat() if isinstance(self.joined_at, datetime) else self.joined_at,
-            'pr_summary': self.pr_summary,
-            'commit_history': self.commit_history,
-            'analysis_uid': self.analysis_uid,
         }
 
     # ── DB helpers ───────────────────────────────────────────────────────────
@@ -129,13 +92,6 @@ class TeamMember:
             pr_summary_json=_get('pr_summary_json'),
             commit_history_json=_get('commit_history_json'),
             analysis_uid=_get('analysis_uid'),
-        )
-
-    # ── Schema ───────────────────────────────────────────────────────────────
-
-    @staticmethod
-    def init_db():
-        """Create team_members table if it doesn't exist, and migrate existing schema."""
         conn = TeamMember._get_conn()
         cur = TeamMember._cursor(conn)
         if _is_postgres():

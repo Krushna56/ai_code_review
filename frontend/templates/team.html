@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 
 {% block title %}Team Management — AI Code Review{% endblock %}
 
@@ -84,6 +84,9 @@
     /* Card footer */
     .member-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
     .last-commit { font-size: 0.65rem; color: #475569; }
+=======
+    .card-actions { display: flex; gap: 6px; }
+>>>>>>> 50b420b4620be03ea149dc44fc325e539a565625
 
     /* Modal */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
@@ -91,6 +94,7 @@
     @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
     .modal { background: #0d1117; border: 1px solid rgba(255,255,255,0.09); border-radius: 20px; padding: 28px; width: 100%; max-width: 480px; box-shadow: 0 24px 80px rgba(0,0,0,0.8); animation: slide-in 0.3s cubic-bezier(0.34,1.56,0.64,1) both; }
     @keyframes slide-in { from { transform: scale(0.94) translateY(10px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+<<<<<<< HEAD
     .modal h3 { font-family: var(--s-font-heading); font-size: 1.1rem; font-weight: 800; color: #e2e8f4; margin-bottom: 20px; }
     .form-group { margin-bottom: 14px; }
     .form-group label { display: block; font-size: 0.75rem; font-weight: 600; color: #94a3b8; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.4px; }
@@ -365,61 +369,6 @@
       document.getElementById('skeletonGrid').style.display = 'none';
     }
 
-    // ── Utility ──────────────────────────────────────────────────────────────
-    function showToast(msg, isError = false) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.style.background = isError ? 'rgba(239,68,68,0.15)' : 'rgba(52,211,153,0.15)';
-      t.style.borderColor = isError ? 'rgba(239,68,68,0.3)' : 'rgba(52,211,153,0.3)';
-      t.style.color = isError ? '#f87171' : '#34d399';
-      t.classList.add('visible');
-      setTimeout(() => t.classList.remove('visible'), 3000);
-    }
-
-    function openExtractModal() { document.getElementById('extractModal').classList.add('open'); }
-    function openAddModal()     { document.getElementById('addModal').classList.add('open'); }
-    function closeModal(id)     { document.getElementById(id).classList.remove('open'); }
-
-    // Close on backdrop click
-    document.querySelectorAll('.modal-overlay').forEach(el =>
-      el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); }));
-
-    // ── Security rating helpers ──────────────────────────────────────────────
-    function ratingColor(r) {
-      if (r === null || r === undefined) return '#64748b';
-      if (r >= 8) return '#34d399';
-      if (r >= 6) return '#eab308';
-      if (r >= 4) return '#f97316';
-      return '#ef4444';
-    }
-
-    function ratingRingHTML(rating) {
-      if (rating === null || rating === undefined) {
-        return `<div class="sec-ring-wrap"><svg width="42" height="42"><circle cx="21" cy="21" r="17" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="4"/></svg><div class="ring-center" style="color:#475569">—</div></div>`;
-      }
-      const pct = (rating / 10) * 100;
-      const circumference = 2 * Math.PI * 17;
-      const dashOffset = circumference - (pct / 100) * circumference;
-      const color = ratingColor(rating);
-      return `<div class="sec-ring-wrap">
-        <svg width="42" height="42">
-          <circle cx="21" cy="21" r="17" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="4"/>
-          <circle cx="21" cy="21" r="17" fill="none" stroke="${color}" stroke-width="4"
-            stroke-dasharray="${circumference.toFixed(2)}"
-            stroke-dashoffset="${dashOffset.toFixed(2)}"
-            stroke-linecap="round"/>
-        </svg>
-        <div class="ring-center" style="color:${color}">${rating.toFixed(1)}</div>
-      </div>`;
-    }
-
-    // ── Render members ───────────────────────────────────────────────────────
-    function renderMembers(members) {
-      const grid = document.getElementById('membersGrid');
-      const empty = document.getElementById('emptyState');
-      const wrap  = document.getElementById('membersWrap');
-      wrap.style.display = 'block';
-
       if (!members.length) {
         grid.innerHTML = '';
         empty.style.display = 'block';
@@ -530,108 +479,12 @@
 
     async function loadMembers() {
       showSkeleton();
-      try {
-        const resp = await fetch('/api/team/members', { credentials: 'same-origin' });
-        if (!resp.ok) throw new Error('Failed to load team');
-        const data = await resp.json();
-
-        hideSkeleton();
-
-        // ── KEY FIX: Show "no analysis" state instead of empty members ──
-        if (data.no_analysis) {
-          document.getElementById('noAnalysisState').style.display = 'block';
-          document.getElementById('membersWrap').style.display = 'none';
-          document.getElementById('toolbarRow').style.display = 'none';
-          // Reset stats to dashes
-          ['statTotal','statCommits','statPRs','statAvgRating'].forEach(id =>
-            document.getElementById(id).textContent = '—');
-          return;
-        }
-
-        // Has an active analysis session — show members (may be empty if not yet extracted)
-        document.getElementById('noAnalysisState').style.display = 'none';
-        document.getElementById('toolbarRow').style.display = 'flex';
-
         allMembers = data.members || [];
         updateStats(allMembers);
         filterMembers();
       } catch (e) {
         hideSkeleton();
         document.getElementById('membersWrap').style.display = 'block';
-        showToast('Error loading team: ' + e.message, true);
-      }
-    }
-
-    // ── Actions ──────────────────────────────────────────────────────────────
-    async function doExtract() {
-      const uid = document.getElementById('extractUid').value.trim();
-      if (!uid) { showToast('Please enter an analysis UID', true); return; }
-      const btn = document.getElementById('btnDoExtract');
-      btn.innerHTML = '<span class="loading-spinner"></span> Extracting…';
-      btn.disabled = true;
-      try {
-        const resp = await fetch('/api/team/extract/' + uid, { method: 'POST', credentials: 'same-origin' });
-        const data = await resp.json();
-        if (!resp.ok) throw new Error(data.error || 'Extraction failed');
-        closeModal('extractModal');
-        showToast(`✅ Extracted ${data.total} team members!`);
-        await loadMembers();
-      } catch (e) {
-        showToast('Error: ' + e.message, true);
-      } finally {
-        btn.innerHTML = '⚡ Extract Members';
-        btn.disabled = false;
-      }
-    }
-
-    async function doAddMember() {
-      const username = document.getElementById('addUsername').value.trim();
-      if (!username) { showToast('GitHub username is required', true); return; }
-      try {
-        const resp = await fetch('/api/team/members', {
-          method: 'POST', credentials: 'same-origin',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            github_username: username,
-            display_name: document.getElementById('addDisplayName').value.trim(),
-            role: document.getElementById('addRole').value,
-          }),
-        });
-        const data = await resp.json();
-        if (!resp.ok) throw new Error(data.error || 'Failed to add');
-        closeModal('addModal');
-        showToast('✅ Member added!');
-        await loadMembers();
-      } catch (e) {
-        showToast('Error: ' + e.message, true);
-      }
-    }
-
-    async function deleteMember(id, name) {
-      if (!confirm(`Remove "${name}" from the team?`)) return;
-      try {
-        const resp = await fetch('/api/team/members/' + id, { method: 'DELETE', credentials: 'same-origin' });
-        if (!resp.ok) throw new Error('Delete failed');
-        showToast('👋 Member removed');
-        await loadMembers();
-      } catch (e) {
-        showToast('Error: ' + e.message, true);
-      }
-    }
-
-    function editMember(id, name, role) {
-      const newRole = prompt(`Editing "${name}"\nEnter new role (Developer, Lead, Security, DevOps, QA):`, role);
-      if (!newRole) return;
-      fetch('/api/team/members/' + id, {
-        method: 'PUT', credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ role: newRole }),
-      }).then(r => r.json()).then(() => { showToast('✅ Updated'); loadMembers(); }).catch(e => showToast('Error: ' + e, true));
-    }
-
-    document.getElementById('btnRefresh').addEventListener('click', () => {
-      document.getElementById('btnRefresh').innerHTML = '<span class="loading-spinner"></span>';
-      loadMembers().finally(() => document.getElementById('btnRefresh').innerHTML = '<span class="material-symbols-outlined">refresh</span> Refresh');
     });
 
     // Init

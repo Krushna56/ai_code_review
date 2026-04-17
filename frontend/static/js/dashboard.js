@@ -15,6 +15,7 @@ Chart.defaults.font.size = 11;
 // ─── MAIN LOAD ────────────────────────────────────────────────────────────
 async function loadDashboard() {
   try {
+    clearDashboardBanner();
     const uid =
       new URLSearchParams(window.location.search).get("uid") ||
       document.body.getAttribute("data-uid") ||
@@ -26,6 +27,7 @@ async function loadDashboard() {
     ]);
   } catch (err) {
     console.error("Dashboard load error:", err);
+    showDashboardBanner("Unable to load dashboard data. Please refresh.", "error");
   }
 }
 
@@ -82,6 +84,7 @@ async function loadMetrics(uid) {
     setText("securityScore", sScore);
   } catch (e) {
     console.error("Metrics error:", e);
+    showDashboardBanner("Some metrics could not be loaded.", "warning");
   }
 }
 
@@ -130,6 +133,7 @@ async function loadCharts(uid) {
     _applyTimelineBadge(trendData);
   } catch (e) {
     console.error("Charts error:", e);
+    showDashboardBanner("Charts are temporarily unavailable.", "warning");
   }
 }
 
@@ -141,7 +145,7 @@ function _applyTimelineBadge(trendData) {
     : '<span style="color:#6b7280;font-size:0.6rem;margin-left:6px">● estimated</span>';
 
   // Attach to any subtitle that mentions days
-  document.querySelectorAll(".card-subtitle").forEach((el) => {
+  document.querySelectorAll(".st-card-sub").forEach((el) => {
     if (
       (el.textContent.includes("30 days") ||
         el.textContent.includes("72 days")) &&
@@ -150,6 +154,35 @@ function _applyTimelineBadge(trendData) {
       el.innerHTML += badge;
     }
   });
+}
+
+function showDashboardBanner(message, level = "warning") {
+  const existing = document.getElementById("dashboardStatusBanner");
+  const isError = level === "error";
+  const className = "st-toast show";
+  if (existing) {
+    existing.className = className;
+    existing.style.background = isError ? "rgba(239, 68, 68, 0.14)" : "";
+    existing.style.borderColor = isError ? "rgba(239, 68, 68, 0.35)" : "";
+    existing.style.color = isError ? "#fecaca" : "";
+    existing.textContent = message;
+    return;
+  }
+  const el = document.createElement("div");
+  el.id = "dashboardStatusBanner";
+  el.className = className;
+  if (isError) {
+    el.style.background = "rgba(239, 68, 68, 0.14)";
+    el.style.borderColor = "rgba(239, 68, 68, 0.35)";
+    el.style.color = "#fecaca";
+  }
+  el.textContent = message;
+  document.body.appendChild(el);
+}
+
+function clearDashboardBanner() {
+  const existing = document.getElementById("dashboardStatusBanner");
+  if (existing) existing.remove();
 }
 
 // ─── DONUT CHART ──────────────────────────────────────────────────────────
@@ -932,6 +965,15 @@ function toggleTheme() {
   const btn = document.getElementById("themeToggle");
   if (btn) btn.innerHTML = isM ? "🌗 Color" : "🌗 Contrast";
   localStorage.setItem("theme", isM ? "monochrome" : "default");
+}
+
+function toggleSidebar() {
+  const sb = document.getElementById("dashSidebar");
+  const btn = document.getElementById("hamBtn");
+  if (!sb || !btn) return;
+  const isOpen = sb.classList.toggle("open");
+  btn.classList.toggle("open", isOpen);
+  btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
 }
 
 document.addEventListener("DOMContentLoaded", () => {

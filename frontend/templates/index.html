@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 
 {% block extra_head %}
   <style>
@@ -393,6 +393,36 @@
 
 {% block extra_scripts %}
 <script>
+=======
+  /* ── Sidebar ── */
+  function toggleSidebar() {
+    const sidebar = document.getElementById('mainSidebar');
+    const toggle = document.getElementById('sidebarToggle');
+    const isOpen = sidebar.classList.toggle('open');
+    toggle.classList.toggle('open', isOpen);
+    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  }
+
+  /* ── Profile dropdown ── */
+  function toggleProfile(e) {
+    e.stopPropagation();
+    const menu = document.getElementById('profileMenu');
+    const btn = document.querySelector('.profile-btn');
+    if (!menu || !btn) return;
+    const isOpen = menu.classList.toggle('open');
+    btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  }
+  document.addEventListener('click', (e) => {
+    const dd = document.querySelector('.profile-dropdown');
+    const menu = document.getElementById('profileMenu');
+    if (menu && dd && !dd.contains(e.target)) {
+      menu.classList.remove('open');
+      const btn = document.querySelector('.profile-btn');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+>>>>>>> 50b420b4620be03ea149dc44fc325e539a565625
   /* ── File inputs ── */
   function selectFiles()  { document.getElementById('codebase').click(); }
   function selectFolder() { document.getElementById('folderInput').click(); }
@@ -585,4 +615,5 @@
     loadAnalysisHistory();
   });
 </script>
+<<<<<<< HEAD
 {% endblock %}

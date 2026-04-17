@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 
 {% block title %}Detailed Report — AI Code Review{% endblock %}
 
@@ -95,12 +95,33 @@
     .pattern-pills { display: flex; flex-wrap: wrap; gap: 8px; }
     .pattern-pill { background: rgba(234,179,8,0.08); color: #fbbf24; border: 1px solid rgba(234,179,8,0.18); padding: 5px 12px; border-radius: 99px; font-size: 0.73rem; }
 
+=======
+    /* Agent log */
+    .agent-log-entry { font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; color: #64748b; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.03); display: flex; gap: 10px; }
+    .log-agent { color: #9d93ff; font-weight: 600; min-width: 80px; }
+    .log-status-done { color: #34d399; }
+    .log-status-error { color: #ef4444; }
+    .log-status-running { color: #fbbf24; }
+
+    /* Overflow scroll */
+    .table-wrap { overflow-x: auto; }
+
+    /* Download / print floating buttons */
+    .fab-group { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+    .fab { border: none; border-radius: 99px; cursor: pointer; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; padding: 11px 20px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s; }
+    .fab-primary { background: linear-gradient(135deg,#7C6FF7,#5b50e0); color: #fff; box-shadow: 0 4px 20px rgba(124,111,247,0.4); }
+    .fab-primary:hover { transform: translateY(-2px); filter: brightness(1.1); }
+    .fab-dark { background: rgba(13,17,23,0.9); color: #94a3b8; border: 1px solid rgba(255,255,255,0.1); }
+    .fab-dark:hover { color: #e2e8f4; }
+
+>>>>>>> 50b420b4620be03ea149dc44fc325e539a565625
     @media (max-width: 640px) {
       .report-page { padding: 16px; }
       .kpi-row { grid-template-columns: repeat(3,1fr); }
       .report-top-row { flex-direction: column; }
     }
   </style>
+<<<<<<< HEAD
 {% endblock %}
 
 {% block content %}
@@ -211,35 +232,6 @@
                   <th>Location</th>
                   <th>Agent</th>
                   <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for f in report.get('merged_findings', [])[:200] %}
-                <tr>
-                  <td>
-                    <span class="sev-badge sev-{{ f.get('severity', 'info') }}">
-                      {% if f.get('severity') == 'critical' %}🔴{% elif f.get('severity') == 'high' %}🟠{% elif f.get('severity') == 'medium' %}🟡{% else %}🟢{% endif %}
-                      {{ f.get('severity', 'info') }}
-                    </span>
-                  </td>
-                  <td>
-                    <div class="find-title">{{ f.get('title', '—') }}</div>
-                    <div class="find-desc">{{ f.get('description', f.get('remediation', ''))[:120] }}{% if f.get('description', '')|length > 120 %}…{% endif %}</div>
-                  </td>
-                  <td>
-                    <div class="file-path">{{ f.get('file', '—') }}{% if f.get('line') %}:{{ f.get('line') }}{% endif %}</div>
-                  </td>
-                  <td>
-                    <span class="agent-pill">{{ ', '.join(f.get('source_agents', [f.get('agent', 'ai')])) }}</span>
-                  </td>
-                  <td>
-                    <button class="st-btn-secondary" style="font-size: 0.65rem; padding: 4px 8px; font-weight:700; display:flex; align-items:center; gap:4px; border:1px solid rgba(163,166,255,0.3); background:rgba(163,166,255,0.05);" onclick="openPRModal('{{ f.get('file', '') | escape }}', '{{ f.title | default('Bug Fix', true) | escape }}', '{{ f.get('remediation', '') | replace('\n', '\\n') | replace('\'', '\\\'') }}')">
-                     <span class="material-symbols-outlined" style="font-size:12px;">pull_request</span> PR Fix
-                    </button>
-                  </td>
-                </tr>
-                {% else %}
-                <tr><td colspan="5" style="text-align:center;color:#475569;padding:32px">No findings recorded.</td></tr>
                 {% endfor %}
               </tbody>
             </table>
