@@ -1,259 +1,633 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign In — AI Code Review</title>
-  <meta name="description" content="Sign in to your AI Code Review account">
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@500;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  
-  <link rel="stylesheet" href="/static/css/stitch.css">
-  
-  <style>
-    body {
-      background: var(--s-bg);
-      color: var(--s-on-surface);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 32px 20px;
-      overflow-y: auto;
-      position: relative;
-      margin: 0;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In — AI Code Review</title>
+    <meta name="description" content="Sign in to your AI Code Review account" />
 
-    /* Ambient orbs */
-    .orb { position: fixed; border-radius: 50%; filter: blur(90px); pointer-events: none; z-index: 0; }
-    .orb-1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(163, 166, 255, 0.1) 0%, transparent 70%); top: -150px; left: -150px; animation: drift 14s ease-in-out infinite alternate; }
-    .orb-2 { width: 350px; height: 350px; background: radial-gradient(circle, rgba(56,189,248,0.06) 0%, transparent 70%); bottom: -100px; right: -100px; animation: drift 10s ease-in-out infinite alternate-reverse; }
-    @keyframes drift { from { transform: translate(0,0); } to { transform: translate(24px,16px); } }
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@500;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
 
-    /* Card */
-    .auth-card {
-      position: relative;
-      z-index: 10;
-      width: 100%;
-      max-width: 420px;
-      background: var(--s-surface-container-low);
-      border: 1px solid var(--s-border);
-      border-radius: var(--s-radius-xl);
-      padding: 44px 40px;
-      backdrop-filter: blur(28px);
-      -webkit-backdrop-filter: blur(28px);
-      box-shadow: 0 28px 72px rgba(0,0,0,0.65), 0 0 100px rgba(163, 166, 255, 0.05);
-      animation: card-in 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
-    }
-    @keyframes card-in { from { opacity:0; transform:translateY(28px) scale(0.97); } to { opacity:1; transform:translateY(0) scale(1); } }
+    <link rel="stylesheet" href="/static/css/stitch.css" />
 
-    /* Logo */
-    .logo { text-align: center; margin-bottom: 34px; }
-    .logo-icon {
-      width: 58px; height: 58px;
-      background: var(--s-gradient-primary);
-      border-radius: var(--s-radius-lg);
-      display: inline-flex; align-items: center; justify-content: center;
-      font-size: 26px; margin-bottom: 16px;
-      box-shadow: 0 8px 28px rgba(163, 166, 255, 0.3), 0 0 0 6px var(--s-surface-container-high);
-    }
-    .logo h1 {
-      color: var(--s-on-surface);
-      font-size: 1.5rem;
-      font-weight: 800;
-      font-family: var(--s-font-heading);
-      letter-spacing: -0.3px;
-      margin-bottom: 6px;
-    }
-    .logo p { color: var(--s-on-surface-variant); font-size: 0.9rem; font-family: var(--s-font-body); }
+    <style>
+      /* Force dark glassmorphism variables for the auth page to prevent light-theme washouts */
+      :root,
+      body {
+        --s-surface: #060913;
+        --s-on-surface: #ffffff;
+        --s-on-surface-variant: #94a3b8;
+        --s-primary: #818cf8;
+        --s-border: rgba(255, 255, 255, 0.1);
+        --s-surface-container-highest: rgba(255, 255, 255, 0.04);
+        --s-error-container: rgba(239, 68, 68, 0.15);
+        --s-on-error-container: #fca5a5;
+      }
 
-    /* Alert */
-    .alert { display: none; padding: 12px 16px; border-radius: var(--s-radius-md); font-size: 0.85rem; margin-bottom: 20px; font-weight: 500; font-family: var(--s-font-body); }
-    .alert-error   { background: var(--s-error-container); color: var(--s-on-error-container); border: 1px solid rgba(239,68,68,0.25); }
-    .alert-success { background: rgba(34,197,94,0.1); color: #86efac;  border: 1px solid rgba(34,197,94,0.25); }
+      body {
+        background: var(--s-surface, #0b0f19);
+        color: var(--s-on-surface);
+        min-height: 100vh;
+        display: flex;
+        padding: 0;
+        margin: 0;
+        font-family: var(--s-font-body);
+        overflow: hidden;
+      }
 
-    /* Fields */
-    .field { margin-bottom: 18px; }
-    .field label { display: block; color: var(--s-on-surface-variant); font-size: 0.82rem; font-weight: 700; font-family: var(--s-font-body); margin-bottom: 8px; letter-spacing: 0.2px; }
-    .input-wrap { position: relative; }
-    .input-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; opacity: 0.5; }
-    .field input {
-      width: 100%;
-      padding: 14px 42px 14px 40px;
-      background: var(--s-surface-container-highest);
-      border: 1px solid var(--s-border);
-      border-radius: var(--s-radius-md);
-      color: var(--s-on-surface);
-      font-size: 0.9rem;
-      font-family: var(--s-font-body);
-      outline: none;
-      transition: all 0.2s ease;
-    }
-    .field input::placeholder { color: var(--s-text-3); }
-    .field input:focus {
-      border-color: var(--s-primary);
-      background: var(--s-surface-container-low);
-      box-shadow: 0 0 0 3px rgba(163, 166, 255, 0.15);
-    }
+      /* Ambient split */
+      .split-layout {
+        display: flex;
+        width: 100vw;
+        height: 100vh;
+      }
 
-    .toggle-pwd {
-      position: absolute; right: 11px; top: 50%; transform: translateY(-50%);
-      background: none; border: none; cursor: pointer;
-      font-size: 16px; opacity: 0.5; transition: opacity 0.2s; padding: 4px; color: var(--s-on-surface);
-    }
-    .toggle-pwd:hover { opacity: 1; }
+      /* ── Left Side (Brand Graphic) ── */
+      .brand-side {
+        flex: 1.2;
+        background:
+          linear-gradient(145deg, rgba(16, 16, 24, 0.95), rgba(7, 7, 12, 0.98)),
+          url("https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80");
+        background-size: cover;
+        background-position: center;
+        background-blend-mode: overlay;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 60px;
+        position: relative;
+      }
 
-    .field-row { display: flex; justify-content: flex-end; margin-top: -6px; margin-bottom: 20px; }
-    .field-row a { color: var(--s-primary); font-size: 0.8rem; text-decoration: none; transition: color 0.2s; font-family: var(--s-font-body); font-weight: 500; }
-    .field-row a:hover { color: #fff; text-decoration: underline; }
+      .brand-side::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to right,
+          rgba(0, 0, 0, 0) 0%,
+          var(--s-surface, #0b0f19) 100%
+        );
+        pointer-events: none;
+      }
 
-    /* Primary CTA */
-    .btn-submit {
-      width: 100%;
-      padding: 14px;
-      background: var(--s-gradient-primary);
-      color: var(--s-on-surface);
-      font-size: 0.95rem;
-      font-weight: 700;
-      font-family: var(--s-font-heading);
-      border: none;
-      border-radius: var(--s-radius-md);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 6px 20px rgba(163, 166, 255, 0.2);
-    }
-    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(163, 166, 255, 0.3); filter: brightness(1.1); }
-    .btn-submit:active { transform: translateY(0); }
-    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+      .brand-content {
+        position: relative;
+        z-index: 10;
+        max-width: 500px;
+      }
 
-    /* Divider */
-    .divider {
-      display: flex; align-items: center; gap: 12px;
-      margin: 24px 0; color: var(--s-on-surface-variant);
-      font-size: 0.75rem; font-family: var(--s-font-body); font-weight: 600; text-transform: uppercase;
-    }
-    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--s-border); }
+      .brand-title {
+        font-family: var(--s-font-heading);
+        font-size: 3.5rem;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 24px;
+        letter-spacing: -1px;
+      }
+      .brand-title span {
+        background: var(--s-gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .brand-desc {
+        font-size: 1.1rem;
+        color: var(--s-on-surface-variant);
+        line-height: 1.6;
+      }
 
-    /* Social buttons */
-    .social-btns { display: flex; flex-direction: column; gap: 12px; }
-    .btn-social {
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      padding: 12px 20px; border-radius: var(--s-radius-md);
-      font-size: 0.9rem; font-weight: 600; font-family: var(--s-font-body);
-      text-decoration: none; cursor: pointer;
-      border: 1px solid var(--s-border);
-      background: var(--s-surface-container-high);
-      color: var(--s-on-surface);
-      transition: all 0.2s ease;
-    }
-    .btn-social:hover { background: var(--s-surface-container-highest); transform: translateY(-1px); }
+      /* ── Right Side (Auth Form) ── */
+      .form-side {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--s-surface, #0b0f19);
+        padding: 40px;
+        position: relative;
+        overflow-y: auto;
+      }
 
-    /* Footer */
-    .footer { text-align: center; margin-top: 28px; color: var(--s-on-surface-variant); font-size: 0.85rem; font-family: var(--s-font-body); }
-    .footer a { color: var(--s-primary); text-decoration: none; font-weight: 600; transition: color 0.2s; }
-    .footer a:hover { color: #fff; }
+      .form-container {
+        width: 100%;
+        max-width: 440px;
+        animation: st-fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+      }
 
-  </style>
-</head>
-<body>
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
+      @keyframes st-fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-  <div class="auth-card st-anim-1">
-    <div class="logo">
-      <div class="logo-icon">🛡️</div>
-      <h1>Welcome back</h1>
-      <p>Sign in to your AI Code Review account</p>
-    </div>
+      .form-logo {
+        display: none;
+      } /* Hidden on desktop */
 
-    <div id="alert" class="alert"></div>
+      .form-header {
+        margin-bottom: 32px;
+      }
+      .form-header h2 {
+        font-family: var(--s-font-heading);
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 8px;
+        color: var(--s-on-surface);
+      }
+      .form-header p {
+        color: var(--s-on-surface-variant);
+        font-size: 0.95rem;
+      }
 
-    <form id="login-form" onsubmit="handleLogin(event)" autocomplete="on">
-      <div class="field">
-        <label for="email">Email address</label>
-        <div class="input-wrap">
-          <span class="input-icon">✉️</span>
-          <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
+      /* Alert */
+      .alert {
+        display: none;
+        padding: 14px 16px;
+        border-radius: var(--s-radius-md);
+        font-size: 0.85rem;
+        margin-bottom: 24px;
+        font-weight: 600;
+      }
+      .alert-error {
+        background: var(--s-error-container);
+        color: var(--s-on-error-container);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+      }
+      .alert-success {
+        background: rgba(34, 197, 94, 0.1);
+        color: #86efac;
+        border: 1px solid rgba(34, 197, 94, 0.25);
+      }
+
+      /* Input Fields */
+      .field {
+        margin-bottom: 20px;
+        position: relative;
+      }
+      .field label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--s-on-surface-variant);
+        margin-bottom: 8px;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+      }
+
+      .input-wrapper {
+        position: relative;
+      }
+      .input-wrapper input {
+        width: 100%;
+        padding: 16px 16px 16px 48px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--s-border);
+        border-radius: var(--s-radius-md);
+        color: var(--s-on-surface);
+        font-size: 0.95rem;
+        font-family: var(--s-font-body);
+        transition: all 0.3s ease;
+        outline: none;
+      }
+      .input-wrapper input::placeholder {
+        color: rgba(255, 255, 255, 0.2);
+      }
+      .input-wrapper input:focus {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: var(--s-primary);
+        box-shadow: 0 0 0 4px rgba(163, 166, 255, 0.1);
+      }
+
+      .input-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--s-on-surface-variant);
+        font-size: 20px;
+        pointer-events: none;
+        transition: color 0.3s ease;
+      }
+      .input-wrapper input:focus + .input-icon {
+        color: var(--s-primary);
+      }
+
+      .toggle-pwd {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--s-on-surface-variant);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px;
+        transition: color 0.2s;
+      }
+      .toggle-pwd:hover {
+        color: var(--s-on-surface);
+      }
+
+      .field-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        font-size: 0.85rem;
+      }
+      .checkbox-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--s-on-surface-variant);
+        cursor: pointer;
+      }
+      .checkbox-wrap input {
+        cursor: pointer;
+        accent-color: var(--s-primary);
+        width: 16px;
+        height: 16px;
+      }
+
+      .forgot-link {
+        color: var(--s-primary);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+      .forgot-link:hover {
+        color: #fff;
+        text-shadow: 0 0 8px rgba(163, 166, 255, 0.4);
+      }
+
+      /* Submit CTA */
+      .btn-submit {
+        width: 100%;
+        padding: 16px;
+        border: none;
+        border-radius: var(--s-radius-md);
+        background: var(--s-primary);
+        color: #000;
+        font-size: 1rem;
+        font-weight: 800;
+        font-family: var(--s-font-heading);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 24px rgba(163, 166, 255, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .btn-submit::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(
+          to right,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        transform: skewX(-20deg);
+        transition: 0.5s;
+      }
+      .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(163, 166, 255, 0.4);
+      }
+      .btn-submit:hover::before {
+        left: 150%;
+      }
+      .btn-submit:active {
+        transform: translateY(0);
+      }
+      .btn-submit:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      /* Divider */
+      .st-divider {
+        display: flex;
+        align-items: center;
+        margin: 32px 0;
+        color: var(--s-on-surface-variant);
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .st-divider::before,
+      .st-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .st-divider span {
+        padding: 0 16px;
+      }
+
+      /* Socials */
+      .social-oauth {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .btn-oauth {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 14px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--s-border);
+        border-radius: var(--s-radius-md);
+        color: var(--s-on-surface);
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+      .btn-oauth:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-1px);
+      }
+
+      .bottom-cta {
+        margin-top: 32px;
+        text-align: center;
+        color: var(--s-on-surface-variant);
+        font-size: 0.9rem;
+      }
+      .bottom-cta a {
+        color: var(--s-primary);
+        font-weight: 700;
+        text-decoration: none;
+        margin-left: 6px;
+        transition: color 0.2s;
+      }
+      .bottom-cta a:hover {
+        color: #fff;
+      }
+
+      /* Mobile handling */
+      @media (max-width: 900px) {
+        .split-layout {
+          flex-direction: column;
+        }
+        .brand-side {
+          display: none;
+        } /* Hide heavy graphic on mobile */
+        .form-side {
+          padding: 24px;
+          align-items: flex-start;
+          padding-top: 10vh;
+        }
+        .form-logo {
+          display: inline-flex;
+          width: 48px;
+          height: 48px;
+          background: var(--s-gradient-primary);
+          border-radius: 12px;
+          align-items: center;
+          justify-content: center;
+          font-size: 24px;
+          margin-bottom: 24px;
+          box-shadow: 0 8px 24px rgba(163, 166, 255, 0.3);
+        }
+        .social-oauth {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="split-layout">
+      <!-- Left Hero/Brand Side -->
+      <div class="brand-side">
+        <div class="brand-content st-anim-1">
+          <h1 class="brand-title">Secure code,<br />delivered instantly</h1>
+          <p class="brand-desc">
+            Join the AI Code Review platform that automatically audits your
+            codebase, detects vulnerabilities in real-time, and dispatches fixes
+            seamlessly.
+          </p>
         </div>
       </div>
 
-      <div class="field">
-        <label for="password">Password</label>
-        <div class="input-wrap">
-          <span class="input-icon">🔒</span>
-          <input type="password" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
-          <button type="button" class="toggle-pwd" onclick="togglePwd('password', this)" tabindex="-1">👁</button>
+      <!-- Right Form Side -->
+      <div class="form-side">
+        <div class="form-container">
+          <div class="form-logo">🛡️</div>
+
+          <div class="form-header">
+            <h2>Welcome back</h2>
+            <p>Secure your organization and continue reviewing.</p>
+          </div>
+
+          <div id="alert" class="alert"></div>
+
+          <form id="login-form" onsubmit="handleLogin(event)" autocomplete="on">
+            <div class="field">
+              <label for="email">Email address</label>
+              <div class="input-wrapper">
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="jane@company.com"
+                  required
+                  autocomplete="email"
+                />
+                <span class="material-symbols-outlined input-icon">mail</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="password">Password</label>
+              <div class="input-wrapper">
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="••••••••••••"
+                  required
+                  autocomplete="current-password"
+                />
+                <span class="material-symbols-outlined input-icon">lock</span>
+                <button
+                  type="button"
+                  class="toggle-pwd"
+                  onclick="togglePwd('password', this)"
+                  tabindex="-1"
+                >
+                  <span
+                    class="material-symbols-outlined"
+                    style="font-size: 18px"
+                    >visibility</span
+                  >
+                </button>
+              </div>
+            </div>
+
+            <div class="field-options">
+              <label
+                class="checkbox-wrap"
+                style="
+                  text-transform: none;
+                  font-weight: 500;
+                  font-size: 0.85rem;
+                  margin: 0;
+                "
+              >
+                <input type="checkbox" checked /> Remember me
+              </label>
+              <a href="#" class="forgot-link">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submit-btn">
+              Sign In
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
+          </form>
+
+          <div class="st-divider"><span>OR CONTINUE WITH</span></div>
+
+          <div class="social-oauth">
+            <a href="{{ url_for('auth.github_login') }}" class="btn-oauth">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.137 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"
+                />
+              </svg>
+              GitHub
+            </a>
+            <a href="{{ url_for('auth.linkedin_login') }}" class="btn-oauth">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+                />
+              </svg>
+              LinkedIn
+            </a>
+          </div>
+
+          <div class="bottom-cta">
+            Don't have an account?
+            <a href="{{ url_for('auth.register_page') }}">Create one</a>
+          </div>
         </div>
       </div>
-
-      <div class="field-row">
-        <a href="#">Forgot password?</a>
-      </div>
-
-      <button type="submit" class="btn-submit" id="submit-btn">Sign In →</button>
-    </form>
-
-    <div class="divider">or continue with</div>
-
-    <div class="social-btns">
-      <a href="{{ url_for('auth.github_login') }}" class="btn-social">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.137 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-        Continue with GitHub
-      </a>
-      <a href="{{ url_for('auth.linkedin_login') }}" class="btn-social">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-        Continue with LinkedIn
-      </a>
     </div>
 
-    <div class="footer">
-      Don't have an account? <a href="{{ url_for('auth.register_page') }}">Create one →</a>
-    </div>
-  </div>
+    <!-- Material Symbols for elegant UI Icons -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    />
 
-  <script>
-    function showAlert(msg, type = 'error') {
-      const el = document.getElementById('alert');
-      el.className = `alert alert-${type}`;
-      el.textContent = type === 'error' ? '❌ ' + msg : '✅ ' + msg;
-      el.style.display = 'block';
-      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
+    <script>
+      function showAlert(msg, type = "error") {
+        const el = document.getElementById("alert");
+        el.className = `alert alert-${type}`;
+        el.textContent = type === "error" ? "❌ " + msg : "✅ " + msg;
+        el.style.display = "block";
+      }
 
-    function togglePwd(id, btn) {
-      const f = document.getElementById(id);
-      f.type = f.type === 'password' ? 'text' : 'password';
-      btn.textContent = f.type === 'password' ? '👁' : '🙈';
-    }
+      function togglePwd(id, btn) {
+        const f = document.getElementById(id);
+        const icon = btn.querySelector("span");
+        if (f.type === "password") {
+          f.type = "text";
+          icon.textContent = "visibility_off";
+        } else {
+          f.type = "password";
+          icon.textContent = "visibility";
+        }
+      }
 
-    async function handleLogin(e) {
-      e.preventDefault();
-      const btn = document.getElementById('submit-btn');
-      btn.disabled = true; btn.textContent = 'Signing in…';
-      const email    = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      try {
-        const resp = await fetch('/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
-        const data = await resp.json();
-        if (!resp.ok) { showAlert(data.error || 'Login failed. Please check your credentials.'); return; }
-        localStorage.setItem('access_token',  data.access_token);
-        localStorage.setItem('refresh_token', data.refresh_token);
-        await fetch('/auth/set-session', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ access_token: data.access_token, refresh_token: data.refresh_token })
-        });
-        showAlert('Signed in! Redirecting…', 'success');
-        setTimeout(() => window.location.href = '/', 700);
-      } catch { showAlert('Network error — please try again.'); }
-      finally { btn.disabled = false; btn.textContent = 'Sign In →'; }
-    }
-  </script>
-</body>
+      async function handleLogin(e) {
+        e.preventDefault();
+        const btn = document.getElementById("submit-btn");
+        btn.disabled = true;
+        btn.innerHTML =
+          '<span class="material-symbols-outlined" style="animation: spin 1s linear infinite;">sync</span> Authenticating...';
+
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+        try {
+          const resp = await fetch("/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+          });
+          const data = await resp.json();
+          if (!resp.ok) {
+            showAlert(
+              data.error || "Login failed. Please check your credentials.",
+            );
+            return;
+          }
+          localStorage.setItem("access_token", data.access_token);
+          localStorage.setItem("refresh_token", data.refresh_token);
+          await fetch("/auth/set-session", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              access_token: data.access_token,
+              refresh_token: data.refresh_token,
+            }),
+          });
+
+          showAlert(
+            "Authentication successful. Bridging context...",
+            "success",
+          );
+          btn.innerHTML =
+            '<span class="material-symbols-outlined">check_circle</span> Success';
+          setTimeout(() => (window.location.href = "/"), 600);
+        } catch {
+          showAlert("Network error — please try again.");
+        } finally {
+          if (typeof resp === "undefined" || !resp.ok) {
+            btn.disabled = false;
+            btn.innerHTML =
+              'Sign In <span class="material-symbols-outlined">arrow_forward</span>';
+          }
+        }
+      }
+    </script>
+  </body>
 </html>

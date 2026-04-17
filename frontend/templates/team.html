@@ -103,11 +103,76 @@
     .toast { position: fixed; bottom: 24px; right: 24px; background: rgba(52,211,153,0.15); border: 1px solid rgba(52,211,153,0.3); color: #34d399; padding: 12px 20px; border-radius: 12px; font-size: 0.83rem; font-weight: 600; z-index: 2000; transform: translateX(200px); opacity: 0; transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1); }
     .toast.visible { transform: translateX(0); opacity: 1; }
 
-    /* Empty state */
+    /* ── Empty state (no members found) ── */
     .empty-state { text-align: center; padding: 64px 20px; }
     .empty-icon { font-size: 3rem; margin-bottom: 16px; }
     .empty-title { font-family: var(--s-font-heading); font-size: 1.1rem; font-weight: 700; color: #e2e8f4; margin-bottom: 8px; }
     .empty-sub { color: #64748b; font-size: 0.83rem; max-width: 360px; margin: 0 auto 20px; }
+
+    /* ── NO ANALYSIS DEFAULT STATE ── */
+    .no-analysis-state {
+      display: none;
+      text-align: center;
+      padding: 80px 20px;
+      animation: fadeUp 0.5s ease both;
+    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .na-illustration {
+      width: 96px; height: 96px; border-radius: 24px;
+      background: linear-gradient(135deg, rgba(124,111,247,0.15), rgba(56,189,248,0.08));
+      border: 1px solid rgba(124,111,247,0.2);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px; font-size: 3rem;
+    }
+    .na-title {
+      font-family: var(--s-font-heading); font-size: 1.5rem; font-weight: 800;
+      color: #e2e8f4; margin-bottom: 12px;
+    }
+    .na-sub {
+      color: #64748b; font-size: 0.9rem; max-width: 440px; margin: 0 auto 32px;
+      line-height: 1.6;
+    }
+    .na-steps {
+      display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .na-step {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px; padding: 16px 20px; text-align: left; max-width: 180px;
+      flex: 1; min-width: 140px;
+    }
+    .na-step-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(124,111,247,0.15); border: 1px solid rgba(124,111,247,0.3);
+      color: #9d93ff; font-size: 0.78rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 8px;
+    }
+    .na-step-title { font-size: 0.82rem; font-weight: 700; color: #e2e8f4; margin-bottom: 4px; }
+    .na-step-sub { font-size: 0.72rem; color: #64748b; line-height: 1.4; }
+
+    /* ── SKELETON LOADING ── */
+    .skeleton-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+    .skeleton-card {
+      background: rgba(13,17,23,0.7);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 18px;
+      padding: 20px;
+      animation: skeleton-pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes skeleton-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .sk-row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+    .sk-avatar { width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.06); flex-shrink: 0; }
+    .sk-lines { flex: 1; }
+    .sk-line { height: 10px; background: rgba(255,255,255,0.06); border-radius: 6px; margin-bottom: 8px; }
+    .sk-line:last-child { margin-bottom: 0; }
+    .sk-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .sk-stat { height: 56px; background: rgba(255,255,255,0.04); border-radius: 10px; }
+    .sk-rating { height: 42px; background: rgba(255,255,255,0.04); border-radius: 10px; margin-bottom: 12px; }
+    .sk-commits { height: 60px; background: rgba(255,255,255,0.04); border-radius: 10px; }
 
     /* Loader */
     .loading-spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.1); border-top-color: #7C6FF7; border-radius: 50%; animation: spin 0.7s linear infinite; }
@@ -116,7 +181,8 @@
     @media (max-width: 640px) {
       .team-page { padding: 16px; }
       .stats-bar { grid-template-columns: repeat(2,1fr); }
-      .members-grid { grid-template-columns: 1fr; }
+      .members-grid, .skeleton-grid { grid-template-columns: 1fr; }
+      .na-steps { flex-direction: column; align-items: center; }
     }
   </style>
 {% endblock %}
@@ -146,7 +212,7 @@
       </div>
 
       <!-- Toolbar -->
-      <div class="toolbar">
+      <div class="toolbar" id="toolbarRow">
         <div class="search-wrap">
           <input type="text" id="searchInput" placeholder="Search by name or username…" oninput="filterMembers()">
         </div>
@@ -164,8 +230,44 @@
         </select>
       </div>
 
+      <!-- ══ NO ANALYSIS DEFAULT STATE ══ -->
+      <div class="no-analysis-state" id="noAnalysisState">
+        <div class="na-illustration">👥</div>
+        <div class="na-title">No Analysis Running Yet</div>
+        <p class="na-sub">
+          Team members are automatically extracted from your codebase's git commit history.
+          Run an analysis first, then come back here to see your contributors.
+        </p>
+        <div class="na-steps">
+          <div class="na-step">
+            <div class="na-step-num">1</div>
+            <div class="na-step-title">Upload Code</div>
+            <div class="na-step-sub">Go to the Home page and upload a ZIP or link a GitHub repo.</div>
+          </div>
+          <div class="na-step">
+            <div class="na-step-num">2</div>
+            <div class="na-step-title">Run Analysis</div>
+            <div class="na-step-sub">Wait for the AI agents to complete the security scan.</div>
+          </div>
+          <div class="na-step">
+            <div class="na-step-num">3</div>
+            <div class="na-step-title">Extract Team</div>
+            <div class="na-step-sub">Come back here and click "Extract from Commits" to populate the board.</div>
+          </div>
+        </div>
+        <a href="/" class="st-btn st-btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+          <span class="material-symbols-outlined">upload_file</span>
+          Start an Analysis
+        </a>
+      </div>
+
+      <!-- ══ SKELETON LOADING CARDS ══ -->
+      <div class="skeleton-grid" id="skeletonGrid" style="display:none">
+        <!-- 6 skeleton cards generated by JS -->
+      </div>
+
       <!-- Members grid -->
-      <div id="membersWrap">
+      <div id="membersWrap" style="display:none">
         <div class="members-grid" id="membersGrid"></div>
         <div class="empty-state" id="emptyState" style="display:none">
           <div class="empty-icon">👤</div>
@@ -182,9 +284,11 @@
     <div class="modal" style="position:relative">
       <button class="modal-close" onclick="closeModal('extractModal')">✕</button>
       <h3>⚡ Extract Team from Git Commits</h3>
-      <p style="color:#64748b;font-size:0.82rem;margin-bottom:20px">Automatically discovers contributors from the git history of an analyzed codebase and fetches GitHub data.</p>
+      <p style="color:#64748b;font-size:0.82rem;margin-bottom:20px">Automatically discovers contributors from the git history of an analyzed codebase and fetches GitHub data.
+        <br><span style="color:#94a3b8;margin-top:6px;display:block;">💡 Find your analysis UIDs on the <a href="/" style="color:#7C6FF7;text-decoration:none;">Home page</a> history section.</span>
+      </p>
       <div class="form-group">
-        <label>Analysis UID (from your last analysis)</label>
+        <label>Analysis UID (auto-filled from current session)</label>
         <input type="text" id="extractUid" placeholder="e.g. a7f3d2b1…" value="">
       </div>
       <div class="modal-footer">
@@ -229,6 +333,37 @@
 
   <script>
     let allMembers = [];
+
+    // ── Skeleton helpers ──────────────────────────────────────────────────────
+    function buildSkeletonCard() {
+      return `<div class="skeleton-card">
+        <div class="sk-row">
+          <div class="sk-avatar"></div>
+          <div class="sk-lines">
+            <div class="sk-line" style="width:65%"></div>
+            <div class="sk-line" style="width:40%"></div>
+          </div>
+        </div>
+        <div class="sk-stats">
+          <div class="sk-stat"></div>
+          <div class="sk-stat"></div>
+        </div>
+        <div class="sk-rating"></div>
+        <div class="sk-commits"></div>
+      </div>`;
+    }
+
+    function showSkeleton() {
+      const grid = document.getElementById('skeletonGrid');
+      grid.innerHTML = Array(6).fill(0).map(buildSkeletonCard).join('');
+      grid.style.display = 'grid';
+      document.getElementById('membersWrap').style.display = 'none';
+      document.getElementById('noAnalysisState').style.display = 'none';
+    }
+
+    function hideSkeleton() {
+      document.getElementById('skeletonGrid').style.display = 'none';
+    }
 
     // ── Utility ──────────────────────────────────────────────────────────────
     function showToast(msg, isError = false) {
@@ -282,6 +417,9 @@
     function renderMembers(members) {
       const grid = document.getElementById('membersGrid');
       const empty = document.getElementById('emptyState');
+      const wrap  = document.getElementById('membersWrap');
+      wrap.style.display = 'block';
+
       if (!members.length) {
         grid.innerHTML = '';
         empty.style.display = 'block';
@@ -391,14 +529,35 @@
     }
 
     async function loadMembers() {
+      showSkeleton();
       try {
         const resp = await fetch('/api/team/members', { credentials: 'same-origin' });
         if (!resp.ok) throw new Error('Failed to load team');
         const data = await resp.json();
+
+        hideSkeleton();
+
+        // ── KEY FIX: Show "no analysis" state instead of empty members ──
+        if (data.no_analysis) {
+          document.getElementById('noAnalysisState').style.display = 'block';
+          document.getElementById('membersWrap').style.display = 'none';
+          document.getElementById('toolbarRow').style.display = 'none';
+          // Reset stats to dashes
+          ['statTotal','statCommits','statPRs','statAvgRating'].forEach(id =>
+            document.getElementById(id).textContent = '—');
+          return;
+        }
+
+        // Has an active analysis session — show members (may be empty if not yet extracted)
+        document.getElementById('noAnalysisState').style.display = 'none';
+        document.getElementById('toolbarRow').style.display = 'flex';
+
         allMembers = data.members || [];
         updateStats(allMembers);
         filterMembers();
       } catch (e) {
+        hideSkeleton();
+        document.getElementById('membersWrap').style.display = 'block';
         showToast('Error loading team: ' + e.message, true);
       }
     }
@@ -477,5 +636,29 @@
 
     // Init
     loadMembers();
+
+    // Auto-fetch current session UID and prefill the extract input
+    (async function prefillSessionUid() {
+      try {
+        const res = await fetch('/api/team/current-uid', { credentials: 'same-origin' });
+        if (res.ok) {
+          const data = await res.json();
+          const uid = data.uid || '';
+          if (uid) {
+            const input = document.getElementById('extractUid');
+            if (input && !input.value) {
+              input.value = uid;
+              input.style.borderColor = 'rgba(52,211,153,0.5)';
+              const hint = document.createElement('div');
+              hint.style.cssText = 'font-size:0.72rem;color:#34d399;margin-top:5px;';
+              hint.innerHTML = `✅ Auto-filled from your current session`;
+              input.parentNode.appendChild(hint);
+            }
+          }
+        }
+      } catch (e) {
+        // Silent fail – user can manually enter UID
+      }
+    })();
   </script>
 {% endblock %}

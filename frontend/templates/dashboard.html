@@ -79,6 +79,78 @@
       margin-bottom: 24px;
     }
     
+    /* ── GitHub Analytics Section ── */
+    .gh-shell {
+      background: var(--s-surface-container-low);
+      border-radius: var(--s-radius-lg);
+      padding: 32px;
+      border: 1px solid rgba(163,166,255,0.08);
+      position: relative;
+      margin-bottom: 32px;
+      overflow: visible;
+    }
+    .gh-shell::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, #333333, #ffffff, #333333);
+      border-radius: 3px 3px 0 0;
+    }
+    .gh-header {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 24px; margin-bottom: 28px; flex-wrap: wrap;
+    }
+    .gh-title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+    .gh-controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .gh-input-group { display: flex; gap: 6px; align-items: center; }
+    .gh-input {
+      padding: 8px 14px; background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09); border-radius: 8px;
+      color: #e2e8f4; font-size: 0.85rem; font-family: var(--s-font-body);
+      outline: none; width: 240px; transition: border-color 0.2s;
+    }
+    .gh-input:focus { border-color: rgba(255,255,255,0.25); }
+    .gh-select {
+      padding: 8px 14px; background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09); border-radius: 8px;
+      color: #e2e8f4; font-size: 0.85rem; font-family: var(--s-font-body);
+      outline: none; min-width: 180px; transition: border-color 0.2s;
+    }
+    .gh-select:focus { border-color: rgba(255,255,255,0.25); }
+
+    .gh-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px;
+    }
+    @media (max-width: 900px) { .gh-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .gh-grid { grid-template-columns: 1fr; } }
+    
+    .gh-stat-card {
+      background: var(--s-surface-container-highest);
+      border-radius: var(--s-radius); padding: 20px;
+      position: relative; border: 1px solid rgba(255,255,255,0.03);
+    }
+    .gh-stat-val { font-size: 1.8rem; font-weight: 800; font-family: var(--s-font-heading); color: var(--s-on-surface); line-height: 1; }
+    .gh-stat-label { font-size: 0.72rem; color: var(--s-on-surface-variant); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
+    .gh-stat-icon { position: absolute; top: 20px; right: 20px; font-size: 1.2rem; opacity: 0.4; }
+
+    .gh-blocks {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+    }
+    @media (max-width: 900px) { .gh-blocks { grid-template-columns: 1fr; } }
+    
+    .gh-block {
+      background: var(--s-surface-container-highest);
+      border-radius: var(--s-radius); padding: 24px;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .gh-block-title { font-family: var(--s-font-heading); font-size: 0.95rem; font-weight: 700; color: var(--s-on-surface); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .gh-commit-msg { font-size: 0.9rem; color: #dee5ff; font-family: var(--s-font-mono); margin-bottom: 10px; line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .gh-commit-meta { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--s-on-surface-variant); }
+    .gh-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 99px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .gh-badge.success { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+    .gh-badge.failure { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+    .gh-badge.pending { background: rgba(234,179,8,0.15); color: #eab308; border: 1px solid rgba(234,179,8,0.3); }
+    .gh-timestamp { font-size: 0.75rem; color: var(--s-on-surface-variant); margin-top: 10px; }
+
     /* ── Bug Bounty Section ── */
     .bounty-shell {
       background: var(--s-surface-container-low);
@@ -389,6 +461,80 @@
           </div>
         </div>
 
+        <!-- ════ REAL-TIME GITHUB ANALYTICS ════ -->
+        <div class="gh-shell st-anim-3" id="gh-sec">
+          <div class="gh-header">
+            <div>
+              <div class="gh-title-row">
+                <h3 style="font-family:var(--s-font-heading); font-size:1.6rem; font-weight:800; color:var(--s-on-surface);">
+                  <span class="material-symbols-outlined" style="vertical-align:bottom; margin-right:4px;">code_blocks</span>GitHub Analytics
+                </h3>
+                <span class="bounty-badge" style="background:rgba(255,255,255,0.1); color:#fff; border-color:rgba(255,255,255,0.2); animation:none;">LIVE</span>
+              </div>
+              <p class="bounty-sub" id="ghActiveRepoLink">Select or track a repository to view live metrics.</p>
+            </div>
+            
+            <div class="gh-controls">
+              <div class="gh-input-group">
+                <select id="ghRepoSelect" class="gh-select" onchange="ghSelectRepo(this.value)">
+                  <option value="">-- No Repositories Tracked --</option>
+                </select>
+              </div>
+              <div class="gh-input-group">
+                <input type="text" id="ghTrackUrl" class="gh-input" placeholder="https://github.com/owner/repo">
+                <button class="st-btn-secondary" id="ghBtnTrack" onclick="ghTrackRepo()" style="padding: 8px 16px;">Track</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="ghContent" style="display: none;">
+            <div class="gh-grid">
+              <div class="gh-stat-card">
+                <span class="material-symbols-outlined gh-stat-icon">star</span>
+                <div class="gh-stat-val" id="ghStars">0</div>
+                <div class="gh-stat-label">Stars</div>
+              </div>
+              <div class="gh-stat-card">
+                <span class="material-symbols-outlined gh-stat-icon">call_merge</span>
+                <div class="gh-stat-val" id="ghPrs">0</div>
+                <div class="gh-stat-label">Open PRs</div>
+              </div>
+              <div class="gh-stat-card">
+                <span class="material-symbols-outlined gh-stat-icon">group</span>
+                <div class="gh-stat-val" id="ghContributors">0</div>
+                <div class="gh-stat-label">Contributors</div>
+              </div>
+              <div class="gh-stat-card">
+                <span class="material-symbols-outlined gh-stat-icon">commit</span>
+                <div class="gh-stat-val" id="ghForks">0</div>
+                <div class="gh-stat-label">Forks</div>
+              </div>
+            </div>
+
+            <div class="gh-blocks">
+              <div class="gh-block">
+                <div class="gh-block-title"><span class="material-symbols-outlined" style="font-size:18px;">history</span>Latest Commit</div>
+                <div class="gh-commit-msg" id="ghCommitMsg">--</div>
+                <div class="gh-commit-meta">
+                  <span id="ghCommitAuthor">--</span>
+                  <span id="ghCommitTime">--</span>
+                </div>
+              </div>
+              <div class="gh-block" style="display: flex; flex-direction: column; justify-content: center; align-items:flex-start;">
+                <div class="gh-block-title" style="margin-bottom:6px;"><span class="material-symbols-outlined" style="font-size:18px;">build_circle</span>CI/CD Status</div>
+                <div id="ghBuildBadge" class="gh-badge pending">
+                  <span class="material-symbols-outlined" style="font-size:14px;">pending</span> Pending
+                </div>
+                <div class="gh-timestamp" id="ghBuildTime">No latest checks available</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="ghEmpty" style="padding: 32px; text-align: center; color: var(--s-on-surface-variant);">
+            Track a repository by entering its GitHub URL above to see real-time analytics.
+          </div>
+        </div>
+
         <!-- ════ BUG BOUNTY SECTION ════ -->
         <div class="bounty-shell st-anim-3" id="bounty-sec">
 
@@ -624,11 +770,153 @@
     });
   }
 
+  // ═══════════════════════════════════════════════
+  //  GITHUB REAL-TIME INTEGRATION
+  // ═══════════════════════════════════════════════
+  let _ghPollingInterval = null;
+  let _ghActiveRepo = null; // format: "owner/repo"
+
+  async function fetchGhUserRepos() {
+    try {
+      const resp = await fetch('/api/github/user-repos?limit=50', { credentials: 'same-origin' });
+      if (!resp.ok) return;
+      const data = await resp.json();
+      const repos = data.repositories || [];
+      const select = document.getElementById('ghRepoSelect');
+      
+      if (repos.length > 0) {
+        select.innerHTML = '<option value="">-- Active Repository --</option>' + 
+          repos.map(r => `<option value="${r.owner}/${r.repo_name}">${r.owner}/${r.repo_name}</option>`).join('');
+        
+        // Auto-select the first repo if none active
+        if (!_ghActiveRepo) {
+          select.value = `${repos[0].owner}/${repos[0].repo_name}`;
+          ghSelectRepo(select.value);
+        } else {
+          select.value = _ghActiveRepo;
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load GitHub user repos:', e);
+    }
+  }
+
+  async function ghTrackRepo() {
+    const url = document.getElementById('ghTrackUrl').value.trim();
+    if (!url) return alert('Enter a GitHub repository URL.');
+    
+    const btn = document.getElementById('ghBtnTrack');
+    btn.disabled = true; btn.textContent = '...';
+    
+    try {
+      const resp = await fetch('/api/github/track-repo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ repo_url: url }),
+        credentials: 'same-origin'
+      });
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error || 'Tracking failed');
+      
+      document.getElementById('ghTrackUrl').value = '';
+      
+      // Auto-select the newly tracked repo
+      await fetchGhUserRepos();
+      const repoPath = `${data.repository.owner}/${data.repository.repo_name}`;
+      document.getElementById('ghRepoSelect').value = repoPath;
+      ghSelectRepo(repoPath);
+
+    } catch (e) {
+      alert(e.message);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Track';
+    }
+  }
+
+  function ghSelectRepo(repoPath) {
+    if (!repoPath) {
+      _ghActiveRepo = null;
+      document.getElementById('ghContent').style.display = 'none';
+      document.getElementById('ghEmpty').style.display = 'block';
+      document.getElementById('ghActiveRepoLink').textContent = 'Select or track a repository to view live metrics.';
+      if (_ghPollingInterval) clearInterval(_ghPollingInterval);
+      return;
+    }
+    
+    _ghActiveRepo = repoPath;
+    document.getElementById('ghContent').style.display = 'block';
+    document.getElementById('ghEmpty').style.display = 'none';
+    
+    const url = `https://github.com/${repoPath}`;
+    document.getElementById('ghActiveRepoLink').innerHTML = `Live metrics for <a href="${url}" target="_blank" style="color:var(--s-primary); text-decoration:none; font-weight:700;">${repoPath}</a>`;
+    
+    // Fetch immediately, then setup polling
+    fetchGhLiveStats();
+    if (_ghPollingInterval) clearInterval(_ghPollingInterval);
+    _ghPollingInterval = setInterval(fetchGhLiveStats, 45000); // 45s poll
+  }
+
+  async function fetchGhLiveStats() {
+    if (!_ghActiveRepo) return;
+    
+    try {
+      const resp = await fetch(`/api/github/stats/${_ghActiveRepo}`, { credentials: 'same-origin' });
+      if (!resp.ok) return;
+      const data = await resp.json();
+      
+      // Update top cards
+      document.getElementById('ghStars').textContent = (data.stars || 0).toLocaleString();
+      document.getElementById('ghPrs').textContent = ((data.pull_requests || {}).open || 0).toLocaleString();
+      document.getElementById('ghContributors').textContent = (data.contributors || []).length;
+      document.getElementById('ghForks').textContent = ((data.github_data || {}).forks || 0).toLocaleString();
+      
+      // Update Latest Commit
+      const lc = data.latest_commit || {};
+      if (lc.message) {
+        document.getElementById('ghCommitMsg').textContent = lc.message;
+        document.getElementById('ghCommitAuthor').innerHTML = lc.author?.avatar_url 
+          ? `<img src="${lc.author.avatar_url}" style="width:16px;height:16px;border-radius:50%;vertical-align:middle;margin-right:4px;"> ${lc.author.name}` 
+          : lc.author?.name || 'Unknown';
+        
+        let dateObj = new Date(lc.created_at);
+        document.getElementById('ghCommitTime').textContent = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      } else {
+        document.getElementById('ghCommitMsg').textContent = 'No commits found.';
+      }
+      
+      // Update CI/CD Status
+      const cs = data.commit_status || {};
+      const state = (cs.state || 'unknown').toLowerCase();
+      const badge = document.getElementById('ghBuildBadge');
+      
+      badge.className = 'gh-badge';
+      let icon = 'pending';
+      let text = 'Pending';
+      
+      if (state === 'success') {
+        badge.classList.add('success'); icon = 'check_circle'; text = 'Success';
+      } else if (state === 'failure' || state === 'error') {
+        badge.classList.add('failure'); icon = 'cancel'; text = 'Failed';
+      } else {
+        badge.classList.add('pending'); icon = 'pending'; text = 'Pending';
+      }
+      
+      badge.innerHTML = `<span class="material-symbols-outlined" style="font-size:14px;">${icon}</span> ${text}`;
+      document.getElementById('ghBuildTime').textContent = cs.description || 'No check runs found';
+      
+    } catch (e) {
+      console.error('Live stats error:', e);
+    }
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     fetchDashboard();
     setInterval(fetchDashboard, 30000); // 30s poll
     loadLeaderboard();
     loadBountyStats();
+    
+    // Init GitHub
+    fetchGhUserRepos();
   });
 
   // ═══════════════════════════════════════════════

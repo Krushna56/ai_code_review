@@ -271,7 +271,7 @@ def github_login():
         f"{config.GITHUB_AUTHORIZATION_URL}"
         f"?client_id={config.GITHUB_CLIENT_ID}"
         f"&redirect_uri={base_url}/auth/github/callback"
-        f"&scope=user:email"
+        f"&scope=user:email%20repo"
         f"&state={state}"
     )
     logger.info(f"GitHub OAuth initiated, state stored server-side")
@@ -562,3 +562,18 @@ def github_repos():
     return jsonify({'repos': repos, 'total': len(repos)}), 200
 
 
+# ---------------------------------------------------------------------------
+# Profile Page — GET renders profile settings page
+# ---------------------------------------------------------------------------
+@auth_bp.route('/profile', methods=['GET'])
+def profile():
+    """Render the user profile and dashboard settings page."""
+    # Check if user is logged in
+    gh_token = session.get('github_access_token')
+    jwt_token = session.get('jwt_access_token')
+
+    if not jwt_token:
+        # User not authenticated, redirect to login
+        return redirect(url_for('auth.login'))
+        
+    return render_template('auth/profile.html')

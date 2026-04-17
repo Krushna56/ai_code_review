@@ -240,6 +240,49 @@ except Exception as e:
 analysis_status = defaultdict(lambda: {'status': 'pending', 'progress': 0, 'error': None})
 
 LAST_ANALYSIS_PATH_FILE = 'last_analysis_path.txt'
+ANALYSIS_HISTORY_FILE = 'analysis_history.json'
+MAX_HISTORY_ENTRIES = 5
+
+
+def _load_analysis_history() -> list:
+    """Load the persisted analysis history list."""
+    try:
+        if os.path.exists(ANALYSIS_HISTORY_FILE):
+            with open(ANALYSIS_HISTORY_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+    except Exception as e:
+        logger.warning(f"Could not load analysis history: {e}")
+    return []
+
+
+def _save_analysis_history(history: list):
+    """Persist the analysis history list."""
+    try:
+        with open(ANALYSIS_HISTORY_FILE, 'w', encoding='utf-8') as f:
+            json.dump(history, f, indent=2)
+    except Exception as e:
+        logger.error(f"Could not save analysis history: {e}")
+
+
+def _record_analysis(uid: str, input_path: str, file_count: int = 0, repo_url: str = None):
+    """Append a completed analysis entry to the history file."""
+    try:
+        history = _load_analysis_history()
+        project_name = os.path.basename(input_path.rstrip('/\\')) or uid[:8]
+        entry = {
+            'uid': uid,
+            'timestamp': datetime.utcnow().isoformat() + 'Z',
+            'project_name': project_name,
+            'file_count': file_count,
+            'repo_url': repo_url,
+        }
+        # Insert newest first; trim to max entries
+        history.insert(0, entry)
+        history = history[:MAX_HISTORY_ENTRIES]
+        _save_analysis_history(history)
+        logger.info(f"Recorded analysis history for UID {uid}")
+    except Exception as e:
+        logger.error(f"Error recording analysis history: {e}")
 
 def sync_results_to_dashboard(processed_path):
     """Sync analysis results to the global output directory for dashboard"""
@@ -499,6 +542,10 @@ def run_analysis_background(input_path, output_path, uid):
         sync_results_to_dashboard(output_path)
         save_last_analysis_path(input_path)
 
+        # Count files analyzed
+        file_count = sum(1 for _ in Path(input_path).rglob('*') if _.is_file())
+        _record_analysis(uid, input_path, file_count=file_count)
+
         analysis_status[uid]['status'] = 'complete'
         analysis_status[uid]['progress'] = 100
         analysis_status[uid]['message'] = 'Analysis complete'
@@ -730,7 +777,7 @@ def api_analyze_repo():
         file_tree = generate_file_tree(input_path)
         
         # Start analysis in background
-        analysis_status[uid] = {'status': 'running', 'progress': 0, 'error': None}
+        analysis_status[uid] = {'status': 'running', 'progress': 0, 'error': None, 'repo_url': repo_url}
         thread = threading.Thread(
             target=run_analysis_background,
             args=(input_path, output_path, uid)
@@ -739,6 +786,10 @@ def api_analyze_repo():
         thread.start()
         logger.info(f"Started background analysis for cloned repo {uid}")
         
+        # Record analysis immediately (will update to 'complete' later)
+        repo_name = repo_url.rstrip('/').split('/')[-1].replace('.git', '')
+        _record_analysis(uid, input_path, file_count=0, repo_url=repo_url)
+
         # Store UID in session
         session['current_uid'] = uid
         session.modified = True
@@ -755,6 +806,30 @@ def api_analyze_repo():
     except Exception as e:
         logger.error(f"Error during repo analysis: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500
+@app.route('/api/analysis/history', methods=['GET'])
+@jwt_required
+def api_analysis_history():
+    """Return the list of past analysis runs (UID + metadata)."""
+    try:
+        history = _load_analysis_history()
+        # Annotate each entry with current status if still in memory
+        for entry in history:
+            uid = entry.get('uid', '')
+            if uid in analysis_status:
+                entry['status'] = analysis_status[uid].get('status', 'unknown')
+            else:
+                # Check if processed files exist to infer completion
+                processed_dir = os.path.join(app.config['PROCESSED_FOLDER'], uid)
+                if os.path.exists(processed_dir):
+                    entry['status'] = 'complete'
+                else:
+                    entry['status'] = 'unknown'
+        limit = request.args.get('limit', 20, type=int)
+        return jsonify({'history': history[:limit], 'total': len(history)}), 200
+    except Exception as e:
+        logger.error(f"Analysis history error: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
 
 
 @app.route('/download/<uid>/<filename>')
@@ -954,18 +1029,31 @@ def processing():
 @app.route('/code-viewer')
 @jwt_required
 def code_viewer():
-    """Code viewer page — redirects to chat with current session UID if available"""
+    """Unified Code + AI Workspace (same as /chat)"""
     uid = request.args.get('uid') or session.get('current_uid')
+    file_tree = []
     if uid:
-        return redirect(url_for('chat', uid=uid))
-    return redirect(url_for('chat'))
+        session['current_uid'] = uid
+        session.modified = True
+        input_path = os.path.join(app.config['UPLOAD_FOLDER'], uid)
+        if os.path.exists(input_path):
+            tree_structure = generate_file_tree(input_path)
+            file_tree = flatten_file_tree(tree_structure)
+    return render_template('chat.html', uid=uid, file_tree=file_tree)
 
 
 @app.route('/code-viewer/<uid>')
 @jwt_required
 def code_viewer_redirect(uid):
-    """Legacy redirect for code viewer with uid param"""
-    return redirect(url_for('chat', uid=uid))
+    """Unified Code + AI Workspace with explicit UID"""
+    session['current_uid'] = uid
+    session.modified = True
+    input_path = os.path.join(app.config['UPLOAD_FOLDER'], uid)
+    file_tree = []
+    if os.path.exists(input_path):
+        tree_structure = generate_file_tree(input_path)
+        file_tree = flatten_file_tree(tree_structure)
+    return render_template('chat.html', uid=uid, file_tree=file_tree)
 
 
 # Health route moved to top of file
@@ -1658,6 +1746,53 @@ def download_detailed_report_json(uid):
     if os.path.exists(json_path):
         return send_file(json_path, as_attachment=True, download_name=f'analysis_{uid[:8]}.json')
     return jsonify({'error': 'No agent results found. Run analysis first.'}), 404
+
+
+@app.route('/api/github/raise-pr', methods=['POST'])
+@jwt_required
+def api_github_raise_pr():
+    """Raise a security fix Pull Request to GitHub"""
+    try:
+        data = request.json
+        owner = data.get('owner')
+        repo = data.get('repo')
+        title = data.get('title', 'Security Patch: Automated Fix')
+        body = data.get('body', 'This pull request contains an automated security hotfix generated by AI Code Review.')
+        file_path = data.get('file_path')
+        file_content = data.get('file_content')
+        commit_message = data.get('commit_message', 'Fix security vulnerability')
+        base_branch = data.get('base_branch', 'main')
+        
+        if not all([owner, repo, file_path, file_content]):
+            return jsonify({'error': 'Missing required fields: owner, repo, file_path, file_content'}), 400
+            
+        user_id = g.get('user_id')
+        user = User.get_by_id(user_id) if user_id else None
+        access_token = user.github_access_token if user and user.github_access_token else None
+        
+        if not access_token:
+            return jsonify({'error': 'GitHub integration required. Please link your GitHub account in profile settings.'}), 403
+            
+        client = create_github_client(access_token)
+        result = client.create_security_pr(
+            owner=owner, 
+            repo=repo, 
+            title=title, 
+            body=body, 
+            file_path=file_path, 
+            file_content=file_content, 
+            commit_message=commit_message, 
+            base_branch=base_branch
+        )
+        
+        if result:
+            return jsonify({'message': 'Pull Request created successfully!', 'url': result.get('html_url')}), 201
+        else:
+            return jsonify({'error': 'Failed to create Pull Request. Please check API permissions.'}), 500
+            
+    except Exception as e:
+        logger.error(f"Error creating PR: {e}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
 
 
 @app.errorhandler(404)

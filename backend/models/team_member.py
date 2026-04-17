@@ -25,7 +25,8 @@ class TeamMember:
                  email=None, avatar_url=None, role=None,
                  commit_count=0, pr_security_rating=None,
                  last_commit_at=None, joined_at=None,
-                 pr_summary_json=None, commit_history_json=None):
+                 pr_summary_json=None, commit_history_json=None,
+                 analysis_uid=None):
         self.id = id
         self.github_username = github_username
         self.display_name = display_name or github_username
@@ -36,6 +37,8 @@ class TeamMember:
         self.pr_security_rating = pr_security_rating  # 0-10 float
         self.last_commit_at = last_commit_at
         self.joined_at = joined_at or datetime.utcnow()
+        # Ties this member to a specific analysis session
+        self.analysis_uid = analysis_uid
         # JSON blobs stored as strings in DB
         self._pr_summary_json = pr_summary_json
         self._commit_history_json = commit_history_json
@@ -72,6 +75,7 @@ class TeamMember:
             'joined_at': self.joined_at.isoformat() if isinstance(self.joined_at, datetime) else self.joined_at,
             'pr_summary': self.pr_summary,
             'commit_history': self.commit_history,
+            'analysis_uid': self.analysis_uid,
         }
 
     # ── DB helpers ───────────────────────────────────────────────────────────
@@ -124,20 +128,21 @@ class TeamMember:
             joined_at=datetime.fromisoformat(str(joined_at)) if joined_at and isinstance(joined_at, str) else joined_at,
             pr_summary_json=_get('pr_summary_json'),
             commit_history_json=_get('commit_history_json'),
+            analysis_uid=_get('analysis_uid'),
         )
 
     # ── Schema ───────────────────────────────────────────────────────────────
 
     @staticmethod
     def init_db():
-        """Create team_members table if it doesn't exist."""
+        """Create team_members table if it doesn't exist, and migrate existing schema."""
         conn = TeamMember._get_conn()
         cur = TeamMember._cursor(conn)
         if _is_postgres():
             cur.execute('''
                 CREATE TABLE IF NOT EXISTS team_members (
                     id SERIAL PRIMARY KEY,
-                    github_username TEXT UNIQUE NOT NULL,
+                    github_username TEXT NOT NULL,
                     display_name TEXT,
                     email TEXT,
                     avatar_url TEXT,
@@ -147,15 +152,23 @@ class TeamMember:
                     last_commit_at TIMESTAMP,
                     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     pr_summary_json TEXT,
-                    commit_history_json TEXT
+                    commit_history_json TEXT,
+                    analysis_uid TEXT,
+                    UNIQUE (github_username, analysis_uid)
                 )
             ''')
             cur.execute('CREATE INDEX IF NOT EXISTS idx_tm_username ON team_members(github_username)')
+            cur.execute('CREATE INDEX IF NOT EXISTS idx_tm_uid ON team_members(analysis_uid)')
+            # Runtime migration: add column if missing
+            try:
+                cur.execute("ALTER TABLE team_members ADD COLUMN analysis_uid TEXT")
+            except Exception:
+                pass
         else:
             cur.execute('''
                 CREATE TABLE IF NOT EXISTS team_members (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    github_username TEXT UNIQUE NOT NULL,
+                    github_username TEXT NOT NULL,
                     display_name TEXT,
                     email TEXT,
                     avatar_url TEXT,
@@ -165,9 +178,16 @@ class TeamMember:
                     last_commit_at TIMESTAMP,
                     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     pr_summary_json TEXT,
-                    commit_history_json TEXT
+                    commit_history_json TEXT,
+                    analysis_uid TEXT,
+                    UNIQUE (github_username, analysis_uid)
                 )
             ''')
+            # Runtime migration: add column to existing tables
+            try:
+                cur.execute("ALTER TABLE team_members ADD COLUMN analysis_uid TEXT")
+            except Exception:
+                pass  # Column already exists
         conn.commit()
         cur.close()
         conn.close()
@@ -175,10 +195,18 @@ class TeamMember:
     # ── CRUD ─────────────────────────────────────────────────────────────────
 
     @staticmethod
-    def get_all() -> List['TeamMember']:
+    def get_all(analysis_uid: Optional[str] = None) -> List['TeamMember']:
+        """Return members, optionally filtered by analysis_uid."""
         conn = TeamMember._get_conn()
         cur = TeamMember._cursor(conn)
-        cur.execute('SELECT * FROM team_members ORDER BY commit_count DESC')
+        ph = TeamMember._ph()
+        if analysis_uid:
+            cur.execute(
+                f'SELECT * FROM team_members WHERE analysis_uid = {ph} ORDER BY commit_count DESC',
+                (analysis_uid,)
+            )
+        else:
+            cur.execute('SELECT * FROM team_members ORDER BY commit_count DESC')
         rows = cur.fetchall()
         cur.close()
         conn.close()
@@ -248,9 +276,9 @@ class TeamMember:
                     INSERT INTO team_members
                         (github_username, display_name, email, avatar_url, role,
                          commit_count, pr_security_rating, last_commit_at, joined_at,
-                         pr_summary_json, commit_history_json)
-                    VALUES ({ph},{ph},{ph},{ph},{ph},{ph},{ph},{ph},{ph},{ph},{ph})
-                    ON CONFLICT (github_username) DO UPDATE SET
+                         pr_summary_json, commit_history_json, analysis_uid)
+                    VALUES ({ph},{ph},{ph},{ph},{ph},{ph},{ph},{ph},{ph},{ph},{ph},{ph})
+                    ON CONFLICT (github_username, analysis_uid) DO UPDATE SET
                         display_name=EXCLUDED.display_name,
                         commit_count=EXCLUDED.commit_count,
                         pr_security_rating=EXCLUDED.pr_security_rating,
@@ -261,7 +289,7 @@ class TeamMember:
                 ''', (self.github_username, self.display_name, self.email,
                       self.avatar_url, self.role, self.commit_count,
                       self.pr_security_rating, self.last_commit_at, self.joined_at,
-                      pr_json, ch_json))
+                      pr_json, ch_json, self.analysis_uid))
                 row = cur.fetchone()
                 self.id = (row['id'] if isinstance(row, dict) else row[0]) if row else self.id
             else:
@@ -269,12 +297,12 @@ class TeamMember:
                     INSERT OR REPLACE INTO team_members
                         (github_username, display_name, email, avatar_url, role,
                          commit_count, pr_security_rating, last_commit_at, joined_at,
-                         pr_summary_json, commit_history_json)
-                    VALUES (?,?,?,?,?,?,?,?,?,?,?)
+                         pr_summary_json, commit_history_json, analysis_uid)
+                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
                 ''', (self.github_username, self.display_name, self.email,
                       self.avatar_url, self.role, self.commit_count,
                       self.pr_security_rating, self.last_commit_at, self.joined_at,
-                      pr_json, ch_json))
+                      pr_json, ch_json, self.analysis_uid))
                 self.id = cur.lastrowid
 
         conn.commit()

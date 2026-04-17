@@ -8,6 +8,7 @@ Endpoints:
   POST /api/team/members           — manually add a member
   PUT  /api/team/members/<id>      — update member (role, etc.)
   DELETE /api/team/members/<id>    — remove member
+  GET  /api/team/current-uid       — get current analysis UID from session
 
 PR Security Rating algorithm:
   - Fetches PRs for the codebase repo from GitHub API
@@ -24,7 +25,7 @@ import subprocess
 from datetime import datetime
 from typing import Dict, List, Optional
 
-from flask import Blueprint, jsonify, request, session
+from flask import Blueprint, jsonify, request, session, current_app
 
 from auth.jwt_utils import jwt_required
 from models.team_member import TeamMember
@@ -33,6 +34,26 @@ from services.github_service import GitHubAPIClient
 logger = logging.getLogger(__name__)
 
 team_bp = Blueprint('team', __name__)
+
+
+def _resolve_upload_path(uid: str) -> str:
+    """Resolve the absolute path to an uploaded project given its UID."""
+    # Try app config first
+    try:
+        upload_folder = current_app.config.get('UPLOAD_FOLDER', 'uploads')
+    except RuntimeError:
+        upload_folder = 'uploads'
+    # Build candidate paths — relative to CWD (backend/) and one level up
+    candidates = [
+        os.path.abspath(os.path.join(upload_folder, uid)),
+        os.path.abspath(os.path.join('..', upload_folder, uid)),
+        os.path.abspath(os.path.join(upload_folder.lstrip('/'), uid)),
+    ]
+    for path in candidates:
+        if os.path.isdir(path):
+            return path
+    # Return the first candidate even if it doesn't exist (for error reporting)
+    return candidates[0]
 
 # ── Vulnerability patterns for PR security rating ──────────────────────────
 VULN_PATTERNS = [
@@ -108,22 +129,37 @@ def _extract_repo_info_from_path(project_path: str) -> Optional[Dict]:
 def _extract_git_commits(project_path: str) -> List[Dict]:
     """Extract commit history from the git repo in project_path."""
     commits = []
+
+    # Check if .git directory exists
+    git_dir = os.path.join(project_path, '.git')
+    if not os.path.isdir(git_dir):
+        logger.info(f"[team_routes] No .git directory at {project_path} — skipping git log")
+        return []
+
     try:
         result = subprocess.run(
-            ['git', 'log', '--pretty=format:%H|%an|%ae|%ai|%s', '--max-count=200'],
-            cwd=project_path, capture_output=True, text=True, timeout=15
+            ['git', 'log', '--pretty=format:%H|%an|%ae|%ai|%s', '--max-count=500'],
+            cwd=project_path, capture_output=True, text=True, timeout=30,
+            encoding='utf-8', errors='replace'
         )
-        if result.returncode == 0:
+        if result.returncode == 0 and result.stdout.strip():
             for line in result.stdout.strip().splitlines():
                 parts = line.split('|', 4)
                 if len(parts) >= 5:
                     commits.append({
                         'sha': parts[0][:8],
-                        'author': parts[1],
-                        'email': parts[2],
-                        'date': parts[3],
-                        'message': parts[4],
+                        'author': parts[1].strip(),
+                        'email': parts[2].strip(),
+                        'date': parts[3].strip(),
+                        'message': parts[4].strip(),
                     })
+        else:
+            stderr_msg = (result.stderr or '').strip()[:200]
+            logger.warning(f"[team_routes] git log returned code {result.returncode}: {stderr_msg}")
+    except FileNotFoundError:
+        logger.warning("[team_routes] git not found in PATH")
+    except subprocess.TimeoutExpired:
+        logger.warning("[team_routes] git log timed out")
     except Exception as e:
         logger.warning(f"[team_routes] git log failed: {e}")
     return commits
@@ -142,6 +178,61 @@ def _github_username_from_email(email: str) -> Optional[str]:
     return None
 
 
+def _fetch_github_contributors(owner: str, repo: str, gh_client) -> List[Dict]:
+    """
+    Fetch GitHub contributors via the GitHub API.
+    Returns a list of contributor dicts with github_username, avatar_url, contributions.
+    """
+    contributors = []
+    try:
+        import requests as req
+        token = gh_client.access_token if gh_client else None
+        headers = {'Accept': 'application/vnd.github.v3+json'}
+        if token:
+            headers['Authorization'] = f'token {token}'
+        url = f'https://api.github.com/repos/{owner}/{repo}/contributors?per_page=100&anon=1'
+        resp = req.get(url, headers=headers, timeout=15)
+        if resp.status_code == 200:
+            for c in resp.json():
+                if c.get('type') == 'Anonymous':
+                    contributors.append({
+                        'github_username': c.get('name', 'anonymous').replace(' ', '-')[:39],
+                        'display_name': c.get('name', 'Anonymous'),
+                        'email': c.get('email', ''),
+                        'avatar_url': c.get('avatar_url', ''),
+                        'contributions': c.get('contributions', 0),
+                    })
+                else:
+                    contributors.append({
+                        'github_username': c.get('login', 'unknown'),
+                        'display_name': c.get('login', 'Unknown'),
+                        'email': '',
+                        'avatar_url': c.get('avatar_url', ''),
+                        'contributions': c.get('contributions', 0),
+                    })
+        else:
+            logger.warning(f"[team_routes] GitHub contributors API returned {resp.status_code} for {owner}/{repo}")
+    except Exception as e:
+        logger.warning(f"[team_routes] Failed to fetch GitHub contributors: {e}")
+    return contributors
+
+
+def _load_repo_url_from_metadata(uid: str) -> Optional[str]:
+    """Try to read the repo_url from the analysis history JSON if stored."""
+    try:
+        import json as _json
+        history_file = 'analysis_history.json'
+        if os.path.exists(history_file):
+            with open(history_file, 'r') as f:
+                history = _json.load(f)
+            for entry in history:
+                if entry.get('uid') == uid and entry.get('repo_url'):
+                    return entry['repo_url']
+    except Exception:
+        pass
+    return None
+
+
 # ────────────────────────────────────────────────────────────────────────────
 # Routes
 # ────────────────────────────────────────────────────────────────────────────
@@ -149,12 +240,21 @@ def _github_username_from_email(email: str) -> Optional[str]:
 @team_bp.route('/api/team/members', methods=['GET'])
 @jwt_required
 def list_team_members():
-    """List all team members with their stats."""
+    """List all team members scoped to the current analysis session."""
     try:
-        members = TeamMember.get_all()
+        uid = session.get('current_uid')
+        if not uid:
+            # No analysis has been run yet in this session
+            return jsonify({
+                'members': [],
+                'total': 0,
+                'no_analysis': True,
+            }), 200
+        members = TeamMember.get_all(analysis_uid=uid)
         return jsonify({
             'members': [m.to_dict() for m in members],
             'total': len(members),
+            'no_analysis': False,
         }), 200
     except Exception as e:
         logger.error(f"[team] list_team_members error: {e}", exc_info=True)
@@ -175,6 +275,14 @@ def get_member_profile(member_id):
         return jsonify({'error': str(e)}), 500
 
 
+@team_bp.route('/api/team/current-uid', methods=['GET'])
+@jwt_required
+def get_current_uid():
+    """Return the current analysis UID stored in the user session."""
+    uid = session.get('current_uid')
+    return jsonify({'uid': uid}), 200
+
+
 @team_bp.route('/api/team/extract/<uid>', methods=['POST'])
 @jwt_required
 def extract_team_from_commits(uid):
@@ -183,9 +291,9 @@ def extract_team_from_commits(uid):
     Also fetches GitHub avatar and PR security rating if GitHub token is available.
     """
     try:
-        project_path = os.path.join('uploads', uid)
+        project_path = _resolve_upload_path(uid)
         if not os.path.exists(project_path):
-            return jsonify({'error': 'Project not found. Upload and analyze first.'}), 404
+            return jsonify({'error': f'Project not found for UID {uid}. Upload and analyze first.'}), 404
 
         # Extract commits from git history
         commits = _extract_git_commits(project_path)
@@ -215,6 +323,56 @@ def extract_team_from_commits(uid):
         # Try to get repo info for PR rating
         repo_info = _extract_repo_info_from_path(project_path)
 
+        # ─ Fallback: GitHub contributors API ─────────────────────────────────
+        if not commits:
+            logger.info(f"[team_routes] No git commits for {uid} — trying GitHub contributors API")
+
+            # Try to resolve repo info from metadata (cloned repos store repo_url)
+            if not repo_info:
+                stored_url = _load_repo_url_from_metadata(uid)
+                if stored_url:
+                    m = re.search(r'github\.com[:/]([^/]+)/([^/\s\.]+)', stored_url)
+                    if m:
+                        repo_info = {'owner': m.group(1), 'repo': m.group(2).rstrip('.git'), 'url': stored_url}
+
+            if repo_info and gh_client:
+                contributors = _fetch_github_contributors(repo_info['owner'], repo_info['repo'], gh_client)
+                if contributors:
+                    saved_members = []
+                    for c in contributors:
+                        member = TeamMember(
+                            github_username=c['github_username'],
+                            display_name=c['display_name'],
+                            email=c['email'],
+                            avatar_url=c['avatar_url'] or f"https://avatars.githubusercontent.com/{c['github_username']}?size=80",
+                            role='Developer',
+                            commit_count=c['contributions'],
+                            pr_security_rating=None,
+                            analysis_uid=uid,
+                        )
+                        member._pr_summary_json = '[]'
+                        member._commit_history_json = '[]'
+                        member.save()
+                        saved_members.append(member.to_dict())
+                    return jsonify({
+                        'message': f'Extracted {len(saved_members)} contributors from GitHub API',
+                        'members': saved_members,
+                        'total': len(saved_members),
+                        'source': 'github_contributors',
+                    }), 200
+            elif repo_info:
+                return jsonify({
+                    'message': 'No git history found and no GitHub token — connect GitHub to fetch contributors',
+                    'hint': 'Connect your GitHub account in the profile menu to enable contributor extraction',
+                    'members': [], 'total': 0,
+                }), 200
+            else:
+                return jsonify({
+                    'message': 'No git history found in this codebase. For uploaded ZIP files without .git history, provide a GitHub repo URL instead.',
+                    'hint': 'Use the Remote Repository option on the home page to analyze a GitHub repo and get team data.',
+                    'members': [], 'total': 0,
+                }), 200
+        # Process git commit authors (reached only if commits exist)
         saved_members = []
         for email, author_data in author_map.items():
             # Try to derive GitHub username
@@ -284,6 +442,7 @@ def extract_team_from_commits(uid):
                 commit_count=len(author_data['commits']),
                 pr_security_rating=pr_security_rating,
                 last_commit_at=last_commit_dt,
+                analysis_uid=uid,
             )
             member._pr_summary_json = json.dumps(pr_summary)
             member._commit_history_json = json.dumps(commit_history_data)
@@ -322,6 +481,7 @@ def add_team_member():
             email=data.get('email', ''),
             role=data.get('role', 'Developer'),
             avatar_url=f"https://avatars.githubusercontent.com/{gh_username}?size=80",
+            analysis_uid=session.get('current_uid'),
         )
         member.save()
         return jsonify({'message': 'Member added', 'member': member.to_dict()}), 201

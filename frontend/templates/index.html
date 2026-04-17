@@ -152,9 +152,128 @@
       padding: 10px 20px; background: var(--s-primary); color: #000; border-radius: var(--s-radius-sm); font-weight: 700; text-decoration: none;
     }
 
+    /* Analysis History */
+    .history-section {
+      margin-bottom: 48px;
+    }
+    .history-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .history-title {
+      font-family: var(--s-font-heading);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--s-on-surface);
+    }
+    .history-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .history-card {
+      background: var(--s-surface-container-low);
+      border-radius: var(--s-radius);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .history-card:hover {
+      background: var(--s-surface-container-highest);
+      transform: translateX(2px);
+    }
+    .history-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, var(--s-primary), var(--s-secondary));
+      border-radius: 0 2px 2px 0;
+    }
+    .history-uid {
+      font-family: var(--s-font-mono);
+      font-size: 0.75rem;
+      color: var(--s-primary);
+      background: rgba(163,166,255,0.08);
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(163,166,255,0.15);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .history-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .history-proj {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--s-on-surface);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .history-meta {
+      font-size: 0.75rem;
+      color: var(--s-on-surface-variant);
+      margin-top: 2px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .history-status {
+      padding: 2px 8px;
+      border-radius: 99px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      flex-shrink: 0;
+    }
+    .history-status.complete { background: rgba(34,197,94,0.12); color: #22c55e; border: 1px solid rgba(34,197,94,0.2); }
+    .history-status.running  { background: rgba(59,130,246,0.12); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); animation: pulseBadge 2s ease infinite; }
+    .history-status.unknown  { background: rgba(100,116,139,0.12); color: #94a3b8; border: 1px solid rgba(100,116,139,0.2); }
+    .history-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .hist-btn {
+      padding: 5px 12px;
+      border-radius: var(--s-radius-sm);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .hist-btn-primary {
+      background: rgba(163,166,255,0.1);
+      color: var(--s-primary);
+      border-color: rgba(163,166,255,0.2);
+    }
+    .hist-btn-primary:hover { background: var(--s-primary); color: #000; }
+    .hist-btn-ghost {
+      background: rgba(255,255,255,0.04);
+      color: var(--s-on-surface-variant);
+    }
+    .hist-btn-ghost:hover { background: rgba(255,255,255,0.08); color: var(--s-on-surface); }
+    @keyframes pulseBadge { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
+
     @media (max-width: 900px) {
       .upload-grid { grid-template-columns: 1fr; }
       .features-grid { grid-template-columns: 1fr; }
+      .history-actions { flex-direction: column; gap: 4px; }
     }
   </style>
 {% endblock %}
@@ -225,6 +344,20 @@
           </div>
         </div>
         {% endif %}
+
+        <!-- Analysis History -->
+        <div class="history-section st-anim-3" id="historySection" style="display:none">
+          <div class="history-header">
+            <div class="history-title">
+              <span class="material-symbols-outlined" style="font-size:20px; vertical-align:middle; margin-right:6px; color: var(--s-primary);">history</span>
+              Recent Analysis History
+            </div>
+            <button onclick="clearHistoryView()" class="st-btn-secondary" style="font-size:0.78rem; padding:6px 14px;">Clear View</button>
+          </div>
+          <div class="history-grid" id="historyGrid">
+            <p style="color:var(--s-on-surface-variant); font-size:0.85rem;">Loading history...</p>
+          </div>
+        </div>
 
         <!-- Features -->
         <div class="features-grid st-anim-4">
@@ -362,6 +495,94 @@
     } catch (e) { alert('Error: '+e.message); btn.disabled = false; btn.textContent = 'Scan Origin'; }
   }
 
-  document.addEventListener('DOMContentLoaded', loadRepos);
+  /* ── Analysis History ── */
+  function _formatTs(isoStr) {
+    if (!isoStr) return '';
+    try {
+      const d = new Date(isoStr);
+      const now = new Date();
+      const diffMs = now - d;
+      const diffMins = Math.floor(diffMs / 60000);
+      if (diffMins < 1) return 'Just now';
+      if (diffMins < 60) return `${diffMins}m ago`;
+      const diffHrs = Math.floor(diffMins / 60);
+      if (diffHrs < 24) return `${diffHrs}h ago`;
+      return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    } catch { return isoStr; }
+  }
+
+  async function loadAnalysisHistory() {
+    const section = document.getElementById('historySection');
+    const grid    = document.getElementById('historyGrid');
+    if (!grid) return;
+    try {
+      const res = await fetch('/api/analysis/history?limit=10');
+      if (!res.ok) return; // Not authenticated or endpoint error — silent fail
+      const data = await res.json();
+      const history = data.history || [];
+      if (!history.length) {
+        section && (section.style.display = 'none');
+        return;
+      }
+      section && (section.style.display = 'block');
+
+      grid.innerHTML = history.map(entry => {
+        const uid = entry.uid || '';
+        const shortUid = uid.slice(0, 8);
+        const proj = entry.project_name || shortUid || 'Analysis';
+        const status = entry.status || 'unknown';
+        const statusLabel = status === 'complete' ? 'Complete' : status === 'running' ? 'Running' : 'Unknown';
+        const ts = _formatTs(entry.timestamp);
+        const fileCount = entry.file_count || 0;
+        const repoUrl = entry.repo_url || '';
+
+        return `<div class="history-card">
+          <span class="history-uid" title="Full UID: ${uid}">${shortUid}</span>
+          <div class="history-info">
+            <div class="history-proj" title="${proj}">${proj}${repoUrl ? ` <span style="color:var(--s-on-surface-variant);font-weight:400;font-size:0.75rem;">(repo)</span>` : ''}</div>
+            <div class="history-meta">
+              <span>🕐 ${ts}</span>
+              ${fileCount ? `<span>📁 ${fileCount} files</span>` : ''}
+              ${repoUrl ? `<span style="color:var(--s-primary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:200px;">🔗 ${repoUrl.replace('https://github.com/', '')}</span>` : ''}
+            </div>
+          </div>
+          <span class="history-status ${status}">${statusLabel}</span>
+          <div class="history-actions">
+            <a href="/dashboard?uid=${uid}" class="hist-btn hist-btn-primary" title="View dashboard for this analysis">
+              <span class="material-symbols-outlined" style="font-size:13px;">dashboard</span>Dashboard
+            </a>
+            ${status === 'complete' ? `<a href="/report/${uid}" class="hist-btn hist-btn-ghost" title="View full report">
+              <span class="material-symbols-outlined" style="font-size:13px;">description</span>Report
+            </a>` : ''}
+            <button class="hist-btn hist-btn-ghost" onclick="copyUid('${uid}')" title="Copy full UID">
+              <span class="material-symbols-outlined" style="font-size:13px;">content_copy</span>
+            </button>
+          </div>
+        </div>`;
+      }).join('');
+    } catch (e) {
+      // Silently handle authentication errors
+    }
+  }
+
+  function copyUid(uid) {
+    navigator.clipboard?.writeText(uid).then(() => {
+      // Brief visual feedback
+      const btns = document.querySelectorAll('.hist-btn-ghost');
+      // Simple flash
+    }).catch(() => {
+      prompt('Copy this UID:', uid);
+    });
+  }
+
+  function clearHistoryView() {
+    const section = document.getElementById('historySection');
+    if (section) section.style.display = 'none';
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadRepos();
+    loadAnalysisHistory();
+  });
 </script>
 {% endblock %}

@@ -210,6 +210,7 @@
                   <th>Title / Description</th>
                   <th>Location</th>
                   <th>Agent</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -231,9 +232,14 @@
                   <td>
                     <span class="agent-pill">{{ ', '.join(f.get('source_agents', [f.get('agent', 'ai')])) }}</span>
                   </td>
+                  <td>
+                    <button class="st-btn-secondary" style="font-size: 0.65rem; padding: 4px 8px; font-weight:700; display:flex; align-items:center; gap:4px; border:1px solid rgba(163,166,255,0.3); background:rgba(163,166,255,0.05);" onclick="openPRModal('{{ f.get('file', '') | escape }}', '{{ f.title | default('Bug Fix', true) | escape }}', '{{ f.get('remediation', '') | replace('\n', '\\n') | replace('\'', '\\\'') }}')">
+                     <span class="material-symbols-outlined" style="font-size:12px;">pull_request</span> PR Fix
+                    </button>
+                  </td>
                 </tr>
                 {% else %}
-                <tr><td colspan="4" style="text-align:center;color:#475569;padding:32px">No findings recorded.</td></tr>
+                <tr><td colspan="5" style="text-align:center;color:#475569;padding:32px">No findings recorded.</td></tr>
                 {% endfor %}
               </tbody>
             </table>
@@ -321,6 +327,37 @@
         </div>
       </div>
 
+      <!-- PR Modal -->
+      <div id="prModalOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:var(--s-surface-container-low); width:100%; max-width:600px; border-radius:16px; border:1px solid var(--s-border); box-shadow:0 24px 48px rgba(0,0,0,0.5); display:flex; flex-direction:column; max-height:90vh;">
+          <div style="padding:20px 24px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-family:var(--s-font-heading); font-size:1.2rem; font-weight:700; display:flex; align-items:center; gap:8px;">
+              <span class="material-symbols-outlined" style="color:var(--s-primary);">pull_request</span> Create Security PR
+            </div>
+            <button onclick="closePRModal()" style="background:transparent; border:none; color:var(--s-on-surface-variant); cursor:pointer;"><span class="material-symbols-outlined">close</span></button>
+          </div>
+          <div style="padding:24px; overflow-y:auto;">
+            <div id="prAlert" style="display:none; padding:12px; margin-bottom:16px; border-radius:8px; font-size:0.85rem;"></div>
+            
+            <label style="display:block; font-size:0.8rem; font-weight:700; color:var(--s-on-surface-variant); margin-bottom:8px;">Target Repository (owner/repo)</label>
+            <input type="text" id="prRepo" placeholder="e.g. facebook/react" style="width:100%; padding:10px 14px; margin-bottom:16px; background:var(--s-surface-container-highest); border:1px solid var(--s-border); border-radius:8px; color:var(--s-on-surface);" value="{{ report.get('repo_full_name', '') }}">
+            
+            <label style="display:block; font-size:0.8rem; font-weight:700; color:var(--s-on-surface-variant); margin-bottom:8px;">File Path to Patch</label>
+            <input type="text" id="prFile" readonly style="width:100%; padding:10px 14px; margin-bottom:16px; background:rgba(0,0,0,0.2); border:1px solid var(--s-border); border-radius:8px; color:var(--s-on-surface-variant); font-family:var(--s-font-mono); font-size:0.85rem;">
+            
+            <label style="display:block; font-size:0.8rem; font-weight:700; color:var(--s-on-surface-variant); margin-bottom:8px;">PR Title</label>
+            <input type="text" id="prTitle" style="width:100%; padding:10px 14px; margin-bottom:16px; background:var(--s-surface-container-highest); border:1px solid var(--s-border); border-radius:8px; color:var(--s-on-surface);">
+            
+            <label style="display:block; font-size:0.8rem; font-weight:700; color:var(--s-on-surface-variant); margin-bottom:8px;">Patched Content <span style="font-weight:400; font-size:0.7rem;">(AI generated, please verify)</span></label>
+            <textarea id="prContent" rows="10" style="width:100%; padding:12px; background:var(--s-surface-container-highest); border:1px solid var(--s-border); border-radius:8px; color:var(--s-on-surface); font-family:var(--s-font-mono); font-size:0.85rem; line-height:1.4; resize:vertical;"></textarea>
+          </div>
+          <div style="padding:20px 24px; border-top:1px solid rgba(255,255,255,0.05); display:flex; justify-content:flex-end; gap:12px;">
+            <button onclick="closePRModal()" class="st-btn-secondary">Cancel</button>
+            <button onclick="submitPR()" id="submitPRBtn" class="st-btn-primary"><span class="material-symbols-outlined" style="font-size:16px; margin-right:6px;">call_merge</span> Raise Pull Request</button>
+          </div>
+        </div>
+      </div>
+
   </div><!-- /report-page -->
 {% endblock %}
 
@@ -331,6 +368,91 @@
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.getElementById('tab-' + name).classList.add('active');
       el.classList.add('active');
+    }
+
+    function openPRModal(filePath, title, remediationContent) {
+      document.getElementById('prFile').value = filePath;
+      document.getElementById('prTitle').value = `Security Patch: ${title}`;
+      let content = typeof remediationContent === 'string' ? remediationContent : '';
+      if (!content && typeof auth !== 'undefined') content = "/* Add fixed patch here */\n";
+      
+      document.getElementById('prContent').value = content;
+      document.getElementById('prAlert').style.display = 'none';
+      
+      if(!document.getElementById('prRepo').value) {
+          // Attempt to extract from DOM or local storage if missing
+          const stored = localStorage.getItem('tracked_repo');
+          if(stored) document.getElementById('prRepo').value = stored;
+      }
+
+      document.getElementById('prModalOverlay').style.display = 'flex';
+    }
+
+    function closePRModal() {
+      document.getElementById('prModalOverlay').style.display = 'none';
+    }
+
+    async function submitPR() {
+      const btn = document.getElementById('submitPRBtn');
+      const alertBox = document.getElementById('prAlert');
+      const repoInput = document.getElementById('prRepo').value.trim();
+      const file_path = document.getElementById('prFile').value.trim();
+      const title = document.getElementById('prTitle').value.trim();
+      const content = document.getElementById('prContent').value;
+      
+      alertBox.style.display = 'none';
+      
+      if (!repoInput || !repoInput.includes('/')) {
+         alertBox.textContent = 'Please enter a valid target repository (owner/repo).';
+         alertBox.style.background = 'var(--s-error-container)';
+         alertBox.style.color = 'var(--s-on-error-container)';
+         alertBox.style.display = 'block';
+         return;
+      }
+      
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px; margin-right:6px; animation: spin 1s linear infinite;">sync</span> Processing...';
+      
+      const [owner, repo] = repoInput.split('/');
+      
+      try {
+        const resp = await fetch('/api/github/raise-pr', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'same-origin',
+          body: JSON.stringify({
+            owner: owner,
+            repo: repo,
+            file_path: file_path,
+            title: title,
+            file_content: content,
+            commit_message: title
+          })
+        });
+        
+        const data = await resp.json();
+        
+        if (resp.ok) {
+          alertBox.innerHTML = `✅ Successfully created Pull Request! <a href="${data.url}" target="_blank" style="color:inherit; text-decoration:underline;">View PR on GitHub</a>`;
+          alertBox.style.background = 'rgba(34,197,94,0.1)';
+          alertBox.style.color = '#86efac';
+          alertBox.style.border = '1px solid rgba(34,197,94,0.2)';
+          alertBox.style.display = 'block';
+          btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px; margin-right:6px;">check</span> Dispatched';
+        } else {
+          throw new Error(data.error || 'Failed to create PR');
+        }
+      } catch (err) {
+        alertBox.textContent = `❌ ${err.message}`;
+        alertBox.style.background = 'var(--s-error-container)';
+        alertBox.style.color = 'var(--s-on-error-container)';
+        alertBox.style.border = '1px solid rgba(239,68,68,0.2)';
+        alertBox.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px; margin-right:6px;">call_merge</span> Raise Pull Request';
+      }
     }
   </script>
 {% endblock %}
