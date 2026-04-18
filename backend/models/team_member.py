@@ -1,4 +1,4 @@
-﻿"""
+"""
 TeamMember Model
 
 Stores team members extracted from git commit history.
@@ -39,7 +39,6 @@ class TeamMember:
         self.joined_at = joined_at or datetime.utcnow()
         # Ties this member to a specific analysis session
         self.analysis_uid = analysis_uid
-        }
 
     # ── DB helpers ───────────────────────────────────────────────────────────
 
@@ -92,6 +91,10 @@ class TeamMember:
             pr_summary_json=_get('pr_summary_json'),
             commit_history_json=_get('commit_history_json'),
             analysis_uid=_get('analysis_uid'),
+        )
+
+    @staticmethod
+    def create_table():
         conn = TeamMember._get_conn()
         cur = TeamMember._cursor(conn)
         if _is_postgres():
