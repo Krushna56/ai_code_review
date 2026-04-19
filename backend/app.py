@@ -109,6 +109,38 @@ app.config['MAX_FORM_MEMORY_SIZE'] = config.MAX_FORM_MEMORY_SIZE  # Werkzeug mul
 app.config['MAX_FORM_PARTS'] = 100000  # Werkzeug 3.x: max parts in multipart upload
 app.config['SECRET_KEY'] = config.SECRET_KEY
 
+@app.route("/")
+def index():
+    """Root route: redirect to login if not authenticated, else to the main dashboard."""
+    from auth.jwt_utils import JWTManager
+    import jwt as _jwt
+    token = session.get('jwt_access_token')
+    if token:
+        try:
+            payload = JWTManager.verify_token(token)
+            if not JWTManager.is_blacklisted(token):
+                return redirect(url_for('index_page'))
+        except Exception:
+            pass
+    return redirect(url_for('auth.login'))
+
+
+@app.route("/dashboard")
+def index_page():
+    """Main dashboard — requires authentication."""
+    from auth.jwt_utils import JWTManager
+    token = session.get('jwt_access_token')
+    if not token:
+        return redirect(url_for('auth.login'))
+    try:
+        payload = JWTManager.verify_token(token)
+        if JWTManager.is_blacklisted(token):
+            return redirect(url_for('auth.login'))
+    except Exception:
+        return redirect(url_for('auth.login'))
+    return render_template('index.html')
+
+
 @app.route("/health")
 def health():
     """Early health check for quick deployment validation"""
@@ -157,7 +189,7 @@ logger.info("Initialized repository tracking table")
 # Initialize TeamMember table
 try:
     from models.team_member import TeamMember
-    TeamMember.init_db()
+    TeamMember.create_table()
     logger.info("Initialized team_members table")
 except Exception as _te:
     logger.warning(f"Team member DB init failed (non-fatal): {_te}")
@@ -554,6 +586,12 @@ def run_analysis_background(input_path, output_path, uid):
         logger.error(f"[4-Agent] Pipeline error for {uid}: {e}", exc_info=True)
         analysis_status[uid]['status'] = 'error'
         analysis_status[uid]['error'] = str(e)
+
+
+@app.errorhandler(404)
+def not_found(error):
+    """Handle 404 Not Found errors — redirect to dashboard root."""
+    return redirect(url_for('index')), 302
 
 
 @app.errorhandler(413)

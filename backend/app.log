@@ -20212,3 +20212,196 @@ openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect A
 2026-04-17 00:00:52,490 - b0520f5f-ec57-4867-beb8-56e41733e910 - werkzeug - INFO - 127.0.0.1 - - [17/Apr/2026 00:00:52] "[33mGET /api/jarvis/feed?limit=40 HTTP/1.1[0m" 404 -
 =======
 >>>>>>> 50b420b4620be03ea149dc44fc325e539a565625
+2026-04-19 12:28:58,550 - 1240abb5-ae55-4c0b-bb73-648c549301c7 - root - INFO - Logging configured: file=c:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-04-19 12:28:58,558 - 9cc00875-bf35-4c56-8db8-5c257d1bf477 - __main__ - INFO - Configured MAX_CONTENT_LENGTH: 21474836480 bytes
+2026-04-19 12:28:58,559 - 8e03a1bd-1416-4a84-b9ee-b69f1a5025b5 - __main__ - INFO - Configured MAX_FORM_MEMORY_SIZE: 33554432 bytes
+2026-04-19 12:28:58,560 - 11d43cf0-e4d8-4952-9828-5c848da74049 - __main__ - INFO - Configured MAX_FORM_PARTS: 100000
+2026-04-19 12:28:58,561 - 66eb8848-fd9e-4a33-b056-5197ae87a738 - utils.csrf_protection - INFO - CSRF middleware initialized
+2026-04-19 12:28:58,562 - 96bc6b2e-e64f-4bf7-9401-426020a6585d - utils.csrf_protection - INFO - CSRF protection enabled for application
+2026-04-19 12:28:58,563 - d1c3cf17-5609-41bb-8808-ea8bc1223b37 - root - INFO - Logging configured: file=c:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-04-19 12:28:58,564 - a8a86acb-3bb4-427d-9bd0-29a3d0616139 - root - INFO - Flask logging configured
+2026-04-19 12:28:58,629 - 32a1fd8c-f7bc-4929-a5d8-7b9f4ea28aa0 - models.repository - INFO - Repositories table ready
+2026-04-19 12:28:58,630 - c098489c-7714-4da1-9296-32560acfaa44 - __main__ - INFO - Initialized repository tracking table
+2026-04-19 12:28:58,635 - 237a9242-2e38-4ffa-9fc5-49e6a30d5c65 - __main__ - INFO - Initialized team_members table
+2026-04-19 12:28:58,636 - c043c0b9-9c9f-4be0-9a23-2b770660cd92 - __main__ - INFO - Using temporary storage at: C:\Users\krush\AppData\Local\Temp\ai_code_review
+2026-04-19 12:28:58,639 - 1d916fca-39a4-48cf-9a9c-f2cf2f5eb143 - __main__ - INFO - Upload folder: C:\Users\krush\AppData\Local\Temp\ai_code_review\uploads
+2026-04-19 12:28:58,641 - d2690b5a-0a46-40fb-8189-76b07d591639 - __main__ - INFO - Processed folder: C:\Users\krush\AppData\Local\Temp\ai_code_review\processed
+2026-04-19 12:28:58,643 - a6088825-fbc8-4f71-883f-62bdc8ad074d - __main__ - INFO - Temp file retention: 24 hours
+2026-04-19 12:28:58,643 - dde8e90b-20ea-4720-8ddc-277e069047d8 - __main__ - INFO - Starting cleanup of temp files older than 24 hours...
+2026-04-19 12:28:58,645 - b0cab35c-dde3-4120-ba81-82270da66039 - __main__ - INFO - Cleanup complete: No old files to remove
+2026-04-19 12:28:58,647 - a1848770-020f-4dc3-87a1-0e5206505b06 - __main__ - INFO - Authentication database initialized successfully
+2026-04-19 12:28:58,648 - 2f813d9b-5600-4c5b-baff-5ef7983aa8c3 - __main__ - INFO - Starting AI Code Review Platform...
+2026-04-19 12:28:58,657 - 84cddb26-a99e-43c5-920d-2c3629946da1 - dotenv.main - WARNING - python-dotenv could not parse statement starting at line 8
+2026-04-19 12:28:58,660 - aeaad487-a113-47b4-b69b-247053949af7 - dotenv.main - WARNING - python-dotenv could not parse statement starting at line 10
+2026-04-19 12:28:59,597 - 8ef612ad-c8b3-480f-9e9c-a4831987f9a6 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.188:5000
+2026-04-19 12:28:59,600 - 0559e3fa-ff1f-40d7-86ef-9d0534b199cf - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-04-19 12:29:03,359 - e31a07fc-210e-4221-b8e2-3a3571d82363 - flask.request - INFO - Request received
+2026-04-19 12:29:03,383 - e31a07fc-210e-4221-b8e2-3a3571d82363 - flask.error - ERROR - 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\werkzeug\routing\map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-04-19 12:29:03,465 - e31a07fc-210e-4221-b8e2-3a3571d82363 - flask.response - WARNING - Response sent
+2026-04-19 12:29:03,477 - e31a07fc-210e-4221-b8e2-3a3571d82363 - werkzeug - INFO - 192.168.0.188 - - [19/Apr/2026 12:29:03] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2026-04-19 12:29:05,487 - c32f04d6-e24b-4a50-99be-7c4c3b60b2f3 - flask.request - INFO - Request received
+2026-04-19 12:29:05,497 - c32f04d6-e24b-4a50-99be-7c4c3b60b2f3 - flask.response - INFO - Response sent
+2026-04-19 12:29:05,499 - c32f04d6-e24b-4a50-99be-7c4c3b60b2f3 - werkzeug - INFO - 192.168.0.188 - - [19/Apr/2026 12:29:05] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 204 -
+2026-04-19 12:29:22,663 - 4149c0e9-37f1-4d49-90cd-9fdd65a23a2a - flask.request - INFO - Request received
+2026-04-19 12:29:22,691 - 4149c0e9-37f1-4d49-90cd-9fdd65a23a2a - flask.error - ERROR - 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\werkzeug\routing\map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-04-19 12:29:22,732 - 4149c0e9-37f1-4d49-90cd-9fdd65a23a2a - flask.response - WARNING - Response sent
+2026-04-19 12:29:22,754 - 4149c0e9-37f1-4d49-90cd-9fdd65a23a2a - werkzeug - INFO - 127.0.0.1 - - [19/Apr/2026 12:29:22] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2026-04-19 12:29:22,812 - f6d02846-d5ad-43b6-b812-d4bd8cbb8852 - flask.request - INFO - Request received
+2026-04-19 12:29:22,831 - f6d02846-d5ad-43b6-b812-d4bd8cbb8852 - flask.error - ERROR - 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\werkzeug\routing\map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-04-19 12:29:22,851 - f6d02846-d5ad-43b6-b812-d4bd8cbb8852 - flask.response - WARNING - Response sent
+2026-04-19 12:29:22,868 - f6d02846-d5ad-43b6-b812-d4bd8cbb8852 - werkzeug - INFO - 127.0.0.1 - - [19/Apr/2026 12:29:22] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2026-04-19 12:29:23,065 - 359ada1b-f353-4652-a9aa-94261ddb5c49 - flask.request - INFO - Request received
+2026-04-19 12:29:23,074 - 359ada1b-f353-4652-a9aa-94261ddb5c49 - flask.error - ERROR - 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\werkzeug\routing\map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-04-19 12:29:23,085 - 359ada1b-f353-4652-a9aa-94261ddb5c49 - flask.response - WARNING - Response sent
+2026-04-19 12:29:23,099 - 359ada1b-f353-4652-a9aa-94261ddb5c49 - werkzeug - INFO - 127.0.0.1 - - [19/Apr/2026 12:29:23] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2026-04-19 12:29:25,071 - 1689a764-8a13-4220-97b8-a2bb6272849b - flask.request - INFO - Request received
+2026-04-19 12:29:25,075 - 1689a764-8a13-4220-97b8-a2bb6272849b - flask.response - INFO - Response sent
+2026-04-19 12:29:25,077 - 1689a764-8a13-4220-97b8-a2bb6272849b - werkzeug - INFO - 127.0.0.1 - - [19/Apr/2026 12:29:25] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 204 -
+2026-04-19 12:30:00,355 - e5bb7845-7443-44c4-8c69-6df1cc27c4b7 - root - INFO - Logging configured: file=c:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-04-19 12:30:00,361 - d1621388-f951-40d8-884a-4913cf141794 - __main__ - INFO - Configured MAX_CONTENT_LENGTH: 21474836480 bytes
+2026-04-19 12:30:00,362 - ecddaf4b-076e-4048-a9d3-a5e54f369f85 - __main__ - INFO - Configured MAX_FORM_MEMORY_SIZE: 33554432 bytes
+2026-04-19 12:30:00,363 - 8601a4c6-c4b3-40f9-9b67-0bee332c3e25 - __main__ - INFO - Configured MAX_FORM_PARTS: 100000
+2026-04-19 12:30:00,364 - aaf2f081-80da-43f2-a0d0-c37f75f75591 - utils.csrf_protection - INFO - CSRF middleware initialized
+2026-04-19 12:30:00,364 - 5877e482-d7d0-4bdf-bcb1-b1e95c4e4ef7 - utils.csrf_protection - INFO - CSRF protection enabled for application
+2026-04-19 12:30:00,366 - 77d73388-6f3b-48d9-9865-f53fee9797c3 - root - INFO - Logging configured: file=c:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-04-19 12:30:00,368 - a6e603d8-4f21-4102-95b1-67097616a0c6 - root - INFO - Flask logging configured
+2026-04-19 12:30:00,411 - bf562fad-fb83-4ba1-bd65-ec6c81c1eff9 - models.repository - INFO - Repositories table ready
+2026-04-19 12:30:00,412 - 89ed834e-b5b4-4d50-b74d-ec27722bdbeb - __main__ - INFO - Initialized repository tracking table
+2026-04-19 12:30:00,413 - 6bcd4b50-b875-454d-ab33-0636b28a934a - __main__ - INFO - Initialized team_members table
+2026-04-19 12:30:00,415 - dafe5107-1ef1-4071-9b74-b90f90d6bdcd - __main__ - INFO - Using temporary storage at: C:\Users\krush\AppData\Local\Temp\ai_code_review
+2026-04-19 12:30:00,415 - 7e14f128-f923-4922-bec4-07fc7bff8ca0 - __main__ - INFO - Upload folder: C:\Users\krush\AppData\Local\Temp\ai_code_review\uploads
+2026-04-19 12:30:00,416 - 403cd9b3-0c2f-4eda-a68e-6d208e1cc9d1 - __main__ - INFO - Processed folder: C:\Users\krush\AppData\Local\Temp\ai_code_review\processed
+2026-04-19 12:30:00,417 - e62ecb35-0356-4db1-9470-a1b440991ff2 - __main__ - INFO - Temp file retention: 24 hours
+2026-04-19 12:30:00,418 - 69becf13-2083-433e-9a58-8e8649424547 - __main__ - INFO - Starting cleanup of temp files older than 24 hours...
+2026-04-19 12:30:00,419 - d47091c5-fd4f-4521-986a-ef164593a86e - __main__ - INFO - Cleanup complete: No old files to remove
+2026-04-19 12:30:00,421 - 4de099d5-b8ff-4a63-b5ef-ab21e30bdde9 - __main__ - INFO - Authentication database initialized successfully
+2026-04-19 12:30:00,421 - 4fce1eec-80f9-43e9-bb3a-7b73ca99b1ea - __main__ - INFO - Starting AI Code Review Platform...
+2026-04-19 12:30:00,427 - f2d03c8d-6979-49bd-9dfc-6219599f0323 - dotenv.main - WARNING - python-dotenv could not parse statement starting at line 8
+2026-04-19 12:30:00,429 - e699930b-a1e7-4d4a-b85a-4cfc8efe767b - dotenv.main - WARNING - python-dotenv could not parse statement starting at line 10
+2026-04-19 12:30:01,358 - b2861649-226f-4553-8d04-8e7902bac936 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.188:5000
+2026-04-19 12:30:01,359 - 395c46a0-d38a-48ed-975b-1066ff675e73 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-04-19 12:30:03,583 - ddedc623-4091-4736-9ba9-c4762def9f8c - flask.request - INFO - Request received
+2026-04-19 12:30:03,584 - ddedc623-4091-4736-9ba9-c4762def9f8c - flask.error - ERROR - 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\werkzeug\routing\map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-04-19 12:30:03,637 - ddedc623-4091-4736-9ba9-c4762def9f8c - flask.response - WARNING - Response sent
+2026-04-19 12:30:03,648 - ddedc623-4091-4736-9ba9-c4762def9f8c - werkzeug - INFO - 127.0.0.1 - - [19/Apr/2026 12:30:03] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2026-04-19 12:30:04,811 - 79fb56b3-1892-4461-8153-d464bcc2dbae - flask.request - INFO - Request received
+2026-04-19 12:30:04,812 - 79fb56b3-1892-4461-8153-d464bcc2dbae - flask.response - INFO - Response sent
+2026-04-19 12:30:04,813 - 79fb56b3-1892-4461-8153-d464bcc2dbae - werkzeug - INFO - 127.0.0.1 - - [19/Apr/2026 12:30:04] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 204 -
+2026-04-19 12:31:55,327 - 34d0debc-2da9-4eed-a35d-f27412910127 - flask.request - INFO - Request received
+2026-04-19 12:31:55,330 - 34d0debc-2da9-4eed-a35d-f27412910127 - flask.error - ERROR - 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\werkzeug\routing\map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-04-19 12:31:55,336 - 34d0debc-2da9-4eed-a35d-f27412910127 - flask.response - WARNING - Response sent
+2026-04-19 12:31:55,337 - 34d0debc-2da9-4eed-a35d-f27412910127 - werkzeug - INFO - 127.0.0.1 - - [19/Apr/2026 12:31:55] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2026-04-19 12:31:55,713 - 6aae9b92-8ebc-4c3f-918b-f40069cf07bf - flask.request - INFO - Request received
+2026-04-19 12:31:55,714 - 6aae9b92-8ebc-4c3f-918b-f40069cf07bf - flask.response - INFO - Response sent
+2026-04-19 12:31:55,723 - 6aae9b92-8ebc-4c3f-918b-f40069cf07bf - werkzeug - INFO - 127.0.0.1 - - [19/Apr/2026 12:31:55] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 204 -
+2026-04-19 12:31:57,224 - d0dafd57-c504-4951-89c4-e8446cb66974 - flask.request - INFO - Request received
+2026-04-19 12:31:57,225 - d0dafd57-c504-4951-89c4-e8446cb66974 - flask.error - ERROR - 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\flask\ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\krush\AppData\Roaming\Python\Python314\site-packages\werkzeug\routing\map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+2026-04-19 12:31:57,236 - d0dafd57-c504-4951-89c4-e8446cb66974 - flask.response - WARNING - Response sent
+2026-04-19 12:31:57,239 - d0dafd57-c504-4951-89c4-e8446cb66974 - werkzeug - INFO - 127.0.0.1 - - [19/Apr/2026 12:31:57] "[35m[1mGET / HTTP/1.1[0m" 500 -
+2026-04-19 12:31:57,497 - 60fe8e52-1468-41aa-af15-3341111022b9 - flask.request - INFO - Request received
+2026-04-19 12:31:57,498 - 60fe8e52-1468-41aa-af15-3341111022b9 - flask.response - INFO - Response sent
+2026-04-19 12:31:57,500 - 60fe8e52-1468-41aa-af15-3341111022b9 - werkzeug - INFO - 127.0.0.1 - - [19/Apr/2026 12:31:57] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 204 -
