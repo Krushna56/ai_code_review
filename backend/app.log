@@ -20405,3 +20405,24 @@ werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on 
 2026-04-19 12:31:57,497 - 60fe8e52-1468-41aa-af15-3341111022b9 - flask.request - INFO - Request received
 2026-04-19 12:31:57,498 - 60fe8e52-1468-41aa-af15-3341111022b9 - flask.response - INFO - Response sent
 2026-04-19 12:31:57,500 - 60fe8e52-1468-41aa-af15-3341111022b9 - werkzeug - INFO - 127.0.0.1 - - [19/Apr/2026 12:31:57] "[35m[1mGET /favicon.ico HTTP/1.1[0m" 204 -
+2026-04-19 12:32:22,099 - 0c4df726-e3dd-4edd-8bf8-8bff3935a1c5 - root - INFO - Logging configured: file=c:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-04-19 12:32:22,105 - 5178499b-c2a2-421b-80d6-b36153ec0e12 - __main__ - INFO - Configured MAX_CONTENT_LENGTH: 21474836480 bytes
+2026-04-19 12:32:22,105 - 53b96626-7e0b-4ec0-a727-04f4d3f6b3f5 - __main__ - INFO - Configured MAX_FORM_MEMORY_SIZE: 33554432 bytes
+2026-04-19 12:32:22,106 - 1fe3f4d0-5643-4833-913c-79eb1ca42f78 - __main__ - INFO - Configured MAX_FORM_PARTS: 100000
+2026-04-19 12:32:22,107 - 937a74b6-6957-4829-8098-a5d2d1b3566f - utils.csrf_protection - INFO - CSRF middleware initialized
+2026-04-19 12:32:22,108 - 41285857-627c-4934-8e44-9af21bff388e - utils.csrf_protection - INFO - CSRF protection enabled for application
+2026-04-19 12:32:22,112 - 85b02524-e4af-4ca6-9635-f899387a31cd - root - INFO - Logging configured: file=c:\Users\krush\OneDrive\Desktop\ai_code_review\backend\app.log, json=False
+2026-04-19 12:32:22,113 - 8d6b1527-6ca0-46aa-a476-a7622bf2b498 - root - INFO - Flask logging configured
+2026-04-19 12:32:22,153 - fc2ff5d3-3991-4c4b-8e35-7260c2dc51ef - models.repository - INFO - Repositories table ready
+2026-04-19 12:32:22,154 - f512a34b-25b9-4d1b-90cb-19b42d667327 - __main__ - INFO - Initialized repository tracking table
+2026-04-19 12:32:22,156 - 9cac40d1-c85b-4a80-b9a4-315f7722348a - __main__ - INFO - Initialized team_members table
+2026-04-19 12:32:22,157 - e5d61253-3472-4d3d-87fc-6b068b5564ed - __main__ - INFO - Using temporary storage at: C:\Users\krush\AppData\Local\Temp\ai_code_review
+2026-04-19 12:32:22,158 - 4feba832-2e90-4226-89c2-4b270cd71a99 - __main__ - INFO - Upload folder: C:\Users\krush\AppData\Local\Temp\ai_code_review\uploads
+2026-04-19 12:32:22,159 - 2c13d2c7-654f-461a-99f7-7f37b0c31b43 - __main__ - INFO - Processed folder: C:\Users\krush\AppData\Local\Temp\ai_code_review\processed
+2026-04-19 12:32:22,159 - 7f37fc47-db7f-4aaf-9e6c-8c9f219d724b - __main__ - INFO - Temp file retention: 24 hours
+2026-04-19 12:32:22,164 - d268c962-337a-42f2-8bc8-1055d9ae1acd - __main__ - INFO - Starting cleanup of temp files older than 24 hours...
+2026-04-19 12:32:22,165 - 7d4d841c-91c4-40b4-8c76-fe74a9567073 - __main__ - INFO - Cleanup complete: No old files to remove
+2026-04-19 12:32:22,167 - b95757f0-ff5a-407a-a089-8a70d80b8d29 - __main__ - INFO - Authentication database initialized successfully
+2026-04-19 12:32:22,168 - 69a6a4d3-ac1f-4c79-9629-d43ef487e065 - __main__ - INFO - Starting AI Code Review Platform...
+2026-04-19 12:32:22,171 - 942e479a-d431-46dc-9107-932f33c00afa - dotenv.main - WARNING - python-dotenv could not parse statement starting at line 8
+2026-04-19 12:32:22,172 - 480f4a30-66a2-46fc-b791-c1e80341a801 - dotenv.main - WARNING - python-dotenv could not parse statement starting at line 10
