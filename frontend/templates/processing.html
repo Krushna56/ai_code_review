@@ -1,4 +1,4 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block title %}Analyzing Code — AI Code Review{% endblock %}
 
@@ -179,7 +179,7 @@
       <p class="status-text" id="statusText">Initializing pipeline…</p>
 
       <div class="error-box" id="errorBox"></div>
-      <a class="st-btn st-btn-primary btn-home" id="btnHome" href="/">Return Home</a>
+      <a class="st-btn st-btn-primary btn-home" id="btnHome" href="/dashboard">Return Home</a>
     </div>
 
     <!-- 4 Agent cards -->
@@ -258,97 +258,111 @@
 
   <div class="wm">AI Code Review · 4-Agent Pipeline</div>
 {% endblock %}
-      card.className = 'agent-card ' + (status === 'done' ? 'done' : status === 'error' ? 'error' : status === 'running' ? 'running' : '');
-      badge.className = 'agent-status-badge ' + (status === 'done' ? 'done' : status === 'error' ? 'error' : status === 'running' ? 'running' : '');
-      badge.textContent = status === 'done' ? '✓ done' : status === 'error' ? '✗ error' : status === 'running' ? '⟳ running' : 'waiting';
-      fill.style.width = progress + '%';
-      if (message) msg.textContent = message;
-    }
+{% block extra_scripts %}
+<script>
+  const uid = "{{ uid | e }}";
+  const AGENT_KEYS = ['security', 'quality', 'dependency', 'orchestrator'];
 
-    function updateFindings(name, findings) {
-      const pills = document.getElementById('pills-' + name);
-      if (!pills || !findings) return;
-      const cnt = Array.isArray(findings) ? findings.length : 0;
-      if (cnt === 0) return;
+  const progressBar = document.getElementById('progressBar');
+  const statusText  = document.getElementById('statusText');
+  const errorBox    = document.getElementById('errorBox');
+  const btnHome     = document.getElementById('btnHome');
 
-      const cls = name === 'quality' ? 'quality' : name === 'dependency' ? 'dep' : name === 'orchestrator' ? 'orch' : '';
-      pills.innerHTML = `<span class="finding-pill ${cls}">${cnt} finding${cnt !== 1 ? 's' : ''}</span>`;
-    }
+  /* Dot animation */
+  const dotEl = document.getElementById('dotAnim');
+  let dotCount = 0;
+  const dotTimer = setInterval(() => {
+    dotCount = (dotCount + 1) % 4;
+    if (dotEl) dotEl.textContent = '.'.repeat(dotCount);
+  }, 500);
 
-    function showError(msg) {
-      errorBox.textContent = '\u274c ' + msg;
-      errorBox.style.display = 'block';
-      btnHome.style.display = 'inline-block';
-      statusText.textContent = 'Analysis could not be completed.';
-      progressBar.style.background = 'var(--s-error)';
-      progressBar.style.animation = 'none';
-      document.getElementById('dotAnim').style.display = 'none';
-    }
+  function updateAgentCard(name, agentData) {
+    const card  = document.getElementById('card-' + name);
+    const badge = document.getElementById('badge-' + name);
+    const fill  = document.getElementById('fill-' + name);
+    const msg   = document.getElementById('msg-' + name);
+    if (!card) return;
 
-    function checkStatus() {
-      fetch('/api/agent/status/' + uid, { credentials: 'same-origin' })
-        .then(r => r.json())
-        .then(data => {
-          const status = data.status || 'running';
-          const progress = data.progress || 0;
-          progressBar.style.width = progress + '%';
+    const status   = agentData.status   || 'waiting';
+    const progress = agentData.progress || 0;
+    const message  = agentData.message  || '';
 
-          if (data.message) statusText.textContent = data.message;
+    card.className  = 'agent-card '  + (status === 'done' ? 'done' : status === 'error' ? 'error' : status === 'running' ? 'running' : '');
+    badge.className = 'agent-status-badge ' + (status === 'done' ? 'done' : status === 'error' ? 'error' : status === 'running' ? 'running' : '');
+    badge.textContent = status === 'done' ? '✓ done' : status === 'error' ? '✗ error' : status === 'running' ? '⟳ running' : 'waiting';
+    fill.style.width = progress + '%';
+    if (message) msg.textContent = message;
+  }
 
-          const agents = data.agents || (data.bus && data.bus.agents) || {};
+  function updateFindings(name, count) {
+    const pills = document.getElementById('pills-' + name);
+    if (!pills || !count) return;
+    const cls = name === 'quality' ? 'quality' : name === 'dependency' ? 'dep' : name === 'orchestrator' ? 'orch' : '';
+    pills.innerHTML = `<span class="finding-pill ${cls}">${count} finding${count !== 1 ? 's' : ''}</span>`;
+  }
+
+  function showError(msg) {
+    if (errorBox) { errorBox.textContent = '❌ ' + msg; errorBox.style.display = 'block'; }
+    if (btnHome)  btnHome.style.display = 'inline-block';
+    if (statusText) statusText.textContent = 'Analysis could not be completed.';
+    if (progressBar) { progressBar.style.background = 'var(--s-error)'; progressBar.style.animation = 'none'; }
+    if (dotEl)    { dotEl.style.display = 'none'; clearInterval(dotTimer); }
+  }
+
+  function checkStatus() {
+    fetch('/api/agent/status/' + uid, { credentials: 'same-origin' })
+      .then(r => r.json())
+      .then(data => {
+        const status   = data.status   || 'running';
+        const progress = data.progress || 0;
+
+        if (progressBar) progressBar.style.width = progress + '%';
+        if (data.message && statusText) statusText.textContent = data.message;
+
+        /* Update per-agent cards — try both data.agents and data.bus.agents */
+        const agents = data.agents || (data.bus && data.bus.agents) || {};
+        AGENT_KEYS.forEach(name => {
+          if (agents[name]) updateAgentCard(name, agents[name]);
+        });
+
+        /* Update findings counts */
+        if (data.security_findings_count !== undefined) {
+          updateFindings('security', data.security_findings_count);
+        }
+
+        if (status === 'complete') {
+          clearInterval(dotTimer);
+          if (progressBar) { progressBar.style.width = '100%'; progressBar.style.background = 'linear-gradient(90deg,#22c55e,#34d399)'; progressBar.style.animation = 'none'; }
+          if (dotEl) dotEl.style.display = 'none';
+          /* Mark all un-errored agents as done */
           AGENT_KEYS.forEach(name => {
-            if (agents[name]) updateAgentCard(name, agents[name]);
+            const card  = document.getElementById('card-' + name);
+            const badge = document.getElementById('badge-' + name);
+            if (card && !card.classList.contains('error')) {
+              card.className = 'agent-card done';
+              if (badge) { badge.className = 'agent-status-badge done'; badge.textContent = '✓ done'; }
+              const fill = document.getElementById('fill-' + name);
+              if (fill) fill.style.width = '100%';
+            }
           });
+          if (statusText) statusText.textContent = '✅ Analysis complete! Redirecting to Dashboard…';
+          setTimeout(() => { window.location.href = '/dashboard?uid=' + uid; }, 1200);
 
-=======
-          // Update findings counts from bus log
->>>>>>> 50b420b4620be03ea149dc44fc325e539a565625
-          const busData = data.bus || {};
-          if (busData.agents) {
-            AGENT_KEYS.forEach(name => {
-              if (busData.agents[name]) updateAgentCard(name, busData.agents[name]);
-            });
-          }
+        } else if (status === 'error') {
+          clearInterval(dotTimer);
+          showError(data.error || 'Unknown error during analysis');
 
-<<<<<<< HEAD
-          if (data.security_findings_count !== undefined) {
-            updateFindings('security', new Array(data.security_findings_count).fill({}));
-          }
+        } else {
+          setTimeout(checkStatus, 2000);
+        }
+      })
+      .catch(() => setTimeout(checkStatus, 3000));
+  }
 
-          if (status === 'complete') {
-            progressBar.style.width = '100%';
-            progressBar.style.background = 'linear-gradient(90deg,#22c55e,#34d399)';
-            progressBar.style.animation = 'none';
-<<<<<<< HEAD
-            document.getElementById('dotAnim').style.display = 'none';
-=======
->>>>>>> 50b420b4620be03ea149dc44fc325e539a565625
-            AGENT_KEYS.forEach(name => {
-              const card = document.getElementById('card-' + name);
-              const badge = document.getElementById('badge-' + name);
-              if (card && !card.classList.contains('error')) {
-                card.className = 'agent-card done';
-                badge.className = 'agent-status-badge done';
-                badge.textContent = '✓ done';
-                document.getElementById('fill-' + name).style.width = '100%';
-              }
-            });
-            statusText.textContent = '\u2705 Analysis complete! Redirecting\u2026';
-            setTimeout(() => { window.location.href = '/chat?uid=' + uid; }, 1200);
-
-          } else if (status === 'error') {
-            showError(data.error || 'Unknown error during analysis');
-          } else {
-            setTimeout(checkStatus, 2000);
-          }
-        })
-        .catch(() => setTimeout(checkStatus, 3000));
-    }
-
-    if (uid && uid !== 'None') {
-      setTimeout(checkStatus, 1000);
-    } else {
-      showError('No analysis UID found. Please go back and try again.');
-    }
-  </script>
-{% endblock %}
+  if (uid && uid !== 'None' && uid !== '') {
+    setTimeout(checkStatus, 1000);
+  } else {
+    showError('No analysis UID found. Please go back and try again.');
+  }
+</script>
+{% endblock %}

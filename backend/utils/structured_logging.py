@@ -238,22 +238,52 @@ def setup_flask_logging(app):
 
     @app.errorhandler(Exception)
     def handle_error(error):
-        """Log unhandled errors"""
+        """
+        Global error handler — logs unhandled exceptions and returns a
+        consistent JSON response.
+
+        IMPORTANT: @app.errorhandler(404), @app.errorhandler(405) etc.
+        registered on the *app* take priority over this @app.errorhandler(Exception)
+        handler in Flask's error-handler lookup order.  So HTTP-specific handlers
+        (our 404 redirect, etc.) are called FIRST; this handler only fires for
+        errors that have no more-specific handler registered.
+
+        DO NOT call _find_error_handler() here — it will return this same
+        function for any exception type, causing infinite recursion.
+        """
+        from flask import jsonify
+        from werkzeug.exceptions import HTTPException
+
         error_logger = get_request_logger('flask.error')
+
+        if isinstance(error, HTTPException):
+            # Let werkzeug's own response handle standard HTTP errors (404, 405…).
+            # Flask's specific @app.errorhandler(4xx) handlers take precedence and
+            # will have already run before reaching here — this is just a safety net.
+            error_logger.log_error(
+                error,
+                context={
+                    'path': request.path,
+                    'method': request.method,
+                    'ip_address': request.remote_addr,
+                    'status_code': error.code,
+                }
+            )
+            return error.get_response()
+
+        # Genuine unexpected exception — log with full traceback and return JSON 500
         error_logger.log_error(
             error,
             context={
                 'path': request.path,
                 'method': request.method,
-                'ip_address': request.remote_addr
+                'ip_address': request.remote_addr,
             }
         )
-
-        # Return JSON error response
-        from flask import jsonify
         response = jsonify({'error': str(error)})
         response.status_code = 500
         response.headers['X-Correlation-ID'] = g.get('correlation_id', '')
         return response
 
     logging.info("Flask logging configured")
+

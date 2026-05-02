@@ -1,4 +1,4 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block title %}ZenReview | Engineering Health Dashboard{% endblock %}
 
@@ -345,7 +345,7 @@
 {% endblock %}
 
 {% block topnav_extra %}
-  <a href="/" class="st-btn-secondary">New Analysis</a>
+  <a href="/dashboard" class="st-btn-secondary">New Analysis</a>
   {% if uid %}
   <a href="/report/{{ uid }}" class="st-btn-primary">View Report</a>
   {% endif %}
@@ -615,38 +615,34 @@
                 <div style="color:var(--s-on-surface-variant); font-size:0.82rem;">Loading...</div>
               </div>
             </div>
-=======
-            <button onclick="runBountyScan()" class="st-btn st-btn-danger" style="padding:6px 14px;font-size:0.78rem" aria-label="Run a fresh bug bounty scan">⚡ Run Fresh Scan</button>
->>>>>>> 50b420b4620be03ea149dc44fc325e539a565625
+
           </div>
 
         </div>
 
 <script>
-<<<<<<< HEAD
 
   // ── DASHBOARD LOGIC (Preserved IDs & ChartJS) ──
   let _chartDonut, _chartTimeline;
 
   async function fetchDashboard() {
-    const uid = document.body.dataset.uid;
-    // We fetch from the persistent security APIs rather than the ephemeral analysis_status map
+    // Try body data-uid, then URL ?uid=, then empty (server will use last history)
+    const uid = document.body.dataset.uid
+               || new URLSearchParams(location.search).get('uid')
+               || '';
     try {
       const q = uid ? `?uid=${uid}` : '';
       const [rSum, rFind] = await Promise.all([
         fetch(`/api/security/summary${q}`),
         fetch(`/api/security/findings${q ? q + '&limit=10' : '?limit=10'}`)
       ]);
-      
-      if (!rSum.ok) return;
-      const summary = await rSum.json();
-      
+
+      const summary = rSum.ok ? await rSum.json() : {};
       let vulns = [];
       if (rFind.ok) {
         const fdata = await rFind.json();
         vulns = fdata.findings || fdata || [];
       }
-      
       updateDashboard({ summary, findings: vulns });
     } catch(e) { console.error('Dashboard Error:', e); }
   }

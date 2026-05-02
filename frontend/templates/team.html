@@ -1,4 +1,4 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block title %}Team Management — AI Code Review{% endblock %}
 
@@ -259,7 +259,7 @@
             <div class="na-step-sub">Come back here and click "Extract from Commits" to populate the board.</div>
           </div>
         </div>
-        <a href="/" class="st-btn st-btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+        <a href="/dashboard" class="st-btn st-btn-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
           <span class="material-symbols-outlined">upload_file</span>
           Start an Analysis
         </a>
@@ -289,7 +289,7 @@
       <button class="modal-close" onclick="closeModal('extractModal')">✕</button>
       <h3>⚡ Extract Team from Git Commits</h3>
       <p style="color:#64748b;font-size:0.82rem;margin-bottom:20px">Automatically discovers contributors from the git history of an analyzed codebase and fetches GitHub data.
-        <br><span style="color:#94a3b8;margin-top:6px;display:block;">💡 Find your analysis UIDs on the <a href="/" style="color:#7C6FF7;text-decoration:none;">Home page</a> history section.</span>
+        <br><span style="color:#94a3b8;margin-top:6px;display:block;">💡 Find your analysis UIDs on the <a href="/dashboard" style="color:#7C6FF7;text-decoration:none;">Home page</a> history section.</span>
       </p>
       <div class="form-group">
         <label>Analysis UID (auto-filled from current session)</label>

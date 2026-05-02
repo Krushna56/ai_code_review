@@ -125,9 +125,12 @@ def index():
     return redirect(url_for('auth.login'))
 
 
-@app.route("/dashboard")
+@app.route("/dashboard", methods=['GET', 'POST'])
 def index_page():
-    """Main dashboard — requires authentication."""
+    """Main dashboard — requires authentication.
+    POST requests (old form submissions without an action attr) are redirected
+    to the correct upload endpoint so users get a clear error instead of a 405.
+    """
     from auth.jwt_utils import JWTManager
     token = session.get('jwt_access_token')
     if not token:
@@ -138,7 +141,20 @@ def index_page():
             return redirect(url_for('auth.login'))
     except Exception:
         return redirect(url_for('auth.login'))
-    return render_template('index.html')
+    if request.method == 'POST':
+        # Form submitted without an action attribute — redirect to the real endpoint.
+        return redirect(url_for('upload_files'), code=307)  # 307 preserves POST + body
+
+    # Pass uid from query param or from latest analysis history
+    uid = request.args.get('uid', '').strip()
+    if not uid:
+        try:
+            history = _load_analysis_history()
+            if history:
+                uid = history[0].get('uid', '')
+        except Exception:
+            pass
+    return render_template('dashboard.html', uid=uid)
 
 
 @app.route("/health")
@@ -159,6 +175,224 @@ def favicon():
 logger.info(f"Configured MAX_CONTENT_LENGTH: {app.config['MAX_CONTENT_LENGTH']} bytes")
 logger.info(f"Configured MAX_FORM_MEMORY_SIZE: {app.config['MAX_FORM_MEMORY_SIZE']} bytes")
 logger.info(f"Configured MAX_FORM_PARTS: {app.config['MAX_FORM_PARTS']}")
+
+
+@app.route("/processing")
+def processing_page():
+    """Analysis processing/progress page — requires authentication."""
+    from auth.jwt_utils import JWTManager
+    token = session.get('jwt_access_token')
+    if not token:
+        return redirect(url_for('auth.login'))
+    try:
+        payload = JWTManager.verify_token(token)
+        if JWTManager.is_blacklisted(token):
+            return redirect(url_for('auth.login'))
+    except Exception:
+        return redirect(url_for('auth.login'))
+    uid = request.args.get('uid', '')
+    return render_template('processing.html', uid=uid)
+
+
+# -----------------------------------------------------------------------
+# Page routes — each nav section gets its own template
+# -----------------------------------------------------------------------
+def _require_auth():
+    """Returns a redirect response if the user is not authenticated, else None."""
+    from auth.jwt_utils import JWTManager
+    token = session.get('jwt_access_token')
+    if not token:
+        return redirect(url_for('auth.login'))
+    try:
+        payload = JWTManager.verify_token(token)
+        if JWTManager.is_blacklisted(token):
+            return redirect(url_for('auth.login'))
+    except Exception:
+        return redirect(url_for('auth.login'))
+    return None
+
+
+@app.route("/chat")
+def chat_page():
+    """Workspace — combined AI Chat + Code Editor."""
+    redir = _require_auth()
+    if redir:
+        return redir
+    uid = request.args.get('uid', '').strip()
+    if not uid:
+        try:
+            history = _load_analysis_history()
+            if history:
+                uid = history[0].get('uid', '')
+        except Exception:
+            pass
+    return render_template('chat.html', uid=uid)
+
+
+@app.route("/code-viewer")
+def code_viewer_page():
+    """Code Viewer — redirects to the unified chat/workspace with the uid."""
+    redir = _require_auth()
+    if redir:
+        return redir
+    uid = request.args.get('uid', '').strip()
+    # code-viewer is now merged into chat; redirect there
+    return redirect(f'/chat?uid={uid}' if uid else '/chat')
+
+
+@app.route("/report/<uid>")
+def report_page(uid):
+    """Detailed analysis report page."""
+    redir = _require_auth()
+    if redir:
+        return redir
+    # Load report data from processed directory
+    report_data = {}
+    report_path = os.path.join('processed', uid, 'security_report.json')
+    if os.path.exists(report_path):
+        try:
+            with open(report_path, 'r', encoding='utf-8') as f:
+                report_data = json.load(f)
+        except Exception as e:
+            logger.error(f"Error loading report for {uid}: {e}")
+    return render_template('report.html', uid=uid, report=report_data)
+
+
+@app.route("/team")
+def team_page():
+    """Team management page."""
+    redir = _require_auth()
+    if redir:
+        return redir
+    return render_template('team.html')
+
+
+@app.route("/download/<uid>/<path:filename>")
+def download_report(uid, filename):
+    """Serve downloadable report files from processed/{uid}/."""
+    redir = _require_auth()
+    if redir:
+        return redir
+    report_dir = os.path.abspath(os.path.join('processed', uid))
+    return send_from_directory(report_dir, filename, as_attachment=True)
+
+
+
+@app.route("/api/agent/status/<uid>", methods=['GET'])
+def agent_status(uid):
+    """Return live status for the 4-agent pipeline for the given uid."""
+    status = analysis_status.get(uid)
+    if status is None:
+        return jsonify({'status': 'not_found', 'progress': 0}), 404
+    return jsonify(dict(status)), 200
+
+
+# -----------------------------------------------------------------------
+# Security Report API — dashboard data endpoints
+# -----------------------------------------------------------------------
+def _load_security_report(uid):
+    """Load security_report.json for the given uid. Returns dict or None."""
+    path = os.path.join('processed', uid, 'security_report.json')
+    if os.path.exists(path):
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            logger.error(f"Error reading security report for {uid}: {e}")
+    return None
+
+
+@app.route("/api/security/summary", methods=['GET'])
+def security_summary():
+    """
+    Return an aggregated summary for the dashboard.
+    ?uid=<uid>  — required to identify which analysis to load.
+    """
+    uid = request.args.get('uid', '').strip()
+    if not uid:
+        # Try last analysis
+        try:
+            if os.path.exists(ANALYSIS_HISTORY_FILE):
+                with open(ANALYSIS_HISTORY_FILE, 'r') as f:
+                    history = json.load(f)
+                if history:
+                    uid = history[0].get('uid', '')
+        except Exception:
+            pass
+
+    if not uid:
+        return jsonify({'total_findings': 0, 'critical_count': 0, 'high_count': 0,
+                        'medium_count': 0, 'low_count': 0, 'severity_distribution': {}}), 200
+
+    report = _load_security_report(uid)
+    if not report:
+        return jsonify({'total_findings': 0, 'critical_count': 0, 'high_count': 0,
+                        'medium_count': 0, 'low_count': 0, 'severity_distribution': {},
+                        'error': 'Report not found or still processing'}), 200
+
+    # Build summary from security_findings list
+    findings = report.get('security_findings', [])
+    dist = {'CRITICAL': 0, 'HIGH': 0, 'MEDIUM': 0, 'LOW': 0, 'INFO': 0}
+    for f in findings:
+        sev = (f.get('severity') or 'LOW').upper()
+        dist[sev] = dist.get(sev, 0) + 1
+
+    summary = {
+        'uid': uid,
+        'total_findings': len(findings),
+        'critical_count': dist.get('CRITICAL', 0),
+        'high_count': dist.get('HIGH', 0),
+        'medium_count': dist.get('MEDIUM', 0),
+        'low_count': dist.get('LOW', 0),
+        'severity_distribution': dist,
+        # Pass through any top-level keys the report may already have
+        'overall_risk_score': report.get('overall_risk_score'),
+        'scan_timestamp': report.get('scan_timestamp'),
+    }
+    return jsonify(summary), 200
+
+
+@app.route("/api/security/findings", methods=['GET'])
+def security_findings():
+    """
+    Return the raw security findings list for the dashboard table.
+    ?uid=<uid>  — required.
+    ?limit=N    — optional cap (default 50).
+    """
+    uid = request.args.get('uid', '').strip()
+    limit = int(request.args.get('limit', 50))
+
+    if not uid:
+        try:
+            if os.path.exists(ANALYSIS_HISTORY_FILE):
+                with open(ANALYSIS_HISTORY_FILE, 'r') as f:
+                    history = json.load(f)
+                if history:
+                    uid = history[0].get('uid', '')
+        except Exception:
+            pass
+
+    if not uid:
+        return jsonify({'findings': [], 'total': 0}), 200
+
+    report = _load_security_report(uid)
+    if not report:
+        return jsonify({'findings': [], 'total': 0, 'error': 'Report not found'}), 200
+
+    findings = report.get('security_findings', [])
+    # Normalise field names for the dashboard table
+    normalized = []
+    for f in findings:
+        normalized.append({
+            'severity': f.get('severity', 'LOW'),
+            'file': f.get('file_path', f.get('file', 'Unknown')),
+            'title': f.get('title', f.get('type', 'Security Issue')),
+            'description': f.get('description', ''),
+            'line_number': f.get('line_number', 0),
+            'owasp_category': f.get('owasp_category'),
+        })
+    return jsonify({'findings': normalized[:limit], 'total': len(normalized)}), 200
+
 
 # Session configuration - prevent auto-login across server restarts
 app.config['SESSION_PERMANENT'] = True           # Give cookie an expiry so it survives OAuth redirects
@@ -588,6 +822,77 @@ def run_analysis_background(input_path, output_path, uid):
         analysis_status[uid]['error'] = str(e)
 
 
+# ---------------------------------------------------------------------------
+# File Upload — POST /api/analyze/upload
+# ---------------------------------------------------------------------------
+@app.route('/api/analyze/upload', methods=['POST'])
+def upload_files():
+    """
+    Accept multipart file uploads (individual files or a ZIP), kick off the
+    4-agent analysis pipeline in a background thread, and return the uid so
+    the browser can redirect to /processing?uid=<uid>.
+    """
+    from auth.jwt_utils import JWTManager
+    import jwt as _jwt
+
+    # Auth check
+    token = session.get('jwt_access_token')
+    if not token:
+        return jsonify({'error': 'Authentication required'}), 401
+    try:
+        payload = JWTManager.verify_token(token)
+        if JWTManager.is_blacklisted(token):
+            return jsonify({'error': 'Session expired'}), 401
+    except _jwt.InvalidTokenError:
+        return jsonify({'error': 'Invalid token'}), 401
+
+    files = request.files.getlist('codebase')
+    if not files or all(f.filename == '' for f in files):
+        return jsonify({'error': 'No files provided'}), 400
+
+    uid = str(uuid.uuid4())
+    upload_dir   = os.path.join(app.config['UPLOAD_FOLDER'],   uid)
+    processed_dir = os.path.join(app.config['PROCESSED_FOLDER'], uid)
+    os.makedirs(upload_dir,    exist_ok=True)
+    os.makedirs(processed_dir, exist_ok=True)
+
+    saved_files = []
+    for f in files:
+        if f.filename == '':
+            continue
+        safe_name = os.path.basename(f.filename)
+        dest = os.path.join(upload_dir, safe_name)
+        f.save(dest)
+        saved_files.append(dest)
+        logger.info(f"Saved uploaded file: {safe_name}")
+
+    if not saved_files:
+        return jsonify({'error': 'No valid files were saved'}), 400
+
+    # If a single ZIP was uploaded, extract it
+    if len(saved_files) == 1 and saved_files[0].lower().endswith('.zip'):
+        try:
+            extract_zip(saved_files[0], upload_dir)
+            os.remove(saved_files[0])   # remove the raw ZIP after extraction
+            logger.info(f"ZIP extracted for uid {uid}")
+        except Exception as e:
+            logger.error(f"ZIP extraction failed for uid {uid}: {e}")
+            return jsonify({'error': f'Failed to extract ZIP: {e}'}), 400
+
+    # Start the 4-agent pipeline in the background
+    analysis_status[uid] = {'status': 'pending', 'progress': 0, 'error': None}
+    thread = threading.Thread(
+        target=run_analysis_background,
+        args=(upload_dir, processed_dir, uid),
+        daemon=True,
+        name=f"{uid}-pipeline"
+    )
+    thread.start()
+    logger.info(f"Analysis pipeline started for uid {uid} with {len(saved_files)} file(s)")
+
+    return jsonify({'uid': uid, 'status': 'started'}), 202
+
+
 @app.errorhandler(404)
 def not_found(error):
     """Handle 404 Not Found errors — redirect to dashboard root."""
@@ -611,5 +916,5 @@ def internal_error(error):
 if __name__ == '__main__':
     logger.info("Starting AI Code Review Platform...")
     # Disable auto-reload to prevent connection resets during uploads
-    port = int(os.getenv('PORT', 5000))
+    port = int(os.getenv('PORT', 5000)) 
     app.run(host='0.0.0.0', port=port, debug=True, use_reloader=False)

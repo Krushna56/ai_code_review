@@ -1,4 +1,4 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block extra_head %}
   <style>
@@ -54,14 +54,13 @@
       border-radius: var(--s-radius-lg);
       padding: 32px;
       transition: all var(--s-dur) var(--s-ease);
-      border-top: 1px solid rgba(255,255,255,0.05); /* Tonal layer separator */
+      border-top: 1px solid rgba(255,255,255,0.05);
     }
     .upload-panel:hover, .upload-panel.dragover {
       background: var(--s-surface-container-highest);
       transform: translateY(-2px);
       box-shadow: 0 12px 32px rgba(0,0,0,0.5);
     }
-    
     .panel-hdr {
       display: flex;
       align-items: center;
@@ -89,9 +88,7 @@
       margin-bottom: 24px;
       line-height: 1.6;
     }
-
     .panel-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
-
     .file-notice {
       color: var(--s-secondary);
       font-size: 0.85rem;
@@ -99,15 +96,296 @@
       font-weight: 600;
       margin-bottom: 16px;
     }
+    .repo-url-row { display: flex; gap: 12px; }
+    #codebase, #folderInput { display: none; }
 
-    /* Repo Inputs */
-    .repo-url-row {
+    /* ── GitHub Repos Section ── */
+    .gh-repos-section {
+      margin-bottom: 48px;
+    }
+    .gh-repos-header {
       display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
       gap: 12px;
     }
+    .gh-repos-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--s-font-heading);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--s-on-surface);
+    }
+    .gh-repos-title-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(163,166,255,0.15), rgba(163,166,255,0.05));
+      display: flex; align-items: center; justify-content: center;
+      color: var(--s-primary);
+      font-size: 18px;
+    }
+    .gh-repos-count {
+      background: rgba(163,166,255,0.1);
+      border: 1px solid rgba(163,166,255,0.2);
+      color: var(--s-primary);
+      border-radius: 99px;
+      padding: 2px 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .gh-repos-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .gh-search-wrap {
+      position: relative;
+    }
+    .gh-search-wrap .material-symbols-outlined {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      color: var(--s-on-surface-variant);
+      pointer-events: none;
+    }
+    #repoSearch {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: var(--s-on-surface);
+      font-size: 0.82rem;
+      padding: 7px 12px 7px 34px;
+      width: 200px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      font-family: var(--s-font-body);
+    }
+    #repoSearch:focus {
+      border-color: rgba(163,166,255,0.4);
+      box-shadow: 0 0 0 3px rgba(163,166,255,0.08);
+    }
+    #repoSearch::placeholder { color: var(--s-on-surface-variant); }
+    .gh-filter-select {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      color: var(--s-on-surface);
+      font-size: 0.82rem;
+      padding: 7px 28px 7px 10px;
+      outline: none;
+      cursor: pointer;
+      font-family: var(--s-font-body);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23a3a6ff' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      background-size: 12px;
+      transition: border-color 0.2s;
+    }
+    .gh-filter-select:focus { border-color: rgba(163,166,255,0.4); }
 
-    /* Hidden inputs */
-    #codebase, #folderInput { display: none; }
+    /* ── Repos Grid ── */
+    .repos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 14px;
+    }
+    .repo-card {
+      background: var(--s-surface-container-low);
+      border-radius: var(--s-radius);
+      padding: 18px 20px;
+      border: 1px solid rgba(255,255,255,0.04);
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+    .repo-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--s-primary), var(--s-secondary));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .repo-card:hover {
+      border-color: rgba(163,166,255,0.15);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .repo-card:hover::before { opacity: 1; }
+
+    .repo-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .repo-name {
+      font-family: var(--s-font-mono);
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--s-primary);
+      text-decoration: none;
+      word-break: break-word;
+      line-height: 1.3;
+    }
+    .repo-name:hover { text-decoration: underline; }
+    .repo-badge-private {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 99px;
+      background: rgba(239,68,68,0.1);
+      color: #fc8b98;
+      border: 1px solid rgba(239,68,68,0.2);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .repo-badge-public {
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 99px;
+      background: rgba(34,197,94,0.08);
+      color: #4ade80;
+      border: 1px solid rgba(34,197,94,0.2);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .repo-desc {
+      font-size: 0.78rem;
+      color: var(--s-on-surface-variant);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      min-height: 0;
+    }
+    .repo-meta {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 0.75rem;
+      color: var(--s-on-surface-variant);
+      flex-wrap: wrap;
+    }
+    .repo-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .lang-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .repo-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: auto;
+    }
+    .repo-updated {
+      font-size: 0.7rem;
+      color: var(--s-on-surface-variant);
+    }
+    .repo-scan-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 14px;
+      border-radius: 7px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      background: rgba(163,166,255,0.1);
+      color: var(--s-primary);
+      border: 1px solid rgba(163,166,255,0.2);
+      cursor: pointer;
+      transition: all 0.18s ease;
+      flex-shrink: 0;
+      font-family: var(--s-font-body);
+    }
+    .repo-scan-btn:hover:not(:disabled) {
+      background: var(--s-primary);
+      color: #000;
+      border-color: var(--s-primary);
+      box-shadow: 0 0 12px rgba(163,166,255,0.3);
+    }
+    .repo-scan-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Skeleton loader */
+    .repo-skeleton {
+      background: var(--s-surface-container-low);
+      border-radius: var(--s-radius);
+      height: 130px;
+      border: 1px solid rgba(255,255,255,0.04);
+      overflow: hidden;
+      position: relative;
+    }
+    .repo-skeleton::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
+      animation: shimmer 1.5s infinite;
+    }
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .gh-empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--s-on-surface-variant);
+    }
+    .gh-empty-state .material-symbols-outlined {
+      font-size: 48px;
+      display: block;
+      margin: 0 auto 12px;
+      color: rgba(163,166,255,0.3);
+    }
+    .gh-load-more {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    /* Connect Banner */
+    .connect-banner {
+      background: var(--s-surface-container-low); margin-bottom: 48px; border-radius: var(--s-radius-lg);
+      padding: 32px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .connect-banner a {
+      display: inline-flex; align-items: center; gap: 8px; margin-top: 16px;
+      padding: 10px 20px; background: var(--s-primary); color: #000;
+      border-radius: var(--s-radius-sm); font-weight: 700; text-decoration: none;
+    }
 
     /* Features Grid */
     .features-grid {
@@ -122,18 +400,15 @@
       border-top: 1px solid rgba(255,255,255,0.05);
     }
     .feat-icon {
-      width: 48px;
-      height: 48px;
+      width: 48px; height: 48px;
       border-radius: var(--s-radius);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       font-size: 1.5rem;
       margin-bottom: 16px;
     }
     .feat-icon.violet { background: rgba(163, 166, 255, 0.1); color: var(--s-primary); }
-    .feat-icon.amber { background: rgba(234, 179, 8, 0.1); color: #eab308; }
-    .feat-icon.sky { background: rgba(56, 189, 248, 0.1); color: #38bdf8; }
+    .feat-icon.amber  { background: rgba(234, 179, 8, 0.1); color: #eab308; }
+    .feat-icon.sky    { background: rgba(56, 189, 248, 0.1); color: #38bdf8; }
     .feat-title {
       font-family: var(--s-font-heading);
       font-size: 1.1rem;
@@ -142,288 +417,202 @@
       color: var(--s-on-surface);
     }
 
-    /* Connect Banner */
-    .connect-banner {
-      background: var(--s-surface-container-low); margin-bottom: 48px; border-radius: var(--s-radius-lg);
-      padding: 32px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05);
-    }
-    .connect-banner a {
-      display: inline-flex; align-items: center; gap: 8px; margin-top: 16px;
-      padding: 10px 20px; background: var(--s-primary); color: #000; border-radius: var(--s-radius-sm); font-weight: 700; text-decoration: none;
-    }
-
     /* Analysis History */
-    .history-section {
-      margin-bottom: 48px;
-    }
-    .history-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
-    .history-title {
-      font-family: var(--s-font-heading);
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--s-on-surface);
-    }
-    .history-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+    .history-section { margin-bottom: 48px; }
+    .history-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .history-title { font-family: var(--s-font-heading); font-size: 1.25rem; font-weight: 700; color: var(--s-on-surface); }
+    .history-grid { display: flex; flex-direction: column; gap: 10px; }
     .history-card {
       background: var(--s-surface-container-low);
       border-radius: var(--s-radius);
       padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
+      display: flex; align-items: center; gap: 16px;
       border-top: 1px solid rgba(255,255,255,0.04);
       transition: all 0.2s ease;
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
     }
-    .history-card:hover {
-      background: var(--s-surface-container-highest);
-      transform: translateX(2px);
-    }
+    .history-card:hover { background: var(--s-surface-container-highest); transform: translateX(2px); }
     .history-card::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 3px;
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
       background: linear-gradient(180deg, var(--s-primary), var(--s-secondary));
       border-radius: 0 2px 2px 0;
     }
     .history-uid {
-      font-family: var(--s-font-mono);
-      font-size: 0.75rem;
-      color: var(--s-primary);
-      background: rgba(163,166,255,0.08);
-      padding: 3px 8px;
-      border-radius: 4px;
-      border: 1px solid rgba(163,166,255,0.15);
-      white-space: nowrap;
-      flex-shrink: 0;
+      font-family: var(--s-font-mono); font-size: 0.75rem; color: var(--s-primary);
+      background: rgba(163,166,255,0.08); padding: 3px 8px; border-radius: 4px;
+      border: 1px solid rgba(163,166,255,0.15); white-space: nowrap; flex-shrink: 0;
     }
-    .history-info {
-      flex: 1;
-      min-width: 0;
-    }
-    .history-proj {
-      font-weight: 700;
-      font-size: 0.9rem;
-      color: var(--s-on-surface);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .history-meta {
-      font-size: 0.75rem;
-      color: var(--s-on-surface-variant);
-      margin-top: 2px;
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .history-status {
-      padding: 2px 8px;
-      border-radius: 99px;
-      font-size: 0.65rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      flex-shrink: 0;
-    }
+    .history-info { flex: 1; min-width: 0; }
+    .history-proj { font-weight: 700; font-size: 0.9rem; color: var(--s-on-surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .history-meta { font-size: 0.75rem; color: var(--s-on-surface-variant); margin-top: 2px; display: flex; gap: 12px; flex-wrap: wrap; }
+    .history-status { padding: 2px 8px; border-radius: 99px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; flex-shrink: 0; }
     .history-status.complete { background: rgba(34,197,94,0.12); color: #22c55e; border: 1px solid rgba(34,197,94,0.2); }
     .history-status.running  { background: rgba(59,130,246,0.12); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); animation: pulseBadge 2s ease infinite; }
     .history-status.unknown  { background: rgba(100,116,139,0.12); color: #94a3b8; border: 1px solid rgba(100,116,139,0.2); }
-    .history-actions {
-      display: flex;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-    .hist-btn {
-      padding: 5px 12px;
-      border-radius: var(--s-radius-sm);
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      transition: all 0.2s;
-      border: 1px solid transparent;
-    }
-    .hist-btn-primary {
-      background: rgba(163,166,255,0.1);
-      color: var(--s-primary);
-      border-color: rgba(163,166,255,0.2);
-    }
+    .history-actions { display: flex; gap: 8px; flex-shrink: 0; }
+    .hist-btn { padding: 5px 12px; border-radius: var(--s-radius-sm); font-size: 0.75rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s; border: 1px solid transparent; }
+    .hist-btn-primary { background: rgba(163,166,255,0.1); color: var(--s-primary); border-color: rgba(163,166,255,0.2); }
     .hist-btn-primary:hover { background: var(--s-primary); color: #000; }
-    .hist-btn-ghost {
-      background: rgba(255,255,255,0.04);
-      color: var(--s-on-surface-variant);
-    }
+    .hist-btn-ghost { background: rgba(255,255,255,0.04); color: var(--s-on-surface-variant); }
     .hist-btn-ghost:hover { background: rgba(255,255,255,0.08); color: var(--s-on-surface); }
     @keyframes pulseBadge { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
 
     @media (max-width: 900px) {
       .upload-grid { grid-template-columns: 1fr; }
       .features-grid { grid-template-columns: 1fr; }
+      .repos-grid { grid-template-columns: 1fr; }
       .history-actions { flex-direction: column; gap: 4px; }
+      .gh-repos-controls { flex-direction: column; align-items: flex-start; }
+      #repoSearch { width: 100%; }
     }
   </style>
 {% endblock %}
 
 {% block content %}
 
-        {% if error %}
-        <div style="background:var(--s-error-container); color:var(--s-on-error-container); padding:16px; border-radius:var(--s-radius-sm); margin-bottom:24px;">{{ error }}</div>
-        {% endif %}
+  {% if error %}
+  <div style="background:var(--s-error-container); color:var(--s-on-error-container); padding:16px; border-radius:var(--s-radius-sm); margin-bottom:24px;">{{ error }}</div>
+  {% endif %}
 
-        <!-- Hero -->
-        <div class="hero-section st-anim-1">
-          <div class="hero-badge"><span class="material-symbols-outlined" style="font-size:16px;">auto_awesome</span> Powered by Zenith Intelligence</div>
-          <h1 class="hero-title">Elevate Your <span>Engineering Health</span></h1>
-          <p class="hero-sub">Next-generation abstract syntax tree analysis combined with deep multimodal AI to catch critical OWASP vulnerabilities before they hit production.</p>
+  <!-- Hero -->
+  <div class="hero-section st-anim-1">
+    <div class="hero-badge"><span class="material-symbols-outlined" style="font-size:16px;">auto_awesome</span> Powered by Zenith Intelligence</div>
+    <h1 class="hero-title">Elevate Your <span>Engineering Health</span></h1>
+    <p class="hero-sub">Next-generation abstract syntax tree analysis combined with deep multimodal AI to catch critical OWASP vulnerabilities before they hit production.</p>
+  </div>
+
+  <!-- Upload Panels -->
+  <div class="upload-grid st-anim-2">
+    <form id="upload-form" enctype="multipart/form-data">
+      <div class="upload-panel" id="upload-area">
+        <div class="panel-hdr">
+          <div class="panel-hdr-icon"><span class="material-symbols-outlined">folder_zip</span></div>
+          Local Codebase
         </div>
-
-        <!-- Upload Panels -->
-        <div class="upload-grid st-anim-2">
-          
-          <form method="POST" enctype="multipart/form-data" id="upload-form">
-            <div class="upload-panel" id="upload-area">
-              <div class="panel-hdr">
-                <div class="panel-hdr-icon"><span class="material-symbols-outlined">folder_zip</span></div>
-                Local Codebase
-              </div>
-              <p class="panel-desc">Drag and drop ZIP files, individual source logic, or secure directories directly into the scanning vault.</p>
-              
-              <input type="file" name="codebase" id="codebase" multiple accept=".py,.js,.ts,.java,.cpp,.c,.h,.html,.css,.json,.xml,.yaml,.yml,.sh,.md,.txt,.zip">
-              <input type="file" id="folderInput" name="codebase" multiple webkitdirectory>
-
-              <div class="panel-actions">
-                <button type="button" onclick="selectFiles()" class="st-btn-secondary"><span class="material-symbols-outlined" style="font-size:16px; margin-right:6px;">note_add</span> Select Files</button>
-                <button type="button" onclick="selectFolder()" class="st-btn-secondary"><span class="material-symbols-outlined" style="font-size:16px; margin-right:6px;">drive_folder_upload</span> Default Directory</button>
-              </div>
-
-              <div class="file-notice" id="fileNotice"></div>
-              <button type="submit" class="st-btn-primary" style="width:100%;" id="analyze-btn">Initiate Analysis</button>
-            </div>
-          </form>
-
-          <div class="upload-panel">
-            <div class="panel-hdr">
-              <div class="panel-hdr-icon"><span class="material-symbols-outlined">public</span></div>
-              Remote Repository
-            </div>
-            <p class="panel-desc">Point ZenReview to an external Git URL endpoint. The engine will transparently clone and parse the repository context.</p>
-
-            <div class="repo-url-row">
-              <input type="text" id="repo-url" class="st-input" placeholder="https://github.com/organization/repository">
-              <button onclick="analyzeRepo()" class="st-btn-primary" id="repo-btn">Clone Target</button>
-            </div>
-          </div>
-
+        <p class="panel-desc">Drag and drop ZIP files, individual source logic, or secure directories directly into the scanning vault.</p>
+        <input type="file" name="codebase" id="codebase" multiple accept=".py,.js,.ts,.java,.cpp,.c,.h,.html,.css,.json,.xml,.yaml,.yml,.sh,.md,.txt,.zip">
+        <input type="file" id="folderInput" name="codebase" multiple webkitdirectory>
+        <div class="panel-actions">
+          <button type="button" onclick="selectFiles()" class="st-btn-secondary"><span class="material-symbols-outlined" style="font-size:16px; margin-right:6px;">note_add</span> Select Files</button>
+          <button type="button" onclick="selectFolder()" class="st-btn-secondary"><span class="material-symbols-outlined" style="font-size:16px; margin-right:6px;">drive_folder_upload</span> Default Directory</button>
         </div>
-
-        {% if current_user.is_authenticated and not current_user.github_username %}
-        <div class="connect-banner st-anim-3">
-          <h3 style="font-family:var(--s-font-heading); font-size:1.5rem; margin-bottom:12px;">Unified Repository Access</h3>
-          <p style="color:var(--s-on-surface-variant);">Connect your GitHub account to directly analyze your private repositories with Zero-Trust compliance.</p>
-          <a href="{{ url_for('auth.github_login') }}"><span class="material-symbols-outlined">integration_instructions</span> Connect GitHub</a>
-        </div>
-        {% elif current_user.is_authenticated and current_user.github_username %}
-        <div class="st-anim-3" style="margin-bottom:48px;">
-          <h3 style="font-family:var(--s-font-heading); font-size:1.5rem; margin-bottom:24px;">Recent Workspaces</h3>
-          <div id="reposGrid" style="display:grid; gap:16px;">
-            <p style="color:var(--s-on-surface-variant);">Loading remote structures...</p>
-          </div>
-        </div>
-        {% endif %}
-
-        <!-- Analysis History -->
-        <div class="history-section st-anim-3" id="historySection" style="display:none">
-          <div class="history-header">
-            <div class="history-title">
-              <span class="material-symbols-outlined" style="font-size:20px; vertical-align:middle; margin-right:6px; color: var(--s-primary);">history</span>
-              Recent Analysis History
-            </div>
-            <button onclick="clearHistoryView()" class="st-btn-secondary" style="font-size:0.78rem; padding:6px 14px;">Clear View</button>
-          </div>
-          <div class="history-grid" id="historyGrid">
-            <p style="color:var(--s-on-surface-variant); font-size:0.85rem;">Loading history...</p>
-          </div>
-        </div>
-
-        <!-- Features -->
-        <div class="features-grid st-anim-4">
-          <div class="feature-card">
-            <div class="feat-icon violet"><span class="material-symbols-outlined">security</span></div>
-            <div class="feat-title">Architectural Security</div>
-            <div class="feat-desc">Validates against deep dependency paths and configuration drift using static and AST traversal.</div>
-          </div>
-          <div class="feature-card">
-            <div class="feat-icon amber"><span class="material-symbols-outlined">speed</span></div>
-            <div class="feat-title">Reviewer Velocity</div>
-            <div class="feat-desc">Cuts PR review times by auto-resolving standard style, lint, and common pattern errors invisibly.</div>
-          </div>
-          <a href="/chat" style="text-decoration:none;" class="feature-card">
-            <div class="feat-icon sky"><span class="material-symbols-outlined">forum</span></div>
-            <div class="feat-title">Conversational Engine</div>
-            <div class="feat-desc">An interactive sub-agent terminal available inside your workspace to contextually rewrite functions.</div>
-          </a>
-          <a href="/code-viewer" style="text-decoration:none;" class="feature-card">
-            <div class="feat-icon" style="background: rgba(34, 197, 94, 0.1); color: #22c55e;"><span class="material-symbols-outlined">code</span></div>
-            <div class="feat-title">Deep Code Editor</div>
-            <div class="feat-desc">Explore syntax, vulnerabilities, and AST structural references via the AI infused IDE.</div>
-          </a>
-          <a href="/dashboard#bounty-sec" style="text-decoration:none;" class="feature-card">
-            <div class="feat-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;"><span class="material-symbols-outlined">bug_report</span></div>
-            <div class="feat-title">Bug Bounty</div>
-            <div class="feat-desc">Gamified vulnerability patching logic to improve overall health scores across platforms.</div>
-          </a>
-        </div>
-
+        <div class="file-notice" id="fileNotice"></div>
+        <button type="submit" class="st-btn-primary" style="width:100%;" id="analyze-btn">Initiate Analysis</button>
       </div>
+    </form>
+
+    <div class="upload-panel">
+      <div class="panel-hdr">
+        <div class="panel-hdr-icon"><span class="material-symbols-outlined">public</span></div>
+        Remote Repository
+      </div>
+      <p class="panel-desc">Point ZenReview to an external Git URL endpoint. The engine will transparently clone and parse the repository context.</p>
+      <div class="repo-url-row">
+        <input type="text" id="repo-url" class="st-input" placeholder="https://github.com/organization/repository">
+        <button onclick="analyzeRepo()" class="st-btn-primary" id="repo-btn">Clone Target</button>
+      </div>
+    </div>
+  </div>
+
+  {% if current_user.is_authenticated and not current_user.github_username %}
+  <!-- Not connected to GitHub -->
+  <div class="connect-banner st-anim-3">
+    <h3 style="font-family:var(--s-font-heading); font-size:1.5rem; margin-bottom:12px;">Unified Repository Access</h3>
+    <p style="color:var(--s-on-surface-variant);">Connect your GitHub account to directly analyze your private repositories with Zero-Trust compliance.</p>
+    <a href="{{ url_for('auth.github_login') }}"><span class="material-symbols-outlined">integration_instructions</span> Connect GitHub</a>
+  </div>
+
+  {% elif current_user.is_authenticated and current_user.github_username %}
+  <!-- GitHub connected — show repositories -->
+  <div class="gh-repos-section st-anim-3" id="ghReposSection">
+    <div class="gh-repos-header">
+      <div class="gh-repos-title">
+        <div class="gh-repos-title-icon">
+          <span class="material-symbols-outlined">code_blocks</span>
+        </div>
+        Your GitHub Repositories
+        <span class="gh-repos-count" id="repoCountBadge">Loading…</span>
+      </div>
+      <div class="gh-repos-controls">
+        <div class="gh-search-wrap">
+          <span class="material-symbols-outlined">search</span>
+          <input type="text" id="repoSearch" placeholder="Filter repositories…" oninput="filterRepos()" autocomplete="off">
+        </div>
+        <select class="gh-filter-select" id="langFilter" onchange="filterRepos()">
+          <option value="">All languages</option>
+        </select>
+        <select class="gh-filter-select" id="visFilter" onchange="filterRepos()">
+          <option value="">Public & Private</option>
+          <option value="public">Public only</option>
+          <option value="private">Private only</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="repos-grid" id="reposGrid">
+      <!-- Skeleton loaders -->
+      <div class="repo-skeleton"></div>
+      <div class="repo-skeleton"></div>
+      <div class="repo-skeleton"></div>
+      <div class="repo-skeleton"></div>
+      <div class="repo-skeleton"></div>
+      <div class="repo-skeleton"></div>
+    </div>
+
+    <div class="gh-load-more" id="loadMoreWrap" style="display:none;">
+      <button class="st-btn-secondary" id="loadMoreBtn" onclick="renderMore()">
+        <span class="material-symbols-outlined" style="font-size:16px; margin-right:6px;">expand_more</span>
+        Load More
+      </button>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Analysis History -->
+  <div class="history-section st-anim-3" id="historySection" style="display:none">
+    <div class="history-header">
+      <div class="history-title">
+        <span class="material-symbols-outlined" style="font-size:20px; vertical-align:middle; margin-right:6px; color:var(--s-primary);">history</span>
+        Recent Analysis History
+      </div>
+      <button onclick="clearHistoryView()" class="st-btn-secondary" style="font-size:0.78rem; padding:6px 14px;">Clear View</button>
+    </div>
+    <div class="history-grid" id="historyGrid">
+      <p style="color:var(--s-on-surface-variant); font-size:0.85rem;">Loading history...</p>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <div class="features-grid st-anim-4">
+    <div class="feature-card">
+      <div class="feat-icon violet"><span class="material-symbols-outlined">security</span></div>
+      <div class="feat-title">Architectural Security</div>
+      <div class="feat-desc">Validates against deep dependency paths and configuration drift using static and AST traversal.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feat-icon amber"><span class="material-symbols-outlined">speed</span></div>
+      <div class="feat-title">Reviewer Velocity</div>
+      <div class="feat-desc">Cuts PR review times by auto-resolving standard style, lint, and common pattern errors invisibly.</div>
+    </div>
+    <a href="/chat" style="text-decoration:none;" class="feature-card">
+      <div class="feat-icon sky"><span class="material-symbols-outlined">terminal</span></div>
+      <div class="feat-title">Code + AI Workspace</div>
+      <div class="feat-desc">Monaco editor fused with a real-time AI assistant — edit, explain, scan and refactor in one view.</div>
+    </a>
+    <a href="/dashboard#bounty-sec" style="text-decoration:none;" class="feature-card">
+      <div class="feat-icon" style="background:rgba(239,68,68,0.1); color:#ef4444;"><span class="material-symbols-outlined">bug_report</span></div>
+      <div class="feat-title">Bug Bounty</div>
+      <div class="feat-desc">Gamified vulnerability patching logic to improve overall health scores across platforms.</div>
+    </a>
+  </div>
+
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
-=======
-  /* ── Sidebar ── */
-  function toggleSidebar() {
-    const sidebar = document.getElementById('mainSidebar');
-    const toggle = document.getElementById('sidebarToggle');
-    const isOpen = sidebar.classList.toggle('open');
-    toggle.classList.toggle('open', isOpen);
-    toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-  }
-
-  /* ── Profile dropdown ── */
-  function toggleProfile(e) {
-    e.stopPropagation();
-    const menu = document.getElementById('profileMenu');
-    const btn = document.querySelector('.profile-btn');
-    if (!menu || !btn) return;
-    const isOpen = menu.classList.toggle('open');
-    btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-  }
-  document.addEventListener('click', (e) => {
-    const dd = document.querySelector('.profile-dropdown');
-    const menu = document.getElementById('profileMenu');
-    if (menu && dd && !dd.contains(e.target)) {
-      menu.classList.remove('open');
-      const btn = document.querySelector('.profile-btn');
-      if (btn) btn.setAttribute('aria-expanded', 'false');
-    }
-  });
-
->>>>>>> 50b420b4620be03ea149dc44fc325e539a565625
-  /* ── File inputs ── */
+  /* ══════════════════════════════════════════
+     File / Folder Inputs
+  ══════════════════════════════════════════ */
   function selectFiles()  { document.getElementById('codebase').click(); }
   function selectFolder() { document.getElementById('folderInput').click(); }
 
@@ -435,7 +624,6 @@
     if (!files || !files.length) { fileNotice.textContent = ''; return; }
     fileNotice.innerHTML = `<span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle; margin-right:4px;">check_circle</span> ${files.length} payload(s) loaded`;
   }
-
   codebaseInput?.addEventListener('change', () => updateNotice(codebaseInput.files));
   folderInput?.addEventListener('change', function () {
     updateNotice(this.files);
@@ -457,11 +645,47 @@
     });
   }
 
-  /* ── Analyze btn ── */
+  /* ── Analyze submit — send to /api/analyze/upload via fetch ── */
   const uploadForm = document.getElementById('upload-form');
   const analyzeBtn = document.getElementById('analyze-btn');
-  uploadForm?.addEventListener('submit', () => {
-    if (analyzeBtn) { analyzeBtn.disabled = true; analyzeBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle; animation: spin 1s linear infinite;">sync</span> Computing...'; }
+  uploadForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();  // Prevent default form POST to /dashboard
+
+    const inputs = [codebaseInput, folderInput].filter(i => i && i.files && i.files.length > 0);
+    if (!inputs.length) {
+      fileNotice.innerHTML = '<span style="color:#fc8b98;">Please select at least one file.</span>';
+      return;
+    }
+
+    if (analyzeBtn) {
+      analyzeBtn.disabled = true;
+      analyzeBtn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;animation:spin 1s linear infinite;">sync</span> Uploading…';
+    }
+
+    const formData = new FormData();
+    for (const input of inputs) {
+      for (const file of input.files) {
+        formData.append('codebase', file);
+      }
+    }
+
+    try {
+      const res = await fetch('/api/analyze/upload', {
+        method: 'POST',
+        body: formData,
+        // NOTE: Do NOT set Content-Type header — browser sets it with boundary automatically
+      });
+      const data = await res.json();
+      if (res.ok && (data.uid || data.task_id)) {
+        window.location.href = `/processing?uid=${data.uid || data.task_id}`;
+      } else {
+        fileNotice.innerHTML = `<span style="color:#fc8b98;">Upload failed: ${data.error || 'Unknown error'}</span>`;
+        if (analyzeBtn) { analyzeBtn.disabled = false; analyzeBtn.textContent = 'Initiate Analysis'; }
+      }
+    } catch (err) {
+      fileNotice.innerHTML = `<span style="color:#fc8b98;">Network error: ${err.message}</span>`;
+      if (analyzeBtn) { analyzeBtn.disabled = false; analyzeBtn.textContent = 'Initiate Analysis'; }
+    }
   });
 
   /* ── Repo URL analyze ── */
@@ -485,60 +709,182 @@
     }
   }
 
-  /* ── GitHub Repos ── */
+  /* ══════════════════════════════════════════
+     GitHub Repositories Browser
+  ══════════════════════════════════════════ */
+  const LANG_COLORS = {
+    Python:'#3572A5', JavaScript:'#f1e05a', TypeScript:'#3178c6',
+    Java:'#b07219', Go:'#00ADD8', Rust:'#dea584', Ruby:'#701516',
+    'C++':'#f34b7d', C:'#555555', HTML:'#e34c26', CSS:'#563d7c',
+    Shell:'#89e051', PHP:'#4F5D95', Swift:'#F05138', Kotlin:'#A97BFF',
+    Dart:'#00B4AB', 'C#':'#178600', Scala:'#c22d40', R:'#198CE7',
+  };
+
+  let _allRepos = [];
+  let _visibleCount = 12;
+
   async function loadRepos() {
     const grid = document.getElementById('reposGrid');
+    const countBadge = document.getElementById('repoCountBadge');
     if (!grid) return;
+
     try {
       const res = await fetch('/auth/github/repos');
-      if (!res.ok) { grid.innerHTML = '<div style="color:var(--s-on-surface-variant)">Unable to map remote endpoints. Restoring connection.</div>'; return; }
+      if (!res.ok) {
+        grid.innerHTML = `<div class="gh-empty-state">
+          <span class="material-symbols-outlined">cloud_off</span>
+          <div style="font-weight:600; margin-bottom:6px;">Could not load repositories</div>
+          <div style="font-size:0.82rem;">Please reconnect your GitHub account.</div>
+        </div>`;
+        if (countBadge) countBadge.textContent = '—';
+        return;
+      }
       const data = await res.json();
-      const repos = data.repos || data || [];
-      if(!repos.length) { grid.innerHTML = '<div style="color:var(--s-on-surface-variant)">No active workspaces documented.</div>'; return; }
-      
-      grid.innerHTML = repos.slice(0,6).map(r => `
-        <div style="background:var(--s-surface-container-low); padding:16px 24px; border-radius:var(--s-radius-sm); display:flex; align-items:center; justify-content:space-between; border-top: 1px solid rgba(255,255,255,0.05);">
-          <div>
-            <div style="font-family:var(--s-font-heading); font-weight:700; color:var(--s-primary); font-size:1.1rem; margin-bottom:4px;">${r.full_name}</div>
-            <div style="font-size:0.8rem; color:var(--s-on-surface-variant); display:flex; gap:16px;">
-              <span>⭐ ${r.stars || r.stargazers_count || 0}</span>
-              <span>${r.language || 'Mixed'}</span>
-              ${r.private ? '<span style="color:#ff97a3;">Private Domain</span>' : ''}
-            </div>
-          </div>
-          <button class="st-btn-secondary" onclick="analyzeGitRepo('${r.clone_url||r.html_url}', this)">Scan Origin</button>
-        </div>
-      `).join('');
+      _allRepos = data.repos || [];
+
+      // Populate language filter
+      const langs = [...new Set(_allRepos.map(r => r.language).filter(Boolean))].sort();
+      const langSel = document.getElementById('langFilter');
+      if (langSel) {
+        langs.forEach(l => {
+          const opt = document.createElement('option');
+          opt.value = l; opt.textContent = l;
+          langSel.appendChild(opt);
+        });
+      }
+
+      if (countBadge) countBadge.textContent = `${_allRepos.length} repos`;
+      renderRepos();
+
     } catch (e) {
-      if (grid) grid.innerHTML = '<div style="color:var(--s-on-surface-variant)">Workspace rendering disrupted.</div>';
+      const grid = document.getElementById('reposGrid');
+      if (grid) grid.innerHTML = `<div class="gh-empty-state"><span class="material-symbols-outlined">error</span><div>Failed to fetch repositories.</div></div>`;
     }
+  }
+
+  function getFilteredRepos() {
+    const q    = (document.getElementById('repoSearch')?.value || '').toLowerCase();
+    const lang = document.getElementById('langFilter')?.value || '';
+    const vis  = document.getElementById('visFilter')?.value || '';
+    return _allRepos.filter(r => {
+      if (q && !r.full_name.toLowerCase().includes(q) && !(r.description||'').toLowerCase().includes(q)) return false;
+      if (lang && r.language !== lang) return false;
+      if (vis === 'public'  && r.private) return false;
+      if (vis === 'private' && !r.private) return false;
+      return true;
+    });
+  }
+
+  function filterRepos() {
+    _visibleCount = 12;
+    renderRepos();
+  }
+
+  function renderRepos() {
+    const grid = document.getElementById('reposGrid');
+    const loadMoreWrap = document.getElementById('loadMoreWrap');
+    if (!grid) return;
+
+    const filtered = getFilteredRepos();
+    const slice = filtered.slice(0, _visibleCount);
+
+    if (!filtered.length) {
+      grid.innerHTML = `<div class="gh-empty-state">
+        <span class="material-symbols-outlined">search_off</span>
+        <div style="font-weight:600; margin-bottom:6px;">No repositories found</div>
+        <div style="font-size:0.82rem;">Try a different search or filter.</div>
+      </div>`;
+      if (loadMoreWrap) loadMoreWrap.style.display = 'none';
+      return;
+    }
+
+    grid.innerHTML = slice.map(r => repoCardHTML(r)).join('');
+
+    if (loadMoreWrap) {
+      loadMoreWrap.style.display = filtered.length > _visibleCount ? 'flex' : 'none';
+      const btn = document.getElementById('loadMoreBtn');
+      if (btn) btn.textContent = `Load More (${filtered.length - _visibleCount} remaining)`;
+    }
+  }
+
+  function renderMore() {
+    _visibleCount += 12;
+    renderRepos();
+  }
+
+  function repoCardHTML(r) {
+    const langColor = LANG_COLORS[r.language] || '#8b949e';
+    const updated = r.updated_at ? _relativeTime(r.updated_at) : '';
+    const desc = r.description ? `<div class="repo-desc" title="${escHtml(r.description)}">${escHtml(r.description)}</div>` : '';
+    const badge = r.private
+      ? `<span class="repo-badge-private"><span class="material-symbols-outlined" style="font-size:9px;">lock</span> Private</span>`
+      : `<span class="repo-badge-public"><span class="material-symbols-outlined" style="font-size:9px;">public</span> Public</span>`;
+
+    return `<div class="repo-card">
+      <div class="repo-card-top">
+        <a href="${escHtml(r.html_url)}" target="_blank" rel="noopener" class="repo-name" title="${escHtml(r.full_name)}">${escHtml(r.full_name)}</a>
+        ${badge}
+      </div>
+      ${desc}
+      <div class="repo-meta">
+        ${r.language ? `<span class="repo-meta-item"><span class="lang-dot" style="background:${langColor};"></span>${escHtml(r.language)}</span>` : ''}
+        <span class="repo-meta-item"><span class="material-symbols-outlined" style="font-size:13px;">star</span>${r.stars ?? 0}</span>
+        <span class="repo-meta-item"><span class="material-symbols-outlined" style="font-size:13px;">fork_right</span>${r.forks ?? 0}</span>
+      </div>
+      <div class="repo-card-footer">
+        <span class="repo-updated">${updated ? `Updated ${updated}` : ''}</span>
+        <button class="repo-scan-btn" onclick="analyzeGitRepo('${escHtml(r.clone_url || r.html_url)}', this)" title="Analyze ${escHtml(r.name)}">
+          <span class="material-symbols-outlined" style="font-size:14px;">rocket_launch</span>
+          Scan Repo
+        </button>
+      </div>
+    </div>`;
   }
 
   async function analyzeGitRepo(url, btn) {
     if (!url) return;
-    btn.disabled = true; btn.textContent = 'Processing...';
+    btn.disabled = true;
+    btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:14px; animation:spin 1s linear infinite;">sync</span> Cloning…';
     try {
       const res  = await fetch('/api/analyze/repo', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ repo_url: url }) });
       const data = await res.json();
-      if (data.task_id || data.uid) { window.location.href = `/processing?uid=${data.task_id||data.uid}`; }
-      else { alert(data.error || 'Failed to start analysis'); btn.disabled = false; btn.textContent = 'Scan Origin'; }
-    } catch (e) { alert('Error: '+e.message); btn.disabled = false; btn.textContent = 'Scan Origin'; }
+      if (data.task_id || data.uid) {
+        window.location.href = `/processing?uid=${data.task_id || data.uid}`;
+      } else {
+        alert(data.error || 'Failed to start analysis');
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:14px;">rocket_launch</span> Scan Repo';
+      }
+    } catch (e) {
+      alert('Error: ' + e.message);
+      btn.disabled = false;
+      btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:14px;">rocket_launch</span> Scan Repo';
+    }
   }
 
-  /* ── Analysis History ── */
-  function _formatTs(isoStr) {
-    if (!isoStr) return '';
+  /* ─ Helpers ─ */
+  function escHtml(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function _relativeTime(iso) {
     try {
-      const d = new Date(isoStr);
-      const now = new Date();
-      const diffMs = now - d;
-      const diffMins = Math.floor(diffMs / 60000);
-      if (diffMins < 1) return 'Just now';
-      if (diffMins < 60) return `${diffMins}m ago`;
-      const diffHrs = Math.floor(diffMins / 60);
-      if (diffHrs < 24) return `${diffHrs}h ago`;
+      const d = new Date(iso), now = new Date();
+      const mins = Math.floor((now - d) / 60000);
+      if (mins < 1)  return 'just now';
+      if (mins < 60) return `${mins}m ago`;
+      const h = Math.floor(mins / 60);
+      if (h < 24) return `${h}h ago`;
+      const days = Math.floor(h / 24);
+      if (days < 30) return `${days}d ago`;
       return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-    } catch { return isoStr; }
+    } catch { return ''; }
+  }
+
+  /* ══════════════════════════════════════════
+     Analysis History
+  ══════════════════════════════════════════ */
+  function _formatTs(isoStr) {
+    return _relativeTime(isoStr);
   }
 
   async function loadAnalysisHistory() {
@@ -547,13 +893,10 @@
     if (!grid) return;
     try {
       const res = await fetch('/api/analysis/history?limit=10');
-      if (!res.ok) return; // Not authenticated or endpoint error — silent fail
+      if (!res.ok) return;
       const data = await res.json();
       const history = data.history || [];
-      if (!history.length) {
-        section && (section.style.display = 'none');
-        return;
-      }
+      if (!history.length) { section && (section.style.display = 'none'); return; }
       section && (section.style.display = 'block');
 
       grid.innerHTML = history.map(entry => {
@@ -578,7 +921,7 @@
           </div>
           <span class="history-status ${status}">${statusLabel}</span>
           <div class="history-actions">
-            <a href="/dashboard?uid=${uid}" class="hist-btn hist-btn-primary" title="View dashboard for this analysis">
+            <a href="/dashboard?uid=${uid}" class="hist-btn hist-btn-primary" title="View dashboard">
               <span class="material-symbols-outlined" style="font-size:13px;">dashboard</span>Dashboard
             </a>
             ${status === 'complete' ? `<a href="/report/${uid}" class="hist-btn hist-btn-ghost" title="View full report">
@@ -590,21 +933,12 @@
           </div>
         </div>`;
       }).join('');
-    } catch (e) {
-      // Silently handle authentication errors
-    }
+    } catch (e) { /* silent */ }
   }
 
   function copyUid(uid) {
-    navigator.clipboard?.writeText(uid).then(() => {
-      // Brief visual feedback
-      const btns = document.querySelectorAll('.hist-btn-ghost');
-      // Simple flash
-    }).catch(() => {
-      prompt('Copy this UID:', uid);
-    });
+    navigator.clipboard?.writeText(uid).catch(() => prompt('Copy this UID:', uid));
   }
-
   function clearHistoryView() {
     const section = document.getElementById('historySection');
     if (section) section.style.display = 'none';
@@ -615,5 +949,4 @@
     loadAnalysisHistory();
   });
 </script>
-<<<<<<< HEAD
 {% endblock %}

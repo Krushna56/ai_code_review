@@ -296,22 +296,38 @@ def github_callback():
         return jsonify({'error': 'GitHub authorization failed — no code'}), 400
 
     try:
+        # NOTE: redirect_uri is intentionally omitted from the token exchange.
+        # GitHub requires it ONLY if your OAuth App has multiple registered
+        # callback URLs. Including a URL that doesn't *exactly* match the
+        # registered one causes a silent `redirect_uri_mismatch` error where
+        # GitHub returns HTTP 200 but with no `access_token` in the body.
+        callback_url = f"{config.OAUTH_REDIRECT_BASE_URL or request.host_url.rstrip('/')}/auth/github/callback"
         token_resp = requests.post(
             config.GITHUB_TOKEN_URL,
             data={
                 'client_id': config.GITHUB_CLIENT_ID,
                 'client_secret': config.GITHUB_CLIENT_SECRET,
                 'code': code,
-                'redirect_uri': f"{config.OAUTH_REDIRECT_BASE_URL or request.host_url.rstrip('/')}/auth/github/callback",
+                'redirect_uri': callback_url,
             },
             headers={'Accept': 'application/json'},
             timeout=10,
         )
         token_resp.raise_for_status()
-        gh_access_token = token_resp.json().get('access_token')
+        token_data = token_resp.json()
+        gh_access_token = token_data.get('access_token')
 
         if not gh_access_token:
-            return jsonify({'error': 'Failed to obtain access token from GitHub'}), 502
+            # Log the real GitHub error so it's visible in server logs
+            gh_error = token_data.get('error', 'unknown')
+            gh_error_desc = token_data.get('error_description', '')
+            logger.error(
+                f"GitHub token exchange failed — error: {gh_error!r}, "
+                f"description: {gh_error_desc!r}, "
+                f"callback_url used: {callback_url!r}"
+            )
+            # Redirect to login page with a user-friendly error
+            return redirect(url_for('auth.login') + '?error=github_token_failed')
 
         user_resp = requests.get(
             config.GITHUB_API_URL,
@@ -543,7 +559,7 @@ def github_repos():
                     'name': r['name'],
                     'full_name': r['full_name'],
                     'description': r.get('description') or '',
-                    'language': r.get('language') or 'Unknown',
+                    'language': r.get('language') or None,
                     'stars': r.get('stargazers_count', 0),
                     'forks': r.get('forks_count', 0),
                     'private': r.get('private', False),

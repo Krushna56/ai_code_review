@@ -77,7 +77,7 @@ class AgentBus:
                 'message': message,
             }
             self._log.append(event)
-        logger.info(f"[AgentBus] {agent_name} → {status} ({progress}%) — {message}")
+        logger.info(f"[AgentBus] {agent_name} -> {status} ({progress}%) -- {message}")
 
         if status == 'done':
             self._finish_events[agent_name].set()

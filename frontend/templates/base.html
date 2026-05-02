@@ -129,11 +129,13 @@
       align-items: center;
       gap: 12px;
       margin-left: auto;
-      flex-shrink: 0;
+      flex-shrink: 1;
+      min-width: 0;
+      overflow: hidden;
     }
 
     /* ── Profile Dropdown ── */
-    .profile-dropdown { position: relative; }
+    .profile-dropdown { position: relative; max-width: 190px; min-width: 0; }
     .profile-btn {
       display: flex;
       align-items: center;
@@ -141,18 +143,28 @@
       background: rgba(163,166,255,0.06);
       border: 1px solid rgba(163,166,255,0.12);
       border-radius: 99px;
-      padding: 5px 14px 5px 5px;
+      padding: 5px 12px 5px 5px;
       color: var(--s-on-surface);
       cursor: pointer;
       font-family: var(--s-font-body);
       font-weight: 600;
       font-size: 0.85rem;
       transition: all 0.2s ease;
+      width: 100%;
+      min-width: 0;
+      overflow: hidden;
     }
     .profile-btn:hover {
       border-color: var(--s-primary);
       background: rgba(163,166,255,0.1);
       box-shadow: 0 0 12px rgba(163,166,255,0.15);
+    }
+    .profile-btn-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      min-width: 0;
+      flex: 1;
     }
     .profile-avatar {
       width: 28px; height: 28px; border-radius: 50%;
@@ -160,6 +172,15 @@
       color: #000;
       display: flex; align-items: center; justify-content: center;
       font-size: 12px; font-weight: 800;
+      flex-shrink: 0;
+    }
+    @media (max-width: 1100px) {
+      .profile-dropdown { max-width: 140px; }
+    }
+    @media (max-width: 960px) {
+      .profile-btn-label { display: none; }
+      .profile-dropdown { max-width: 52px; }
+      .profile-btn { padding: 5px; }
     }
     .profile-menu {
       display: none;
@@ -340,7 +361,7 @@
   <nav class="zr-navbar" id="mainNavbar">
 
     <!-- Brand -->
-    <a href="/" class="zr-brand">
+    <a href="/dashboard" class="zr-brand">
       <div class="zr-brand-icon">
         <span class="material-symbols-outlined" style="font-size:20px;">filter_vintage</span>
       </div>
@@ -350,17 +371,12 @@
 
     <!-- Nav Links -->
     <div class="zr-nav" id="mainNav">
-      <a href="/" class="zr-nav-link {% if request.path == '/' %}active{% endif %}">
+      <a href="/dashboard" class="zr-nav-link {% if request.path in ['/', '/dashboard'] %}active{% endif %}">
         <span class="material-symbols-outlined nb-icon">home</span>Home
       </a>
-      <a href="/dashboard" class="zr-nav-link {% if request.path == '/dashboard' %}active{% endif %}">
-        <span class="material-symbols-outlined nb-icon">dashboard</span>Dashboard
-      </a>
-      <a href="/chat{% if uid is defined and uid %}?uid={{ uid }}{% endif %}" class="zr-nav-link {% if request.path == '/chat' %}active{% endif %}">
-        <span class="material-symbols-outlined nb-icon">chat</span>AI Chat
-      </a>
-      <a href="/code-viewer{% if uid is defined and uid %}?uid={{ uid }}{% endif %}" class="zr-nav-link {% if request.path == '/code-viewer' %}active{% endif %}">
-        <span class="material-symbols-outlined nb-icon">code</span>Code Editor
+
+      <a href="/chat{% if uid is defined and uid %}?uid={{ uid }}{% endif %}" class="zr-nav-link {% if request.path in ['/chat', '/code-viewer'] %}active{% endif %}">
+        <span class="material-symbols-outlined nb-icon">terminal</span>Workspace
       </a>
       {% if uid is defined and uid %}
       <a href="/report/{{ uid }}" class="zr-nav-link {% if '/report' in request.path %}active{% endif %}">
@@ -380,8 +396,8 @@
       <div class="profile-dropdown" id="profileDropdown">
         <button class="profile-btn" onclick="toggleProfile(event)" id="profileBtn" aria-expanded="false">
           <div class="profile-avatar">{{ (current_user.email or current_user.github_username or 'U')[0] | upper }}</div>
-          <span>{{ (current_user.email or current_user.github_username or 'User') | truncate(16, true, '') }}</span>
-          <span class="material-symbols-outlined" style="font-size:14px; color:var(--s-on-surface-variant);">expand_more</span>
+          <span class="profile-btn-label">{{ current_user.email or current_user.github_username or 'User' }}</span>
+          <span class="material-symbols-outlined" style="font-size:14px; color:var(--s-on-surface-variant); flex-shrink:0;">expand_more</span>
         </button>
         <div class="profile-menu" id="profileMenu">
           <!-- User info -->
@@ -428,17 +444,12 @@
 
   <!-- ════ MOBILE DRAWER ════ -->
   <div class="zr-mobile-nav" id="mobileNav">
-    <a href="/" class="zr-mobile-link {% if request.path == '/' %}active{% endif %}">
+    <a href="/dashboard" class="zr-mobile-link {% if request.path in ['/', '/dashboard'] %}active{% endif %}">
       <span class="material-symbols-outlined">home</span>Home
     </a>
-    <a href="/dashboard" class="zr-mobile-link {% if request.path == '/dashboard' %}active{% endif %}">
-      <span class="material-symbols-outlined">dashboard</span>Dashboard
-    </a>
-    <a href="/chat{% if uid is defined and uid %}?uid={{ uid }}{% endif %}" class="zr-mobile-link {% if request.path == '/chat' %}active{% endif %}">
-      <span class="material-symbols-outlined">chat</span>AI Chat
-    </a>
-    <a href="/code-viewer{% if uid is defined and uid %}?uid={{ uid }}{% endif %}" class="zr-mobile-link {% if request.path == '/code-viewer' %}active{% endif %}">
-      <span class="material-symbols-outlined">code</span>Code Editor
+
+    <a href="/chat{% if uid is defined and uid %}?uid={{ uid }}{% endif %}" class="zr-mobile-link {% if request.path in ['/chat', '/code-viewer'] %}active{% endif %}">
+      <span class="material-symbols-outlined">terminal</span>Workspace
     </a>
     {% if uid is defined and uid %}
     <a href="/report/{{ uid }}" class="zr-mobile-link {% if '/report' in request.path %}active{% endif %}">
