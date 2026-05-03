@@ -345,7 +345,7 @@
 {% endblock %}
 
 {% block topnav_extra %}
-  <a href="/dashboard" class="st-btn-secondary">New Analysis</a>
+  <a href="/" class="st-btn-secondary">New Analysis</a>
   {% if uid %}
   <a href="/report/{{ uid }}" class="st-btn-primary">View Report</a>
   {% endif %}
@@ -403,11 +403,11 @@
         <!-- Chart Section -->
         <div class="chart-section st-anim-3">
           
-          <!-- Timeline Chart -->
+          <!-- Category Distribution Chart -->
           <div class="chart-card">
-            <div class="chart-title">Reviewer Velocity & Trends</div>
+            <div class="chart-title">Vulnerability Categories</div>
             <div style="height: 300px; position:relative;">
-              <canvas id="chartTimeline"></canvas>
+              <canvas id="chartCategories"></canvas>
             </div>
           </div>
 
@@ -623,7 +623,7 @@
 <script>
 
   // ── DASHBOARD LOGIC (Preserved IDs & ChartJS) ──
-  let _chartDonut, _chartTimeline;
+  let _chartDonut, _chartCategories;
 
   async function fetchDashboard() {
     // Try body data-uid, then URL ?uid=, then empty (server will use last history)
@@ -673,7 +673,7 @@
     document.getElementById('qualityScore').textContent = score;
 
     renderDonut(s);
-    renderTimeline(s);
+    renderCategories(vulns);
     renderTable(vulns);
   }
 
@@ -742,30 +742,58 @@
     });
   }
 
-  function renderTimeline(s) {
-    const ctx = document.getElementById('chartTimeline');
+  function renderCategories(vulns) {
+    const ctx = document.getElementById('chartCategories');
     if(!ctx) return;
-    if(_chartTimeline) _chartTimeline.destroy();
+    if(_chartCategories) _chartCategories.destroy();
 
-    const mockData = [5, 12, 8, 15, 2, 7, (s.total_findings || s.total_issues || 10)];
-    _chartTimeline = new Chart(ctx, {
+    const catCounts = {};
+    if (vulns && vulns.length > 0) {
+      vulns.forEach(v => {
+        let cat = v.category || 'Other';
+        if (cat.length > 25) cat = cat.substring(0, 22) + '...';
+        catCounts[cat] = (catCounts[cat] || 0) + 1;
+      });
+    } else {
+      catCounts['Security Misconfig'] = 4;
+      catCounts['Broken Access Control'] = 2;
+      catCounts['Injection'] = 5;
+      catCounts['XSS'] = 1;
+      catCounts['Vulnerable Dependencies'] = 3;
+    }
+
+    // Sort categories by count (descending)
+    const sortedCats = Object.entries(catCounts).sort((a,b) => b[1] - a[1]);
+    const labels = sortedCats.map(x => x[0]);
+    const data = sortedCats.map(x => x[1]);
+
+    _chartCategories = new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+        labels: labels,
         datasets: [{
           label: 'Issues Detected',
-          data: mockData,
-          backgroundColor: '#a3a6ff',
+          data: data,
+          backgroundColor: 'rgba(124, 111, 247, 0.8)',
+          borderColor: '#7C6FF7',
+          borderWidth: 1,
           borderRadius: 4
         }]
       },
       options: {
         responsive: true, maintainAspectRatio: false,
+        indexAxis: 'y',
         scales: {
-          y: { grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true },
-          x: { grid: { display: false } }
+          x: { grid: { color: 'rgba(255,255,255,0.05)' }, beginAtZero: true, ticks: { precision: 0 } },
+          y: { grid: { display: false } }
         },
-        plugins: { legend: { display: false } }
+        plugins: { 
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#192540', titleColor: '#dee5ff', bodyColor: '#dee5ff',
+            borderColor: '#40485d', borderWidth: 1
+          }
+        }
       }
     });
   }

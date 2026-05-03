@@ -111,7 +111,7 @@ app.config['SECRET_KEY'] = config.SECRET_KEY
 
 @app.route("/")
 def index():
-    """Root route: redirect to login if not authenticated, else to the main dashboard."""
+    """Root route: render home/upload page for authenticated users, else redirect to login."""
     from auth.jwt_utils import JWTManager
     import jwt as _jwt
     token = session.get('jwt_access_token')
@@ -119,10 +119,19 @@ def index():
         try:
             payload = JWTManager.verify_token(token)
             if not JWTManager.is_blacklisted(token):
-                return redirect(url_for('index_page'))
+                uid = request.args.get('uid', '').strip()
+                history = []
+                try:
+                    history = _load_analysis_history()
+                    if not uid and history:
+                        uid = history[0].get('uid', '')
+                except Exception:
+                    pass
+                return render_template('index.html', uid=uid, history=history)
         except Exception:
             pass
     return redirect(url_for('auth.login'))
+
 
 
 @app.route("/dashboard", methods=['GET', 'POST'])
@@ -135,7 +144,7 @@ def index_page():
     token = session.get('jwt_access_token')
     if not token:
         return redirect(url_for('auth.login'))
-    try:
+    try:   
         payload = JWTManager.verify_token(token)
         if JWTManager.is_blacklisted(token):
             return redirect(url_for('auth.login'))
@@ -248,7 +257,7 @@ def report_page(uid):
         return redir
     # Load report data from processed directory
     report_data = {}
-    report_path = os.path.join('processed', uid, 'security_report.json')
+    report_path = os.path.join(app.config['PROCESSED_FOLDER'], uid, 'security_report.json')
     if os.path.exists(report_path):
         try:
             with open(report_path, 'r', encoding='utf-8') as f:
@@ -273,7 +282,7 @@ def download_report(uid, filename):
     redir = _require_auth()
     if redir:
         return redir
-    report_dir = os.path.abspath(os.path.join('processed', uid))
+    report_dir = os.path.abspath(os.path.join(app.config['PROCESSED_FOLDER'], uid))
     return send_from_directory(report_dir, filename, as_attachment=True)
 
 
@@ -292,7 +301,7 @@ def agent_status(uid):
 # -----------------------------------------------------------------------
 def _load_security_report(uid):
     """Load security_report.json for the given uid. Returns dict or None."""
-    path = os.path.join('processed', uid, 'security_report.json')
+    path = os.path.join(app.config['PROCESSED_FOLDER'], uid, 'security_report.json')
     if os.path.exists(path):
         try:
             with open(path, 'r', encoding='utf-8') as f:
@@ -889,6 +898,84 @@ def upload_files():
     )
     thread.start()
     logger.info(f"Analysis pipeline started for uid {uid} with {len(saved_files)} file(s)")
+
+    return jsonify({'uid': uid, 'status': 'started'}), 202
+
+
+# ---------------------------------------------------------------------------
+# GitHub Repo Analyze — POST /api/analyze/repo
+# ---------------------------------------------------------------------------
+@app.route('/api/analyze/repo', methods=['POST'])
+def analyze_repo():
+    from auth.jwt_utils import JWTManager
+    import jwt as _jwt
+
+    # Auth check
+    token = session.get('jwt_access_token')
+    if not token:
+        return jsonify({'error': 'Authentication required'}), 401
+    try:
+        payload = JWTManager.verify_token(token)
+        if JWTManager.is_blacklisted(token):
+            return jsonify({'error': 'Session expired'}), 401
+    except _jwt.InvalidTokenError:
+        return jsonify({'error': 'Invalid token'}), 401
+
+    data = request.get_json()
+    repo_url = data.get('repo_url', '').strip()
+    logger.debug(f"[/api/analyze/repo] Received request to clone: {repo_url}")
+    
+    if not repo_url:
+        logger.warning("[/api/analyze/repo] No repository URL provided in request.")
+        return jsonify({'error': 'No repository URL provided'}), 400
+
+    uid = str(uuid.uuid4())
+    logger.info(f"[/api/analyze/repo] Generated UID {uid} for {repo_url}")
+    
+    upload_dir   = os.path.join(app.config['UPLOAD_FOLDER'],   uid)
+    processed_dir = os.path.join(app.config['PROCESSED_FOLDER'], uid)
+    
+    logger.debug(f"[/api/analyze/repo] Creating directories:\n  Upload: {upload_dir}\n  Processed: {processed_dir}")
+    os.makedirs(upload_dir,    exist_ok=True)
+    os.makedirs(processed_dir, exist_ok=True)
+
+    analysis_status[uid] = {'status': 'pending', 'progress': 0, 'error': None}
+
+    def clone_and_analyze():
+        try:
+            logger.info(f"[Clone Thread - {uid}] Starting git clone for {repo_url} into {upload_dir}")
+            analysis_status[uid]['status'] = 'cloning'
+            
+            # Clone repo (depth 1 for speed)
+            clone_cmd = ['git', 'clone', '--depth', '1', repo_url, upload_dir]
+            logger.debug(f"[Clone Thread - {uid}] Executing: {' '.join(clone_cmd)}")
+            
+            result = subprocess.run(clone_cmd, check=True, capture_output=True)
+            logger.debug(f"[Clone Thread - {uid}] Git Clone STDOUT: {result.stdout.decode('utf-8', errors='ignore')}")
+            logger.info(f"[Clone Thread - {uid}] Git clone successful. Starting AST pipeline...")
+            
+            # Run the normal analysis pipeline
+            run_analysis_background(upload_dir, processed_dir, uid)
+            logger.info(f"[Clone Thread - {uid}] Background analysis pipeline triggered successfully.")
+            
+        except subprocess.CalledProcessError as e:
+            err = e.stderr.decode('utf-8', errors='ignore') if e.stderr else str(e)
+            logger.error(f"[Clone Thread - {uid}] Git clone FAILED! Exit code: {e.returncode}. Error: {err}")
+            analysis_status[uid]['status'] = 'error'
+            analysis_status[uid]['error'] = f"Failed to clone repository: {err}"
+        except Exception as e:
+            logger.error(f"[Clone Thread - {uid}] Unhandled exception during repo analysis: {e}", exc_info=True)
+            analysis_status[uid]['status'] = 'error'
+            analysis_status[uid]['error'] = str(e)
+
+    logger.debug(f"[/api/analyze/repo] Spawning background thread for {uid}")
+    thread = threading.Thread(
+        target=clone_and_analyze,
+        daemon=True,
+        name=f"{uid}-pipeline"
+    )
+    thread.start()
+    logger.info(f"[/api/analyze/repo] Successfully accepted repo {repo_url} (UID: {uid})")
 
     return jsonify({'uid': uid, 'status': 'started'}), 202
 

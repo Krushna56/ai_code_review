@@ -361,7 +361,7 @@
   <nav class="zr-navbar" id="mainNavbar">
 
     <!-- Brand -->
-    <a href="/dashboard" class="zr-brand">
+    <a href="/" class="zr-brand">
       <div class="zr-brand-icon">
         <span class="material-symbols-outlined" style="font-size:20px;">filter_vintage</span>
       </div>
@@ -371,10 +371,12 @@
 
     <!-- Nav Links -->
     <div class="zr-nav" id="mainNav">
-      <a href="/dashboard" class="zr-nav-link {% if request.path in ['/', '/dashboard'] %}active{% endif %}">
+      <a href="/" class="zr-nav-link {% if request.path == '/' %}active{% endif %}">
         <span class="material-symbols-outlined nb-icon">home</span>Home
       </a>
-
+      <a href="/dashboard" class="zr-nav-link {% if request.path == '/dashboard' %}active{% endif %}">
+        <span class="material-symbols-outlined nb-icon">dashboard</span>Dashboard
+      </a>
       <a href="/chat{% if uid is defined and uid %}?uid={{ uid }}{% endif %}" class="zr-nav-link {% if request.path in ['/chat', '/code-viewer'] %}active{% endif %}">
         <span class="material-symbols-outlined nb-icon">terminal</span>Workspace
       </a>
@@ -444,10 +446,12 @@
 
   <!-- ════ MOBILE DRAWER ════ -->
   <div class="zr-mobile-nav" id="mobileNav">
-    <a href="/dashboard" class="zr-mobile-link {% if request.path in ['/', '/dashboard'] %}active{% endif %}">
+    <a href="/" class="zr-mobile-link {% if request.path == '/' %}active{% endif %}">
       <span class="material-symbols-outlined">home</span>Home
     </a>
-
+    <a href="/dashboard" class="zr-mobile-link {% if request.path == '/dashboard' %}active{% endif %}">
+      <span class="material-symbols-outlined">dashboard</span>Dashboard
+    </a>
     <a href="/chat{% if uid is defined and uid %}?uid={{ uid }}{% endif %}" class="zr-mobile-link {% if request.path in ['/chat', '/code-viewer'] %}active{% endif %}">
       <span class="material-symbols-outlined">terminal</span>Workspace
     </a>
