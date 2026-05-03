@@ -2502,3 +2502,237 @@ openai.AuthenticationError: Error code: 401 - {'error': {'message': 'Incorrect A
 2026-05-03 15:29:29,273 - 04434187-f274-44d8-94df-50692674466a - flask.request - INFO - Request received
 2026-05-03 15:29:29,277 - 04434187-f274-44d8-94df-50692674466a - flask.response - INFO - Response sent
 2026-05-03 15:29:29,283 - 04434187-f274-44d8-94df-50692674466a - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:29:29] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:29:59,229 - 56e40a34-cfb1-4eb8-aba7-221640db0e39 - flask.request - INFO - Request received
+2026-05-03 15:29:59,230 - 56e40a34-cfb1-4eb8-aba7-221640db0e39 - flask.request - INFO - Request received
+2026-05-03 15:29:59,232 - 56e40a34-cfb1-4eb8-aba7-221640db0e39 - flask.response - INFO - Response sent
+2026-05-03 15:29:59,232 - 56e40a34-cfb1-4eb8-aba7-221640db0e39 - flask.response - INFO - Response sent
+2026-05-03 15:29:59,233 - 56e40a34-cfb1-4eb8-aba7-221640db0e39 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:29:59] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:29:59,234 - 56e40a34-cfb1-4eb8-aba7-221640db0e39 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:29:59] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:30:29,257 - d7aec3ec-c21a-42a3-88db-db0eb8fcae86 - flask.request - INFO - Request received
+2026-05-03 15:30:29,262 - d7aec3ec-c21a-42a3-88db-db0eb8fcae86 - flask.response - INFO - Response sent
+2026-05-03 15:30:29,270 - d7aec3ec-c21a-42a3-88db-db0eb8fcae86 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:30:29] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:30:29,276 - 027e3fb0-e761-4da8-8b0d-7e55562d68f2 - flask.request - INFO - Request received
+2026-05-03 15:30:29,283 - 027e3fb0-e761-4da8-8b0d-7e55562d68f2 - flask.response - INFO - Response sent
+2026-05-03 15:30:29,288 - 027e3fb0-e761-4da8-8b0d-7e55562d68f2 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:30:29] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:30:59,226 - adb41704-52f9-4733-b889-41e335060cbe - flask.request - INFO - Request received
+2026-05-03 15:30:59,230 - adb41704-52f9-4733-b889-41e335060cbe - flask.response - INFO - Response sent
+2026-05-03 15:30:59,231 - adb41704-52f9-4733-b889-41e335060cbe - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:30:59] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:30:59,232 - 0e17ea6d-549a-4bcb-a130-b679ec6d4dcc - flask.request - INFO - Request received
+2026-05-03 15:30:59,234 - 0e17ea6d-549a-4bcb-a130-b679ec6d4dcc - flask.response - INFO - Response sent
+2026-05-03 15:30:59,236 - 0e17ea6d-549a-4bcb-a130-b679ec6d4dcc - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:30:59] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:31:29,229 - 790e7b33-8358-4dca-a9d7-02cc84082b0e - flask.request - INFO - Request received
+2026-05-03 15:31:29,231 - 5cf5d637-13d3-4efd-8903-1920c942ae29 - flask.response - INFO - Response sent
+2026-05-03 15:31:29,232 - 5cf5d637-13d3-4efd-8903-1920c942ae29 - flask.request - INFO - Request received
+2026-05-03 15:31:29,232 - 5cf5d637-13d3-4efd-8903-1920c942ae29 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:31:29] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:31:29,234 - 5cf5d637-13d3-4efd-8903-1920c942ae29 - flask.response - INFO - Response sent
+2026-05-03 15:31:29,235 - 5cf5d637-13d3-4efd-8903-1920c942ae29 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:31:29] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:31:59,226 - f025e84d-7f41-452d-bd49-6c01e7cd502e - flask.request - INFO - Request received
+2026-05-03 15:31:59,228 - 459da555-0839-452b-a37e-4fed08f842ba - flask.request - INFO - Request received
+2026-05-03 15:31:59,229 - 459da555-0839-452b-a37e-4fed08f842ba - flask.response - INFO - Response sent
+2026-05-03 15:31:59,230 - 459da555-0839-452b-a37e-4fed08f842ba - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:31:59] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:31:59,231 - 459da555-0839-452b-a37e-4fed08f842ba - flask.response - INFO - Response sent
+2026-05-03 15:31:59,233 - 459da555-0839-452b-a37e-4fed08f842ba - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:31:59] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:32:29,226 - 437f148a-0d98-43ac-90e4-5b1966910825 - flask.request - INFO - Request received
+2026-05-03 15:32:29,229 - e275576e-452d-4b62-a7ab-b4c3e7b46a70 - flask.request - INFO - Request received
+2026-05-03 15:32:29,230 - e275576e-452d-4b62-a7ab-b4c3e7b46a70 - flask.response - INFO - Response sent
+2026-05-03 15:32:29,231 - e275576e-452d-4b62-a7ab-b4c3e7b46a70 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:32:29] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:32:29,232 - e275576e-452d-4b62-a7ab-b4c3e7b46a70 - flask.response - INFO - Response sent
+2026-05-03 15:32:29,233 - e275576e-452d-4b62-a7ab-b4c3e7b46a70 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:32:29] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:32:59,232 - 1fe8eadb-7630-42d4-9c25-cc0ebfd62021 - flask.request - INFO - Request received
+2026-05-03 15:32:59,234 - 1fe8eadb-7630-42d4-9c25-cc0ebfd62021 - flask.response - INFO - Response sent
+2026-05-03 15:32:59,236 - 4ac3d5b0-120b-4e72-a030-9d9e80d8e9d3 - flask.request - INFO - Request received
+2026-05-03 15:32:59,236 - 4ac3d5b0-120b-4e72-a030-9d9e80d8e9d3 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:32:59] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:32:59,237 - 4ac3d5b0-120b-4e72-a030-9d9e80d8e9d3 - flask.response - INFO - Response sent
+2026-05-03 15:32:59,238 - 4ac3d5b0-120b-4e72-a030-9d9e80d8e9d3 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:32:59] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:33:29,231 - f2bada1a-b0cb-40b1-91c5-36e3f80e1298 - flask.request - INFO - Request received
+2026-05-03 15:33:29,233 - 90b185fa-1451-4272-a160-3b12babfa608 - flask.request - INFO - Request received
+2026-05-03 15:33:29,233 - 90b185fa-1451-4272-a160-3b12babfa608 - flask.response - INFO - Response sent
+2026-05-03 15:33:29,234 - 90b185fa-1451-4272-a160-3b12babfa608 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:33:29] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:33:29,235 - 90b185fa-1451-4272-a160-3b12babfa608 - flask.response - INFO - Response sent
+2026-05-03 15:33:29,236 - 90b185fa-1451-4272-a160-3b12babfa608 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:33:29] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:33:59,229 - 43fb7812-2c22-442b-a67e-b6fa55b54000 - flask.request - INFO - Request received
+2026-05-03 15:33:59,230 - b76bb0d7-3471-4e4b-9dc6-4a8386b5690e - flask.request - INFO - Request received
+2026-05-03 15:33:59,231 - b76bb0d7-3471-4e4b-9dc6-4a8386b5690e - flask.response - INFO - Response sent
+2026-05-03 15:33:59,232 - b76bb0d7-3471-4e4b-9dc6-4a8386b5690e - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:33:59] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:33:59,233 - b76bb0d7-3471-4e4b-9dc6-4a8386b5690e - flask.response - INFO - Response sent
+2026-05-03 15:33:59,234 - b76bb0d7-3471-4e4b-9dc6-4a8386b5690e - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:33:59] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:34:29,230 - 676ab97c-6a69-4f5f-9e6a-ea15d79501d4 - flask.request - INFO - Request received
+2026-05-03 15:34:29,231 - bf74baca-6e40-4376-a3ad-ca64fbd6f647 - flask.response - INFO - Response sent
+2026-05-03 15:34:29,233 - bf74baca-6e40-4376-a3ad-ca64fbd6f647 - flask.request - INFO - Request received
+2026-05-03 15:34:29,233 - bf74baca-6e40-4376-a3ad-ca64fbd6f647 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:34:29] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:34:29,236 - bf74baca-6e40-4376-a3ad-ca64fbd6f647 - flask.response - INFO - Response sent
+2026-05-03 15:34:29,237 - bf74baca-6e40-4376-a3ad-ca64fbd6f647 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:34:29] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:35:57,260 - 06d88dd8-ce73-4d77-9354-01d58ddf450a - flask.request - INFO - Request received
+2026-05-03 15:35:57,263 - 06d88dd8-ce73-4d77-9354-01d58ddf450a - flask.response - INFO - Response sent
+2026-05-03 15:35:57,265 - a1a29428-8f96-4ddf-a131-c4841dc5a096 - flask.request - INFO - Request received
+2026-05-03 15:35:57,265 - a1a29428-8f96-4ddf-a131-c4841dc5a096 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:35:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:35:57,267 - a1a29428-8f96-4ddf-a131-c4841dc5a096 - flask.response - INFO - Response sent
+2026-05-03 15:35:57,268 - a1a29428-8f96-4ddf-a131-c4841dc5a096 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:35:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:36:57,243 - 9927d62b-340f-4cac-bc1f-6e05e646d21d - flask.request - INFO - Request received
+2026-05-03 15:36:57,245 - 9927d62b-340f-4cac-bc1f-6e05e646d21d - flask.response - INFO - Response sent
+2026-05-03 15:36:57,246 - 9927d62b-340f-4cac-bc1f-6e05e646d21d - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:36:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:36:57,252 - ed81f081-e8c6-40cc-bd1a-e0df90476ff5 - flask.request - INFO - Request received
+2026-05-03 15:36:57,255 - ed81f081-e8c6-40cc-bd1a-e0df90476ff5 - flask.response - INFO - Response sent
+2026-05-03 15:36:57,256 - ed81f081-e8c6-40cc-bd1a-e0df90476ff5 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:36:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:37:57,226 - 604b984f-979b-4853-b9b1-ac02856732a3 - flask.request - INFO - Request received
+2026-05-03 15:37:57,228 - a4ff2911-b0dc-4b41-81e5-3a4ef9a6c3b3 - flask.request - INFO - Request received
+2026-05-03 15:37:57,229 - a4ff2911-b0dc-4b41-81e5-3a4ef9a6c3b3 - flask.response - INFO - Response sent
+2026-05-03 15:37:57,230 - a4ff2911-b0dc-4b41-81e5-3a4ef9a6c3b3 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:37:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:37:57,231 - a4ff2911-b0dc-4b41-81e5-3a4ef9a6c3b3 - flask.response - INFO - Response sent
+2026-05-03 15:37:57,233 - a4ff2911-b0dc-4b41-81e5-3a4ef9a6c3b3 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:37:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:38:57,236 - 40cd86cb-cf35-43d5-b179-414cccd0ce1b - flask.request - INFO - Request received
+2026-05-03 15:38:57,239 - 7e8689a9-5383-4c15-bec4-b3f40c910e79 - flask.request - INFO - Request received
+2026-05-03 15:38:57,240 - 7e8689a9-5383-4c15-bec4-b3f40c910e79 - flask.response - INFO - Response sent
+2026-05-03 15:38:57,242 - 7e8689a9-5383-4c15-bec4-b3f40c910e79 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:38:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:38:57,243 - 7e8689a9-5383-4c15-bec4-b3f40c910e79 - flask.response - INFO - Response sent
+2026-05-03 15:38:57,244 - 7e8689a9-5383-4c15-bec4-b3f40c910e79 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:38:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:39:57,230 - 4820085d-99ef-47f1-8765-4c59ce94f262 - flask.request - INFO - Request received
+2026-05-03 15:39:57,232 - f351ac97-5c21-4a37-bf1f-d73f89719a36 - flask.request - INFO - Request received
+2026-05-03 15:39:57,234 - f351ac97-5c21-4a37-bf1f-d73f89719a36 - flask.response - INFO - Response sent
+2026-05-03 15:39:57,235 - f351ac97-5c21-4a37-bf1f-d73f89719a36 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:39:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:39:57,236 - f351ac97-5c21-4a37-bf1f-d73f89719a36 - flask.response - INFO - Response sent
+2026-05-03 15:39:57,239 - f351ac97-5c21-4a37-bf1f-d73f89719a36 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:39:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:40:57,384 - 89844adb-c171-4df5-85c8-ca86f676d886 - flask.request - INFO - Request received
+2026-05-03 15:40:57,386 - c7057197-4280-42b4-a0d3-0f2d73501ce4 - flask.request - INFO - Request received
+2026-05-03 15:40:57,388 - c7057197-4280-42b4-a0d3-0f2d73501ce4 - flask.response - INFO - Response sent
+2026-05-03 15:40:57,390 - c7057197-4280-42b4-a0d3-0f2d73501ce4 - flask.response - INFO - Response sent
+2026-05-03 15:40:57,391 - c7057197-4280-42b4-a0d3-0f2d73501ce4 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:40:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:40:57,393 - c7057197-4280-42b4-a0d3-0f2d73501ce4 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:40:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:41:57,234 - 5ef9c280-6587-4278-8d72-9de8bf981c8c - flask.request - INFO - Request received
+2026-05-03 15:41:57,236 - 5ef9c280-6587-4278-8d72-9de8bf981c8c - flask.response - INFO - Response sent
+2026-05-03 15:41:57,237 - 5ef9c280-6587-4278-8d72-9de8bf981c8c - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:41:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:41:57,239 - 4eb040c6-e6a7-413a-a936-a826bb16b4a5 - flask.request - INFO - Request received
+2026-05-03 15:41:57,242 - 4eb040c6-e6a7-413a-a936-a826bb16b4a5 - flask.response - INFO - Response sent
+2026-05-03 15:41:57,244 - 4eb040c6-e6a7-413a-a936-a826bb16b4a5 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:41:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:42:57,240 - ca9fc409-6a35-4743-8aff-b2f9e0619c42 - flask.request - INFO - Request received
+2026-05-03 15:42:57,242 - ca9fc409-6a35-4743-8aff-b2f9e0619c42 - flask.response - INFO - Response sent
+2026-05-03 15:42:57,244 - 1e5753f1-7021-436a-a5c3-392156bb78d1 - flask.request - INFO - Request received
+2026-05-03 15:42:57,245 - 1e5753f1-7021-436a-a5c3-392156bb78d1 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:42:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:42:57,246 - 1e5753f1-7021-436a-a5c3-392156bb78d1 - flask.response - INFO - Response sent
+2026-05-03 15:42:57,248 - 1e5753f1-7021-436a-a5c3-392156bb78d1 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:42:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:43:57,230 - 8b9f446a-1ea3-48d0-a6fc-d2628affda0e - flask.request - INFO - Request received
+2026-05-03 15:43:57,232 - 8b9f446a-1ea3-48d0-a6fc-d2628affda0e - flask.response - INFO - Response sent
+2026-05-03 15:43:57,233 - 67ce0914-36f1-4c16-a0f8-e479a5e0f663 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:43:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:43:57,234 - 67ce0914-36f1-4c16-a0f8-e479a5e0f663 - flask.request - INFO - Request received
+2026-05-03 15:43:57,236 - 67ce0914-36f1-4c16-a0f8-e479a5e0f663 - flask.response - INFO - Response sent
+2026-05-03 15:43:57,237 - 67ce0914-36f1-4c16-a0f8-e479a5e0f663 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:43:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:44:57,234 - 4365fe0d-ceab-4f19-9f26-bd12d9e737f4 - flask.request - INFO - Request received
+2026-05-03 15:44:57,238 - 74974538-c5cb-4a5b-a9a0-22a627586183 - flask.request - INFO - Request received
+2026-05-03 15:44:57,239 - 74974538-c5cb-4a5b-a9a0-22a627586183 - flask.response - INFO - Response sent
+2026-05-03 15:44:57,241 - 74974538-c5cb-4a5b-a9a0-22a627586183 - flask.response - INFO - Response sent
+2026-05-03 15:44:57,242 - 74974538-c5cb-4a5b-a9a0-22a627586183 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:44:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:44:57,243 - 74974538-c5cb-4a5b-a9a0-22a627586183 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:44:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:45:57,243 - 09f9de67-08e3-4f49-8f2e-d8e781565c7c - flask.request - INFO - Request received
+2026-05-03 15:45:57,245 - fb6e1288-c2de-4ad9-8012-dabf4464722c - flask.request - INFO - Request received
+2026-05-03 15:45:57,247 - fb6e1288-c2de-4ad9-8012-dabf4464722c - flask.response - INFO - Response sent
+2026-05-03 15:45:57,250 - fb6e1288-c2de-4ad9-8012-dabf4464722c - flask.response - INFO - Response sent
+2026-05-03 15:45:57,251 - fb6e1288-c2de-4ad9-8012-dabf4464722c - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:45:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:45:57,252 - fb6e1288-c2de-4ad9-8012-dabf4464722c - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:45:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:46:57,229 - 0e25ba74-8530-4630-8365-afb6c3c23f1e - flask.request - INFO - Request received
+2026-05-03 15:46:57,231 - fbca9b51-f4f5-4fca-9b51-173ec64da4f3 - flask.request - INFO - Request received
+2026-05-03 15:46:57,232 - fbca9b51-f4f5-4fca-9b51-173ec64da4f3 - flask.response - INFO - Response sent
+2026-05-03 15:46:57,234 - fbca9b51-f4f5-4fca-9b51-173ec64da4f3 - flask.response - INFO - Response sent
+2026-05-03 15:46:57,235 - fbca9b51-f4f5-4fca-9b51-173ec64da4f3 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:46:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:46:57,234 - fbca9b51-f4f5-4fca-9b51-173ec64da4f3 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:46:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:47:57,249 - 2247b2f1-6472-4c92-801b-7b913ee13333 - flask.request - INFO - Request received
+2026-05-03 15:47:57,251 - 2247b2f1-6472-4c92-801b-7b913ee13333 - flask.response - INFO - Response sent
+2026-05-03 15:47:57,252 - 2247b2f1-6472-4c92-801b-7b913ee13333 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:47:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:47:57,260 - 9fbe2365-7a3d-4b5d-b992-0e7ad8a99967 - flask.request - INFO - Request received
+2026-05-03 15:47:57,261 - 9fbe2365-7a3d-4b5d-b992-0e7ad8a99967 - flask.response - INFO - Response sent
+2026-05-03 15:47:57,262 - 9fbe2365-7a3d-4b5d-b992-0e7ad8a99967 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:47:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:48:57,232 - 28bcdb2e-bc7e-4985-9c38-c41563f1f5fc - flask.request - INFO - Request received
+2026-05-03 15:48:57,234 - d164aed4-69a6-4446-8377-1e834adbc68b - flask.request - INFO - Request received
+2026-05-03 15:48:57,236 - d164aed4-69a6-4446-8377-1e834adbc68b - flask.response - INFO - Response sent
+2026-05-03 15:48:57,238 - d164aed4-69a6-4446-8377-1e834adbc68b - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:48:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:48:57,238 - d164aed4-69a6-4446-8377-1e834adbc68b - flask.response - INFO - Response sent
+2026-05-03 15:48:57,239 - d164aed4-69a6-4446-8377-1e834adbc68b - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:48:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:49:57,274 - b4acadab-955a-48f3-be09-b0da465a8cd3 - flask.request - INFO - Request received
+2026-05-03 15:49:57,276 - b4acadab-955a-48f3-be09-b0da465a8cd3 - flask.response - INFO - Response sent
+2026-05-03 15:49:57,278 - 909b24ab-d431-4ac2-b2a0-dce507586eb1 - flask.request - INFO - Request received
+2026-05-03 15:49:57,278 - 909b24ab-d431-4ac2-b2a0-dce507586eb1 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:49:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:49:57,280 - 909b24ab-d431-4ac2-b2a0-dce507586eb1 - flask.response - INFO - Response sent
+2026-05-03 15:49:57,281 - 909b24ab-d431-4ac2-b2a0-dce507586eb1 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:49:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:50:57,237 - e4a97650-c5fb-4571-92dc-3400792ea5fb - flask.request - INFO - Request received
+2026-05-03 15:50:57,243 - f66405e9-03ac-45be-9dee-4b938da4eba3 - flask.request - INFO - Request received
+2026-05-03 15:50:57,244 - f66405e9-03ac-45be-9dee-4b938da4eba3 - flask.response - INFO - Response sent
+2026-05-03 15:50:57,245 - f66405e9-03ac-45be-9dee-4b938da4eba3 - flask.response - INFO - Response sent
+2026-05-03 15:50:57,246 - f66405e9-03ac-45be-9dee-4b938da4eba3 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:50:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:50:57,247 - f66405e9-03ac-45be-9dee-4b938da4eba3 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:50:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:51:57,263 - 2033e6e1-de4c-4342-a21e-265842421831 - flask.request - INFO - Request received
+2026-05-03 15:51:57,266 - 6920b283-a899-4707-9d01-b93f5772fabc - flask.request - INFO - Request received
+2026-05-03 15:51:57,266 - 6920b283-a899-4707-9d01-b93f5772fabc - flask.response - INFO - Response sent
+2026-05-03 15:51:57,268 - 6920b283-a899-4707-9d01-b93f5772fabc - flask.response - INFO - Response sent
+2026-05-03 15:51:57,270 - 6920b283-a899-4707-9d01-b93f5772fabc - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:51:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:51:57,271 - 6920b283-a899-4707-9d01-b93f5772fabc - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:51:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:52:57,222 - e2814b69-f924-429f-844d-7f658e9a8f30 - flask.request - INFO - Request received
+2026-05-03 15:52:57,224 - f19f9a98-1ba1-46e4-86e3-d80498107c79 - flask.response - INFO - Response sent
+2026-05-03 15:52:57,226 - f19f9a98-1ba1-46e4-86e3-d80498107c79 - flask.request - INFO - Request received
+2026-05-03 15:52:57,227 - f19f9a98-1ba1-46e4-86e3-d80498107c79 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:52:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:52:57,230 - f19f9a98-1ba1-46e4-86e3-d80498107c79 - flask.response - INFO - Response sent
+2026-05-03 15:52:57,232 - f19f9a98-1ba1-46e4-86e3-d80498107c79 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:52:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:53:57,268 - 316b6350-53aa-47c5-9fbb-a8506cd0af19 - flask.request - INFO - Request received
+2026-05-03 15:53:57,270 - 316b6350-53aa-47c5-9fbb-a8506cd0af19 - flask.response - INFO - Response sent
+2026-05-03 15:53:57,271 - 316b6350-53aa-47c5-9fbb-a8506cd0af19 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:53:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:53:57,276 - 687907f6-754b-474d-a1df-b5a89afdf299 - flask.request - INFO - Request received
+2026-05-03 15:53:57,283 - 687907f6-754b-474d-a1df-b5a89afdf299 - flask.response - INFO - Response sent
+2026-05-03 15:53:57,283 - 687907f6-754b-474d-a1df-b5a89afdf299 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:53:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:54:57,227 - 68414a19-7992-47fb-866d-c190d734cf56 - flask.request - INFO - Request received
+2026-05-03 15:54:57,230 - 68414a19-7992-47fb-866d-c190d734cf56 - flask.response - INFO - Response sent
+2026-05-03 15:54:57,233 - 619cce04-6628-4af4-9b42-d80b8553d9d1 - flask.request - INFO - Request received
+2026-05-03 15:54:57,233 - 619cce04-6628-4af4-9b42-d80b8553d9d1 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:54:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:54:57,235 - 619cce04-6628-4af4-9b42-d80b8553d9d1 - flask.response - INFO - Response sent
+2026-05-03 15:54:57,236 - 619cce04-6628-4af4-9b42-d80b8553d9d1 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:54:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:55:57,229 - c9b34e32-53cb-4592-8b6f-00bc89cd137f - flask.request - INFO - Request received
+2026-05-03 15:55:57,232 - 3aced821-c2af-41da-b5b6-06bb9f4eb62f - flask.request - INFO - Request received
+2026-05-03 15:55:57,233 - 3aced821-c2af-41da-b5b6-06bb9f4eb62f - flask.response - INFO - Response sent
+2026-05-03 15:55:57,234 - 3aced821-c2af-41da-b5b6-06bb9f4eb62f - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:55:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:55:57,236 - 3aced821-c2af-41da-b5b6-06bb9f4eb62f - flask.response - INFO - Response sent
+2026-05-03 15:55:57,238 - 3aced821-c2af-41da-b5b6-06bb9f4eb62f - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:55:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:56:57,253 - acd3962e-282a-4d46-9096-7570dcfa8d6d - flask.request - INFO - Request received
+2026-05-03 15:56:57,255 - acd3962e-282a-4d46-9096-7570dcfa8d6d - flask.response - INFO - Response sent
+2026-05-03 15:56:57,257 - acd3962e-282a-4d46-9096-7570dcfa8d6d - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:56:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:56:57,260 - d0fb352d-cbd8-43f3-97ec-0983af12b781 - flask.request - INFO - Request received
+2026-05-03 15:56:57,264 - d0fb352d-cbd8-43f3-97ec-0983af12b781 - flask.response - INFO - Response sent
+2026-05-03 15:56:57,267 - d0fb352d-cbd8-43f3-97ec-0983af12b781 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:56:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:57:57,220 - 9ea51221-d91f-479b-8189-e3e33083b45b - flask.request - INFO - Request received
+2026-05-03 15:57:57,222 - 7cd8557f-e553-4d4e-aa6d-a1c616295f6d - flask.request - INFO - Request received
+2026-05-03 15:57:57,223 - 7cd8557f-e553-4d4e-aa6d-a1c616295f6d - flask.response - INFO - Response sent
+2026-05-03 15:57:57,224 - 7cd8557f-e553-4d4e-aa6d-a1c616295f6d - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:57:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:57:57,225 - 7cd8557f-e553-4d4e-aa6d-a1c616295f6d - flask.response - INFO - Response sent
+2026-05-03 15:57:57,227 - 7cd8557f-e553-4d4e-aa6d-a1c616295f6d - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:57:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:58:57,239 - d12a143d-e95a-4f79-a61b-a8d9b4cc72cd - flask.request - INFO - Request received
+2026-05-03 15:58:57,241 - 092c8cf1-69b3-4bb6-a9fe-2cd8d384eda5 - flask.response - INFO - Response sent
+2026-05-03 15:58:57,242 - 092c8cf1-69b3-4bb6-a9fe-2cd8d384eda5 - flask.request - INFO - Request received
+2026-05-03 15:58:57,242 - 092c8cf1-69b3-4bb6-a9fe-2cd8d384eda5 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:58:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:58:57,247 - 092c8cf1-69b3-4bb6-a9fe-2cd8d384eda5 - flask.response - INFO - Response sent
+2026-05-03 15:58:57,249 - 092c8cf1-69b3-4bb6-a9fe-2cd8d384eda5 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:58:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 15:59:57,563 - 09f80d3e-2d64-41d2-a7f4-f17d75a752ec - flask.request - INFO - Request received
+2026-05-03 15:59:57,566 - be60e2ee-6fdc-4c84-baaf-568e2dedd127 - flask.request - INFO - Request received
+2026-05-03 15:59:57,567 - be60e2ee-6fdc-4c84-baaf-568e2dedd127 - flask.response - INFO - Response sent
+2026-05-03 15:59:57,568 - be60e2ee-6fdc-4c84-baaf-568e2dedd127 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:59:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 15:59:57,569 - be60e2ee-6fdc-4c84-baaf-568e2dedd127 - flask.response - INFO - Response sent
+2026-05-03 15:59:57,573 - be60e2ee-6fdc-4c84-baaf-568e2dedd127 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 15:59:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 16:00:57,231 - 5282830b-d892-4a4b-b5a0-95624a0b7601 - flask.request - INFO - Request received
+2026-05-03 16:00:57,234 - 5282830b-d892-4a4b-b5a0-95624a0b7601 - flask.response - INFO - Response sent
+2026-05-03 16:00:57,236 - 62cf5d12-91fa-42c6-b92a-737cfd86cd1c - flask.request - INFO - Request received
+2026-05-03 16:00:57,236 - 62cf5d12-91fa-42c6-b92a-737cfd86cd1c - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 16:00:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 16:00:57,240 - 62cf5d12-91fa-42c6-b92a-737cfd86cd1c - flask.response - INFO - Response sent
+2026-05-03 16:00:57,241 - 62cf5d12-91fa-42c6-b92a-737cfd86cd1c - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 16:00:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 16:01:57,306 - 5bdc6e11-2af9-4bb2-ab43-f0778657ae2b - flask.request - INFO - Request received
+2026-05-03 16:01:57,310 - 5bdc6e11-2af9-4bb2-ab43-f0778657ae2b - flask.response - INFO - Response sent
+2026-05-03 16:01:57,312 - 456dedc9-fcf2-4f1e-8fae-1ae5b96265ad - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 16:01:57] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 16:01:57,314 - 456dedc9-fcf2-4f1e-8fae-1ae5b96265ad - flask.request - INFO - Request received
+2026-05-03 16:01:57,317 - 456dedc9-fcf2-4f1e-8fae-1ae5b96265ad - flask.response - INFO - Response sent
+2026-05-03 16:01:57,318 - 456dedc9-fcf2-4f1e-8fae-1ae5b96265ad - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 16:01:57] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 16:02:50,803 - cce03bce-eea6-479c-8e84-fffc5c1d9de0 - flask.request - INFO - Request received
+2026-05-03 16:02:50,805 - cce03bce-eea6-479c-8e84-fffc5c1d9de0 - flask.request - INFO - Request received
+2026-05-03 16:02:50,807 - cce03bce-eea6-479c-8e84-fffc5c1d9de0 - flask.response - INFO - Response sent
+2026-05-03 16:02:50,811 - cce03bce-eea6-479c-8e84-fffc5c1d9de0 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 16:02:50] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 16:02:50,813 - cce03bce-eea6-479c-8e84-fffc5c1d9de0 - flask.response - INFO - Response sent
+2026-05-03 16:02:50,818 - cce03bce-eea6-479c-8e84-fffc5c1d9de0 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 16:02:50] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
+2026-05-03 16:02:59,218 - bb43501e-ca8e-45d0-b061-e12655dd9db7 - flask.request - INFO - Request received
+2026-05-03 16:02:59,234 - 1a712c29-500d-465c-b4b5-f28d4ab016a3 - flask.request - INFO - Request received
+2026-05-03 16:02:59,234 - 1a712c29-500d-465c-b4b5-f28d4ab016a3 - flask.response - INFO - Response sent
+2026-05-03 16:02:59,236 - 1a712c29-500d-465c-b4b5-f28d4ab016a3 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 16:02:59] "GET /api/security/summary?uid=aa76ad7c-d18a-4949-8a98-2344860a3317 HTTP/1.1" 200 -
+2026-05-03 16:02:59,237 - 1a712c29-500d-465c-b4b5-f28d4ab016a3 - flask.response - INFO - Response sent
+2026-05-03 16:02:59,238 - 1a712c29-500d-465c-b4b5-f28d4ab016a3 - werkzeug - INFO - 192.168.0.188 - - [03/May/2026 16:02:59] "GET /api/security/findings?uid=aa76ad7c-d18a-4949-8a98-2344860a3317&limit=10 HTTP/1.1" 200 -
