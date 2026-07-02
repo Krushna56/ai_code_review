@@ -535,8 +535,49 @@
           </div>
         </div>
 
-        <!-- ════ BUG BOUNTY SECTION ════ -->
-        <div class="bounty-shell st-anim-3" id="bounty-sec">
+        <!-- ════ BUG BOUNTY — Link to dedicated page ════ -->
+        <div class="bounty-shell st-anim-3" id="bounty-sec" style="cursor:pointer;" onclick="window.location.href='/bug-bounty'">
+          <div class="bounty-header">
+            <div>
+              <div class="bounty-title-row">
+                <h3 style="font-family:var(--s-font-heading); font-size:1.6rem; font-weight:800; color:var(--s-on-surface);">
+                  🎯 Bug Bounty
+                </h3>
+                <span class="bounty-badge">Live</span>
+              </div>
+              <p class="bounty-sub">Identify and patch vulnerabilities to earn reputation points and climb the leaderboard.</p>
+            </div>
+            <a href="/bug-bounty" class="st-btn-primary" onclick="event.stopPropagation()">
+              <span class="material-symbols-outlined" style="font-size:16px; vertical-align:middle; margin-right:4px;">open_in_new</span>
+              Open Bug Bounty
+            </a>
+          </div>
+
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:14px; margin-top:8px;">
+            <div style="background:var(--s-surface-container-highest);border-radius:var(--s-radius);padding:20px;text-align:center;border:1px solid rgba(255,255,255,0.03);">
+              <div style="font-size:2rem;font-weight:800;font-family:var(--s-font-heading);color:var(--s-primary);" id="bbDashScore">—</div>
+              <div style="font-size:0.7rem;color:var(--s-on-surface-variant);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-top:6px;">Your Points</div>
+            </div>
+            <div style="background:var(--s-surface-container-highest);border-radius:var(--s-radius);padding:20px;text-align:center;border:1px solid rgba(255,255,255,0.03);">
+              <div style="font-size:2rem;font-weight:800;font-family:var(--s-font-heading);color:#22c55e;" id="bbDashPatched">—</div>
+              <div style="font-size:0.7rem;color:var(--s-on-surface-variant);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-top:6px;">Bugs Patched</div>
+            </div>
+            <div style="background:var(--s-surface-container-highest);border-radius:var(--s-radius);padding:20px;text-align:center;border:1px solid rgba(239,68,68,0.08);">
+              <div style="font-size:1.5rem;font-weight:800;font-family:var(--s-font-heading);color:#f87171;" id="bbDashRank">—</div>
+              <div style="font-size:0.7rem;color:var(--s-on-surface-variant);text-transform:uppercase;letter-spacing:0.5px;font-weight:700;margin-top:6px;">Current Rank</div>
+            </div>
+          </div>
+
+          <div style="text-align:center;margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.05);">
+            <a href="/bug-bounty" class="st-btn-secondary" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;" onclick="event.stopPropagation()">
+              <span class="material-symbols-outlined" style="font-size:16px;">bug_report</span>
+              Go to Bug Bounty Dashboard
+              <span class="material-symbols-outlined" style="font-size:16px;">arrow_forward</span>
+            </a>
+          </div>
+        </div>
+
+
 
           <!-- Header -->
           <div class="bounty-header">

@@ -388,6 +388,9 @@
       <a href="/team" class="zr-nav-link {% if request.path == '/team' %}active{% endif %}">
         <span class="material-symbols-outlined nb-icon">group</span>Team
       </a>
+      <a href="/bug-bounty" class="zr-nav-link {% if request.path == '/bug-bounty' %}active{% endif %}">
+        <span class="material-symbols-outlined nb-icon">bug_report</span>Bug Bounty
+      </a>
     </div>
 
     <!-- Right actions slot -->
@@ -462,6 +465,9 @@
     {% endif %}
     <a href="/team" class="zr-mobile-link {% if request.path == '/team' %}active{% endif %}">
       <span class="material-symbols-outlined">group</span>Team
+    </a>
+    <a href="/bug-bounty" class="zr-mobile-link {% if request.path == '/bug-bounty' %}active{% endif %}" style="color:#f87171;">
+      <span class="material-symbols-outlined">bug_report</span>Bug Bounty
     </a>
     {% if current_user.is_authenticated %}
     <a href="{{ url_for('auth.logout') }}" class="zr-mobile-link" style="color:#ff97a3; margin-top:8px;">

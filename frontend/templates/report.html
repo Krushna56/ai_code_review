@@ -1,4 +1,4 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block title %}Detailed Report — AI Code Review{% endblock %}
 
@@ -95,7 +95,6 @@
     .pattern-pills { display: flex; flex-wrap: wrap; gap: 8px; }
     .pattern-pill { background: rgba(234,179,8,0.08); color: #fbbf24; border: 1px solid rgba(234,179,8,0.18); padding: 5px 12px; border-radius: 99px; font-size: 0.73rem; }
 
-=======
     /* Agent log */
     .agent-log-entry { font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; color: #64748b; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.03); display: flex; gap: 10px; }
     .log-agent { color: #9d93ff; font-weight: 600; min-width: 80px; }
@@ -114,14 +113,12 @@
     .fab-dark { background: rgba(13,17,23,0.9); color: #94a3b8; border: 1px solid rgba(255,255,255,0.1); }
     .fab-dark:hover { color: #e2e8f4; }
 
->>>>>>> 50b420b4620be03ea149dc44fc325e539a565625
     @media (max-width: 640px) {
       .report-page { padding: 16px; }
       .kpi-row { grid-template-columns: repeat(3,1fr); }
       .report-top-row { flex-direction: column; }
     }
   </style>
-<<<<<<< HEAD
 {% endblock %}
 
 {% block content %}
@@ -184,7 +181,7 @@
       <!-- ── Tabs ──────────────────────────────────────────────────────────── -->
       <div class="tabs">
         <button class="tab active" onclick="switchTab('summary', this)">📋 Summary</button>
-        <button class="tab" onclick="switchTab('findings', this)">🚨 Findings ({{ stats.get('total_findings', 0) }})</button>
+        <button class="tab" onclick="switchTab('findings', this)">🚨 Findings ({{ report.get('merged_findings', [])|length }})</button>
         <button class="tab" onclick="switchTab('roadmap', this)">🗺️ Roadmap</button>
         <button class="tab" onclick="switchTab('enhancements', this)">✨ Enhancements</button>
         <button class="tab" onclick="switchTab('agents', this)">🤖 Agent Log</button>
@@ -232,7 +229,42 @@
                   <th>Location</th>
                   <th>Agent</th>
                   <th>Actions</th>
-                {% endfor %}
+                </tr>
+              </thead>
+              <tbody>
+                {% set findings = report.get('merged_findings', []) %}
+                {% if findings %}
+                  {% for finding in findings %}
+                  <tr>
+                    <td>
+                      {% set sev = (finding.get('severity') or 'info') | lower %}
+                      <span class="sev-badge sev-{{ sev }}">{{ sev }}</span>
+                    </td>
+                    <td>
+                      <div class="find-title">{{ finding.get('title', finding.get('type', 'Issue')) }}</div>
+                      <div class="find-desc">{{ finding.get('description', '') }}</div>
+                    </td>
+                    <td>
+                      <div class="file-path">{{ finding.get('file_path', finding.get('file', '—')) }}</div>
+                      {% if finding.get('line_number') %}<div style="color:#475569; font-size:0.65rem; margin-top:2px;">Line {{ finding.get('line_number') }}</div>{% endif %}
+                    </td>
+                    <td><span class="agent-pill">{{ finding.get('agent', finding.get('source', '—')) }}</span></td>
+                    <td>
+                      <button class="st-btn" style="font-size:0.65rem; padding:4px 10px;"
+                        onclick="openPRModal('{{ finding.get('file_path', finding.get('file', '')) }}', '{{ finding.get('title', 'Fix') | replace(\"'\", \"\") }}', '')">
+                        🔧 Fix PR
+                      </button>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                {% else %}
+                <tr>
+                  <td colspan="5" style="text-align:center; padding:32px; color:#475569;">
+                    <div style="font-size:2rem; margin-bottom:8px;">✅</div>
+                    No findings — analysis may still be processing or the codebase is clean.
+                  </td>
+                </tr>
+                {% endif %}
               </tbody>
             </table>
           </div>
@@ -372,7 +404,6 @@
       document.getElementById('prAlert').style.display = 'none';
       
       if(!document.getElementById('prRepo').value) {
-          // Attempt to extract from DOM or local storage if missing
           const stored = localStorage.getItem('tracked_repo');
           if(stored) document.getElementById('prRepo').value = stored;
       }

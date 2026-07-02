@@ -200,6 +200,22 @@ def list_team_members():
     try:
         uid = session.get('current_uid')
 
+        # Fallback: use the most recent analysis from history
+        if not uid:
+            try:
+                import json as _json
+                history_file = 'analysis_history.json'
+                if os.path.exists(history_file):
+                    with open(history_file, 'r') as f:
+                        history = _json.load(f)
+                    if history:
+                        uid = history[0].get('uid', '')
+                        if uid:
+                            session['current_uid'] = uid
+                            session.modified = True
+            except Exception:
+                pass
+
         # No active analysis session — return sentinel so frontend shows "no analysis" state
         if not uid:
             return jsonify({

@@ -287,6 +287,81 @@ def download_report(uid, filename):
 
 
 
+@app.route('/api/files/<uid>', methods=['GET'])
+def get_file_tree(uid):
+    """
+    Return the flat file list for the workspace explorer.
+    Requires authentication — used by chat.html file tree loader.
+    """
+    redir = _require_auth()
+    if redir:
+        return jsonify({'error': 'Authentication required', 'files': []}), 302
+
+    upload_dir = os.path.join(app.config['UPLOAD_FOLDER'], uid)
+    if not os.path.exists(upload_dir):
+        return jsonify({'files': [], 'error': 'Analysis not found'}), 404
+
+    files = []
+    try:
+        for root, dirs, filenames in os.walk(upload_dir):
+            dirs[:] = [d for d in dirs if not should_ignore_directory(os.path.join(root, d))]
+            for fname in filenames:
+                fpath = os.path.join(root, fname)
+                if should_ignore_file(fpath):
+                    continue
+                rel = os.path.relpath(fpath, upload_dir).replace('\\', '/')
+                files.append({'name': fname, 'path': rel, 'type': 'file'})
+    except Exception as e:
+        logger.error(f"Error building file tree for {uid}: {e}")
+
+    return jsonify({'files': files, 'total': len(files)}), 200
+
+
+@app.route('/api/file-content/<uid>/<path:filepath>', methods=['GET'])
+def get_file_content(uid, filepath):
+    """
+    Return the content of a specific file within an analysis upload.
+    Used by the workspace editor to load file contents.
+    """
+    redir = _require_auth()
+    if redir:
+        return jsonify({'error': 'Authentication required'}), 302
+
+    # Sanitize path to prevent directory traversal
+    upload_dir = os.path.abspath(os.path.join(app.config['UPLOAD_FOLDER'], uid))
+    target = os.path.abspath(os.path.join(upload_dir, filepath))
+    if not target.startswith(upload_dir):
+        return jsonify({'error': 'Invalid file path'}), 400
+
+    if not os.path.exists(target) or not os.path.isfile(target):
+        return jsonify({'error': 'File not found'}), 404
+
+    try:
+        with open(target, 'r', encoding='utf-8', errors='replace') as f:
+            content = f.read()
+        return jsonify({'path': filepath, 'content': content}), 200
+    except Exception as e:
+        logger.error(f"Error reading file {filepath} for {uid}: {e}")
+        return jsonify({'error': f'Failed to read file: {e}'}), 500
+
+
+@app.route('/bug-bounty')
+def bug_bounty_page():
+    """Standalone Bug Bounty page."""
+    redir = _require_auth()
+    if redir:
+        return redir
+    uid = request.args.get('uid', '').strip()
+    if not uid:
+        try:
+            history = _load_analysis_history()
+            if history:
+                uid = history[0].get('uid', '')
+        except Exception:
+            pass
+    return render_template('bug_bounty.html', uid=uid)
+
+
 @app.route("/api/agent/status/<uid>", methods=['GET'])
 def agent_status(uid):
     """Return live status for the 4-agent pipeline for the given uid."""
@@ -945,19 +1020,23 @@ def analyze_repo():
         try:
             logger.info(f"[Clone Thread - {uid}] Starting git clone for {repo_url} into {upload_dir}")
             analysis_status[uid]['status'] = 'cloning'
-            
+            analysis_status[uid]['repo_url'] = repo_url  # store for auto-extract
+
             # Clone repo (depth 1 for speed)
             clone_cmd = ['git', 'clone', '--depth', '1', repo_url, upload_dir]
             logger.debug(f"[Clone Thread - {uid}] Executing: {' '.join(clone_cmd)}")
-            
+
             result = subprocess.run(clone_cmd, check=True, capture_output=True)
             logger.debug(f"[Clone Thread - {uid}] Git Clone STDOUT: {result.stdout.decode('utf-8', errors='ignore')}")
             logger.info(f"[Clone Thread - {uid}] Git clone successful. Starting AST pipeline...")
-            
+
             # Run the normal analysis pipeline
             run_analysis_background(upload_dir, processed_dir, uid)
             logger.info(f"[Clone Thread - {uid}] Background analysis pipeline triggered successfully.")
-            
+
+            # ── Auto-extract team members after analysis completes ──────────
+            _auto_extract_team(uid, upload_dir)
+
         except subprocess.CalledProcessError as e:
             err = e.stderr.decode('utf-8', errors='ignore') if e.stderr else str(e)
             logger.error(f"[Clone Thread - {uid}] Git clone FAILED! Exit code: {e.returncode}. Error: {err}")
@@ -977,7 +1056,216 @@ def analyze_repo():
     thread.start()
     logger.info(f"[/api/analyze/repo] Successfully accepted repo {repo_url} (UID: {uid})")
 
-    return jsonify({'uid': uid, 'status': 'started'}), 202
+    return jsonify({'uid': uid, 'status': 'started', 'repo_url': repo_url}), 202
+
+
+def _auto_extract_team(uid: str, project_path: str):
+    """Auto-extract team members from git commits after a GitHub repo analysis."""
+    try:
+        from models.team_member import TeamMember
+        from api.team_routes import _extract_git_commits, _extract_repo_info_from_path, _github_username_from_email, _compute_pr_security_rating, _fetch_github_contributors, _load_repo_url_from_metadata
+        import re as _re, json as _json
+        from services.github_service import GitHubAPIClient
+
+        logger.info(f"[AutoExtract] Starting team extraction for {uid}")
+
+        commits = _extract_git_commits(project_path)
+        github_token = os.getenv('GITHUB_TOKEN', '')
+        gh_client = GitHubAPIClient(access_token=github_token) if github_token else None
+        repo_info = _extract_repo_info_from_path(project_path)
+
+        # Fallback: try stored repo_url
+        if not repo_info:
+            stored_url = _load_repo_url_from_metadata(uid)
+            if stored_url:
+                m = _re.search(r'github\.com[:/]([^/]+)/([^/\s\.]+)', stored_url)
+                if m:
+                    repo_info = {'owner': m.group(1), 'repo': m.group(2).rstrip('.git'), 'url': stored_url}
+
+        # Also try from analysis_status
+        if not repo_info:
+            stored_url = analysis_status.get(uid, {}).get('repo_url', '')
+            if stored_url:
+                m = _re.search(r'github\.com[:/]([^/]+)/([^/\s\.]+)', stored_url)
+                if m:
+                    repo_info = {'owner': m.group(1), 'repo': m.group(2).rstrip('.git'), 'url': stored_url}
+
+        if not commits and repo_info and gh_client:
+            contributors = _fetch_github_contributors(repo_info['owner'], repo_info['repo'], gh_client)
+            for c in contributors:
+                member = TeamMember(
+                    github_username=c['github_username'], display_name=c['display_name'],
+                    email=c.get('email',''), avatar_url=c.get('avatar_url',''),
+                    role='Developer', commit_count=c.get('contributions',0),
+                    pr_security_rating=None, analysis_uid=uid,
+                )
+                member._pr_summary_json = '[]'
+                member._commit_history_json = '[]'
+                member.save()
+            logger.info(f"[AutoExtract] Saved {len(contributors)} contributors from GitHub API for {uid}")
+            return
+
+        author_map = {}
+        for commit in commits:
+            email = commit['email']
+            if email not in author_map:
+                author_map[email] = {'display_name': commit['author'], 'email': email, 'commits': [], 'last_commit': commit['date']}
+            author_map[email]['commits'].append(commit)
+            if commit['date'] > author_map[email]['last_commit']:
+                author_map[email]['last_commit'] = commit['date']
+
+        from datetime import datetime as _dt
+        saved = 0
+        for email, ad in author_map.items():
+            gh_username = _github_username_from_email(email)
+            if not gh_username:
+                gh_username = _re.sub(r'[^a-zA-Z0-9\-]', '-', ad['display_name'].lower())[:39]
+            avatar_url = f"https://avatars.githubusercontent.com/{gh_username}?size=80"
+            commit_history_data = [{'sha': c['sha'], 'message': c['message'][:80], 'date': c['date']} for c in ad['commits'][:30]]
+            try:
+                last_commit_dt = _dt.fromisoformat(ad['last_commit'].replace('Z', '+00:00'))
+            except Exception:
+                last_commit_dt = None
+            member = TeamMember(
+                github_username=gh_username, display_name=ad['display_name'],
+                email=email, avatar_url=avatar_url, role='Developer',
+                commit_count=len(ad['commits']), pr_security_rating=None,
+                last_commit_at=last_commit_dt, analysis_uid=uid,
+            )
+            member._pr_summary_json = '[]'
+            member._commit_history_json = _json.dumps(commit_history_data)
+            member.save()
+            saved += 1
+
+        logger.info(f"[AutoExtract] Saved {saved} team members from git commits for {uid}")
+    except Exception as e:
+        logger.warning(f"[AutoExtract] Non-fatal error during team extraction for {uid}: {e}")
+
+
+# ---------------------------------------------------------------------------
+# GitHub Analytics API Routes
+# ---------------------------------------------------------------------------
+
+def _get_current_user_id():
+    """Extract user_id from the JWT in session. Returns int or None."""
+    from auth.jwt_utils import JWTManager
+    token = session.get('jwt_access_token')
+    if not token:
+        return None
+    try:
+        payload = JWTManager.verify_token(token)
+        if JWTManager.is_blacklisted(token):
+            return None
+        return int(payload.get('sub', 0)) or None
+    except Exception:
+        return None
+
+
+@app.route('/api/github/user-repos', methods=['GET'])
+def github_user_repos():
+    """Return repositories tracked by the current user."""
+    user_id = _get_current_user_id()
+    if not user_id:
+        return jsonify({'error': 'Authentication required'}), 401
+
+    limit = min(int(request.args.get('limit', 50)), 100)
+    repos = Repository.get_by_user(user_id, limit=limit)
+    return jsonify({
+        'repositories': [r.to_dict() for r in repos],
+        'total': len(repos)
+    }), 200
+
+
+@app.route('/api/github/track-repo', methods=['POST'])
+def github_track_repo():
+    """
+    Track a new GitHub repository for the current user.
+    Body JSON: { "repo_url": "https://github.com/owner/repo" }
+    """
+    user_id = _get_current_user_id()
+    if not user_id:
+        return jsonify({'error': 'Authentication required'}), 401
+
+    data = request.get_json(silent=True) or {}
+    repo_url = (data.get('repo_url') or '').strip()
+    if not repo_url:
+        return jsonify({'error': 'repo_url is required'}), 400
+
+    # Parse owner/repo from URL
+    parsed = GitHubAPIClient.parse_github_url(repo_url)
+    if not parsed:
+        return jsonify({'error': 'Invalid GitHub repository URL'}), 400
+
+    owner = parsed['owner']
+    repo_name = parsed['repo']
+
+    # Check if already tracked by this user
+    existing = Repository.get_by_url(repo_url)
+    if existing and existing.user_id == user_id:
+        return jsonify({'message': 'Already tracked', 'repository': existing.to_dict()}), 200
+
+    # Fetch metadata from GitHub (unauthenticated is fine for public repos)
+    client = create_github_client()
+    repo_info = client.get_repo_info(owner, repo_name)
+
+    repo = Repository(
+        user_id=user_id,
+        repo_url=repo_url,
+        owner=owner,
+        repo_name=repo_name,
+        repo_full_name=f"{owner}/{repo_name}",
+        description=repo_info.get('description') if repo_info else None,
+        language=repo_info.get('language') if repo_info else None,
+        stars=repo_info.get('stars', 0) if repo_info else 0,
+        github_data=repo_info or {},
+    )
+
+    if not repo.save():
+        return jsonify({'error': 'Failed to save repository'}), 500
+
+    logger.info(f"User {user_id} started tracking {owner}/{repo_name}")
+    return jsonify({'message': 'Repository tracked', 'repository': repo.to_dict()}), 201
+
+
+@app.route('/api/github/stats/<owner>/<repo_name>', methods=['GET'])
+def github_repo_stats(owner, repo_name):
+    """Return live GitHub stats for a repository."""
+    user_id = _get_current_user_id()
+    if not user_id:
+        return jsonify({'error': 'Authentication required'}), 401
+
+    client = create_github_client()
+    stats = client.get_repo_stats(owner, repo_name)
+    if not stats:
+        return jsonify({'error': 'Failed to fetch repository stats from GitHub'}), 502
+
+    # Flatten for the dashboard JS
+    repo_info = stats.get('repo_info') or {}
+    commits = stats.get('latest_commits') or []
+    latest_commit = commits[0] if commits else {}
+    commit_status = stats.get('commit_status') or {}
+    prs = stats.get('pull_requests') or []
+    contributors = stats.get('contributors') or []
+
+    return jsonify({
+        'owner': owner,
+        'repo_name': repo_name,
+        'stars': repo_info.get('stars', 0),
+        'forks': repo_info.get('forks', 0),
+        'description': repo_info.get('description'),
+        'language': repo_info.get('language'),
+        'github_data': repo_info,
+        'latest_commit': latest_commit,
+        'commit_status': commit_status,
+        'pull_requests': {
+            'open': len(prs),
+            'items': prs,
+        },
+        'contributors': contributors,
+        'branches': stats.get('branches') or [],
+        'latest_release': stats.get('latest_release'),
+        'fetched_at': stats.get('fetched_at'),
+    }), 200
 
 
 @app.errorhandler(404)

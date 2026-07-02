@@ -881,7 +881,7 @@
     if (clickedEl) clickedEl.classList.add('active');
 
     try {
-      const res = await fetch(`/api/file/content/${uid}/${filepath}`);
+      const res = await fetch(`/api/file-content/${uid}/${filepath}`);
       const data = await res.json();
       if (data.error) { setStatus('Error loading file: ' + data.error); return; }
 
