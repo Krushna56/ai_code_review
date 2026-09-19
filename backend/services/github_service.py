@@ -409,7 +409,7 @@ class GitHubAPIClient:
             logger.error(f"Error getting repo stats for {owner}/{repo}: {e}")
             return None
 
-    def create_security_pr(self, owner: str, repo: str, title: str, body: str, file_path: str, file_content: str, commit_message: str, base_branch: str = 'main') -> Optional[Dict[str, Any]]:
+    def create_security_pr(self, owner: str, repo: str, title: str, body: str, file_path: str, file_content: str, commit_message: str, base_branch: Optional[str] = None) -> Optional[Dict[str, Any]]:
         """
         Creates a new branch, commits the file content, and raises a PR.
         
@@ -421,7 +421,7 @@ class GitHubAPIClient:
             file_path: Path to the file being updated/patched
             file_content: Raw text content of the patched file
             commit_message: Commit message
-            base_branch: Base branch to branch off of
+            base_branch: Base branch to branch off of (defaults to repo's default branch)
             
         Returns:
             Dict containing PR info or None
@@ -431,13 +431,36 @@ class GitHubAPIClient:
         
         if not self.access_token:
             logger.error("Cannot create PR without an access token")
-            return None
+            raise ValueError("GitHub access token is required to create a Pull Request.")
             
+        # Normalize file path
+        normalized_path = file_path.replace('\\', '/').strip()
+        while normalized_path.startswith('./'):
+            normalized_path = normalized_path[2:]
+        normalized_path = normalized_path.lstrip('/')
+
         try:
-            # 1. Get SHA of base branch
+            # 1. Resolve default branch if not specified
+            if not base_branch:
+                repo_info = self.get_repo_info(owner, repo)
+                base_branch = (repo_info.get('default_branch') if repo_info else None) or 'main'
+            
+            # Get SHA of base branch
             url = f"{self.base_url}/repos/{owner}/{repo}/git/ref/heads/{base_branch}"
             resp = requests.get(url, headers=self.headers, timeout=10)
-            resp.raise_for_status()
+            if resp.status_code == 404:
+                # If specified branch failed and was 'main', try 'master' as fallback
+                fallback_branch = 'master' if base_branch == 'main' else 'main'
+                url_fallback = f"{self.base_url}/repos/{owner}/{repo}/git/ref/heads/{fallback_branch}"
+                resp_fallback = requests.get(url_fallback, headers=self.headers, timeout=10)
+                if resp_fallback.status_code == 200:
+                    resp = resp_fallback
+                    base_branch = fallback_branch
+                else:
+                    resp.raise_for_status()
+            else:
+                resp.raise_for_status()
+
             base_sha = resp.json()['object']['sha']
             
             # 2. Create new branch
@@ -451,15 +474,15 @@ class GitHubAPIClient:
             
             # 3. Get existing file SHA (if it exists) to update it
             file_sha = None
-            url = f"{self.base_url}/repos/{owner}/{repo}/contents/{file_path}"
+            url = f"{self.base_url}/repos/{owner}/{repo}/contents/{normalized_path}"
             resp = requests.get(url, headers=self.headers, params={"ref": new_branch}, timeout=10)
             if resp.status_code == 200:
-                file_sha = resp.json()['sha']
+                file_sha = resp.json().get('sha')
                 
             # 4. Commit file to new branch
             encoded_content = base64.b64encode(file_content.encode('utf-8')).decode('utf-8')
             payload = {
-                "message": commit_message,
+                "message": commit_message or title,
                 "content": encoded_content,
                 "branch": new_branch
             }
@@ -479,11 +502,31 @@ class GitHubAPIClient:
             }, timeout=10)
             resp.raise_for_status()
             
-            return resp.json()
+            pr_data = resp.json()
+            return {
+                "url": pr_data.get("html_url"),
+                "html_url": pr_data.get("html_url"),
+                "number": pr_data.get("number"),
+                "title": pr_data.get("title"),
+                "branch": new_branch,
+                "base_branch": base_branch,
+                "state": pr_data.get("state"),
+                "raw": pr_data
+            }
             
-        except requests.exceptions.RequestException as e:
-            logger.error(f"Error creating security PR for {owner}/{repo}: {e}")
-            return None
+        except requests.exceptions.HTTPError as e:
+            err_msg = f"GitHub API error: {e}"
+            if e.response is not None:
+                try:
+                    err_json = e.response.json()
+                    err_msg = err_json.get('message', err_msg)
+                except Exception:
+                    err_msg = f"{e} - {e.response.text}"
+            logger.error(f"Error creating security PR for {owner}/{repo}: {err_msg}")
+            raise RuntimeError(err_msg) from e
+        except Exception as e:
+            logger.error(f"Unexpected error creating security PR for {owner}/{repo}: {e}")
+            raise
 
 def create_github_client(access_token: Optional[str] = None) -> GitHubAPIClient:
     """Factory function to create GitHub API client"""

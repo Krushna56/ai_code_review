@@ -32,6 +32,7 @@ from api.v2_routes import api_v2
 from api.file_issues import file_issues_bp
 from api.bounty_routes import bounty_bp
 from api.team_routes import team_bp
+from api.github_routes import github_bp
 
 # Configure structured logging
 setup_logging(
@@ -264,6 +265,26 @@ def report_page(uid):
                 report_data = json.load(f)
         except Exception as e:
             logger.error(f"Error loading report for {uid}: {e}")
+
+    # Auto-resolve repo_full_name for 1-click PR creation
+    if not report_data.get('repo_full_name'):
+        repo_url = None
+        if uid in analysis_status and analysis_status[uid].get('repo_url'):
+            repo_url = analysis_status[uid]['repo_url']
+        else:
+            try:
+                for entry in _load_analysis_history():
+                    if entry.get('uid') == uid and entry.get('repo_url'):
+                        repo_url = entry['repo_url']
+                        break
+            except Exception:
+                pass
+        if repo_url:
+            import re
+            m = re.search(r'github\.com[:/]([^/]+)/([^/\s\.]+)', repo_url)
+            if m:
+                report_data['repo_full_name'] = f"{m.group(1)}/{m.group(2).rstrip('.git')}"
+
     return render_template('report.html', uid=uid, report=report_data)
 
 
@@ -499,6 +520,7 @@ app.register_blueprint(api_v2)
 app.register_blueprint(file_issues_bp)
 app.register_blueprint(bounty_bp)  # Bug bounty / vulnerability scanner routes
 app.register_blueprint(team_bp)    # Team management routes
+app.register_blueprint(github_bp)  # 1-click GitHub PR creation & fix remediation
 
 # Initialize database tables
 Repository.create_table()

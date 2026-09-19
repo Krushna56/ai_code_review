@@ -251,12 +251,15 @@
                     <td><span class="agent-pill">{{ finding.get('agent', finding.get('source', '—')) }}</span></td>
                     <td>
                       <button class="st-btn" style="font-size:0.65rem; padding:4px 10px;"
-                        onclick="openPRModal('{{ finding.get('file_path', finding.get('file', '')) }}', '{{ finding.get('title', 'Fix') | replace(\"'\", \"\") }}', '')">
+                        onclick="openPRModalForFinding({{ loop.index0 }})">
                         🔧 Fix PR
                       </button>
                     </td>
                   </tr>
                   {% endfor %}
+                  <script id="reportFindingsJson" type="application/json">
+                    {{ findings | tojson }}
+                  </script>
                 {% else %}
                 <tr>
                   <td colspan="5" style="text-align:center; padding:32px; color:#475569;">
@@ -352,33 +355,117 @@
       </div>
 
       <!-- PR Modal -->
-      <div id="prModalOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); z-index:9999; align-items:center; justify-content:center;">
-        <div style="background:var(--s-surface-container-low); width:100%; max-width:600px; border-radius:16px; border:1px solid var(--s-border); box-shadow:0 24px 48px rgba(0,0,0,0.5); display:flex; flex-direction:column; max-height:90vh;">
-          <div style="padding:20px 24px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center;">
-            <div style="font-family:var(--s-font-heading); font-size:1.2rem; font-weight:700; display:flex; align-items:center; gap:8px;">
-              <span class="material-symbols-outlined" style="color:var(--s-primary);">pull_request</span> Create Security PR
+      <div id="prModalOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); backdrop-filter:blur(6px); z-index:9999; align-items:center; justify-content:center; padding:16px;">
+        <div style="background:#0f172a; width:100%; max-width:760px; border-radius:18px; border:1px solid rgba(124,111,247,0.3); box-shadow:0 24px 64px rgba(0,0,0,0.7); display:flex; flex-direction:column; max-height:92vh; overflow:hidden;">
+          
+          <!-- Modal Header -->
+          <div style="padding:18px 24px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center; background:linear-gradient(135deg, rgba(124,111,247,0.12) 0%, rgba(56,189,248,0.05) 100%);">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <div style="width:34px; height:34px; border-radius:8px; background:rgba(124,111,247,0.2); display:flex; align-items:center; justify-content:center; color:#9d93ff;">
+                <span class="material-symbols-outlined" style="font-size:20px;">call_merge</span>
+              </div>
+              <div>
+                <div style="font-family:var(--s-font-heading); font-size:1.15rem; font-weight:800; color:#e2e8f0;">1-Click Security Pull Request</div>
+                <div id="modalFindingBadge" style="font-size:0.7rem; color:#94a3b8; font-family:var(--s-font-mono);">Automated AI remediation for GitHub</div>
+              </div>
             </div>
-            <button onclick="closePRModal()" style="background:transparent; border:none; color:var(--s-on-surface-variant); cursor:pointer;"><span class="material-symbols-outlined">close</span></button>
+            <button onclick="closePRModal()" style="background:transparent; border:none; color:#94a3b8; cursor:pointer; padding:6px; border-radius:6px; transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">
+              <span class="material-symbols-outlined" style="font-size:20px;">close</span>
+            </button>
           </div>
-          <div style="padding:24px; overflow-y:auto;">
-            <div id="prAlert" style="display:none; padding:12px; margin-bottom:16px; border-radius:8px; font-size:0.85rem;"></div>
-            
-            <label style="display:block; font-size:0.8rem; font-weight:700; color:var(--s-on-surface-variant); margin-bottom:8px;">Target Repository (owner/repo)</label>
-            <input type="text" id="prRepo" placeholder="e.g. facebook/react" style="width:100%; padding:10px 14px; margin-bottom:16px; background:var(--s-surface-container-highest); border:1px solid var(--s-border); border-radius:8px; color:var(--s-on-surface);" value="{{ report.get('repo_full_name', '') }}">
-            
-            <label style="display:block; font-size:0.8rem; font-weight:700; color:var(--s-on-surface-variant); margin-bottom:8px;">File Path to Patch</label>
-            <input type="text" id="prFile" readonly style="width:100%; padding:10px 14px; margin-bottom:16px; background:rgba(0,0,0,0.2); border:1px solid var(--s-border); border-radius:8px; color:var(--s-on-surface-variant); font-family:var(--s-font-mono); font-size:0.85rem;">
-            
-            <label style="display:block; font-size:0.8rem; font-weight:700; color:var(--s-on-surface-variant); margin-bottom:8px;">PR Title</label>
-            <input type="text" id="prTitle" style="width:100%; padding:10px 14px; margin-bottom:16px; background:var(--s-surface-container-highest); border:1px solid var(--s-border); border-radius:8px; color:var(--s-on-surface);">
-            
-            <label style="display:block; font-size:0.8rem; font-weight:700; color:var(--s-on-surface-variant); margin-bottom:8px;">Patched Content <span style="font-weight:400; font-size:0.7rem;">(AI generated, please verify)</span></label>
-            <textarea id="prContent" rows="10" style="width:100%; padding:12px; background:var(--s-surface-container-highest); border:1px solid var(--s-border); border-radius:8px; color:var(--s-on-surface); font-family:var(--s-font-mono); font-size:0.85rem; line-height:1.4; resize:vertical;"></textarea>
+
+          <!-- Modal Body -->
+          <div style="padding:22px 24px; overflow-y:auto; flex:1;">
+            <div id="prAlert" style="display:none; padding:12px 16px; margin-bottom:16px; border-radius:10px; font-size:0.85rem; line-height:1.5;"></div>
+
+            <!-- Repo & Target File row -->
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px; margin-bottom:14px;">
+              <div>
+                <label style="display:block; font-size:0.75rem; font-weight:700; color:#94a3b8; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Target Repository (owner/repo)</label>
+                <input type="text" id="prRepo" placeholder="e.g. owner/repo" style="width:100%; padding:9px 12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#e2e8f0; font-size:0.85rem;" value="{{ report.get('repo_full_name', '') }}">
+              </div>
+              <div>
+                <label style="display:block; font-size:0.75rem; font-weight:700; color:#94a3b8; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">Target File</label>
+                <input type="text" id="prFile" readonly style="width:100%; padding:9px 12px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.07); border-radius:8px; color:#38bdf8; font-family:var(--s-font-mono); font-size:0.8rem;">
+              </div>
+            </div>
+
+            <!-- PR Title -->
+            <div style="margin-bottom:14px;">
+              <label style="display:block; font-size:0.75rem; font-weight:700; color:#94a3b8; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">PR Title</label>
+              <input type="text" id="prTitle" style="width:100%; padding:9px 12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#e2e8f0; font-size:0.85rem;">
+            </div>
+
+            <!-- AI Fix Guidance Card -->
+            <div id="prRemediationCard" style="display:none; background:rgba(124,111,247,0.06); border:1px solid rgba(124,111,247,0.2); border-radius:10px; padding:12px 16px; margin-bottom:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <span style="font-size:0.75rem; font-weight:700; color:#9d93ff; display:flex; align-items:center; gap:6px;">
+                  <span class="material-symbols-outlined" style="font-size:16px;">psychology</span> AI Remediation Strategy
+                </span>
+                <span id="prDifficultyBadge" style="font-size:0.65rem; padding:2px 8px; border-radius:99px; background:rgba(255,255,255,0.08); color:#cbd5e1;"></span>
+              </div>
+              <div id="prExplanation" style="font-size:0.8rem; color:#94a3b8; line-height:1.5; white-space:pre-line;"></div>
+            </div>
+
+            <!-- AI Loading Indicator -->
+            <div id="prLoadingIndicator" style="display:none; padding:16px; text-align:center; background:rgba(255,255,255,0.02); border-radius:10px; margin-bottom:14px; border:1px dashed rgba(124,111,247,0.3);">
+              <span class="material-symbols-outlined" style="font-size:24px; color:#9d93ff; animation:spin 1s linear infinite; vertical-align:middle; margin-right:8px;">progress_activity</span>
+              <span style="font-size:0.85rem; color:#cbd5e1; font-weight:600;">Generating AI code remediation &amp; unified diff...</span>
+            </div>
+
+            <!-- View Switcher Tabs -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <div style="display:flex; gap:4px; background:rgba(255,255,255,0.05); padding:3px; border-radius:8px;">
+                <button type="button" id="tabBtnDiff" onclick="switchPRView('diff')" style="background:#7C6FF7; color:#fff; border:none; padding:4px 12px; border-radius:6px; font-size:0.75rem; font-weight:700; cursor:pointer;">
+                  Diff Preview
+                </button>
+                <button type="button" id="tabBtnCode" onclick="switchPRView('code')" style="background:transparent; color:#94a3b8; border:none; padding:4px 12px; border-radius:6px; font-size:0.75rem; font-weight:700; cursor:pointer;">
+                  Full Patched Code
+                </button>
+              </div>
+              <button type="button" onclick="regenerateFix()" style="background:transparent; border:1px solid rgba(255,255,255,0.15); color:#94a3b8; padding:3px 10px; border-radius:6px; font-size:0.72rem; cursor:pointer; display:flex; align-items:center; gap:4px;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#94a3b8'">
+                <span class="material-symbols-outlined" style="font-size:14px;">refresh</span> Regenerate Fix
+              </button>
+            </div>
+
+            <!-- Diff Preview Panel -->
+            <div id="prDiffContainer" style="background:#090d16; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px; font-family:var(--s-font-mono); font-size:0.78rem; line-height:1.4; max-height:220px; overflow-y:auto; margin-bottom:14px; white-space:pre; color:#e2e8f0;">
+              <div id="prDiffContent" style="color:#64748b;">No diff available yet.</div>
+            </div>
+
+            <!-- Code Editor Panel (hidden by default) -->
+            <div id="prCodeContainer" style="display:none; margin-bottom:14px;">
+              <textarea id="prContent" rows="10" placeholder="Patched file content..." style="width:100%; padding:12px; background:#090d16; border:1px solid rgba(255,255,255,0.1); border-radius:8px; color:#e2e8f0; font-family:var(--s-font-mono); font-size:0.8rem; line-height:1.4; resize:vertical;"></textarea>
+            </div>
+
+            <!-- Optional GitHub Token Override -->
+            <div style="margin-top:10px;">
+              <div onclick="toggleTokenSection()" style="font-size:0.72rem; color:#94a3b8; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+                <span class="material-symbols-outlined" id="tokenToggleIcon" style="font-size:16px;">chevron_right</span>
+                <span>GitHub Token Settings (Optional / PAT)</span>
+                {% if session.get('github_access_token') %}
+                  <span style="background:rgba(34,197,94,0.15); color:#86efac; border:1px solid rgba(34,197,94,0.3); padding:1px 6px; border-radius:99px; font-size:0.65rem;">OAuth Connected</span>
+                {% endif %}
+              </div>
+              <div id="prTokenSection" style="display:none; margin-top:8px;">
+                <input type="password" id="prToken" placeholder="ghp_... (paste Personal Access Token if not using OAuth)" style="width:100%; padding:8px 12px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); border-radius:6px; color:#e2e8f0; font-size:0.8rem; font-family:var(--s-font-mono);">
+                <div style="font-size:0.68rem; color:#64748b; margin-top:4px;">Token requires <code>repo</code> scope to create branches and pull requests.</div>
+              </div>
+            </div>
+
           </div>
-          <div style="padding:20px 24px; border-top:1px solid rgba(255,255,255,0.05); display:flex; justify-content:flex-end; gap:12px;">
-            <button onclick="closePRModal()" class="st-btn-secondary">Cancel</button>
-            <button onclick="submitPR()" id="submitPRBtn" class="st-btn-primary"><span class="material-symbols-outlined" style="font-size:16px; margin-right:6px;">call_merge</span> Raise Pull Request</button>
+
+          <!-- Modal Footer -->
+          <div style="padding:16px 24px; border-top:1px solid rgba(255,255,255,0.08); background:rgba(15,23,42,0.8); display:flex; justify-content:space-between; align-items:center; gap:12px;">
+            <div id="prStatusText" style="font-size:0.75rem; color:#64748b;">Ready to submit</div>
+            <div style="display:flex; gap:10px;">
+              <button onclick="closePRModal()" class="st-btn-secondary" style="padding:8px 16px; font-size:0.82rem; border-radius:8px; cursor:pointer; background:rgba(255,255,255,0.05); color:#94a3b8; border:1px solid rgba(255,255,255,0.1);">Cancel</button>
+              <button onclick="submitPR()" id="submitPRBtn" class="st-btn-primary" style="padding:8px 20px; font-size:0.82rem; font-weight:700; border-radius:8px; cursor:pointer; background:#7C6FF7; color:#fff; border:none; display:flex; align-items:center; gap:6px;">
+                <span class="material-symbols-outlined" style="font-size:16px;">call_merge</span> Raise Pull Request
+              </button>
+            </div>
           </div>
+
         </div>
       </div>
 
@@ -387,6 +474,20 @@
 
 {% block extra_scripts %}
   <script>
+    const currentUid = "{{ uid }}";
+    let activeFinding = null;
+    let reportFindings = [];
+
+    // Parse findings from embedded JSON
+    try {
+      const findingsElem = document.getElementById('reportFindingsJson');
+      if (findingsElem) {
+        reportFindings = JSON.parse(findingsElem.textContent.trim());
+      }
+    } catch(e) {
+      console.warn('Could not parse report findings JSON:', e);
+    }
+
     function switchTab(name, el) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -394,21 +495,143 @@
       el.classList.add('active');
     }
 
-    function openPRModal(filePath, title, remediationContent) {
+    function toggleTokenSection() {
+      const sec = document.getElementById('prTokenSection');
+      const icon = document.getElementById('tokenToggleIcon');
+      if (sec.style.display === 'none') {
+        sec.style.display = 'block';
+        icon.textContent = 'expand_more';
+      } else {
+        sec.style.display = 'none';
+        icon.textContent = 'chevron_right';
+      }
+    }
+
+    function switchPRView(view) {
+      const diffContainer = document.getElementById('prDiffContainer');
+      const codeContainer = document.getElementById('prCodeContainer');
+      const btnDiff = document.getElementById('tabBtnDiff');
+      const btnCode = document.getElementById('tabBtnCode');
+
+      if (view === 'diff') {
+        diffContainer.style.display = 'block';
+        codeContainer.style.display = 'none';
+        btnDiff.style.background = '#7C6FF7';
+        btnDiff.style.color = '#fff';
+        btnCode.style.background = 'transparent';
+        btnCode.style.color = '#94a3b8';
+      } else {
+        diffContainer.style.display = 'none';
+        codeContainer.style.display = 'block';
+        btnCode.style.background = '#7C6FF7';
+        btnCode.style.color = '#fff';
+        btnDiff.style.background = 'transparent';
+        btnDiff.style.color = '#94a3b8';
+      }
+    }
+
+    function openPRModalForFinding(index) {
+      const finding = reportFindings[index] || {};
+      activeFinding = finding;
+      const filePath = finding.file_path || finding.file || '';
+      const title = finding.title || finding.type || 'Security Remediation';
+      openPRModal(filePath, title, '', finding);
+    }
+
+    async function openPRModal(filePath, title, remediationContent, finding) {
       document.getElementById('prFile').value = filePath;
-      document.getElementById('prTitle').value = `Security Patch: ${title}`;
-      let content = typeof remediationContent === 'string' ? remediationContent : '';
-      if (!content && typeof auth !== 'undefined') content = "/* Add fixed patch here */\n";
-      
-      document.getElementById('prContent').value = content;
+      document.getElementById('prTitle').value = `Fix: ${title}`;
       document.getElementById('prAlert').style.display = 'none';
+      document.getElementById('modalFindingBadge').textContent = `Patching ${filePath}`;
       
-      if(!document.getElementById('prRepo').value) {
-          const stored = localStorage.getItem('tracked_repo');
-          if(stored) document.getElementById('prRepo').value = stored;
+      const repoInput = document.getElementById('prRepo');
+      if (!repoInput.value) {
+        const stored = localStorage.getItem('tracked_repo');
+        if (stored) repoInput.value = stored;
       }
 
+      // Reset panels
+      document.getElementById('prContent').value = remediationContent || '';
+      document.getElementById('prDiffContent').textContent = 'Loading unified diff...';
+      document.getElementById('prRemediationCard').style.display = 'none';
+      switchPRView('diff');
+
       document.getElementById('prModalOverlay').style.display = 'flex';
+
+      // Automatically generate AI remediation if content is not provided
+      if (!remediationContent) {
+        await fetchAIFix(filePath, finding || activeFinding);
+      }
+    }
+
+    async function regenerateFix() {
+      const filePath = document.getElementById('prFile').value;
+      await fetchAIFix(filePath, activeFinding);
+    }
+
+    async function fetchAIFix(filePath, finding) {
+      const indicator = document.getElementById('prLoadingIndicator');
+      const statusText = document.getElementById('prStatusText');
+      indicator.style.display = 'block';
+      statusText.textContent = '🤖 Generating AI patch...';
+
+      try {
+        const resp = await fetch('/api/github/generate-fix', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({
+            uid: currentUid,
+            file_path: filePath,
+            finding: finding || activeFinding || { title: document.getElementById('prTitle').value }
+          })
+        });
+
+        const data = await resp.json();
+        if (resp.ok && data.status === 'success') {
+          document.getElementById('prContent').value = data.patched_content || '';
+          renderDiff(data.diff || '');
+          
+          if (data.explanation) {
+            document.getElementById('prExplanation').textContent = data.explanation;
+            document.getElementById('prDifficultyBadge').textContent = `${data.difficulty || 'MEDIUM'} • Est: ${data.estimated_time || '15m'}`;
+            document.getElementById('prRemediationCard').style.display = 'block';
+          }
+          statusText.textContent = 'AI fix generated — ready to review and submit';
+        } else {
+          document.getElementById('prDiffContent').textContent = '⚠️ Could not generate automated diff. You can manually enter patched code in the "Full Patched Code" tab.';
+          statusText.textContent = 'Fix generation notice';
+        }
+      } catch (err) {
+        console.warn('Error fetching AI fix:', err);
+        document.getElementById('prDiffContent').textContent = 'Could not fetch diff. Please switch to "Full Patched Code" to write your patch.';
+        statusText.textContent = 'Ready for manual entry';
+      } finally {
+        indicator.style.display = 'none';
+      }
+    }
+
+    function renderDiff(rawDiff) {
+      const diffElem = document.getElementById('prDiffContent');
+      if (!rawDiff || !rawDiff.trim()) {
+        diffElem.innerHTML = '<span style="color:#64748b;">No code modifications needed or file unchanged.</span>';
+        return;
+      }
+      
+      const lines = rawDiff.split('\n');
+      const formatted = lines.map(line => {
+        const escaped = line.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        if (line.startsWith('+') && !line.startsWith('+++')) {
+          return `<div style="background:rgba(34,197,94,0.15); color:#86efac; padding:1px 4px; border-radius:2px;">${escaped}</div>`;
+        } else if (line.startsWith('-') && !line.startsWith('---')) {
+          return `<div style="background:rgba(239,68,68,0.15); color:#fca5a5; padding:1px 4px; border-radius:2px;">${escaped}</div>`;
+        } else if (line.startsWith('@@')) {
+          return `<div style="color:#93c5fd; font-weight:700; padding:2px 4px;">${escaped}</div>`;
+        }
+        return `<div style="color:#94a3b8; padding:1px 4px;">${escaped}</div>`;
+      }).join('');
+
+      diffElem.innerHTML = formatted;
     }
 
     function closePRModal() {
@@ -418,64 +641,94 @@
     async function submitPR() {
       const btn = document.getElementById('submitPRBtn');
       const alertBox = document.getElementById('prAlert');
+      const statusText = document.getElementById('prStatusText');
       const repoInput = document.getElementById('prRepo').value.trim();
-      const file_path = document.getElementById('prFile').value.trim();
+      const filePath = document.getElementById('prFile').value.trim();
       const title = document.getElementById('prTitle').value.trim();
       const content = document.getElementById('prContent').value;
+      const customToken = document.getElementById('prToken') ? document.getElementById('prToken').value.trim() : '';
       
       alertBox.style.display = 'none';
       
       if (!repoInput || !repoInput.includes('/')) {
-         alertBox.textContent = 'Please enter a valid target repository (owner/repo).';
-         alertBox.style.background = 'var(--s-error-container)';
-         alertBox.style.color = 'var(--s-on-error-container)';
-         alertBox.style.display = 'block';
-         return;
+        alertBox.textContent = 'Please enter a valid target repository formatted as "owner/repo" (e.g. your-org/your-repo).';
+        alertBox.style.background = 'rgba(239,68,68,0.15)';
+        alertBox.style.color = '#fca5a5';
+        alertBox.style.border = '1px solid rgba(239,68,68,0.3)';
+        alertBox.style.display = 'block';
+        return;
+      }
+
+      if (!content || !content.trim()) {
+        alertBox.textContent = 'Patched file content cannot be empty.';
+        alertBox.style.background = 'rgba(239,68,68,0.15)';
+        alertBox.style.color = '#fca5a5';
+        alertBox.style.border = '1px solid rgba(239,68,68,0.3)';
+        alertBox.style.display = 'block';
+        return;
       }
       
       btn.disabled = true;
-      btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px; margin-right:6px; animation: spin 1s linear infinite;">sync</span> Processing...';
+      btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px; margin-right:6px; animation:spin 1s linear infinite;">progress_activity</span> Creating PR...';
+      statusText.textContent = 'Creating branch and opening PR on GitHub...';
       
       const [owner, repo] = repoInput.split('/');
+      localStorage.setItem('tracked_repo', repoInput);
       
       try {
         const resp = await fetch('/api/github/raise-pr', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           credentials: 'same-origin',
           body: JSON.stringify({
             owner: owner,
             repo: repo,
-            file_path: file_path,
+            file_path: filePath,
             title: title,
             file_content: content,
-            commit_message: title
+            commit_message: title,
+            github_token: customToken || undefined,
+            description: activeFinding ? activeFinding.description : ''
           })
         });
         
         const data = await resp.json();
         
-        if (resp.ok) {
-          alertBox.innerHTML = `✅ Successfully created Pull Request! <a href="${data.url}" target="_blank" style="color:inherit; text-decoration:underline;">View PR on GitHub</a>`;
-          alertBox.style.background = 'rgba(34,197,94,0.1)';
+        if (resp.ok && data.status === 'success') {
+          alertBox.innerHTML = `
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+              <div>
+                <strong>✅ Pull Request Created Successfully!</strong>
+                <div style="font-size:0.75rem; margin-top:2px;">Branch: <code>${data.branch}</code> • PR #${data.pr_number || ''}</div>
+              </div>
+              <a href="${data.url || data.html_url}" target="_blank" rel="noopener noreferrer" style="background:#22c55e; color:#0f172a; padding:6px 14px; border-radius:6px; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:4px; font-size:0.8rem;">
+                Open on GitHub <span class="material-symbols-outlined" style="font-size:14px;">open_in_new</span>
+              </a>
+            </div>
+          `;
+          alertBox.style.background = 'rgba(34,197,94,0.15)';
           alertBox.style.color = '#86efac';
-          alertBox.style.border = '1px solid rgba(34,197,94,0.2)';
+          alertBox.style.border = '1px solid rgba(34,197,94,0.3)';
           alertBox.style.display = 'block';
-          btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px; margin-right:6px;">check</span> Dispatched';
+          
+          btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px; margin-right:6px;">check_circle</span> Dispatched';
+          btn.style.background = '#22c55e';
+          statusText.textContent = `PR #${data.pr_number || ''} is now open on GitHub!`;
         } else {
-          throw new Error(data.error || 'Failed to create PR');
+          throw new Error(data.error || 'Failed to create Pull Request');
         }
       } catch (err) {
-        alertBox.textContent = `❌ ${err.message}`;
-        alertBox.style.background = 'var(--s-error-container)';
-        alertBox.style.color = 'var(--s-on-error-container)';
-        alertBox.style.border = '1px solid rgba(239,68,68,0.2)';
+        alertBox.innerHTML = `<strong>❌ PR Creation Failed:</strong> ${err.message}`;
+        alertBox.style.background = 'rgba(239,68,68,0.15)';
+        alertBox.style.color = '#fca5a5';
+        alertBox.style.border = '1px solid rgba(239,68,68,0.3)';
         alertBox.style.display = 'block';
+        
         btn.disabled = false;
         btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px; margin-right:6px;">call_merge</span> Raise Pull Request';
+        statusText.textContent = 'Submission failed — check error message above';
       }
     }
   </script>
+{% endblock %}
 {% endblock %}
