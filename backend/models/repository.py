@@ -225,6 +225,36 @@ class Repository:
         except Exception as e:
             logger.error(f"Error getting repository: {e}")
             return None
+
+    @staticmethod
+    def get_by_owner_and_name(owner: str, repo_name: str) -> Optional['Repository']:
+        """Get repository by owner and repo_name (case-insensitive)"""
+        try:
+            if _is_postgres():
+                conn = get_pooled_connection()
+                cursor = conn.cursor()
+                cursor.execute('SELECT * FROM repositories WHERE LOWER(owner)=LOWER(%s) AND LOWER(repo_name)=LOWER(%s)', (owner, repo_name))
+                row = cursor.fetchone()
+                return_connection(conn)
+            else:
+                db_path = Path(config.DATABASE_PATH if hasattr(config, 'DATABASE_PATH')
+                              else 'instance/app.db')
+                conn = sqlite3.connect(str(db_path))
+                conn.row_factory = sqlite3.Row
+                cursor = conn.cursor()
+                cursor.execute('SELECT * FROM repositories WHERE LOWER(owner)=LOWER(?) AND LOWER(repo_name)=LOWER(?)', (owner, repo_name))
+                row = cursor.fetchone()
+                conn.close()
+
+            if row:
+                repo_data = dict(row)
+                repo_data['github_data'] = json.loads(repo_data['github_data']) if isinstance(repo_data['github_data'], str) else repo_data['github_data']
+                repo_data['commit_status'] = json.loads(repo_data['commit_status']) if isinstance(repo_data['commit_status'], str) else repo_data['commit_status']
+                return Repository(**repo_data)
+            return None
+        except Exception as e:
+            logger.error(f"Error getting repository by owner/name: {e}")
+            return None
     
     @staticmethod
     def get_by_id(repo_id: int) -> Optional['Repository']:

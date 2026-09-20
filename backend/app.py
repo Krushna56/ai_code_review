@@ -32,6 +32,7 @@ from api.v2_routes import api_v2
 from api.file_issues import file_issues_bp
 from api.bounty_routes import bounty_bp
 from api.team_routes import team_bp
+from api.github_routes import github_bp
 
 # Configure structured logging
 setup_logging(
@@ -264,6 +265,26 @@ def report_page(uid):
                 report_data = json.load(f)
         except Exception as e:
             logger.error(f"Error loading report for {uid}: {e}")
+
+    # Auto-resolve repo_full_name for 1-click PR creation
+    if not report_data.get('repo_full_name'):
+        repo_url = None
+        if uid in analysis_status and analysis_status[uid].get('repo_url'):
+            repo_url = analysis_status[uid]['repo_url']
+        else:
+            try:
+                for entry in _load_analysis_history():
+                    if entry.get('uid') == uid and entry.get('repo_url'):
+                        repo_url = entry['repo_url']
+                        break
+            except Exception:
+                pass
+        if repo_url:
+            import re
+            m = re.search(r'github\.com[:/]([^/]+)/([^/\s\.]+)', repo_url)
+            if m:
+                report_data['repo_full_name'] = f"{m.group(1)}/{m.group(2).rstrip('.git')}"
+
     return render_template('report.html', uid=uid, report=report_data)
 
 
@@ -369,6 +390,34 @@ def agent_status(uid):
     if status is None:
         return jsonify({'status': 'not_found', 'progress': 0}), 404
     return jsonify(dict(status)), 200
+
+
+# -----------------------------------------------------------------------
+# Analysis History API
+# -----------------------------------------------------------------------
+@app.route("/api/analysis/history", methods=['GET'])
+def analysis_history_api():
+    """
+    Return the persisted analysis history list.
+    ?limit=N  — optional cap (default 10, max 50).
+    Also enriches entries with live status from analysis_status dict.
+    """
+    limit = min(int(request.args.get('limit', 10)), 50)
+    history = _load_analysis_history()[:limit]
+
+    # Enrich with live status info for in-progress jobs
+    for entry in history:
+        uid = entry.get('uid', '')
+        if uid and uid in analysis_status:
+            live = analysis_status[uid]
+            entry['status'] = live.get('status', 'unknown')
+        else:
+            # Check if processed dir exists → complete
+            proc_dir = os.path.join(app.config['PROCESSED_FOLDER'], uid)
+            report_exists = os.path.exists(os.path.join(proc_dir, 'security_report.json'))
+            entry['status'] = 'complete' if report_exists else 'unknown'
+
+    return jsonify({'history': history, 'total': len(history)}), 200
 
 
 # -----------------------------------------------------------------------
@@ -499,6 +548,7 @@ app.register_blueprint(api_v2)
 app.register_blueprint(file_issues_bp)
 app.register_blueprint(bounty_bp)  # Bug bounty / vulnerability scanner routes
 app.register_blueprint(team_bp)    # Team management routes
+app.register_blueprint(github_bp)  # 1-click GitHub PR creation & fix remediation
 
 # Initialize database tables
 Repository.create_table()
@@ -589,8 +639,10 @@ except Exception as e:
 # Analysis status tracking (in-memory)
 analysis_status = defaultdict(lambda: {'status': 'pending', 'progress': 0, 'error': None})
 
-LAST_ANALYSIS_PATH_FILE = 'last_analysis_path.txt'
-ANALYSIS_HISTORY_FILE = 'analysis_history.json'
+# Use absolute paths anchored to this file so they're consistent regardless of CWD
+_APP_DIR = os.path.dirname(os.path.abspath(__file__))
+LAST_ANALYSIS_PATH_FILE = os.path.join(_APP_DIR, 'last_analysis_path.txt')
+ANALYSIS_HISTORY_FILE = os.path.join(_APP_DIR, 'analysis_history.json')
 MAX_HISTORY_ENTRIES = 5
 
 
@@ -614,11 +666,119 @@ def _save_analysis_history(history: list):
         logger.error(f"Could not save analysis history: {e}")
 
 
+def _get_current_user_id():
+    """Extract user_id from the JWT in session. Returns int or None."""
+    from auth.jwt_utils import JWTManager
+    token = session.get('jwt_access_token')
+    if not token:
+        return None
+    try:
+        payload = JWTManager.verify_token(token)
+        if JWTManager.is_blacklisted(token):
+            return None
+        return int(payload.get('sub', 0)) or None
+    except Exception:
+        return None
+
+
+def _get_github_client_for_user(user_id: int = None) -> GitHubAPIClient:
+    """Create GitHub client using session token, user token, or env token."""
+    token = session.get('github_access_token')
+    if not token and user_id:
+        try:
+            from models.user import User
+            u = User.find_by_id(user_id)
+            if u and u.github_access_token:
+                token = u.github_access_token
+        except Exception:
+            pass
+    if not token:
+        token = os.getenv('GITHUB_TOKEN')
+    return create_github_client(token)
+
+
+def _track_repository_for_user(user_id: int, repo_url: str, uid: str = None) -> Optional[Repository]:
+    """Ensure a GitHub repository is tracked for the user and linked to an analysis UID."""
+    if not user_id or not repo_url:
+        return None
+    try:
+        parsed = GitHubAPIClient.parse_github_url(repo_url)
+        if not parsed:
+            return None
+        owner = parsed['owner']
+        repo_name = parsed['repo']
+        clean_url = f"https://github.com/{owner}/{repo_name}"
+
+        # Check existing by owner/name or URL
+        existing = (
+            Repository.get_by_owner_and_name(owner, repo_name)
+            or Repository.get_by_url(clean_url)
+            or Repository.get_by_url(repo_url)
+        )
+        if existing:
+            existing.user_id = user_id
+            if uid:
+                existing.analysis_id = uid
+            existing.save()
+            return existing
+
+        client = _get_github_client_for_user(user_id)
+        repo_info = client.get_repo_info(owner, repo_name) if client else None
+
+        repo = Repository(
+            user_id=user_id,
+            repo_url=clean_url,
+            owner=owner,
+            repo_name=repo_name,
+            repo_full_name=f"{owner}/{repo_name}",
+            description=repo_info.get('description') if repo_info else None,
+            language=repo_info.get('language') if repo_info else None,
+            stars=repo_info.get('stars', 0) if repo_info else 0,
+            analysis_id=uid,
+            github_data=repo_info or {},
+        )
+        if repo.save():
+            logger.info(f"Auto-tracked repository {owner}/{repo_name} for user {user_id}")
+            return repo
+    except Exception as e:
+        logger.warning(f"Failed to auto-track repository {repo_url} for user {user_id}: {e}")
+    return None
+
+
+def _extract_project_name(input_path: str, repo_url: str = None) -> str:
+    """Extract a human-readable project name from the repo URL or git config."""
+    # 1. From repo URL (most reliable for GitHub clones)
+    if repo_url:
+        import re as _re
+        m = _re.search(r'github\.com[:/]([^/]+)/([^/\s\.]+)', repo_url)
+        if m:
+            return m.group(2).rstrip('.git')
+
+    # 2. From git config in the cloned directory
+    git_config = os.path.join(input_path, '.git', 'config')
+    if os.path.exists(git_config):
+        try:
+            with open(git_config, 'r', encoding='utf-8', errors='ignore') as f:
+                for line in f:
+                    line = line.strip()
+                    if line.startswith('url ='):
+                        url = line.split('=', 1)[1].strip()
+                        import re as _re
+                        m = _re.search(r'[:/]([^/]+)/([^/\s\.]+?)(\.git)?$', url)
+                        if m:
+                            return m.group(2)
+        except Exception:
+            pass
+
+    # 3. Fallback: basename of path (may be UUID for uploads)
+    return os.path.basename(input_path.rstrip('/\\'))
+
+
 def _record_analysis(uid: str, input_path: str, file_count: int = 0, repo_url: str = None):
     """Append a completed analysis entry to the history file."""
     try:
         history = _load_analysis_history()
-        project_name = os.path.basename(input_path.rstrip('/\\')) or uid[:8]
+        project_name = _extract_project_name(input_path, repo_url) or uid[:8]
         entry = {
             'uid': uid,
             'timestamp': datetime.utcnow().isoformat() + 'Z',
@@ -630,7 +790,11 @@ def _record_analysis(uid: str, input_path: str, file_count: int = 0, repo_url: s
         history.insert(0, entry)
         history = history[:MAX_HISTORY_ENTRIES]
         _save_analysis_history(history)
-        logger.info(f"Recorded analysis history for UID {uid}")
+        logger.info(f"Recorded analysis history for UID {uid} (project: {project_name})")
+
+        if repo_url:
+            current_uid = _get_current_user_id() or 1
+            _track_repository_for_user(current_uid, repo_url, uid=uid)
     except Exception as e:
         logger.error(f"Error recording analysis history: {e}")
 
@@ -894,7 +1058,9 @@ def run_analysis_background(input_path, output_path, uid):
 
         # Count files analyzed
         file_count = sum(1 for _ in Path(input_path).rglob('*') if _.is_file())
-        _record_analysis(uid, input_path, file_count=file_count)
+        # Pass repo_url if this was a GitHub clone (stored in analysis_status by clone_and_analyze)
+        _repo_url = analysis_status.get(uid, {}).get('repo_url')
+        _record_analysis(uid, input_path, file_count=file_count, repo_url=_repo_url)
 
         analysis_status[uid]['status'] = 'complete'
         analysis_status[uid]['progress'] = 100
@@ -1007,6 +1173,10 @@ def analyze_repo():
     uid = str(uuid.uuid4())
     logger.info(f"[/api/analyze/repo] Generated UID {uid} for {repo_url}")
     
+    user_id = int(payload.get('sub', 0)) or None
+    if user_id and repo_url:
+        _track_repository_for_user(user_id, repo_url, uid=uid)
+
     upload_dir   = os.path.join(app.config['UPLOAD_FOLDER'],   uid)
     processed_dir = os.path.join(app.config['PROCESSED_FOLDER'], uid)
     
@@ -1021,6 +1191,8 @@ def analyze_repo():
             logger.info(f"[Clone Thread - {uid}] Starting git clone for {repo_url} into {upload_dir}")
             analysis_status[uid]['status'] = 'cloning'
             analysis_status[uid]['repo_url'] = repo_url  # store for auto-extract
+            if user_id and repo_url:
+                _track_repository_for_user(user_id, repo_url, uid=uid)
 
             # Clone repo (depth 1 for speed)
             clone_cmd = ['git', 'clone', '--depth', '1', repo_url, upload_dir]
@@ -1146,33 +1318,61 @@ def _auto_extract_team(uid: str, project_path: str):
 # GitHub Analytics API Routes
 # ---------------------------------------------------------------------------
 
-def _get_current_user_id():
-    """Extract user_id from the JWT in session. Returns int or None."""
-    from auth.jwt_utils import JWTManager
-    token = session.get('jwt_access_token')
-    if not token:
-        return None
-    try:
-        payload = JWTManager.verify_token(token)
-        if JWTManager.is_blacklisted(token):
-            return None
-        return int(payload.get('sub', 0)) or None
-    except Exception:
-        return None
-
-
 @app.route('/api/github/user-repos', methods=['GET'])
 def github_user_repos():
-    """Return repositories tracked by the current user."""
+    """Return repositories tracked by the current user, prioritizing scanned repository."""
     user_id = _get_current_user_id()
     if not user_id:
         return jsonify({'error': 'Authentication required'}), 401
 
     limit = min(int(request.args.get('limit', 50)), 100)
+    target_uid = request.args.get('uid', '').strip()
+
+    # Discover scanned repo URL from uid, analysis_status, or latest history
+    history = _load_analysis_history()
+    active_repo_url = None
+    if target_uid:
+        for entry in history:
+            if entry.get('uid') == target_uid and entry.get('repo_url'):
+                active_repo_url = entry['repo_url']
+                break
+        if not active_repo_url and target_uid in analysis_status:
+            active_repo_url = analysis_status[target_uid].get('repo_url')
+
+    # If no target_uid or not matched, check the latest analysis history
+    if not active_repo_url and history:
+        for entry in history:
+            if entry.get('repo_url'):
+                active_repo_url = entry['repo_url']
+                break
+
+    # Auto-track historical scanned repos for this user if not yet tracked
+    for entry in history[:5]:
+        h_url = entry.get('repo_url')
+        if h_url:
+            _track_repository_for_user(user_id, h_url, uid=entry.get('uid'))
+
+    active_repo_full_name = None
+    if active_repo_url:
+        parsed = GitHubAPIClient.parse_github_url(active_repo_url)
+        if parsed:
+            active_repo_full_name = f"{parsed['owner']}/{parsed['repo']}"
+            _track_repository_for_user(user_id, active_repo_url, uid=target_uid or (history[0].get('uid') if history else None))
+
     repos = Repository.get_by_user(user_id, limit=limit)
+    repo_list = [r.to_dict() for r in repos]
+
+    # Reorder repo_list so active_repo_full_name is at the top
+    if active_repo_full_name:
+        match_idx = next((i for i, r in enumerate(repo_list) if f"{r['owner']}/{r['repo_name']}".lower() == active_repo_full_name.lower()), None)
+        if match_idx is not None and match_idx > 0:
+            item = repo_list.pop(match_idx)
+            repo_list.insert(0, item)
+
     return jsonify({
-        'repositories': [r.to_dict() for r in repos],
-        'total': len(repos)
+        'repositories': repo_list,
+        'active_repo': active_repo_full_name,
+        'total': len(repo_list)
     }), 200
 
 
@@ -1191,53 +1391,60 @@ def github_track_repo():
     if not repo_url:
         return jsonify({'error': 'repo_url is required'}), 400
 
-    # Parse owner/repo from URL
     parsed = GitHubAPIClient.parse_github_url(repo_url)
     if not parsed:
         return jsonify({'error': 'Invalid GitHub repository URL'}), 400
 
-    owner = parsed['owner']
-    repo_name = parsed['repo']
-
-    # Check if already tracked by this user
-    existing = Repository.get_by_url(repo_url)
-    if existing and existing.user_id == user_id:
-        return jsonify({'message': 'Already tracked', 'repository': existing.to_dict()}), 200
-
-    # Fetch metadata from GitHub (unauthenticated is fine for public repos)
-    client = create_github_client()
-    repo_info = client.get_repo_info(owner, repo_name)
-
-    repo = Repository(
-        user_id=user_id,
-        repo_url=repo_url,
-        owner=owner,
-        repo_name=repo_name,
-        repo_full_name=f"{owner}/{repo_name}",
-        description=repo_info.get('description') if repo_info else None,
-        language=repo_info.get('language') if repo_info else None,
-        stars=repo_info.get('stars', 0) if repo_info else 0,
-        github_data=repo_info or {},
-    )
-
-    if not repo.save():
+    repo = _track_repository_for_user(user_id, repo_url)
+    if not repo:
         return jsonify({'error': 'Failed to save repository'}), 500
 
-    logger.info(f"User {user_id} started tracking {owner}/{repo_name}")
     return jsonify({'message': 'Repository tracked', 'repository': repo.to_dict()}), 201
 
 
 @app.route('/api/github/stats/<owner>/<repo_name>', methods=['GET'])
 def github_repo_stats(owner, repo_name):
-    """Return live GitHub stats for a repository."""
+    """Return live GitHub stats for a repository with graceful fallback."""
     user_id = _get_current_user_id()
     if not user_id:
         return jsonify({'error': 'Authentication required'}), 401
 
-    client = create_github_client()
+    client = _get_github_client_for_user(user_id)
     stats = client.get_repo_stats(owner, repo_name)
     if not stats:
-        return jsonify({'error': 'Failed to fetch repository stats from GitHub'}), 502
+        # Graceful fallback from locally stored Repository model
+        repo = Repository.get_by_owner_and_name(owner, repo_name) or Repository.get_by_url(f"https://github.com/{owner}/{repo_name}")
+        repo_info = (repo.github_data if repo and repo.github_data else {}) or {
+            'name': repo_name,
+            'full_name': f"{owner}/{repo_name}",
+            'stars': repo.stars if repo else 0,
+            'description': repo.description if repo else None,
+            'language': repo.language if repo else None,
+            'forks': 0,
+        }
+        latest_commit = {}
+        if repo and repo.last_commit_sha:
+            latest_commit = {
+                'sha': repo.last_commit_sha,
+                'message': 'Scanned commit',
+                'created_at': repo.last_commit_date.isoformat() if repo.last_commit_date else None
+            }
+        return jsonify({
+            'owner': owner,
+            'repo_name': repo_name,
+            'stars': repo_info.get('stars', repo.stars if repo else 0),
+            'forks': repo_info.get('forks', 0),
+            'description': repo_info.get('description', repo.description if repo else None),
+            'language': repo_info.get('language', repo.language if repo else None),
+            'github_data': repo_info,
+            'latest_commit': latest_commit,
+            'commit_status': repo.commit_status if repo and repo.commit_status else {},
+            'pull_requests': {'open': 0, 'items': []},
+            'contributors': [],
+            'branches': [],
+            'latest_release': None,
+            'fetched_at': datetime.utcnow().isoformat()
+        }), 200
 
     # Flatten for the dashboard JS
     repo_info = stats.get('repo_info') or {}
